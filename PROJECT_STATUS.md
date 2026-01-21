@@ -6,23 +6,22 @@
 > **Build**: Critical console errors detected in User Testing Round 1. Priority P0 fixes in progress.
 
 ## Recent Updates
+- **User Feedback Round 2 (UI/UX)**: ✅
+    - **Navigation**: Added "Back" buttons and section descriptions to Settings.
+    - **Logic**: Fixed "Apply" behavior (notify vs close), separated One-Time/Recurring events.
+    - **Defaults**: Updated Housing (Sell=No) and Healthcare ($5k/$5k/$6k) defaults.
 - **Feature Expansion**: Integrated 3 key features from "Boldin" examples:
     - **Money Flows**: Interactive "Annual Cash Flow" chart mimicking Sankey logic.
     - **Success Gauge**: "Success Rate" doughnut chart in the dashboard header.
     - **Gap Calculator**: "What You Need" calculator to solve for income shortfalls.
 - **Surplus/Gap Chart**: Added annual surplus/deficit visualization.
-- **Deep Dive & Audit**: Conducted a comprehensive code audit of `index.html` and `tests`.
 - **Test Integrity**: Test suite covers all new features (68/68 tests passing).
-
-- **Deployment**: Established automated FTP deployment to `bmwseals.com/retirefire` using `basic-ftp`.
-- **Branching**: Switched to `retirefire` branch for specialized development.
-- **DevOps**: Integrated `pre-commit` and `prettier` for consistent code quality.
 
 ## Health Check
 | Component | Status | Notes |
 |-----------|--------|-------|
 | **Core Logic** | ✅ Passing | `index.html` JS logic valid |
-| **Tests** | ✅ Passing | 68/68 tests passed |
+| **Tests** | ✅ Passing | 68/68 tests passed (E2E + Unit) |
 | **Deployment** | ✅ Active | Live at `bmwseals.com/retirefire` |
 
 ## Next Steps

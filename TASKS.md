@@ -193,8 +193,18 @@
 ## Priority Order (Active)
 
 ### P0 - Critical (Next Sprint)
-1. **US-025**: Browser Runtime Tests - Validate charts render
-2. **US-026**: Calculation Accuracy Tests - Verify math
+1. **US-034**: Boldin Gap Analysis & Feature Parity Check (Active)
+   - [x] Crawl/Review public feature docs (PlannerPlus)
+   - [x] Create `BOLDIN_GAP_ANALYSIS.md` report
+   - [ ] **Story A**: Tax Logic (Separate Ord Income/Cap Gains/FICA)
+   - [ ] **Story B**: Real Estate (Buy/Sell/Downsize logic)
+   - [ ] **Story C**: Withdrawal Strategy Toggle (Tax Deferred vs Tax Free first)
+   - [ ] **Story D**: Tax Visualization Chart (Stacked Area)
+   - [ ] **Story E**: Scenario Comparison Modal
+   - [ ] **Story F**: Wellness Score Metrics
+   - [ ] **Story G**: Advanced Roth Optimizer (Algo)
+2. **US-025**: Browser Runtime Tests - Validate charts render
+3. **US-026**: Calculation Accuracy Tests - Verify math
 
 ### P1 - High Priority
 1. **US-027**: Lifetime Cash Flow Chart
