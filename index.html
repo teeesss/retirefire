@@ -44,7 +44,7 @@
             --bg-tertiary: #334155;
             --bg-card: rgba(30, 41, 59, 0.8);
             --bg-hover: rgba(255, 255, 255, 0.05);
-            --bg-input: rgba(0, 0, 0, 0.3);
+            --bg-input: rgba(0, 0, 0, 0.6);
             --border-color: rgba(255, 255, 255, 0.1);
             --border-hover: rgba(255, 255, 255, 0.2);
             --text-primary: #f1f5f9;
@@ -602,6 +602,12 @@
             color: var(--text-primary);
         }
 
+        /* Dark Select Options */
+        select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
         .settings-nav-item.active {
             background: var(--bg-hover);
             color: var(--primary);
@@ -679,6 +685,7 @@
             padding: 0;
             height: 6px;
             -webkit-appearance: none;
+            appearance: none;
             background: var(--bg-tertiary);
             border-radius: 3px;
             border: none;
@@ -908,6 +915,7 @@
             background: var(--bg-tertiary);
             outline: none;
             -webkit-appearance: none;
+            appearance: none;
         }
 
         .year-slider::-webkit-slider-thumb {
@@ -2610,6 +2618,7 @@
                                 <div class="card-value" id="metricCurrentNW">$4.24M</div>
                                 <div class="card-subtitle">Age 50 (2026)</div>
                             </div>
+                            <button class="btn btn-sm btn-outline" onclick="openSettings('assets')">✏️ Edit</button>
                         </div>
                         <div class="mini-chart"><canvas id="sparkNW"></canvas></div>
                     </div>
@@ -4496,31 +4505,53 @@
                         <h3 style="margin-top: 1.5rem;">📈 Asset Allocation</h3>
                         <div class="settings-grid settings-grid-4">
                             <div class="input-group">
-                                <label>Stocks %: <span id="allocStocksVal">80%</span></label>
-                                <input type="range" id="inputGlideStocks" min="0" max="100" value="80"
-                                    oninput="updateAllocDisplay()">
+                                <label>Stocks %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputGlideStocks" min="0" max="100" value="90"
+                                        style="flex:1"
+                                        oninput="document.getElementById('inputGlideStocksNum').value=this.value; updateAllocDisplay()">
+                                    <input type="number" id="inputGlideStocksNum" value="90" min="0" max="100"
+                                        style="width: 60px;"
+                                        oninput="document.getElementById('inputGlideStocks').value=this.value; updateAllocDisplay()">
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Bonds %: <span id="allocBondsVal">15%</span></label>
-                                <input type="range" id="inputGlideBonds" min="0" max="100" value="15"
-                                    oninput="updateAllocDisplay()">
+                                <label>Bonds %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputGlideBonds" min="0" max="100" value="0" style="flex:1"
+                                        oninput="document.getElementById('inputGlideBondsNum').value=this.value; updateAllocDisplay()">
+                                    <input type="number" id="inputGlideBondsNum" value="0" min="0" max="100"
+                                        style="width: 60px;"
+                                        oninput="document.getElementById('inputGlideBonds').value=this.value; updateAllocDisplay()">
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Cash %: <span id="allocCashVal">5%</span></label>
-                                <input type="range" id="inputGlideCash" min="0" max="100" value="5"
-                                    oninput="updateAllocDisplay()">
+                                <label>Cash %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputGlideCash" min="0" max="100" value="3" style="flex:1"
+                                        oninput="document.getElementById('inputGlideCashNum').value=this.value; updateAllocDisplay()">
+                                    <input type="number" id="inputGlideCashNum" value="3" min="0" max="100"
+                                        style="width: 60px;"
+                                        oninput="document.getElementById('inputGlideCash').value=this.value; updateAllocDisplay()">
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>Crypto %</label>
-                                <input type="range" id="inputGlideCrypto" min="0" max="100" value="0"
-                                    oninput="updateAllocDisplay()">
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputGlideCrypto" min="0" max="100" value="7" style="flex:1"
+                                        oninput="document.getElementById('inputGlideCryptoNum').value=this.value; updateAllocDisplay()">
+                                    <input type="number" id="inputGlideCryptoNum" value="7" min="0" max="100"
+                                        style="width: 60px;"
+                                        oninput="document.getElementById('inputGlideCrypto').value=this.value; updateAllocDisplay()">
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>Glide Path</label>
                                 <select id="inputGlidePath">
-                                    <option value="aggressive">Aggressive (Stay 80/20)</option>
-                                    <option value="moderate" selected>Moderate (Age in Bonds)</option>
-                                    <option value="conservative">Conservative (60/40 by 65)</option>
+                                    <option value="custom">Custom</option>
+                                    <option value="aggressive">Aggressive (90/10)</option>
+                                    <option value="moderate">Moderate (60/40)</option>
+                                    <option value="conservative">Conservative (40/60)</option>
                                 </select>
                             </div>
                         </div>
@@ -4598,32 +4629,50 @@
                     <!-- ============================================ -->
                     <div class="settings-section" id="settings-expenses">
                         <h3>📤 Annual Expenses</h3>
+                        <div
+                            style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total
+                                Annual Expenses</div>
+                            <div id="totalExpensesDisplay"
+                                style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">$0</div>
+                        </div>
                         <div class="settings-grid settings-grid-3">
                             <div class="input-group">
-                                <label>Current Annual Living Expenses</label>
-                                <input type="number" id="inputAnnualExpenses" value="90000">
+                                <label>General Living Expenses</label>
+                                <input type="number" id="inputExpensesGeneral" value="60000">
+                                <span class="input-hint">Groceries, Dining, Hobbies</span>
                             </div>
                             <div class="input-group">
                                 <label>Retirement Spending (% of current)</label>
-                                <input type="number" id="inputRetireSpendPct" value="85" min="50" max="120">
+                                <input type="number" id="inputRetireSpendPct" value="90" min="50" max="120">
                                 <span class="input-hint">% - typically 70-90%</span>
                             </div>
                             <div class="input-group">
-                                <label>Annual Travel Budget</label>
-                                <input type="number" id="inputTravel" value="12000">
+                                <label>Utilities & Services</label>
+                                <input type="number" id="inputExpensesUtilities" value="6000">
                             </div>
                             <div class="input-group">
-                                <label>Annual Discretionary</label>
-                                <input type="number" id="inputDiscretionary" value="6000">
+                                <label>Annual Travel Budget</label>
+                                <input type="number" id="inputExpensesTravel" value="12000">
+                            </div>
+                            <div class="input-group">
+                                <label>Discretionary / Misc</label>
+                                <input type="number" id="inputExpensesMisc" value="3000">
                             </div>
                             <div class="input-group">
                                 <label>Annual Gifts/Charity</label>
                                 <input type="number" id="inputGifts" value="5000">
                             </div>
                             <div class="input-group">
-                                <label>Annual Vehicle Expenses</label>
-                                <input type="number" id="inputVehicle" value="8000">
+                                <label>Vehicle Expenses</label>
+                                <input type="number" id="inputVehicle" value="4000">
                             </div>
+                        </div>
+                        <div
+                            style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600; color: var(--text-secondary);">Total Annual Expenses:</span>
+                            <span id="totalExpensesDisplay"
+                                style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">$0</span>
                         </div>
                     </div>
 
@@ -4750,27 +4799,59 @@
                         <h3>📈 Investment Return Rates</h3>
                         <div class="settings-grid settings-grid-3">
                             <div class="input-group">
-                                <label>Optimistic Return: <span id="returnOptVal">10%</span></label>
-                                <input type="range" id="inputReturnOpt" min="5" max="15" step="0.5" value="10"
-                                    oninput="document.getElementById('returnOptVal').textContent=this.value+'%'">
+                                <label>Optimistic Return %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputReturnOpt" min="5" max="15" step="0.1" value="10"
+                                        style="flex:1"
+                                        oninput="document.getElementById('inputReturnOptNum').value=this.value">
+                                    <input type="number" id="inputReturnOptNum" value="10" min="5" max="15" step="0.1"
+                                        style="width: 70px;"
+                                        oninput="document.getElementById('inputReturnOpt').value=this.value">
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Average Return: <span id="returnAvgVal">7%</span></label>
-                                <input type="range" id="inputReturnAvg" min="3" max="12" step="0.5" value="7"
-                                    oninput="document.getElementById('returnAvgVal').textContent=this.value+'%'">
+                                <label>Average Return %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputReturnAvg" min="3" max="12" step="0.1" value="7"
+                                        style="flex:1"
+                                        oninput="document.getElementById('inputReturnAvgNum').value=this.value">
+                                    <input type="number" id="inputReturnAvgNum" value="7" min="3" max="12" step="0.1"
+                                        style="width: 70px;"
+                                        oninput="document.getElementById('inputReturnAvg').value=this.value">
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Pessimistic Return: <span id="returnPesVal">4%</span></label>
-                                <input type="range" id="inputReturnPes" min="0" max="8" step="0.5" value="4"
-                                    oninput="document.getElementById('returnPesVal').textContent=this.value+'%'">
+                                <label>Pessimistic Return %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputReturnPes" min="0" max="8" step="0.1" value="4"
+                                        style="flex:1"
+                                        oninput="document.getElementById('inputReturnPesNum').value=this.value">
+                                    <input type="number" id="inputReturnPesNum" value="4" min="0" max="8" step="0.1"
+                                        style="width: 70px;"
+                                        oninput="document.getElementById('inputReturnPes').value=this.value">
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Bond Returns</label>
-                                <input type="number" id="inputReturnBonds" value="4" step="0.1">
+                                <label>Bond Returns %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputReturnBonds" min="1" max="8" step="0.1" value="4"
+                                        style="flex:1"
+                                        oninput="document.getElementById('inputReturnBondsNum').value=this.value">
+                                    <input type="number" id="inputReturnBondsNum" value="4" min="1" max="8" step="0.1"
+                                        style="width: 70px;"
+                                        oninput="document.getElementById('inputReturnBonds').value=this.value">
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Cash Returns</label>
-                                <input type="number" id="inputReturnCash" value="2" step="0.1">
+                                <label>Cash Returns %</label>
+                                <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                    <input type="range" id="inputReturnCash" min="0" max="6" step="0.1" value="2"
+                                        style="flex:1"
+                                        oninput="document.getElementById('inputReturnCashNum').value=this.value">
+                                    <input type="number" id="inputReturnCashNum" value="2" min="0" max="6" step="0.1"
+                                        style="width: 70px;"
+                                        oninput="document.getElementById('inputReturnCash').value=this.value">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -5055,7 +5136,7 @@
             // User settings - will be updated from inputs
             settings: {
                 personal: {
-                    name: 'Ray',
+                    name: '',
                     age: 50,
                     retireAge: 53,
                     longevity: 95
@@ -5078,9 +5159,9 @@
                     investments: 67000,
                     cash: 10000,
                     crypto: 293500,
-                    btc: 2.5,
-                    eth: 15.0,
-                    sol: 100.0,
+                    btc: 4.5,
+                    eth: 4.0,
+                    sol: 14.2,
                     otherAssets: 517000,
                     debt: 4583
                 },
@@ -5100,7 +5181,7 @@
                     propertyTax: 8000,
                     maintenance: 5000,
                     insurance: 2400,
-                    sellHome: 'yes',
+                    sellHome: 'no',
                     sellYear: 2032,
                     saleCosts: 6,
                     futureRent: 3000,
@@ -5146,9 +5227,10 @@
                     ]
                 },
                 healthcare: {
-                    current: 3000,
-                    preMedicare: 18000,
-                    medicare: 6000,
+                    current: 5000,
+                    preMedicare: 5000,
+                    medicare: 10000,
+                    outOfPocket: 5000,
                     inflation: 5,
                     ltcAge: 93,
                     ltcCost: 100000,
@@ -5157,7 +5239,9 @@
                 rates: {
                     optimistic: 10.52,
                     average: 8.77,
-                    pessimistic: 7.02
+                    pessimistic: 7.02,
+                    bonds: 4.0,
+                    cash: 2.0
                 },
                 inflation: {
                     optimistic: 2.03,
@@ -5771,8 +5855,12 @@
         // SETTINGS PANEL
         // ============================================
 
-        function openSettings() {
+        function openSettings(section) {
             document.getElementById('settingsOverlay').classList.add('active');
+            if (section) {
+                const navItem = document.querySelector(`.settings-nav-item[onclick*="'${section}'"]`);
+                if (navItem) showSettingsSection(section, navItem);
+            }
         }
 
         function closeSettings() {
@@ -5798,10 +5886,52 @@
             document.getElementById('homeOwnerFields').style.display = owns ? 'block' : 'none';
         }
 
+        function setAllocation(stocks, bonds, cash, crypto) {
+            document.getElementById('inputGlideStocks').value = stocks;
+            document.getElementById('inputGlideStocksNum').value = stocks;
+            document.getElementById('inputGlideBonds').value = bonds;
+            document.getElementById('inputGlideBondsNum').value = bonds;
+            document.getElementById('inputGlideCash').value = cash;
+            document.getElementById('inputGlideCashNum').value = cash;
+            document.getElementById('inputGlideCrypto').value = crypto;
+            document.getElementById('inputGlideCryptoNum').value = crypto;
+        }
+
         function updateAllocDisplay() {
-            document.getElementById('allocStocksVal').textContent = document.getElementById('inputAllocStocks').value + '%';
-            document.getElementById('allocBondsVal').textContent = document.getElementById('inputAllocBonds').value + '%';
-            document.getElementById('allocCashVal').textContent = document.getElementById('inputAllocCash').value + '%';
+            const s = parseInt(document.getElementById('inputGlideStocks').value);
+            const b = parseInt(document.getElementById('inputGlideBonds').value);
+            const c = parseInt(document.getElementById('inputGlideCash').value);
+            const cr = parseInt(document.getElementById('inputGlideCrypto').value);
+
+            // Check totals (optional warning logic could go here)
+
+            // Sync Dropdown
+            const select = document.getElementById('inputGlidePath');
+            if (s === 90 && b === 0 && c === 3 && cr === 7) {
+                select.value = 'aggressive';
+            } else if (s === 60 && b === 30 && c === 5 && cr === 5) {
+                select.value = 'moderate';
+            } else if (s === 40 && b === 50 && c === 10 && cr === 0) {
+                select.value = 'conservative';
+            } else {
+                select.value = 'custom';
+            }
+        }
+
+        function updateTotalExpenses() {
+            const general = parseFloat(document.getElementById('inputExpensesGeneral').value) || 0;
+            const utilities = parseFloat(document.getElementById('inputExpensesUtilities').value) || 0;
+            const travel = parseFloat(document.getElementById('inputExpensesTravel').value) || 0;
+            const misc = parseFloat(document.getElementById('inputExpensesMisc').value) || 0;
+            const gifts = parseFloat(document.getElementById('inputGifts').value) || 0;
+            const vehicle = parseFloat(document.getElementById('inputVehicle').value) || 0;
+
+            const total = general + utilities + travel + misc + gifts + vehicle;
+
+            const display = document.getElementById('totalExpensesDisplay');
+            if (display) {
+                display.textContent = formatCurrency(total);
+            }
         }
 
         function validateSettings() {
@@ -5851,6 +5981,16 @@
             g.bonds = parseFloat(document.getElementById('inputGlideBonds').value);
             g.cash = parseFloat(document.getElementById('inputGlideCash').value);
             g.crypto = parseFloat(document.getElementById('inputGlideCrypto').value);
+
+            g.crypto = parseFloat(document.getElementById('inputGlideCrypto').value);
+
+            // Rates
+            const r = config.settings.rates;
+            r.optimistic = parseFloat(document.getElementById('inputReturnOpt').value);
+            r.average = parseFloat(document.getElementById('inputReturnAvg').value);
+            r.pessimistic = parseFloat(document.getElementById('inputReturnPes').value);
+            r.bonds = parseFloat(document.getElementById('inputReturnBonds').value);
+            r.cash = parseFloat(document.getElementById('inputReturnCash').value);
 
             // Income
             const inc = config.settings.income;
@@ -6115,8 +6255,29 @@
 
             // Add listeners to crypto inputs
             ['inputBTC', 'inputETH', 'inputSOL'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateTotalExpenses); // Also update crypto? No, different function.
                 document.getElementById(id).addEventListener('input', updateTotalCrypto);
             });
+
+            // Add listeners for expense running total
+            ['inputExpensesGeneral', 'inputExpensesUtilities', 'inputExpensesTravel', 'inputExpensesMisc', 'inputGifts', 'inputVehicle'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updateTotalExpenses);
+            });
+            // Asset Allocation Dropdown Listener
+            document.getElementById('inputGlidePath').addEventListener('change', function () {
+                const val = this.value;
+                if (val === 'aggressive') {
+                    setAllocation(90, 0, 3, 7);
+                } else if (val === 'moderate') {
+                    setAllocation(60, 30, 5, 5);
+                } else if (val === 'conservative') {
+                    setAllocation(40, 50, 10, 0);
+                }
+                // Custom: do nothing
+            });
+
+            updateTotalExpenses(); // Init
         });
 
         function saveGoal() {
