@@ -45,6 +45,10 @@
 | **ISSUE-030** | **Roth Conversion doesn't show which account money comes from** | **High - Missing transparency** |
 | **ISSUE-031** | **Roth Conversion needs break-even analysis and alternate scenarios** | **High - Decision support** |
 | **ISSUE-032** | **Mortgage Payoff chart has no on-hover info** | **Medium - Missing tooltips** |
+| **ISSUE-033** | **Monte Carlo chart hover tooltips don't work** | **Medium - Missing tooltips** |
+| **ISSUE-034** | **Monte Carlo needs more scenario options (spend rate %, market conditions)** | **High - Feature regression** |
+| **ISSUE-035** | **Monte Carlo missing historical range options (last 10/20/30 years)** | **High - Feature regression** |
+| **ISSUE-036** | **Estate/Legacy Value chart hover tooltips don't work** | **Medium - Missing tooltips** |
 
 ---
 
