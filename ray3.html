@@ -8654,6 +8654,228 @@
         }
 
         // ============================================
+        // MISSING FUNCTIONS - CRITICAL FIXES
+        // ============================================
+
+        // Settings Panel Functions
+        function openSettings() {
+            document.getElementById('settingsOverlay').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsOverlay').classList.remove('active');
+        }
+
+        function showSettingsSection(sectionName, navItem) {
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+            // Show selected section
+            const section = document.getElementById(`section-${sectionName}`);
+            if (section) section.classList.add('active');
+
+            // Update nav active state
+            document.querySelectorAll('.settings-nav-item').forEach(item => item.classList.remove('active'));
+            if (navItem) navItem.classList.add('active');
+        }
+
+        // Money Flow Chart - Show ANNUAL breakdown by AGE, not a single bar!
+        function initMoneyFlowChart() {
+            const ctx = document.getElementById('chartMoneyFlow')?.getContext('2d');
+            if (!ctx) return;
+
+            const scenario = config.currentScenario;
+            const data = rawData[scenario];
+
+            // Generate years and ages arrays dynamically
+            const startYear = 2026;
+            const currentAge = config.settings.personal.age;
+            const longevity = config.settings.personal.longevity;
+            const yearCount = longevity - currentAge + 1;
+            const years = Array.from({ length: yearCount }, (_, i) => startYear + i);
+            const ages = Array.from({ length: yearCount }, (_, i) => currentAge + i);
+
+            // Get annual data for each category
+            const taxes = [];
+            const expenses = [];
+            const savings = [];
+
+            for (let i = 0; i < yearCount; i++) {
+                const income = (data.income.Work?.[i] || 0) +
+                    (data.income.SocialSecurity?.[i] || 0) +
+                    (data.income.Drawdown?.[i] || 0) +
+                    (data.income.RMD?.[i] || 0);
+
+                const tax = (data.taxes?.Federal?.[i] || 0) + (data.taxes?.FICA?.[i] || 0) + (data.taxes?.CapGains?.[i] || 0);
+                const expense = (data.expenses?.General?.[i] || 0) +
+                    (data.expenses?.Housing?.[i] || 0) +
+                    (data.expenses?.Medical?.[i] || 0) +
+                    (data.expenses?.LTC?.[i] || 0);
+
+                const surplus = income - tax - expense;
+
+                taxes.push(tax);
+                expenses.push(expense);
+                savings.push(Math.max(0, surplus)); // Only positive savings
+            }
+
+            charts.moneyFlow = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: 'Taxes',
+                            data: taxes,
+                            backgroundColor: '#ef4444',
+                            stack: 'stack1'
+                        },
+                        {
+                            label: 'Living Expenses',
+                            data: expenses,
+                            backgroundColor: '#f59e0b',
+                            stack: 'stack1'
+                        },
+                        {
+                            label: 'Savings/Surplus',
+                            data: savings,
+                            backgroundColor: '#10b981',
+                            stack: 'stack1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8 } },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => `Age ${ages[items[0].dataIndex]} (${items[0].label})`,
+                                label: (ctx) => `${ctx.dataset.label}: ${formatCurrency(ctx.raw, false)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: { maxTicksLimit: 10 }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: { callback: (v) => formatCurrency(v) }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gap Calculator - Show retirement income WITH AGE CONTEXT
+        function initGapCalculator() {
+            const targetMonthly = parseInt(document.getElementById('calcTargetIncome')?.value || 12000);
+            const scenario = config.currentScenario;
+            const data = rawData[scenario];
+
+            // Find retirement year (first year after retire age)
+            const retireAge = config.settings.personal.retireAge;
+            const currentAge = config.settings.personal.age;
+            const startYear = 2026;
+            const yearsToRetire = retireAge - currentAge;
+            const retireYearIndex = Math.max(0, yearsToRetire);
+
+            // Calculate monthly income at retirement  
+            const retireYear = startYear + retireYearIndex;
+            const retireAgeActual = currentAge + retireYearIndex;
+            const annualIncome = (data.income.SocialSecurity?.[retireYearIndex] || 0) +
+                (data.income.Drawdown?.[retireYearIndex] || 0) +
+                (data.income.RMD?.[retireYearIndex] || 0);
+            const monthlyIncome = annualIncome / 12;
+
+            // Calculate gap/surplus
+            const gap = targetMonthly - monthlyIncome;
+            const percentage = (monthlyIncome / targetMonthly) * 100;
+
+            // Update UI with age context
+            const projectedEl = document.getElementById('calcProjectedIncome');
+            if (projectedEl) {
+                projectedEl.innerHTML = `${formatCurrency(monthlyIncome, false)}/mo<br><small style="font-size: 0.7em; opacity: 0.7;">at Age ${retireAgeActual} (${retireYear})</small>`;
+            }
+
+            const resultLabel = document.getElementById('calcResultLabel');
+            const resultValue = document.getElementById('calcResultValue');
+            const progressBar = document.getElementById('calcProgressBar');
+
+            if (gap > 0) {
+                // Shortfall
+                if (resultLabel) resultLabel.textContent = 'Monthly Shortfall';
+                if (resultValue) {
+                    resultValue.textContent = formatCurrency(gap, false);
+                    resultValue.style.color = '#ef4444';
+                }
+                if (progressBar) {
+                    progressBar.style.width = Math.min(percentage, 100) + '%';
+                    progressBar.style.background = '#ef4444';
+                }
+            } else {
+                // Surplus
+                if (resultLabel) resultLabel.textContent = 'Monthly Surplus';
+                if (resultValue) {
+                    resultValue.textContent = '+' + formatCurrency(Math.abs(gap), false);
+                    resultValue.style.color = '#10b981';
+                }
+                if (progressBar) {
+                    progressBar.style.width = '100%';
+                    progressBar.style.background = '#10b981';
+                }
+            }
+        }
+
+        // Master Chart Initialization Function
+        function initCharts() {
+            // Helper to safely call init functions
+            const safeInit = (funcName) => {
+                try {
+                    if (typeof window[funcName] === 'function') {
+                        window[funcName]();
+                    }
+                } catch (e) {
+                    console.warn(`Failed to initialize ${funcName}:`, e.message);
+                }
+            };
+
+            // List of all chart init functions to try
+            const chartFunctions = [
+                'initNetWorthChart', 'initMiniCharts', 'initSuccessGauge',
+                'initRealNominalChart', 'initAllocationChart', 'initStackedPortfolioChart',
+                'initIncomeChart', 'initSSComparisonChart', 'initIncomeReplacementChart',
+                'initExpensesChart', 'initExpensePieChart', 'initHealthcareChart',
+                'initTaxesChart', 'initCumulativeTaxChart', 'initEffectiveTaxChart',
+                'initTaxBracketChart', 'initWithdrawalChart', 'initSWRChart',
+                'initRothConversionChart', 'initRMDChart', 'initMortgageChart',
+                'initAccountTrendsChart', 'initScenarioComparisonChart',
+                'initMonteCarloChart', 'initSequenceRiskChart', 'initLegacyChart',
+                'initWhatIfChart', 'initDebtPayoffChart', 'initMarketRiskChart',
+                'initSSExplorerChart', 'initRothExplorerChart', 'initSurplusGapChart'
+            ];
+
+            // Initialize all existing charts
+            chartFunctions.forEach(safeInit);
+
+            // CRITICAL: Always initialize these fixed charts
+            try {
+                initMoneyFlowChart();
+            } catch (e) {
+                console.error('Money Flow chart failed:', e);
+            }
+
+            try {
+                initGapCalculator();
+            } catch (e) {
+                console.error('Gap Calculator failed:', e);
+            }
+        }
+
+        // ============================================
         // INITIALIZATION
         // ============================================
 
