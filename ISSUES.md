@@ -50,6 +50,7 @@
 | **ISSUE-035** | **Monte Carlo missing historical range options (last 10/20/30 years)** | **High - Feature regression** |
 | **ISSUE-036** | **Estate/Legacy Value chart hover tooltips don't work** | **Medium - Missing tooltips** |
 | **ISSUE-037** | **What-If Scenario Explorer: Market stress test buttons don't work** | **Critical - Broken feature** |
+| **ISSUE-038** | **Debt Payoff Explorer: Avalanche/Snowball buttons don't work** | **Critical - Broken feature** |
 
 ---
 
