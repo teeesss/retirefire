@@ -5218,7 +5218,10 @@
                 </div>
                 <div>
                     <button class="btn btn-outline" onclick="closeSettings()">Cancel</button>
-                    <button class="btn btn-success" onclick="applySettings()">✅ Apply & Recalculate</button>
+                    <button class="btn btn-warning" id="applySettingsBtn" onclick="applySettings()">
+                        <span id="applyBtnIcon">⚠️</span>
+                        <span id="applyBtnText">Apply & Recalculate</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -6207,7 +6210,62 @@
                 }
             });
 
+            // Update button to show success
+            updateApplyButton('applied');
+
             console.log('Recalculation complete');
+        }
+
+        // Track if settings have changed
+        let settingsChanged = false;
+
+        // Add change listeners to all settings inputs
+        function initSettingsChangeDetection() {
+            const settingsInputs = document.querySelectorAll('.settings-section input, .settings-section select');
+
+            settingsInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    settingsChanged = true;
+                    updateApplyButton('changed');
+                });
+
+                input.addEventListener('change', () => {
+                    settingsChanged = true;
+                    updateApplyButton('changed');
+                });
+            });
+
+            console.log(`Initialized change detection on ${settingsInputs.length} settings inputs`);
+        }
+
+        function updateApplyButton(state) {
+            const btn = document.getElementById('applySettingsBtn');
+            const icon = document.getElementById('applyBtnIcon');
+            const text = document.getElementById('applyBtnText');
+
+            if (!btn || !icon || !text) return;
+
+            if (state === 'changed') {
+                btn.className = 'btn btn-warning';
+                icon.textContent = '⚠️';
+                text.textContent = 'Apply & Recalculate';
+                btn.style.animation = 'pulse 1.5s ease-in-out infinite';
+            } else if (state === 'applied') {
+                btn.className = 'btn btn-success';
+                icon.textContent = '✅';
+                text.textContent = 'Applied!';
+                btn.style.animation = 'none';
+                settingsChanged = false;
+
+                // Reset to warning state after 3 seconds
+                setTimeout(() => {
+                    if (!settingsChanged) {
+                        btn.className = 'btn btn-outline';
+                        icon.textContent = '⚙️';
+                        text.textContent = 'Apply & Recalculate';
+                    }
+                }, 3000);
+            }
         }
 
 
@@ -9160,6 +9218,9 @@
                     }
                 }, 100);
             });
+
+            // Initialize settings change detection
+            initSettingsChangeDetection();
         }
     </script>
 </body>
