@@ -14,7 +14,7 @@ python -m http.server 8080
 ```
 
 ### 2. Open Application
-- Navigate to: `http://localhost:8080/ray3.html`
+- Navigate to: `http://localhost:8080/index.html`
 - Open Chrome DevTools (F12)
 - Go to Console tab
 

@@ -3,7 +3,7 @@ const path = require('path');
 
 function build() {
     const distPath = path.join(__dirname, '../dist');
-    const sourceFile = path.join(__dirname, '../ray3.html');
+    const sourceFile = path.join(__dirname, '../index.html');
     const targetFile = path.join(distPath, 'index.html');
 
     if (!fs.existsSync(distPath)) {

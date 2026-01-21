@@ -11,7 +11,7 @@
     - **Success Gauge**: "Success Rate" doughnut chart in the dashboard header.
     - **Gap Calculator**: "What You Need" calculator to solve for income shortfalls.
 - **Surplus/Gap Chart**: Added annual surplus/deficit visualization.
-- **Deep Dive & Audit**: Conducted a comprehensive code audit of `ray3.html` and `tests`.
+- **Deep Dive & Audit**: Conducted a comprehensive code audit of `index.html` and `tests`.
 - **Test Integrity**: Test suite covers all new features (68/68 tests passing).
 
 - **Deployment**: Established automated FTP deployment to `bmwseals.com/retirefire` using `basic-ftp`.
@@ -21,7 +21,7 @@
 ## Health Check
 | Component | Status | Notes |
 |-----------|--------|-------|
-| **Core Logic** | ✅ Passing | `ray3.html` JS logic valid |
+| **Core Logic** | ✅ Passing | `index.html` JS logic valid |
 | **Tests** | ✅ Passing | 68/68 tests passed |
 | **Deployment** | ✅ Active | Live at `bmwseals.com/retirefire` |
 

@@ -87,22 +87,22 @@ class TestRunner {
         this.log('\n📁 FILE INTEGRITY TESTS', 'blue');
         this.log('─────────────────────────────────────', 'blue');
 
-        const rayFile = path.join(__dirname, '..', 'ray3.html');
+        const rayFile = path.join(__dirname, '..', 'index.html');
 
         // Check file exists
         if (fs.existsSync(rayFile)) {
-            this.pass('ray3.html exists');
+            this.pass('index.html exists');
         } else {
-            this.fail('ray3.html exists', 'File not found');
+            this.fail('index.html exists', 'File not found');
             return;
         }
 
         // Check file size (should be > 200KB)
         const stats = fs.statSync(rayFile);
         if (stats.size > 200000) {
-            this.pass(`ray3.html size OK (${(stats.size / 1024).toFixed(1)} KB)`);
+            this.pass(`index.html size OK (${(stats.size / 1024).toFixed(1)} KB)`);
         } else {
-            this.fail('ray3.html size', `File too small: ${stats.size} bytes`);
+            this.fail('index.html size', `File too small: ${stats.size} bytes`);
         }
 
         // Check for critical sections
@@ -132,7 +132,7 @@ class TestRunner {
         this.log('\n🔧 JAVASCRIPT SYNTAX TESTS', 'blue');
         this.log('─────────────────────────────────────', 'blue');
 
-        const rayFile = path.join(__dirname, '..', 'ray3.html');
+        const rayFile = path.join(__dirname, '..', 'index.html');
         const content = fs.readFileSync(rayFile, 'utf8');
 
         // Extract JavaScript from script tags
@@ -191,7 +191,7 @@ class TestRunner {
         this.log('\n📊 DATA STRUCTURE TESTS', 'blue');
         this.log('─────────────────────────────────────', 'blue');
 
-        const rayFile = path.join(__dirname, '..', 'ray3.html');
+        const rayFile = path.join(__dirname, '..', 'index.html');
         const content = fs.readFileSync(rayFile, 'utf8');
 
         // Check rawData structure
@@ -237,7 +237,7 @@ class TestRunner {
         this.log('\n⚙️ CONFIGURATION TESTS', 'blue');
         this.log('─────────────────────────────────────', 'blue');
 
-        const rayFile = path.join(__dirname, '..', 'ray3.html');
+        const rayFile = path.join(__dirname, '..', 'index.html');
         const content = fs.readFileSync(rayFile, 'utf8');
 
         // Check mortgage years is 8 (the fix we applied)
@@ -280,7 +280,7 @@ class TestRunner {
         this.log('\n📈 CHART CONFIGURATION TESTS', 'blue');
         this.log('─────────────────────────────────────', 'blue');
 
-        const rayFile = path.join(__dirname, '..', 'ray3.html');
+        const rayFile = path.join(__dirname, '..', 'index.html');
         const content = fs.readFileSync(rayFile, 'utf8');
 
         // Check chart initialization functions exist
@@ -335,7 +335,7 @@ class TestRunner {
         this.log('\n🧮 CALCULATION FUNCTION TESTS', 'blue');
         this.log('─────────────────────────────────────', 'blue');
 
-        const rayFile = path.join(__dirname, '..', 'ray3.html');
+        const rayFile = path.join(__dirname, '..', 'index.html');
         const content = fs.readFileSync(rayFile, 'utf8');
 
         // Check calculation functions exist

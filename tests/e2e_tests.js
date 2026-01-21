@@ -58,9 +58,9 @@ class E2ETestRunner {
         await this.page.setViewport({ width: 1920, height: 1080 });
 
         // Navigate to the HTML file
-        const htmlPath = path.resolve(__dirname, '..', 'ray3.html');
+        const htmlPath = path.resolve(__dirname, '..', 'index.html');
         if (!fs.existsSync(htmlPath)) {
-            throw new Error('ray3.html not found');
+            throw new Error('index.html not found');
         }
 
         await this.page.goto(`file://${htmlPath}`, { waitUntil: 'networkidle0' });
