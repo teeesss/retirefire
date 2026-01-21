@@ -6193,6 +6193,24 @@
             }
         }
 
+        function recalculate() {
+            // Recalculate the entire financial plan with new settings
+            console.log('Recalculating financial plan...');
+
+            // Update the dashboard which regenerates all projections
+            updateDashboard();
+
+            // Force update all charts
+            Object.keys(charts).forEach(key => {
+                if (charts[key] && typeof charts[key].update === 'function') {
+                    charts[key].update();
+                }
+            });
+
+            console.log('Recalculation complete');
+        }
+
+
         function resetToDefaults() {
             if (confirm('Are you sure you want to reset all settings to defaults?')) {
                 localStorage.clear();
