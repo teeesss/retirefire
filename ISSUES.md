@@ -64,6 +64,7 @@
 | **ISSUE-049** | **Key Milestones: Should auto-update when changes made to settings** | **High - Missing reactivity** |
 | **ISSUE-050** | **Alerts & Warnings: Should be clickable links to navigate to relevant sections** | **Medium - UX enhancement** |
 | **ISSUE-051** | **Strategic Insights: Should be clickable links to navigate to relevant sections** | **Medium - UX enhancement** |
+| **ISSUE-052** | **Browse All Metrics: All metrics should be clickable to navigate to relevant sections** | **High - Major UX enhancement** |
 
 ---
 
