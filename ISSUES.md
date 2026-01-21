@@ -52,6 +52,10 @@
 | **ISSUE-037** | **What-If Scenario Explorer: Market stress test buttons don't work** | **Critical - Broken feature** |
 | **ISSUE-038** | **Debt Payoff Explorer: Avalanche/Snowball buttons don't work** | **Critical - Broken feature** |
 | **ISSUE-039** | **Market Risk Explorer: Buttons don't work, unclear difference from Monte Carlo** | **Critical - Broken + confusing** |
+| **ISSUE-040** | **Social Security: Benefits should auto-calculate from income, not manual input** | **Critical - Core logic** |
+| **ISSUE-041** | **Social Security: Graph shows annual not cumulative lifetime amounts** | **High - Missing key data** |
+| **ISSUE-042** | **Social Security: Hover should show cumulative lifetime total for each age** | **High - Decision support** |
+| **ISSUE-043** | **Social Security: Should allow any age 62-70, not just 62/67/70** | **Medium - UX limitation** |
 
 ---
 
