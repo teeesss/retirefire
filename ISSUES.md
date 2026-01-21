@@ -56,6 +56,12 @@
 | **ISSUE-041** | **Social Security: Graph shows annual not cumulative lifetime amounts** | **High - Missing key data** |
 | **ISSUE-042** | **Social Security: Hover should show cumulative lifetime total for each age** | **High - Decision support** |
 | **ISSUE-043** | **Social Security: Should allow any age 62-70, not just 62/67/70** | **Medium - UX limitation** |
+| **ISSUE-044** | **Roth Conversion Optimizer: Hover tooltips on graph don't work** | **Medium - Missing tooltips** |
+| **ISSUE-045** | **Roth Conversion Optimizer: Needs comparison feature (e.g., 100k vs 50k/year)** | **High - Decision support** |
+| **ISSUE-046** | **Roth Conversion Optimizer: User can't select which accounts to convert from** | **Critical - Missing control** |
+| **ISSUE-047** | **Roth Conversion Optimizer: Software should recommend optimal accounts based on taxes** | **High - Smart optimization** |
+| **ISSUE-048** | **Goal Tracking: Missing hover tooltips/on-hover info** | **Medium - Missing tooltips** |
+| **ISSUE-049** | **Key Milestones: Should auto-update when changes made to settings** | **High - Missing reactivity** |
 
 ---
 
