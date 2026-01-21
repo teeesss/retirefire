@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Automated Test Runner - Retirement Planner Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #60a5fa;
+        }
+
+        .header-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-bar {
+            display: flex;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-item .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .summary-item .label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .passed .number {
+            color: #10b981;
+        }
+
+        .failed .number {
+            color: #ef4444;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge.failure {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-badge.running {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .test-category {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .category-header {
+            padding: 1rem 1.5rem;
+            background: rgba(30, 41, 59, 0.8);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .test-result {
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .test-result .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .test-result.pass .icon {
+            color: #10b981;
+        }
+
+        .test-result.fail .icon {
+            color: #ef4444;
+        }
+
+        .test-result .name {
+            flex: 1;
+        }
+
+        .test-result .error {
+            color: #f87171;
+            font-size: 0.85rem;
+        }
+
+        .progress {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 0.5rem;
+        }
+
+        .timestamp {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 2rem;
+        }
+
+        #log {
+            background: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 0.25rem 0;
+        }
+
+        .log-pass {
+            color: #10b981;
+        }
+
+        .log-fail {
+            color: #ef4444;
+        }
+
+        .log-info {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧪 Automated Test Runner</h1>
+
+        <div class="header-info">
+            <p><strong>Retirement Planner Pro</strong> - Automated Pre-Update Validation</p>
+            <p style="margin-top: 0.5rem; color: #94a3b8;">Tests run automatically on page load - no user interaction
+                required</p>
+        </div>
+
+        <div class="progress" id="progress">
+            <span id="progressText">⏳ Starting automated tests...</span>
+        </div>
+
+        <div class="summary-bar">
+            <div class="summary-item passed">
+                <div class="number" id="passedCount">0</div>
+                <div class="label">Passed</div>
+            </div>
+            <div class="summary-item failed">
+                <div class="number" id="failedCount">0</div>
+                <div class="label">Failed</div>
+            </div>
+            <div id="statusBadge" class="status-badge running">
+                Running...
+            </div>
+        </div>
+
+        <div id="testResults"></div>
+
+        <div id="log"></div>
+
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+
+    <script>
+        // Automated test runner - runs immediately on load
+        let results = { passed: 0, failed: 0 };
+        let fileContent = '';
+        const categories = {
+            'file': { name: '📁 File Integrity', tests: [] },
+            'syntax': { name: '🔧 JavaScript Syntax', tests: [] },
+            'data': { name: '📊 Data Structure', tests: [] },
+            'config': { name: '⚙️ Configuration', tests: [] },
+            'charts': { name: '📈 Chart Functions', tests: [] },
+            'functions': { name: '🧮 Core Functions', tests: [] }
+        };
+
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function pass(category, name) {
+            categories[category].tests.push({ name, status: 'pass', error: '' });
+            results.passed++;
+            log(`✓ PASS: ${name}`, 'pass');
+            updateDisplay();
+        }
+
+        function fail(category, name, error) {
+            categories[category].tests.push({ name, status: 'fail', error });
+            results.failed++;
+            log(`✗ FAIL: ${name} → ${error}`, 'fail');
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('passedCount').textContent = results.passed;
+            document.getElementById('failedCount').textContent = results.failed;
+        }
+
+        function updateProgress(text) {
+            document.getElementById('progressText').textContent = text;
+            log(text, 'info');
+        }
+
+        function renderResults() {
+            const container = document.getElementById('testResults');
+            container.innerHTML = '';
+
+            for (const [id, cat] of Object.entries(categories)) {
+                if (cat.tests.length === 0) continue;
+
+                const passCount = cat.tests.filter(t => t.status === 'pass').length;
+                const failCount = cat.tests.filter(t => t.status === 'fail').length;
+
+                const div = document.createElement('div');
+                div.className = 'test-category';
+                div.innerHTML = `
+                    <div class="category-header">
+                        <span>${cat.name}</span>
+                        <span style="color: ${failCount > 0 ? '#ef4444' : '#10b981'}">
+                            ${passCount}/${cat.tests.length} passed
+                        </span>
+                    </div>
+                    <div class="category-results">
+                        ${cat.tests.map(t => `
+                            <div class="test-result ${t.status}">
+                                <span class="icon">${t.status === 'pass' ? '✓' : '✗'}</span>
+                                <span class="name">${t.name}</span>
+                                ${t.error ? `<span class="error">→ ${t.error}</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+
+            const badge = document.getElementById('statusBadge');
+            if (results.failed > 0) {
+                badge.className = 'status-badge failure';
+                badge.textContent = '❌ Tests Failed';
+            } else {
+                badge.className = 'status-badge success';
+                badge.textContent = '✅ All Passed';
+            }
+        }
+
+        // ========================================
+        // TEST FUNCTIONS
+        // ========================================
+
+        function testFileIntegrity() {
+            updateProgress('📁 Testing file integrity...');
+
+            // Check file exists and has content
+            if (fileContent && fileContent.length > 0) {
+                pass('file', 'ray3.html loaded successfully');
+            } else {
+                fail('file', 'ray3.html loaded', 'File is empty or not found');
+                return;
+            }
+
+            // Check file size
+            if (fileContent.length > 200000) {
+                pass('file', `File size OK (${(fileContent.length / 1024).toFixed(1)} KB)`);
+            } else {
+                fail('file', 'File size', `Too small: ${fileContent.length} bytes`);
+            }
+
+            // Check DOCTYPE
+            if (fileContent.includes('<!DOCTYPE html>')) {
+                pass('file', 'DOCTYPE declaration present');
+            } else {
+                fail('file', 'DOCTYPE declaration', 'Missing');
+            }
+
+            // Check critical elements
+            const elements = [
+                { id: 'chartNetWorth', name: 'Net worth chart canvas' },
+                { id: 'chartMortgage', name: 'Mortgage chart canvas' },
+                { id: 'yearSlider', name: 'Year slider' },
+                { id: 'spendingSlider', name: 'Spending slider' },
+                { id: 'rothConversionEnabled', name: 'Roth conversion toggle' },
+                { id: 'settingsOverlay', name: 'Settings panel' }
+            ];
+
+            for (const el of elements) {
+                if (fileContent.includes(`id="${el.id}"`)) {
+                    pass('file', `${el.name} exists`);
+                } else {
+                    fail('file', `${el.name} exists`, 'Element not found');
+                }
+            }
+        }
+
+        function testSyntax() {
+            updateProgress('🔧 Testing JavaScript syntax...');
+
+            // Check for config object
+            if (/const config\s*=\s*\{/.test(fileContent)) {
+                pass('syntax', 'config object defined');
+            } else {
+                fail('syntax', 'config object', 'Not found');
+            }
+
+            // Check for rawData object
+            if (/const rawData\s*=\s*\{/.test(fileContent)) {
+                pass('syntax', 'rawData object defined');
+            } else {
+                fail('syntax', 'rawData object', 'Not found');
+            }
+
+            // Check for charts object
+            if (/const charts\s*=\s*\{/.test(fileContent)) {
+                pass('syntax', 'charts object defined');
+            } else {
+                fail('syntax', 'charts object', 'Not found');
+            }
+
+            // Check balanced braces (basic check)
+            const braceBalance = (fileContent.match(/\{/g) || []).length -
+                (fileContent.match(/\}/g) || []).length;
+            if (Math.abs(braceBalance) < 5) { // Allow small tolerance
+                pass('syntax', 'Braces roughly balanced');
+            } else {
+                fail('syntax', 'Braces balanced', `Imbalance: ${braceBalance}`);
+            }
+        }
+
+        function testDataStructure() {
+            updateProgress('📊 Testing data structures...');
+
+            // Check scenarios
+            const scenarios = ['optimistic', 'average', 'pessimistic'];
+            for (const s of scenarios) {
+                if (fileContent.includes(`${s}: {`)) {
+                    pass('data', `${s} scenario exists`);
+                } else {
+                    fail('data', `${s} scenario`, 'Not found');
+                }
+            }
+
+            // Check 46 years
+            if (/years:\s*Array\.from\(\{length:\s*46\}/.test(fileContent)) {
+                pass('data', 'Years array has 46 elements');
+            } else {
+                fail('data', 'Years array length', 'Not 46 elements');
+            }
+
+            // Check account types
+            const accounts = ['RetirementSavings', 'RothIRA', 'HSA', 'Investments', 'CashSavings'];
+            for (const acc of accounts) {
+                if (fileContent.includes(`${acc}:`)) {
+                    pass('data', `Account type ${acc} exists`);
+                } else {
+                    fail('data', `Account type ${acc}`, 'Not found');
+                }
+            }
+        }
+
+        function testConfig() {
+            updateProgress('⚙️ Testing configuration...');
+
+            // Check mortgage is 8 years
+            if (/mortgageYears:\s*8/.test(fileContent)) {
+                pass('config', 'Mortgage years is 8 (fixed)');
+            } else {
+                fail('config', 'Mortgage years', 'Not set to 8');
+            }
+
+            // Check rothConversionEnabled
+            if (/rothConversionEnabled:\s*(true|false)/.test(fileContent)) {
+                pass('config', 'rothConversionEnabled setting exists');
+            } else {
+                fail('config', 'rothConversionEnabled', 'Not found');
+            }
+
+            // Check annualSpending
+            if (/annualSpending:\s*\d+/.test(fileContent)) {
+                pass('config', 'annualSpending configured');
+            } else {
+                fail('config', 'annualSpending', 'Not found');
+            }
+
+            // Check start year
+            if (/startYear:\s*2026/.test(fileContent)) {
+                pass('config', 'Start year is 2026');
+            } else {
+                fail('config', 'Start year', 'Not 2026');
+            }
+
+            // Check retirement age
+            if (/retireAge:\s*\d+/.test(fileContent)) {
+                pass('config', 'Retirement age configured');
+            } else {
+                fail('config', 'Retirement age', 'Not found');
+            }
+        }
+
+        function testChartFunctions() {
+            updateProgress('📈 Testing chart functions...');
+
+            const chartFuncs = [
+                'initNetWorthChart',
+                'initAllocationChart',
+                'initIncomeChart',
+                'initExpensesChart',
+                'initTaxesChart',
+                'initMortgageChart',
+                'initMonteCarloChart',
+                'initRothConversionChart',
+                'initWithdrawalChart',
+                'initSSComparisonChart'
+            ];
+
+            for (const func of chartFuncs) {
+                if (fileContent.includes(`function ${func}(`)) {
+                    pass('charts', `${func}() exists`);
+                } else {
+                    fail('charts', `${func}()`, 'Not found');
+                }
+            }
+        }
+
+        function testCoreFunctions() {
+            updateProgress('🧮 Testing core functions...');
+
+            const coreFuncs = [
+                'formatCurrency',
+                'formatPercent',
+                'calculateNetWorth',
+                'getTotalIncome',
+                'getTotalExpenses',
+                'getTotalTaxes',
+                'setScenario',
+                'toggleComparison',
+                'toggleRothConversion',
+                'updateSpendingSlider',
+                'saveToLocalStorage',
+                'loadFromLocalStorage',
+                'updateDashboard'
+            ];
+
+            for (const func of coreFuncs) {
+                if (fileContent.includes(`function ${func}(`)) {
+                    pass('functions', `${func}() exists`);
+                } else {
+                    fail('functions', `${func}()`, 'Not found');
+                }
+            }
+        }
+
+        // ========================================
+        // MAIN TEST RUNNER
+        // ========================================
+
+        async function runAllTests() {
+            log('═══════════════════════════════════════════════════', 'info');
+            log('  AUTOMATED TEST SUITE - STARTING', 'info');
+            log('═══════════════════════════════════════════════════', 'info');
+
+            try {
+                // Load the file content
+                updateProgress('📂 Loading ray3.html...');
+                const response = await fetch('../ray3.html');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                fileContent = await response.text();
+                log(`Loaded file: ${(fileContent.length / 1024).toFixed(1)} KB`, 'info');
+
+                // Run all test categories
+                testFileIntegrity();
+                testSyntax();
+                testDataStructure();
+                testConfig();
+                testChartFunctions();
+                testCoreFunctions();
+
+            } catch (e) {
+                fail('file', 'Load ray3.html', e.message);
+            }
+
+            // Complete
+            document.getElementById('progress').style.display = 'none';
+            renderResults();
+
+            log('═══════════════════════════════════════════════════', 'info');
+            log(`  COMPLETE: ${results.passed} passed, ${results.failed} failed`,
+                results.failed > 0 ? 'fail' : 'pass');
+            log('═══════════════════════════════════════════════════', 'info');
+
+            document.getElementById('timestamp').textContent =
+                `Test run completed: ${new Date().toLocaleString()}`;
+
+            // Return results for programmatic access
+            return { passed: results.passed, failed: results.failed };
+        }
+
+        // AUTO-RUN on page load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+
+</html>

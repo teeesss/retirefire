@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Validation Tests - Retirement Planner</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        h1,
+        h2 {
+            color: #10b981;
+        }
+
+        .test-result {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pass {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+        }
+
+        .fail {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+        }
+
+        .status {
+            font-weight: 600;
+        }
+
+        .status.pass {
+            color: #10b981;
+        }
+
+        .status.fail {
+            color: #ef4444;
+        }
+
+        .summary {
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .detail {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        iframe {
+            display: none;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: #10b981;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📊 Data Validation Tests - Retirement Planner</h1>
+
+    <div class="summary">
+        <h2>Test Summary</h2>
+        <p>Total: <span id="total">0</span> |
+            <span style="color: #10b981;">Passed: <span id="passed">0</span></span> |
+            <span style="color: #ef4444;">Failed: <span id="failed">0</span></span>
+        </p>
+    </div>
+
+    <button onclick="runTests()">🔄 Run All Tests</button>
+
+    <h2>Net Worth Calculations</h2>
+    <div id="netWorthTests"></div>
+
+    <h2>Income Calculations</h2>
+    <div id="incomeTests"></div>
+
+    <h2>Expense Calculations</h2>
+    <div id="expenseTests"></div>
+
+    <h2>Tax Calculations</h2>
+    <div id="taxTests"></div>
+
+    <h2>Mortgage Calculations</h2>
+    <div id="mortgageTests"></div>
+
+    <iframe id="appFrame" src="../ray3.html"></iframe>
+
+    <script>
+        let passed = 0, failed = 0;
+
+        function addResult(category, name, status, detail = '') {
+            const container = document.getElementById(category + 'Tests');
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `
+                <span>${name}</span>
+                <span class="status ${status}">${status.toUpperCase()}</span>
+                ${detail ? `<span class="detail">${detail}</span>` : ''}
+            `;
+            container.appendChild(div);
+
+            if (status === 'pass') passed++;
+            else failed++;
+
+            document.getElementById('total').textContent = passed + failed;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+        }
+
+        async function runTests() {
+            passed = 0; failed = 0;
+            ['netWorth', 'income', 'expense', 'tax', 'mortgage'].forEach(cat => {
+                document.getElementById(cat + 'Tests').innerHTML = '';
+            });
+
+            const frame = document.getElementById('appFrame');
+            const appWindow = frame.contentWindow;
+
+            await new Promise(r => setTimeout(r, 3000));
+
+            try {
+                const rawData = appWindow.rawData;
+                const config = appWindow.config;
+
+                // NET WORTH TESTS
+                ['optimistic', 'average', 'pessimistic'].forEach(scenario => {
+                    const accounts = rawData[scenario].accounts;
+
+                    // Test year 0 (2026)
+                    let calculatedNW = 0;
+                    for (let key in accounts) {
+                        calculatedNW += accounts[key][0] || 0;
+                    }
+
+                    // Compare with calculateNetWorth function
+                    const functionNW = appWindow.calculateNetWorth(scenario, 0);
+
+                    if (Math.abs(calculatedNW - functionNW) < 1) {
+                        addResult('netWorth', `${scenario} Year 0 NW matches`, 'pass',
+                            `$${(calculatedNW / 1000000).toFixed(2)}M`);
+                    } else {
+                        addResult('netWorth', `${scenario} Year 0 NW matches`, 'fail',
+                            `Calc: ${calculatedNW}, Func: ${functionNW}`);
+                    }
+
+                    // Verify NW is positive throughout projection
+                    let allPositive = true;
+                    for (let i = 0; i < 46; i++) {
+                        if (appWindow.calculateNetWorth(scenario, i) < 0) {
+                            allPositive = false;
+                            break;
+                        }
+                    }
+                    addResult('netWorth', `${scenario} NW stays positive`,
+                        allPositive ? 'pass' : 'fail');
+                });
+
+                // INCOME TESTS
+                ['optimistic', 'average', 'pessimistic'].forEach(scenario => {
+                    const income = rawData[scenario].income;
+
+                    // Test that work income stops at retirement
+                    const retireYear = config.settings.personal.retireAge - 50;
+                    const workAfterRetire = income.Work.slice(retireYear + 1).some(v => v > 0);
+
+                    addResult('income', `${scenario} work stops at retirement`,
+                        workAfterRetire ? 'fail' : 'pass');
+
+                    // Test SS starts at claiming age
+                    const ssStartYear = config.settings.socialSecurity.claimAge - 50;
+                    const ssBeforeClaim = income.SocialSecurity.slice(0, ssStartYear).some(v => v > 0);
+
+                    addResult('income', `${scenario} SS starts at claim age`,
+                        ssBeforeClaim ? 'fail' : 'pass');
+                });
+
+                // EXPENSE TESTS
+                ['optimistic', 'average', 'pessimistic'].forEach(scenario => {
+                    const expenses = rawData[scenario].expenses;
+
+                    // Verify expenses > 0 for all years
+                    let hasExpensesEachYear = true;
+                    for (let i = 0; i < 46; i++) {
+                        let yearTotal = 0;
+                        for (let key in expenses) {
+                            yearTotal += expenses[key][i] || 0;
+                        }
+                        if (yearTotal <= 0) {
+                            hasExpensesEachYear = false;
+                            break;
+                        }
+                    }
+                    addResult('expense', `${scenario} has expenses each year`,
+                        hasExpensesEachYear ? 'pass' : 'fail');
+
+                    // LTC should only appear after LTC age
+                    const ltcStartYear = config.settings.healthcare.ltcAge - 50;
+                    const ltcBeforeAge = expenses.LTC.slice(0, ltcStartYear).some(v => v > 0);
+
+                    addResult('expense', `${scenario} LTC only after age ${config.settings.healthcare.ltcAge}`,
+                        ltcBeforeAge ? 'fail' : 'pass');
+                });
+
+                // TAX TESTS
+                ['optimistic', 'average', 'pessimistic'].forEach(scenario => {
+                    const taxes = rawData[scenario].taxes;
+
+                    // FICA should stop at retirement
+                    const retireYear = config.settings.personal.retireAge - 50;
+                    const ficaAfterRetire = taxes.FICA.slice(retireYear + 1).some(v => v > 0);
+
+                    addResult('tax', `${scenario} FICA stops at retirement`,
+                        ficaAfterRetire ? 'fail' : 'pass');
+
+                    // Federal tax should be >= 0
+                    const negFederal = taxes.Federal.some(v => v < 0);
+                    addResult('tax', `${scenario} no negative federal tax`,
+                        negFederal ? 'fail' : 'pass');
+                });
+
+                // MORTGAGE TESTS
+                const mortgageYears = config.settings.housing.mortgageYears;
+                addResult('mortgage', `Mortgage years set to ${mortgageYears}`,
+                    mortgageYears === 8 ? 'pass' : 'fail',
+                    `Expected: 8, Got: ${mortgageYears}`);
+
+                // Payoff age should be 57-58
+                const payoffAge = 50 + mortgageYears;
+                addResult('mortgage', `Mortgage payoff at age ${payoffAge}`,
+                    (payoffAge >= 57 && payoffAge <= 58) ? 'pass' : 'fail');
+
+            } catch (e) {
+                addResult('netWorth', 'Tests ran without errors', 'fail', e.message);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+
+</html>

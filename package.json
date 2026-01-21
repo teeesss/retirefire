@@ -1,0 +1,21 @@
+{
+  "name": "retirement-planner-tests",
+  "version": "1.0.0",
+  "description": "Automated testing for Retirement Planner Pro",
+  "scripts": {
+    "test": "node tests/run_tests.js",
+    "test:e2e": "node tests/e2e_tests.js",
+    "test:calc": "node tests/calculation_tests.js",
+    "test:all": "npm test && npm run test:calc && npm run test:e2e",
+    "test:charts": "node tests/run_tests.js --charts",
+    "test:data": "node tests/run_tests.js --data",
+    "preupdate": "npm test",
+    "validate": "npm test && echo '✅ All tests passed - safe to update'"
+  },
+  "devDependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

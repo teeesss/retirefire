@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Tests - Retirement Planner</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        h1,
+        h2 {
+            color: #60a5fa;
+        }
+
+        .test-result {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pass {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+        }
+
+        .fail {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+        }
+
+        .skip {
+            background: rgba(245, 158, 11, 0.2);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .status {
+            font-weight: 600;
+        }
+
+        .status.pass {
+            color: #10b981;
+        }
+
+        .status.fail {
+            color: #ef4444;
+        }
+
+        .status.skip {
+            color: #f59e0b;
+        }
+
+        .summary {
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .summary h2 {
+            margin-top: 0;
+        }
+
+        .error {
+            font-size: 0.8rem;
+            color: #f87171;
+            margin-left: 1rem;
+        }
+
+        iframe {
+            display: none;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: #3b82f6;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        #progress {
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Chart Test Suite - Retirement Planner</h1>
+
+    <div class="summary">
+        <h2>Test Summary</h2>
+        <p>Total: <span id="total">0</span> |
+            <span style="color: #10b981;">Passed: <span id="passed">0</span></span> |
+            <span style="color: #ef4444;">Failed: <span id="failed">0</span></span> |
+            <span style="color: #f59e0b;">Skipped: <span id="skipped">0</span></span>
+        </p>
+        <div id="progress"></div>
+    </div>
+
+    <button onclick="runTests()">🔄 Run All Tests</button>
+    <button onclick="location.reload()">🔃 Reset</button>
+
+    <h2>Chart Existence Tests</h2>
+    <div id="existenceTests"></div>
+
+    <h2>Chart Data Tests</h2>
+    <div id="dataTests"></div>
+
+    <h2>Chart Interaction Tests</h2>
+    <div id="interactionTests"></div>
+
+    <!-- Hidden iframe to load the main app -->
+    <iframe id="appFrame" src="../ray3.html"></iframe>
+
+    <script>
+        const tests = [];
+        let passed = 0, failed = 0, skipped = 0;
+
+        const chartIds = [
+            'chartNetWorth', 'chartRealNominal', 'chartAllocation', 'chartStackedPortfolio',
+            'chartIncome', 'chartSSComparison', 'chartIncomeReplacement', 'chartExpenses',
+            'chartExpensePie', 'chartHealthcare', 'chartTaxes', 'chartCumulativeTax',
+            'chartEffectiveTax', 'chartTaxBracket', 'chartWithdrawal', 'chartSWR',
+            'chartRothConversion', 'chartRMD', 'chartMortgage', 'chartAccountTrends',
+            'chartScenarioComparison', 'chartMonteCarlo', 'chartSequenceRisk',
+            'chartLegacy', 'chartWhatIf'
+        ];
+
+        function addResult(category, name, status, error = '') {
+            const container = document.getElementById(category + 'Tests');
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `
+                <span>${name}</span>
+                <span class="status ${status}">${status.toUpperCase()}</span>
+                ${error ? `<span class="error">${error}</span>` : ''}
+            `;
+            container.appendChild(div);
+
+            if (status === 'pass') passed++;
+            else if (status === 'fail') failed++;
+            else skipped++;
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            document.getElementById('total').textContent = passed + failed + skipped;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+            document.getElementById('skipped').textContent = skipped;
+        }
+
+        async function runTests() {
+            passed = 0; failed = 0; skipped = 0;
+            document.getElementById('existenceTests').innerHTML = '';
+            document.getElementById('dataTests').innerHTML = '';
+            document.getElementById('interactionTests').innerHTML = '';
+
+            const frame = document.getElementById('appFrame');
+            const appWindow = frame.contentWindow;
+
+            // Wait for app to load
+            document.getElementById('progress').textContent = '⏳ Waiting for app to load...';
+            await new Promise(r => setTimeout(r, 3000));
+
+            // Test 1: Check if charts object exists
+            document.getElementById('progress').textContent = '🔍 Testing chart existence...';
+
+            try {
+                const charts = appWindow.charts;
+                if (!charts) {
+                    addResult('existence', 'Charts object exists', 'fail', 'charts is undefined');
+                } else {
+                    addResult('existence', 'Charts object exists', 'pass');
+                }
+
+                // Test each chart exists
+                for (const chartId of chartIds) {
+                    const canvasEl = chartId.replace('chart', '').toLowerCase();
+                    try {
+                        if (charts[canvasEl] || charts[chartId.replace('chart', '').charAt(0).toLowerCase() + chartId.replace('chart', '').slice(1)]) {
+                            addResult('existence', `${chartId} exists`, 'pass');
+                        } else {
+                            // Try alternate lookup
+                            const canvas = appWindow.document.getElementById(chartId);
+                            if (canvas) {
+                                addResult('existence', `${chartId} canvas exists`, 'pass');
+                            } else {
+                                addResult('existence', `${chartId} exists`, 'fail', 'Chart not found');
+                            }
+                        }
+                    } catch (e) {
+                        addResult('existence', `${chartId} exists`, 'fail', e.message);
+                    }
+                }
+
+                // Test 2: Data validation
+                document.getElementById('progress').textContent = '📊 Testing chart data...';
+
+                const rawData = appWindow.rawData;
+                if (rawData) {
+                    addResult('data', 'rawData object exists', 'pass');
+
+                    // Check years array
+                    if (rawData.years && rawData.years.length === 46) {
+                        addResult('data', 'Years array has 46 elements', 'pass');
+                    } else {
+                        addResult('data', 'Years array has 46 elements', 'fail',
+                            `Found ${rawData.years?.length || 0} elements`);
+                    }
+
+                    // Check scenarios exist
+                    ['optimistic', 'average', 'pessimistic'].forEach(scenario => {
+                        if (rawData[scenario]) {
+                            addResult('data', `${scenario} scenario data exists`, 'pass');
+                        } else {
+                            addResult('data', `${scenario} scenario data exists`, 'fail');
+                        }
+                    });
+
+                    // Check account data
+                    const accounts = rawData.optimistic?.accounts;
+                    if (accounts) {
+                        const accountKeys = Object.keys(accounts);
+                        addResult('data', `Found ${accountKeys.length} account types`, 'pass');
+
+                        // Verify each account has 46 years of data
+                        accountKeys.forEach(key => {
+                            if (accounts[key].length === 46) {
+                                addResult('data', `${key} has 46 data points`, 'pass');
+                            } else {
+                                addResult('data', `${key} has 46 data points`, 'fail',
+                                    `Found ${accounts[key].length}`);
+                            }
+                        });
+                    }
+                } else {
+                    addResult('data', 'rawData object exists', 'fail', 'rawData is undefined');
+                }
+
+                // Test 3: Interactions 
+                document.getElementById('progress').textContent = '🖱️ Testing interactions...';
+
+                // Test scenario switching
+                try {
+                    const setScenario = appWindow.setScenario;
+                    if (typeof setScenario === 'function') {
+                        addResult('interaction', 'setScenario function exists', 'pass');
+                        setScenario('average');
+                        await new Promise(r => setTimeout(r, 500));
+                        if (appWindow.config.currentScenario === 'average') {
+                            addResult('interaction', 'Scenario switch works', 'pass');
+                        } else {
+                            addResult('interaction', 'Scenario switch works', 'fail');
+                        }
+                        setScenario('optimistic'); // Reset
+                    } else {
+                        addResult('interaction', 'setScenario function exists', 'fail');
+                    }
+                } catch (e) {
+                    addResult('interaction', 'Scenario switching', 'fail', e.message);
+                }
+
+                // Test Roth toggle
+                try {
+                    const toggleRoth = appWindow.toggleRothConversion;
+                    if (typeof toggleRoth === 'function') {
+                        addResult('interaction', 'toggleRothConversion function exists', 'pass');
+                    } else {
+                        addResult('interaction', 'toggleRothConversion function exists', 'skip', 'Not found');
+                    }
+                } catch (e) {
+                    addResult('interaction', 'Roth toggle', 'fail', e.message);
+                }
+
+                // Test spending slider
+                try {
+                    const updateSpending = appWindow.updateSpendingSlider;
+                    if (typeof updateSpending === 'function') {
+                        addResult('interaction', 'updateSpendingSlider function exists', 'pass');
+                    } else {
+                        addResult('interaction', 'updateSpendingSlider function exists', 'skip', 'Not found');
+                    }
+                } catch (e) {
+                    addResult('interaction', 'Spending slider', 'fail', e.message);
+                }
+
+            } catch (e) {
+                addResult('existence', 'App loaded successfully', 'fail', e.message);
+            }
+
+            document.getElementById('progress').textContent = '✅ Tests complete!';
+        }
+
+        // Auto-run tests after page loads
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+
+</html>
