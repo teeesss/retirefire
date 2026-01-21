@@ -36,6 +36,8 @@
 | **ISSUE-021** | **Explorer Year slider not tied to Annual Retirement Spending slider** | **Critical - Sliders disconnected** |
 | **ISSUE-022** | **Changing spending doesn't update Net Worth projections** | **Critical - Logic broken** |
 | **ISSUE-023** | **Increased spending should lower Net Worth, decreased should raise it** | **Critical - Core calc issue** |
+| **ISSUE-024** | **Dashboard charts too tall - need side-by-side 1/2 width layout** | **High - UX/scrolling issue** |
+| **ISSUE-025** | **All charts/sections need detailed descriptions explaining what they show** | **High - User education** |
 
 ---
 
