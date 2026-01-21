@@ -495,19 +495,20 @@
             color: var(--text-primary);
         }
 
-        /* Settings Panel */
+        /* Settings Panel - CRITICAL: Must have highest z-index to overlay ALL page content */
         .settings-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 999;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 2rem;
+            isolation: isolate;
         }
 
         .settings-overlay.active {
@@ -524,6 +525,8 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 10001;
         }
 
         .settings-header {
