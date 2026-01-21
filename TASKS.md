@@ -142,6 +142,15 @@
 
 # BACKLOG - Future Enhancements
 
+## BUG: Goals Modal Issues 🐛
+- [ ] X and Cancel buttons not clickable in "Add New Goal" modal
+- [ ] "Add New Goal" button doesn't disappear after adding a goal
+- [ ] Goals not persisting - refresh removes added goals (localStorage not implemented)
+
+## BUG: Settings Panel Rebuild Required 🐛
+- [ ] Settings popup has deeply broken HTML structure causing section overlap
+- [ ] Need complete rebuild with clean, properly-nested HTML structure
+
 ## Epic 9: Dynamic Calculation Engine ✅ COMPLETE
 
 ### US-020: Implement Dynamic Recalculation ✅
