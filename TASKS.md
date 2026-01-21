@@ -153,6 +153,20 @@
 
 ---
 
+## Epic 14: Deployment & DevOps ✅ COMPLETE
+
+### US-033: Setup Automated FTP Deployment ✅
+- [x] Create `scripts/deploy.js` using `basic-ftp`
+- [x] Add `build` and `deploy` scripts to `package.json`
+- [x] Configure `deploy_creds.json` and `.credentials` for `retirefire` path
+
+### US-034: Branching & Version Control ✅ COMPLETE
+- [x] Create and switch to `retirefire` branch
+- [x] review and push `.pre-commit-config.yaml`, `.prettierrc`, and `.prettierignore`
+- [x] Push all changes to remote repository
+
+---
+
 ## Priority Order (Active)
 
 ### P0 - Critical (Next Sprint)
