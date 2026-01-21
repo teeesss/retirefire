@@ -40,6 +40,11 @@
 | **ISSUE-025** | **All charts/sections need detailed descriptions explaining what they show** | **High - User education** |
 | **ISSUE-026** | **Withdrawal Strategy needs breakdown showing which accounts drawdowns come from** | **High - Data visibility** |
 | **ISSUE-027** | **Safe Withdrawal Rate analysis doesn't show anything on hover** | **Medium - Missing tooltips** |
+| **ISSUE-028** | **Roth Conversion graph not useful - needs interactive controls and comparison** | **Critical - Major feature** |
+| **ISSUE-029** | **Roth Conversion uses same amount per year - unclear where configured** | **High - User confusion** |
+| **ISSUE-030** | **Roth Conversion doesn't show which account money comes from** | **High - Missing transparency** |
+| **ISSUE-031** | **Roth Conversion needs break-even analysis and alternate scenarios** | **High - Decision support** |
+| **ISSUE-032** | **Mortgage Payoff chart has no on-hover info** | **Medium - Missing tooltips** |
 
 ---
 
