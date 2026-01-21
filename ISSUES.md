@@ -29,6 +29,10 @@
 | ISSUE-013 | Sidebar active highlighting on scroll uses wrong container | Low - Navigation works, cosmetic issue |
 | ISSUE-014 | Scenario switching triggers internal warning | Low - Functionality works, warning is benign |
 | ISSUE-015 | Some charts use default 300x150 size | Medium - Consider responsive sizing |
+| **ISSUE-017** | **Net Worth showing $0, Peak showing -$InfinityB, Age undefined** | **Critical - Dashboard broken** |
+| **ISSUE-018** | **"Compare" button at top doesn't work / seems useless** | **High - Remove or fix** |
+| **ISSUE-019** | **"What You Need" calculator outdated / only shows Age 53** | **High - Needs refresh logic** |
+| **ISSUE-020** | **"What You Need" target income should be slider, not static** | **Medium - UX improvement** |
 
 ---
 
