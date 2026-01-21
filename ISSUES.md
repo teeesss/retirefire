@@ -65,6 +65,11 @@
 | **ISSUE-050** | **Alerts & Warnings: Should be clickable links to navigate to relevant sections** | **Medium - UX enhancement** |
 | **ISSUE-051** | **Strategic Insights: Should be clickable links to navigate to relevant sections** | **Medium - UX enhancement** |
 | **ISSUE-052** | **Browse All Metrics: All metrics should be clickable to navigate to relevant sections** | **High - Major UX enhancement** |
+| **ISSUE-053** | **Detailed Data Tables: Add Roth Conversion table with yearly breakdown** | **High - Missing key data** |
+| **ISSUE-054** | **Detailed Data Tables: Home Equity shows $0 at age 56 when house not sold** | **Critical - Data bug** |
+| **ISSUE-055** | **Detailed Data Tables: Show data for every year, not every 2 years** | **High - Data granularity** |
+| **ISSUE-056** | **Detailed Data Tables: Expenses needs tax breakdown (Roth conv, 401k withdrawals)** | **High - Missing detail** |
+| **ISSUE-057** | **Detailed Data Tables: Taxes needs separate columns by source** | **High - Missing detail** |
 
 ---
 
