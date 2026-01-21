@@ -80,9 +80,11 @@
         }
 
         .container {
-            max-width: 1920px;
+            width: 100%;
             margin: 0 auto;
             padding: 1rem;
+            max-width: 2560px;
+            /* Reasonable upper limit for ultra-wide displays */
         }
 
         /* Main Sidebar Navigation */
@@ -565,9 +567,14 @@
 
         .settings-sidebar {
             width: 200px;
+            min-width: 200px;
+            flex-shrink: 0;
             border-right: 1px solid var(--border-color);
             padding: 1rem 0;
             overflow-y: auto;
+            background: var(--bg-secondary);
+            position: relative;
+            z-index: 10;
         }
 
         .settings-nav-item {
@@ -580,6 +587,8 @@
             font-size: 0.875rem;
             transition: all 0.2s ease;
             border-left: 3px solid transparent;
+            position: relative;
+            z-index: 11;
         }
 
         .settings-nav-item:hover {
@@ -597,6 +606,8 @@
             flex: 1;
             padding: 1.5rem;
             overflow-y: auto;
+            position: relative;
+            z-index: 1;
         }
 
         .settings-section {
@@ -6054,9 +6065,16 @@
             tx.state = document.getElementById('inputState').value;
             tx.fedBracket = parseInt(document.getElementById('inputFedBracket').value);
 
+            // BUG-003 FIX: Always close settings modal, even if recalculation fails
             closeSettings();
             saveToLocalStorage();
-            recalculate();
+
+            try {
+                recalculate();
+            } catch (error) {
+                console.error('Error during recalculation:', error);
+                showNotification('Settings saved, but recalculation encountered an error. Please refresh the page.', 'error');
+            }
         }
 
         function resetToDefaults() {
@@ -8048,7 +8066,16 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: (context) => `${context.dataset.label}: ${formatCurrency(context.parsed.y, false)}`
+                            }
+                        }
+                    },
                     scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { display: false } }
                 }
             });
@@ -8070,7 +8097,17 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                title: (items) => `Age ${rawData.ages[items[0].dataIndex]} (${items[0].label})`,
+                                label: (context) => `${context.dataset.label}: ${formatCurrency(context.parsed.y, false)}/yr`
+                            }
+                        }
+                    },
                     scales: { y: { ticks: { callback: (v) => formatCurrency(v) } } }
                 }
             });
@@ -8093,7 +8130,17 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                title: (items) => `Year ${items[0].label}`,
+                                label: (context) => `${context.dataset.label}: ${formatCurrency(context.parsed.y, false)}`
+                            }
+                        }
+                    },
                     scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { ticks: { maxTicksLimit: 10 } } }
                 }
             });
@@ -8408,6 +8455,34 @@
         // METRICS & DASHBOARD UPDATE
         // ============================================
 
+        // ============================================
+        // SAFE DOM UPDATE HELPER (BUG-001 FIX)
+        // ============================================
+
+        /**
+         * Safely update a DOM element's textContent or style
+         * @param {string} id - Element ID
+         * @param {string} content - Content to set
+         * @param {string} property - Property to set ('textContent', 'innerHTML', or style property)
+         */
+        function safeUpdateElement(id, content, property = 'textContent') {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.warn(`Element with id '${id}' not found in DOM`);
+                return false;
+            }
+
+            if (property === 'textContent' || property === 'innerHTML') {
+                element[property] = content;
+            } else if (property.startsWith('style.')) {
+                const styleProp = property.replace('style.', '');
+                element.style[styleProp] = content;
+            } else {
+                element[property] = content;
+            }
+            return true;
+        }
+
         function updateMetrics() {
             const scenario = config.currentScenario;
             const netWorths = getNetWorthSeries(scenario);
@@ -8415,24 +8490,24 @@
             const peakNW = Math.max(...netWorths);
             const peakIndex = netWorths.indexOf(peakNW);
 
-            // Basic Header Metrics
-            document.getElementById('metricCurrentNW').textContent = formatCurrency(currentNW);
-            document.getElementById('metricPeakNW').textContent = formatCurrency(peakNW);
-            document.getElementById('metricPeakYear').textContent = `Age ${rawData.ages[peakIndex]} (${rawData.years[peakIndex]})`;
-            document.getElementById('metricPeakGrowth').textContent = `+${((peakNW - currentNW) / currentNW * 100).toFixed(0)}%`;
+            // Basic Header Metrics (with null checks)
+            safeUpdateElement('metricCurrentNW', formatCurrency(currentNW));
+            safeUpdateElement('metricPeakNW', formatCurrency(peakNW));
+            safeUpdateElement('metricPeakYear', `Age ${rawData.ages[peakIndex]} (${rawData.years[peakIndex]})`);
+            safeUpdateElement('metricPeakGrowth', `+${((peakNW - currentNW) / currentNW * 100).toFixed(0)}%`);
 
             const successRates = { optimistic: 99, average: 97, pessimistic: 94 };
             const successRate = successRates[scenario] || 95;
-            document.getElementById('metricSuccess').textContent = successRate + '%';
-            document.getElementById('successRingNum').textContent = successRate + '%';
-            document.getElementById('successRing').style.strokeDashoffset = 201 - (201 * successRate / 100);
+            safeUpdateElement('metricSuccess', successRate + '%');
+            safeUpdateElement('successRingNum', successRate + '%');
+            safeUpdateElement('successRing', 201 - (201 * successRate / 100), 'style.strokeDashoffset');
 
-            document.getElementById('metricRetireAge').textContent = config.settings.personal.retireAge;
-            document.getElementById('metricRetireYear').textContent = 'Year ' + (2026 + config.settings.personal.retireAge - config.settings.personal.age);
+            safeUpdateElement('metricRetireAge', config.settings.personal.retireAge);
+            safeUpdateElement('metricRetireYear', 'Year ' + (2026 + config.settings.personal.retireAge - config.settings.personal.age));
 
             const ssBenefit = config.settings.socialSecurity['ss' + config.settings.socialSecurity.claimAge] || config.settings.socialSecurity.ss62;
-            document.getElementById('metricSS').textContent = formatCurrency(ssBenefit, false) + '/mo';
-            document.getElementById('metricSSAge').textContent = 'Starting Age ' + config.settings.socialSecurity.claimAge + ' (' + formatCurrency(ssBenefit * 12, false) + '/yr)';
+            safeUpdateElement('metricSS', formatCurrency(ssBenefit, false) + '/mo');
+            safeUpdateElement('metricSSAge', 'Starting Age ' + config.settings.socialSecurity.claimAge + ' (' + formatCurrency(ssBenefit * 12, false) + '/yr)');
 
             // Lifetime Totals for Analysis
             let totalTaxes = 0;
@@ -8442,77 +8517,75 @@
                 totalTaxes += (sc.taxes.Federal[i] || 0) + (sc.taxes.FICA[i] || 0) + (sc.taxes.CapGains[i] || 0);
                 totalIncome += (sc.income.Work[i] || 0) + (sc.income.SocialSecurity[i] || 0) + (sc.income.RMD[i] || 0);
             }
-            document.getElementById('metricTaxes').textContent = formatCurrency(totalTaxes);
+            safeUpdateElement('metricTaxes', formatCurrency(totalTaxes));
 
             // --- Comprehensive Metrics Dashboard (US-013) ---
 
             // Financial Health
             const outOfMoney = netWorths.findIndex(nw => nw <= 0);
-            document.getElementById('mNeverRunOut').textContent = outOfMoney === -1 ? 'Never' : 'Age ' + rawData.ages[outOfMoney];
-            document.getElementById('mSuccessRate').textContent = successRate + '%';
+            safeUpdateElement('mNeverRunOut', outOfMoney === -1 ? 'Never' : 'Age ' + rawData.ages[outOfMoney]);
+            safeUpdateElement('mSuccessRate', successRate + '%');
 
             const retirementSpend = config.settings.expenses.annualSpending;
             const assetsRequired = retirementSpend * 25;
             const currentAssets = config.settings.assets.retirement + config.settings.assets.roth + config.settings.assets.hsa + config.settings.assets.investments;
             const savingsRatio = (currentAssets / assetsRequired * 100).toFixed(0);
-            document.getElementById('mSavingsRatio').textContent = savingsRatio + '%';
+            safeUpdateElement('mSavingsRatio', savingsRatio + '%');
 
             // Progress Tracking
             const monthsToRetire = Math.max(0, (config.settings.personal.retireAge - config.settings.personal.age) * 12);
-            document.getElementById('mRetireCount').textContent = monthsToRetire + ' mo';
+            safeUpdateElement('mRetireCount', monthsToRetire + ' mo');
 
             const monthsRemaining = (config.settings.personal.longevity - config.settings.personal.age) * 12;
-            document.getElementById('mLifeRemaining').textContent = monthsRemaining + ' mo';
+            safeUpdateElement('mLifeRemaining', monthsRemaining + ' mo');
 
             const yearlySavings = config.settings.income.contribution401k + config.settings.income.rothContrib + config.settings.income.hsaContrib;
             const savingsRate = (yearlySavings / config.settings.income.work * 100).toFixed(1);
-            document.getElementById('mSavingsRate').textContent = savingsRate + '%';
+            safeUpdateElement('mSavingsRate', savingsRate + '%');
 
             // Debt & Cash Flow
-            document.getElementById('mDebtFree').textContent = 'Sep 2027'; // Simplified for now
+            safeUpdateElement('mDebtFree', 'Sep 2027'); // Simplified for now
             const debtRatio = (config.settings.housing.mortgagePayment * 12 / config.settings.income.work * 100).toFixed(1);
-            document.getElementById('mDebtRatio').textContent = debtRatio + '%';
+            safeUpdateElement('mDebtRatio', debtRatio + '%');
 
             const year1Income = sc.income.Work[0] + sc.income.SocialSecurity[0];
             const year1Expense = sc.expenses.General[0] + sc.expenses.Housing[0] + sc.expenses.Medical[0];
-            document.getElementById('mCashFlow12').textContent = formatCurrency(year1Income - year1Expense);
+            safeUpdateElement('mCashFlow12', formatCurrency(year1Income - year1Expense));
 
             // Taxes & Housing
             const lifetimeTaxRate = ((totalTaxes / totalIncome) * 100).toFixed(1);
-            document.getElementById('mTaxLifetime').textContent = lifetimeTaxRate + '%';
+            safeUpdateElement('mTaxLifetime', lifetimeTaxRate + '%');
 
             const year1Tax = (sc.taxes.Federal[0] || 0) + (sc.taxes.FICA[0] || 0);
             const year1TaxRate = ((year1Tax / sc.income.Work[0]) * 100).toFixed(1);
-            document.getElementById('mTaxNextYear').textContent = year1TaxRate + '%';
+            safeUpdateElement('mTaxNextYear', year1TaxRate + '%');
 
-            document.getElementById('mHousingRatio').textContent = debtRatio + '%';
+            safeUpdateElement('mHousingRatio', debtRatio + '%');
 
-            // Legacy & Estate
-            const legacyGoal = config.goals[2]?.target || 5000000;
+            // Legacy & Estate (BUG-002 FIX: Safe array access)
+            const legacyGoal = config.goals?.[2]?.target || 5000000;
             const legacyScore = (peakNW / legacyGoal * 100).toFixed(0);
-            document.getElementById('mLegacyScore').textContent = legacyScore + '%';
-            document.getElementById('mEstateDocs').textContent = '0/7';
-            document.getElementById('mRothLegacy').textContent = formatCurrency(sc.accounts.RothIRA[sc.accounts.RothIRA.length - 1]);
+            safeUpdateElement('mLegacyScore', legacyScore + '%');
+            safeUpdateElement('mEstateDocs', '0/7');
+            safeUpdateElement('mRothLegacy', formatCurrency(sc.accounts.RothIRA[sc.accounts.RothIRA.length - 1]));
 
             // Update the Metrics Cards for Expenses
             const totalExp = config.settings.expenses.annualSpending;
-            if (document.getElementById('mTotalExpenses')) {
-                document.getElementById('mTotalExpenses').textContent = formatCurrency(totalExp, false) + '/yr';
-            }
+            safeUpdateElement('mTotalExpenses', formatCurrency(totalExp, false) + '/yr');
 
             // Dynamic Debt Free
             const debtIdx = sc.accounts.Debt.findIndex((d, idx) => d >= 0 && idx > 0);
             if (debtIdx !== -1) {
-                document.getElementById('mDebtFree').textContent = (config.startYear + debtIdx);
+                safeUpdateElement('mDebtFree', (config.startYear + debtIdx));
             } else {
-                document.getElementById('mDebtFree').textContent = 'Paid Off';
+                safeUpdateElement('mDebtFree', 'Paid Off');
             }
 
             // Risk
-            document.getElementById('mLTCRisk').textContent = '70% Potential';
+            safeUpdateElement('mLTCRisk', '70% Potential');
             const withdrawalRate = (retirementSpend / (sc.accounts.RetirementSavings[peakIndex] || 1) * 100).toFixed(2);
-            document.getElementById('mWithdrawalRate').textContent = withdrawalRate + '%';
-            document.getElementById('mStressTest').textContent = 'Passed';
+            safeUpdateElement('mWithdrawalRate', withdrawalRate + '%');
+            safeUpdateElement('mStressTest', 'Passed');
         }
         function updateDashboard() {
             updateMetrics();
