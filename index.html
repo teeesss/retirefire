@@ -6269,6 +6269,65 @@
         }
 
 
+        function updateDashboard() {
+            // ISSUE-017 FIX: Calculate and update all dashboard metrics
+            const scenario = config.currentScenario || 'average';
+            const data = rawData[scenario];
+            const assets = config.settings.assets;
+            const personal = config.settings.personal;
+
+            // Calculate current net worth
+            const currentNW = (assets.retirement || 0) +
+                (assets.roth || 0) +
+                (assets.hsa || 0) +
+                (assets.investments || 0) +
+                (assets.cash || 0) +
+                (assets.otherAssets || 0) +
+                (assets.homeValue || 0) -
+                (assets.mortgage || 0);
+
+            // Find peak net worth from projection data
+            let peakNW = currentNW;
+            let peakAge = personal.age;
+            let peakYear = new Date().getFullYear();
+
+            if (data && data.netWorth) {
+                data.netWorth.forEach((nw, idx) => {
+                    if (nw > peakNW) {
+                        peakNW = nw;
+                        peakAge = personal.age + idx;
+                        peakYear = new Date().getFullYear() + idx;
+                    }
+                });
+            }
+
+            // Update Current Net Worth
+            const metricCurrentNW = document.getElementById('metricCurrentNW');
+            if (metricCurrentNW) {
+                metricCurrentNW.textContent = formatCurrency(currentNW);
+            }
+
+            // Update Peak Net Worth
+            const metricPeakNW = document.getElementById('metricPeakNW');
+            if (metricPeakNW) {
+                metricPeakNW.textContent = formatCurrency(peakNW);
+            }
+
+            const metricPeakYear = document.getElementById('metricPeakYear');
+            if (metricPeakYear) {
+                metricPeakYear.textContent = `Age ${peakAge} (${peakYear})`;
+            }
+
+            // Calculate growth percentage
+            const growthPercent = currentNW > 0 ? ((peakNW - currentNW) / currentNW * 100) : 0;
+            const metricPeakGrowth = document.getElementById('metricPeakGrowth');
+            if (metricPeakGrowth) {
+                metricPeakGrowth.textContent = `+${growthPercent.toFixed(0)}%`;
+            }
+
+            console.log('Dashboard updated:', { currentNW: formatCurrency(currentNW), peakNW: formatCurrency(peakNW), peakAge, peakYear });
+        }
+
         function resetToDefaults() {
             if (confirm('Are you sure you want to reset all settings to defaults?')) {
                 localStorage.clear();
