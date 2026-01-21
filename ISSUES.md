@@ -18,6 +18,7 @@
 | ISSUE-010 | Money Flow chart showing $0 | Fixed - Now displays actual income/expense breakdown |
 | ISSUE-011 | Success Gauge broken calculation | Fixed - Now uses SimulationEngine.runMonteCarlo() directly |
 | ISSUE-012 | Missing sidebar navigation | Added persistent left sidebar with section links |
+| ISSUE-016 | Duplicate Social Security div broke settings panel | Fixed - Removed duplicate `<div class="settings-section" id="settings-socialsecurity">` on line 4637 |
 
 ---
 
@@ -44,3 +45,8 @@
 2. Test chart tooltips show correct values on hover
 3. Test scenario switching updates all charts
 4. Test interactive controls (sliders, toggles) work correctly
+
+### Code Editing Principles
+1. **Be careful with multi_replace_file_content** - When adding content to nested HTML, ensure you don't duplicate opening/closing tags
+2. **Verify HTML structure** - After large edits, verify the DOM structure is valid (no duplicate IDs, proper nesting)
+3. **Test settings panel** - After ANY settings-related change, open the settings panel and navigate through all sections
