@@ -22,10 +22,10 @@ async function deploy() {
         console.log(`Changing to remote directory: ${remotePath}`);
         await client.cd(remotePath);
 
-        // Upload ray3.html
-        const localFile = path.join(__dirname, '../ray3.html');
-        console.log(`Uploading ray3.html...`);
-        await client.uploadFrom(localFile, 'ray3.html');
+        // Upload dist/index.html as index.html
+        const localFile = path.join(__dirname, '../dist/index.html');
+        console.log(`Uploading dist/index.html to index.html...`);
+        await client.uploadFrom(localFile, 'index.html');
 
         console.log('Deployment successful!');
     } catch (err) {
