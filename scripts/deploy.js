@@ -14,15 +14,18 @@ async function deploy() {
             host: creds.host,
             user: creds.user,
             password: creds.password,
-            secure: creds.secure
+            secure: creds.secure || false
         });
 
-        console.log(`Successfully connected. Ensuring remote directory exists: ${creds.remotePath}`);
-        await client.ensureDir(creds.remotePath);
+        // Change to the correct remote directory
+        const remotePath = creds.remotePath || '/bmwseals.com/retirefire';
+        console.log(`Changing to remote directory: ${remotePath}`);
+        await client.cd(remotePath);
 
-        // Upload everything from dist folder
-        console.log('Uploading contents of dist folder...');
-        await client.uploadFromDir(path.join(__dirname, '../dist'));
+        // Upload ray3.html
+        const localFile = path.join(__dirname, '../ray3.html');
+        console.log(`Uploading ray3.html...`);
+        await client.uploadFrom(localFile, 'ray3.html');
 
         console.log('Deployment successful!');
     } catch (err) {
