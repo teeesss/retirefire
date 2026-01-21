@@ -4373,6 +4373,8 @@
                     <div class="settings-nav-item" onclick="showSettingsSection('taxes', this)">🏛️ Tax Settings</div>
                     <div class="settings-nav-item" onclick="showSettingsSection('events', this)">📅 One-Time Events
                     </div>
+                    <div class="settings-nav-item" onclick="showSettingsSection('recurring', this)">🔄 Recurring Events
+                    </div>
                     <div class="settings-nav-item" onclick="showSettingsSection('scenarios', this)">🎯 Custom Scenarios
                     </div>
                     <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">🎯 Goals</div>
@@ -4995,17 +4997,23 @@
                     <!-- SECTION: One-Time Events -->
                     <!-- ============================================ -->
                     <div class="settings-section" id="settings-events">
-                        <h3>📅 One-Time & Recurring Events</h3>
+                        <h3>📅 One-Time Financial Events</h3>
 
                         <p class="section-description">
-                            Model detailed cash flow events. Use <strong>One-Time</strong> for things like
-                            inheritances or weddings.
-                            Use <strong>Recurring</strong> for ongoing costs like travel phases or club memberships.
+                            <strong>What are One-Time Events?</strong><br>
+                            These are significant financial events that happen <strong>once</strong> at a specific year.
+                            Examples include:<br>
+                            • Inheritance or gift received<br>
+                            • Large home purchase or sale (if not using Housing section)<br>
+                            • College tuition payment<br>
+                            • Wedding expenses<br>
+                            • Starting a business (seed capital)<br><br>
+
+                            <strong>How to use:</strong> Enter the year, describe the event, specify the amount, and
+                            choose whether it's income (money coming in) or expense (money going out). Click "Add
+                            One-Time Event" and it will appear in your projection for that specific year only.
                         </p>
 
-                        <h4
-                            style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            📅 One-Time Events</h4>
                         <div class="input-row" style="margin-bottom: 1rem;">
                             <div class="input-group">
                                 <label>Year</label>
@@ -5026,7 +5034,7 @@
                                     <option value="expense">Expense (-)</option>
                                 </select>
                             </div>
-                            <button class="btn btn-primary" onclick="addEvent()">Add One-Time</button>
+                            <button class="btn btn-primary" onclick="addEvent()">Add One-Time Event</button>
                         </div>
                         <table class="events-table">
                             <thead>
@@ -5042,26 +5050,57 @@
                                 <!-- Dynamic -->
                             </tbody>
                         </table>
+                    </div>
 
-                        <h4
-                            style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                            🔄 Recurring Expense/Income</h4>
+                    <!-- ============================================ -->
+                    <!-- SECTION: Recurring Events -->
+                    <!-- ============================================ -->
+                    <div class="settings-section" id="settings-recurring">
+                        <h3>🔄 Recurring Cash Flow Events</h3>
+
+                        <p class="section-description">
+                            <strong>What are Recurring Events?</strong><br>
+                            These are income or expenses that happen <strong>every year</strong> for a specific age
+                            range. Perfect for modeling:<br>
+                            • **Travel phases**: "Ages 55-65: $40k/year extra travel"<br>
+                            • **Part-time income**: "Ages 60-70: $25k/year consulting"<br>
+                            • **Education costs**: "Ages 50-54: $30k/year for kid's college"<br>
+                            • **Rental property income** (if not using main income fields)<br>
+                            • **Club memberships** or **hobbies** with ongoing costs<br><br>
+
+                            <strong>How to use:</strong><br>
+                            1. Enter the <strong>Start Age</strong> and <strong>End Age</strong> for when this event
+                            occurs (inclusive)<br>
+                            2. Describe what it is (e.g., "Extra Travel Budget")<br>
+                            3. Enter the <strong>Annual Amount</strong> (how much per year)<br>
+                            4. Choose <strong>Expense</strong> (money out) or <strong>Income</strong> (money in)<br>
+                            5. Click "Add Recurring Event"<br><br>
+
+                            The planner will automatically apply this amount EVERY year from Start Age to End Age in
+                            your projection. You can add multiple recurring events to model complex spending/income
+                            phases.
+                        </p>
+
                         <div class="input-row" style="margin-bottom: 1rem;">
                             <div class="input-group">
                                 <label>Start Age</label>
                                 <input type="number" id="recurStartAge" value="55" min="50" max="95">
+                                <span class="input-hint">When does this begin?</span>
                             </div>
                             <div class="input-group">
                                 <label>End Age</label>
                                 <input type="number" id="recurEndAge" value="65" min="50" max="95">
+                                <span class="input-hint">When does this end?</span>
                             </div>
                             <div class="input-group">
                                 <label>Description</label>
-                                <input type="text" id="recurDescription" placeholder="e.g., Travel">
+                                <input type="text" id="recurDescription" placeholder="e.g., Extra Travel">
+                                <span class="input-hint">What is this for?</span>
                             </div>
                             <div class="input-group">
                                 <label>Annual Amount</label>
                                 <input type="number" id="recurAmount" value="10000">
+                                <span class="input-hint">Per year</span>
                             </div>
                             <div class="input-group">
                                 <label>Type</label>
@@ -5070,7 +5109,7 @@
                                     <option value="income">Income (+)</option>
                                 </select>
                             </div>
-                            <button class="btn btn-primary" onclick="addRecurringEvent()">Add Recurring</button>
+                            <button class="btn btn-primary" onclick="addRecurringEvent()">Add Recurring Event</button>
                         </div>
 
                         <table class="events-table">
@@ -5079,6 +5118,7 @@
                                     <th>Age Range</th>
                                     <th>Description</th>
                                     <th>Annual Amount</th>
+                                    <th>Type</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -5086,6 +5126,13 @@
                                 <!-- Dynamic -->
                             </tbody>
                         </table>
+
+                        <div
+                            style="margin-top: 1rem; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary); border-radius: 0.25rem; font-size: 0.85rem;">
+                            <strong>💡 Example:</strong> If you plan to travel heavily from ages 60-70, add a recurring
+                            expense: "Start Age: 60, End Age: 70, Description: Enhanced Travel, Amount: $40,000, Type:
+                            Expense". The planner will deduct $40k every year from age 60 to 70.
+                        </div>
                     </div>
 
                     <!-- ============================================ -->
