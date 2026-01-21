@@ -38,6 +38,8 @@
 | **ISSUE-023** | **Increased spending should lower Net Worth, decreased should raise it** | **Critical - Core calc issue** |
 | **ISSUE-024** | **Dashboard charts too tall - need side-by-side 1/2 width layout** | **High - UX/scrolling issue** |
 | **ISSUE-025** | **All charts/sections need detailed descriptions explaining what they show** | **High - User education** |
+| **ISSUE-026** | **Withdrawal Strategy needs breakdown showing which accounts drawdowns come from** | **High - Data visibility** |
+| **ISSUE-027** | **Safe Withdrawal Rate analysis doesn't show anything on hover** | **Medium - Missing tooltips** |
 
 ---
 
