@@ -127,16 +127,30 @@
 - [x] E2E test fails if value is $0 (ISSUE-009 fix)
 
 ### US-032: Implement Sidebar Navigation ✅
-**As a** user  
-**I want** a sidebar navigation to quickly jump to sections  
-**So that** I don't have to scroll through the entire dashboard  
-
-**Acceptance Criteria:**
 - [x] Add persistent left sidebar with section links
 - [x] All major sections have anchor IDs
 - [x] Smooth scroll on navigation click
 - [x] E2E test verifies sidebar exists with 11 nav items
 - [x] E2E test verifies all 9 section anchors exist
+
+### US-033: User Feedback Fixes Round 2 (Active)
+**As a** user
+**I want** the settings panel to be clearer and "Apply" to give feedback without closing
+**So that** I understand what I am changing and can tweak values easily
+
+**Acceptance Criteria:**
+- [ ] **Docs**: Update all .md files and tracking.
+- [ ] **Nav**: Add Descriptions to ALL settings sections.
+- [ ] **Nav**: Add "Back" / "Next" buttons or clear navigation flow.
+- [ ] **SS**: Fix Social Security section (add description, ensure fields match request).
+- [ ] **Assets**: Clarify "Asset Allocation" vs "Glide Path".
+- [ ] **UX**: "Apply" button should NOT close modal, just recalculate & notify.
+- [ ] **Housing**: Default "Plan to Sell" = NO.
+- [ ] **Healthcare**: Set defaults (Curr: $5k, Pre-Med: $5k, Med: $6k).
+- [ ] **Taxes**: Add description.
+- [ ] **Events**: detailed separation of One-Time vs Recurring.
+- [ ] **Events**: Add Start/End Age to Recurring Events.
+- [ ] **Scenarios**: Add description explaining "Custom Scenarios".
 
 ---
 
