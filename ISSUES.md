@@ -62,6 +62,8 @@
 | **ISSUE-047** | **Roth Conversion Optimizer: Software should recommend optimal accounts based on taxes** | **High - Smart optimization** |
 | **ISSUE-048** | **Goal Tracking: Missing hover tooltips/on-hover info** | **Medium - Missing tooltips** |
 | **ISSUE-049** | **Key Milestones: Should auto-update when changes made to settings** | **High - Missing reactivity** |
+| **ISSUE-050** | **Alerts & Warnings: Should be clickable links to navigate to relevant sections** | **Medium - UX enhancement** |
+| **ISSUE-051** | **Strategic Insights: Should be clickable links to navigate to relevant sections** | **Medium - UX enhancement** |
 
 ---
 
