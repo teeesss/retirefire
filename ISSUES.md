@@ -33,6 +33,9 @@
 | **ISSUE-018** | **"Compare" button at top doesn't work / seems useless** | **High - Remove or fix** |
 | **ISSUE-019** | **"What You Need" calculator outdated / only shows Age 53** | **High - Needs refresh logic** |
 | **ISSUE-020** | **"What You Need" target income should be slider, not static** | **Medium - UX improvement** |
+| **ISSUE-021** | **Explorer Year slider not tied to Annual Retirement Spending slider** | **Critical - Sliders disconnected** |
+| **ISSUE-022** | **Changing spending doesn't update Net Worth projections** | **Critical - Logic broken** |
+| **ISSUE-023** | **Increased spending should lower Net Worth, decreased should raise it** | **Critical - Core calc issue** |
 
 ---
 
