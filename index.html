@@ -2784,6 +2784,13 @@
                                     <span class="metric-status status-informational">Info</span>
                                 </div>
                             </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Savings Rate</span>
+                                <div class="metric-value-group">
+                                    <span class="metric-value" id="mSavingsRate">0%</span>
+                                    <span class="metric-status status-excelling">Excelling</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Row 2: Debt & Taxes -->
@@ -3779,7 +3786,23 @@
                                     <input type="number" id="rothEndAge" value="65" min="53" max="95"
                                         oninput="updateRothExplorer()">
                                 </div>
+                                <div class="roth-input-group">
+                                    <label>Target Bracket:</label>
+                                    <select id="rothTargetBracket" onchange="updateRothExplorer()">
+                                        <option value="0.10">10% Bracket</option>
+                                        <option value="0.12">12% Bracket</option>
+                                        <option value="0.22" selected>22% Bracket</option>
+                                        <option value="0.24">24% Bracket</option>
+                                        <option value="0.32">32% Bracket</option>
+                                    </select>
+                                </div>
                             </div>
+
+                            <button class="btn-primary" style="width: 100%; margin-top: 1rem;"
+                                onclick="optimizeRothStrategy()">
+                                ✨ Optimize Conversion Strategy
+                            </button>
+
 
                             <div class="roth-impact-indicators">
                                 <div class="roth-impact-card">
@@ -5264,10 +5287,356 @@
 
     <script>
         // ============================================
-        // DATA CONFIGURATION & STATE
+        // CORE CALCULATION ENGINES
         // ============================================
 
-        const config = {
+        var TaxCalculator = class {
+            static brackets = {
+                single: [
+                    { limit: 11600, rate: 0.10 },
+                    { limit: 47150, rate: 0.12 },
+                    { limit: 100525, rate: 0.22 },
+                    { limit: 191950, rate: 0.24 },
+                    { limit: 243725, rate: 0.32 },
+                    { limit: 609350, rate: 0.35 },
+                    { limit: Infinity, rate: 0.37 }
+                ],
+                married: [
+                    { limit: 23200, rate: 0.10 },
+                    { limit: 94300, rate: 0.12 },
+                    { limit: 201050, rate: 0.22 },
+                    { limit: 383900, rate: 0.24 },
+                    { limit: 487450, rate: 0.32 },
+                    { limit: 731200, rate: 0.35 },
+                    { limit: Infinity, rate: 0.37 }
+                ],
+                hoh: [
+                    { limit: 16550, rate: 0.10 },
+                    { limit: 63100, rate: 0.12 },
+                    { limit: 100500, rate: 0.22 },
+                    { limit: 191950, rate: 0.24 },
+                    { limit: 243700, rate: 0.32 },
+                    { limit: 609350, rate: 0.35 },
+                    { limit: Infinity, rate: 0.37 }
+                ]
+            };
+
+            static standardDeduction = {
+                single: 14600,
+                married: 29200,
+                hoh: 21900
+            };
+
+            static calculateFederalSocialSecurity(totalIncome, status) {
+                const deduction = this.standardDeduction[status] || 14600;
+                let taxableIncome = Math.max(0, totalIncome - deduction);
+                let tax = 0;
+                let prevLimit = 0;
+
+                const statusBrackets = this.brackets[status] || this.brackets.single;
+
+                for (const bracket of statusBrackets) {
+                    if (taxableIncome > bracket.limit) {
+                        tax += (bracket.limit - prevLimit) * bracket.rate;
+                        prevLimit = bracket.limit;
+                    } else {
+                        tax += (taxableIncome - prevLimit) * bracket.rate;
+                        break;
+                    }
+                }
+                return tax;
+            }
+
+            static calculateCombined(income, spouseIncome, status) {
+                const total = (income || 0) + (spouseIncome || 0);
+                return this.calculateFederalSocialSecurity(total, status);
+            }
+
+            static getTaxes(income, filingStatus, state, isEarned = true) {
+                const deduction = this.standardDeduction[filingStatus] || 14600;
+                const taxable = Math.max(0, income - deduction);
+                const fed = this.calculateFederalSocialSecurity(income, filingStatus); // Re-use our progressive logic
+
+                // Mock state tax for now
+                const stateRates = { 'CA': 0.093, 'NY': 0.065, 'FL': 0, 'TX': 0 };
+                const st = taxable * (stateRates[state] || 0);
+
+                // FICA
+                const ficaRate = 0.0765;
+                const ficaCap = 176100;
+                const fi = isEarned ? Math.min(income, ficaCap) * ficaRate : 0;
+
+                return { federal: fed, state: st, fica: fi, total: fed + st + fi };
+            }
+        }
+
+        var SimulationEngine = class {
+            static project(config, scenario) {
+                const years = config.endYear - config.startYear + 1;
+                const results = {
+                    years: [],
+                    ages: [],
+                    accounts: {
+                        RetirementSavings: [],
+                        RothIRA: [],
+                        HSA: [],
+                        Investments: [],
+                        CashSavings: [],
+                        Housing: [],
+                        OtherAssets: [],
+                        Debt: []
+                    },
+                    income: {
+                        Work: [],
+                        SocialSecurity: [],
+                        RMD: [],
+                        Drawdown: [],
+                        HomeSale: []
+                    },
+                    expenses: {
+                        Medical: [],
+                        Housing: [],
+                        General: [],
+                        Taxes: [],
+                        LTC: []
+                    },
+                    taxes: {
+                        Federal: [],
+                        FICA: [],
+                        CapGains: []
+                    },
+                    netWorth: []
+                };
+
+                // Initialize starting values
+                let retirement = config.settings.assets.retirement;
+                let roth = config.settings.assets.roth;
+                let hsa = config.settings.assets.hsa;
+                let investments = config.settings.assets.investments;
+                let cash = config.settings.assets.cash;
+                let mortgage = config.settings.assets.mortgage;
+                let homeValue = config.settings.assets.homeValue;
+                let otherAssets = config.settings.assets.otherAssets;
+
+                const rates = {
+                    optimistic: { return: 0.08, inflation: 0.02 },
+                    average: { return: 0.06, inflation: 0.03 },
+                    pessimistic: { return: 0.04, inflation: 0.04 }
+                };
+                const currentRates = rates[scenario] || rates.average;
+
+                for (let i = 0; i < years; i++) {
+                    const currentYear = config.startYear + i;
+                    const currentAge = config.startAge + i;
+
+                    results.years.push(currentYear);
+                    results.ages.push(currentAge);
+
+                    // 1. Income
+                    let workIncome = 0;
+                    if (currentAge < config.settings.personal.retireAge) {
+                        workIncome = config.settings.income.work * Math.pow(1 + config.settings.income.growth / 100, i);
+                    }
+
+                    let ssIncome = 0;
+                    const ssStartAge = config.settings.socialSecurity.claimAge;
+                    if (currentAge >= ssStartAge) {
+                        ssIncome = config.settings.socialSecurity[`ss${ssStartAge}`] * 12 * Math.pow(1 + config.settings.socialSecurity.cola / 100, Math.max(0, currentAge - ssStartAge));
+                    }
+
+                    // 2. Expenses
+                    let generalExp = config.settings.expenses.annualSpending * Math.pow(1 + currentRates.inflation, i);
+
+                    // Simple logic for taxes - will be refined below
+                    let estimatedTax = TaxCalculator.calculateFederalSocialSecurity(workIncome + ssIncome, config.settings.taxSettings.filingStatus);
+
+                    // 3. Retirement Contributions
+                    if (workIncome > 0) {
+                        retirement += config.settings.income.contribution401k + config.settings.income.employerMatch;
+                        roth += config.settings.income.rothContrib;
+                        hsa += config.settings.income.hsaContrib;
+                    }
+
+                    // 4. Growth
+                    retirement *= (1 + currentRates.return);
+                    roth *= (1 + currentRates.return);
+                    hsa *= (1 + currentRates.return);
+                    investments *= (1 + currentRates.return);
+                    homeValue *= (1 + config.settings.housing.appreciation / 100);
+                    otherAssets *= (1 + currentRates.inflation);
+
+                    // 5. Drawdown logic if expenses > income
+                    let netFlow = workIncome + ssIncome - generalExp - estimatedTax;
+
+                    if (netFlow < 0) {
+                        let deficit = Math.abs(netFlow);
+
+                        // Investements first
+                        if (investments >= deficit) {
+                            investments -= deficit;
+                            deficit = 0;
+                        } else {
+                            deficit -= investments;
+                            investments = 0;
+                        }
+
+                        // Retirement Savings next
+                        if (deficit > 0) {
+                            if (retirement >= deficit) {
+                                retirement -= deficit;
+                                deficit = 0;
+                            } else {
+                                deficit -= retirement;
+                                retirement = 0;
+                            }
+                        }
+
+                        // Roth last
+                        if (deficit > 0) {
+                            if (roth >= deficit) {
+                                roth -= deficit;
+                                deficit = 0;
+                            } else {
+                                deficit -= roth;
+                                roth = 0;
+                            }
+                        }
+                    } else {
+                        investments += netFlow;
+                    }
+
+                    // Roth Conversion Ladder
+                    if (config.settings.taxes.rothConversionEnabled && currentYear >= config.settings.taxes.rothConvStart && currentYear <= config.settings.taxes.rothConvEnd) {
+                        const convAmount = config.settings.taxes.rothConversion;
+                        if (retirement >= convAmount) {
+                            retirement -= convAmount;
+                            roth += convAmount;
+                            // Tax on conversion is handled by estimatedTax in next iteration or we should add it here
+                            estimatedTax += convAmount * (config.settings.taxSettings.fedBracket / 100);
+                        }
+                    }
+
+                    // Store results
+                    results.accounts.RetirementSavings.push(Math.round(retirement));
+                    results.accounts.RothIRA.push(Math.round(roth));
+                    results.accounts.HSA.push(Math.round(hsa));
+                    results.accounts.Investments.push(Math.round(investments));
+                    results.accounts.CashSavings.push(Math.round(cash));
+                    results.accounts.Housing.push(Math.round(homeValue));
+                    results.accounts.OtherAssets.push(Math.round(otherAssets));
+                    results.accounts.Debt.push(Math.round(-mortgage));
+
+                    results.income.Work.push(Math.round(workIncome));
+                    results.income.SocialSecurity.push(Math.round(ssIncome));
+                    results.income.RMD.push(0); // TODO: Implement RMD
+                    results.income.Drawdown.push(netFlow < 0 ? Math.round(Math.abs(netFlow)) : 0);
+
+                    results.expenses.General.push(Math.round(generalExp));
+                    results.expenses.Taxes.push(Math.round(estimatedTax));
+
+                    results.netWorth.push(Math.round(retirement + roth + hsa + investments + cash + homeValue + otherAssets - mortgage));
+                }
+
+                return results;
+            }
+
+            static run() {
+                // Return a global rawData object with all scenarios
+                return {
+                    years: Array.from({ length: config.endYear - config.startYear + 1 }, (_, i) => config.startYear + i),
+                    ages: Array.from({ length: config.endYear - config.startYear + 1 }, (_, i) => config.startAge + i),
+                    optimistic: this.project(config, 'optimistic'),
+                    average: this.project(config, 'average'),
+                    pessimistic: this.project(config, 'pessimistic')
+                };
+            }
+
+            static projectPath(config, volatility = 0.15) {
+                const years = config.endYear - config.startYear + 1;
+                let results = new Array(years);
+                let currentConfig = JSON.parse(JSON.stringify(config));
+
+                // Randomize returns for each year
+                const baseRate = config.settings.rates.average / 100;
+
+                // Simplified projection for MC
+                let retirement = config.settings.assets.retirement;
+                let roth = config.settings.assets.roth;
+                let hsa = config.settings.assets.hsa;
+                let investments = config.settings.assets.investments;
+                let cash = config.settings.assets.cash;
+                let otherAssets = config.settings.assets.otherAssets;
+                let infl = config.settings.inflation.average / 100;
+
+                for (let i = 0; i < years; i++) {
+                    const currentAge = config.startAge + i;
+                    const isRetired = currentAge >= config.settings.personal.retireAge;
+
+                    // Gaussian approx
+                    const r = baseRate + (Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random() - 3) / 3 * volatility;
+
+                    if (i > 0) {
+                        retirement *= (1 + r);
+                        roth *= (1 + r);
+                        hsa *= (1 + r);
+                        investments *= (1 + r);
+                        otherAssets *= (1 + infl);
+                    }
+
+                    if (!isRetired) {
+                        retirement += config.settings.income.contribution401k + config.settings.income.employerMatch;
+                        roth += config.settings.income.rothContrib;
+                        hsa += config.settings.income.hsaContrib;
+                    }
+
+                    // Simplified drawdown/spending
+                    const spend = config.settings.expenses.annualSpending * Math.pow(1 + infl, i);
+                    const ss = (currentAge >= config.settings.socialSecurity.claimAge) ? 40000 : 0; // Mock SS
+
+                    let delta = (isRetired ? ss : config.settings.income.work) - spend;
+                    if (delta < 0) {
+                        let pull = Math.abs(delta);
+                        if (investments >= pull) investments -= pull;
+                        else { pull -= investments; investments = 0; retirement = Math.max(0, retirement - pull); }
+                    } else {
+                        investments += delta;
+                    }
+
+                    results[i] = Math.max(0, retirement + roth + hsa + investments + cash + otherAssets);
+                }
+                return results;
+            }
+
+            static runMonteCarlo(iterations = 1000) {
+                const runs = [];
+                for (let i = 0; i < iterations; i++) {
+                    runs.push(this.projectPath(config));
+                }
+
+                const numYears = runs[0].length;
+                const percentiles = { p10: [], p25: [], p50: [], p75: [], p90: [], successRate: 0, legacyRate: 0 };
+                const legacyGoal = 5000000;
+
+                for (let y = 0; y < numYears; y++) {
+                    const yearValues = runs.map(r => r[y]).sort((a, b) => a - b);
+                    percentiles.p10.push(yearValues[Math.floor(iterations * 0.1)]);
+                    percentiles.p25.push(yearValues[Math.floor(iterations * 0.25)]);
+                    percentiles.p50.push(yearValues[Math.floor(iterations * 0.5)]);
+                    percentiles.p75.push(yearValues[Math.floor(iterations * 0.75)]);
+                    percentiles.p90.push(yearValues[Math.floor(iterations * 0.9)]);
+
+                    if (y === numYears - 1) {
+                        const successes = yearValues.filter(v => v > 0).length;
+                        percentiles.successRate = (successes / iterations) * 100;
+                        const legacyMet = yearValues.filter(v => v >= legacyGoal).length;
+                        percentiles.legacyRate = (legacyMet / iterations) * 100;
+                    }
+                }
+                return percentiles;
+            }
+        }
+
+        var config = {
             startYear: 2026,
             startAge: 50,
             endYear: 2071,
@@ -5413,422 +5782,13 @@
             recurringEvents: []
         };
 
-        // ============================================
-        // DYNAMIC CALCULATION ENGINE (US-020)
-        // ============================================
-
-        const SimulationEngine = {
-            run: function () {
-                const results = {
-                    years: [],
-                    ages: [],
-                    optimistic: this.project(config, 'optimistic'),
-                    average: this.project(config, 'average'),
-                    pessimistic: this.project(config, 'pessimistic')
-                };
-
-                const count = results.average.yearsCount;
-                results.years = Array.from({ length: count }, (_, i) => config.startYear + i);
-                results.ages = Array.from({ length: count }, (_, i) => config.settings.personal.age + i);
-
-                return results;
-            },
-
-            project: function (config, scenario) {
-                const s = config.settings;
-                const startAge = s.personal.age;
-                const retireAge = s.personal.retireAge;
-                const longevity = s.personal.longevity;
-                const numYears = longevity - startAge + 1;
-
-                // Scenario-specific modifiers
-                let rate = s.rates[scenario] / 100;
-                let infl = s.inflation[scenario] / 100;
-
-                // Glide Path Return Calculation
-                const calculateCustomRate = () => {
-                    const g = s.glidePath;
-                    const stockR = (config.settings.rates.usStocks || 10) / 100;
-                    const bondR = (config.settings.rates.bonds || 4) / 100;
-                    const cashR = (config.settings.rates.cash || 2) / 100;
-                    const cryptoR = 0.15; // Assumption for alternative growth
-
-                    return (g.stocks / 100 * stockR) +
-                        (g.bonds / 100 * bondR) +
-                        (g.cash / 100 * cashR) +
-                        (g.crypto / 100 * cryptoR);
-                };
-
-                // Override default scenario rate if glide path is meaningful
-                if (s.glidePath.stocks + s.glidePath.bonds + s.glidePath.cash + s.glidePath.crypto > 0) {
-                    const customRate = calculateCustomRate();
-                    // Blend custom rate with scenario volatility
-                    const scenarioShift = (s.rates[scenario] - s.rates.average) / 100;
-                    rate = customRate + scenarioShift;
-                }
-
-                const res = {
-                    accounts: {
-                        RetirementSavings: new Array(numYears).fill(0),
-                        RothIRA: new Array(numYears).fill(0),
-                        HSA: new Array(numYears).fill(0),
-                        Investments: new Array(numYears).fill(0),
-                        CashSavings: new Array(numYears).fill(0),
-                        Housing: new Array(numYears).fill(0),
-                        OtherAssets: new Array(numYears).fill(0),
-                        Debt: new Array(numYears).fill(0)
-                    },
-                    income: {
-                        Work: new Array(numYears).fill(0),
-                        SocialSecurity: new Array(numYears).fill(0),
-                        RMD: new Array(numYears).fill(0),
-                        Drawdown: new Array(numYears).fill(0),
-                        HomeSale: new Array(numYears).fill(0)
-                    },
-                    expenses: {
-                        General: new Array(numYears).fill(0),
-                        Housing: new Array(numYears).fill(0),
-                        Medical: new Array(numYears).fill(0),
-                        Taxes: new Array(numYears).fill(0),
-                        LTC: new Array(numYears).fill(0)
-                    },
-                    taxes: {
-                        Federal: new Array(numYears).fill(0),
-                        FICA: new Array(numYears).fill(0),
-                        CapGains: new Array(numYears).fill(0)
-                    }
-                };
-
-                // Initialize starting values from settings
-                let retirement = s.assets.retirement;
-                let roth = s.assets.roth;
-                let hsa = s.assets.hsa;
-                let investments = s.assets.investments;
-                let cash = s.assets.cash;
-                let debtInitial = s.housing.mortgageBalance;
-                let otherAssets = s.assets.otherAssets;
-
-                for (let i = 0; i < numYears; i++) {
-                    const age = startAge + i;
-                    const year = config.startYear + i;
-                    const isRetired = age >= retireAge;
-
-                    // 1. Growth
-                    if (i > 0) {
-                        retirement *= (1 + rate);
-                        roth *= (1 + rate);
-                        hsa *= (1 + rate);
-                        investments *= (1 + rate);
-                        cash *= 1.02; // Cash grows at slower rate
-                        otherAssets *= (1 + infl);
-                    }
-
-                    // 2. Contributions (If working)
-                    let workIncome = 0;
-                    if (!isRetired) {
-                        workIncome = s.income.work * Math.pow(1 + s.income.growth / 100, i);
-                        res.income.Work[i] = workIncome;
-
-                        // Add contributions
-                        retirement += (s.income.contribution401k + s.income.employerMatch);
-                        roth += s.income.rothContrib;
-                        hsa += s.income.hsaContrib;
-                    }
-
-                    // 3. Social Security
-                    if (age >= s.socialSecurity.claimAge) {
-                        let baseBenefit = 0;
-                        if (s.socialSecurity.claimAge <= 62) baseBenefit = s.socialSecurity.ss62;
-                        else if (s.socialSecurity.claimAge <= 67) baseBenefit = s.socialSecurity.ss67;
-                        else baseBenefit = s.socialSecurity.ss70;
-
-                        res.income.SocialSecurity[i] = baseBenefit * 12 * Math.pow(1 + (s.socialSecurity.cola || 2) / 100, Math.max(0, age - s.socialSecurity.claimAge));
-                    }
-
-                    // 4. Events (One-time & Recurring)
-                    let eventIncome = 0;
-                    let eventExpense = 0;
-
-                    config.events.forEach(ev => {
-                        if (ev.year === year) {
-                            if (ev.type === 'income') eventIncome += ev.amount;
-                            else eventExpense += ev.amount;
-                        }
-                    });
-
-                    config.recurringEvents.forEach(ev => {
-                        if (age >= ev.startAge && age <= ev.endAge) {
-                            if (ev.type === 'income') eventIncome += ev.amount;
-                            else eventExpense += ev.amount;
-                        }
-                    });
-
-                    // 5. RMDs (Simplified - starts age 73)
-                    if (age >= 73) {
-                        const rmd = retirement / (95 - age); // Simplified factor
-                        res.income.RMD[i] = rmd;
-                        retirement -= rmd;
-                        investments += rmd * 0.76; // Assume 24% tax
-                    }
-
-                    // 6. Expenses with Phases
-                    let baseExpense = s.expenses.annualSpending;
-                    if (isRetired) {
-                        // Apply Phases
-                        const phase = s.expenses.phases?.find(p => age >= p.startAge && age <= p.endAge);
-                        if (phase) {
-                            baseExpense *= phase.multiplier;
-                        } else if (age > 75) {
-                            baseExpense *= (1 - s.expenses.age75Reduction / 100);
-                        } else {
-                            baseExpense *= (1 - s.expenses.retireReduction / 100);
-                        }
-                    }
-
-                    res.expenses.General[i] = baseExpense * Math.pow(1 + infl, i);
-
-                    // Housing Expense
-                    if (age < startAge + s.housing.mortgageYears) {
-                        res.expenses.Housing[i] = s.housing.mortgagePayment * 12;
-                    } else {
-                        res.expenses.Housing[i] = (s.housing.propertyTax + s.housing.maintenance + s.housing.insurance) * Math.pow(1 + infl, i);
-                    }
-
-                    // Medical & LTC
-                    res.expenses.Medical[i] = s.healthcare.current * Math.pow(1 + s.healthcare.inflation / 100, i);
-                    if (age >= s.healthcare.ltcAge) res.expenses.LTC[i] = s.healthcare.ltcCost * Math.pow(1 + s.healthcare.ltcInflation / 100, i);
-
-                    // 7. Cash Flow & Drawdown
-                    const totalIncome = workIncome + res.income.SocialSecurity[i] + res.income.RMD[i] + eventIncome;
-                    const totalSpending = res.expenses.General[i] + res.expenses.Housing[i] + res.expenses.Medical[i] + res.expenses.LTC[i] + eventExpense;
-
-                    let delta = totalIncome - totalSpending;
-                    if (delta < 0) {
-                        let pull = Math.abs(delta);
-                        res.income.Drawdown[i] = pull;
-
-                        // Pull priority: Cash -> Investments -> Retirement -> Roth
-                        if (cash >= pull) { cash -= pull; }
-                        else {
-                            pull -= cash; cash = 0;
-                            if (investments >= pull) { investments -= pull; }
-                            else {
-                                pull -= investments; investments = 0;
-                                if (retirement >= pull) { retirement -= pull; }
-                                else {
-                                    pull -= retirement; retirement = 0;
-                                    roth = Math.max(0, roth - pull);
-                                }
-                            }
-                        }
-                    } else {
-                        investments += delta;
-                    }
-
-                    // 8. Final Balances for this year
-                    res.accounts.RetirementSavings[i] = retirement;
-                    res.accounts.RothIRA[i] = roth;
-                    res.accounts.HSA[i] = hsa;
-                    res.accounts.Investments[i] = investments;
-                    res.accounts.CashSavings[i] = cash;
-                    res.accounts.OtherAssets[i] = otherAssets;
-                    res.accounts.Housing[i] = (s.housing.homeValue * Math.pow(1 + s.housing.appreciation / 100, i));
-                    res.accounts.Debt[i] = (age < startAge + s.housing.mortgageYears) ? -debtInitial * (1 - i / s.housing.mortgageYears) : 0;
-                }
-
-                return res;
-            },
-
-            projectPath: function (config, volatility = 0.15) {
-                const s = config.settings;
-                const startAge = s.personal.age;
-                const endAge = s.personal.longevity;
-                const retireAge = s.personal.retireAge;
-                const numYears = endAge - startAge + 1;
-
-                const baseRate = s.rates.average / 100;
-                const infl = s.inflation.average / 100;
-
-                const results = new Array(numYears);
-
-                let retirement = s.assets.retirement;
-                let roth = s.assets.roth;
-                let hsa = s.assets.hsa;
-                let investments = s.assets.investments;
-                let cash = s.assets.cash;
-                let otherAssets = s.assets.otherAssets;
-
-                for (let i = 0; i < numYears; i++) {
-                    const age = startAge + i;
-                    const year = config.startYear + i;
-                    const isRetired = age >= retireAge;
-
-                    // Random return for this year (Gaussian approximation)
-                    const randomReturn = baseRate + (Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random() - 3) / 3 * volatility;
-
-                    if (i > 0) {
-                        retirement *= (1 + randomReturn);
-                        roth *= (1 + randomReturn);
-                        hsa *= (1 + randomReturn);
-                        investments *= (1 + randomReturn);
-                        cash *= 1.02;
-                        otherAssets *= (1 + infl);
-                    }
-
-                    if (!isRetired) {
-                        retirement += (s.income.contribution401k + s.income.employerMatch);
-                        roth += s.income.rothContrib;
-                        hsa += s.income.hsaContrib;
-                    }
-
-                    // Simplified drawdown logic for MC
-                    const totalIncome = (!isRetired ? s.income.work * Math.pow(1.03, i) : 0);
-                    const totalSpending = 90000 * Math.pow(1 + infl, i) * (isRetired ? 0.9 : 1);
-
-                    let delta = totalIncome - totalSpending;
-                    if (delta < 0) {
-                        let pull = Math.abs(delta);
-                        if (cash >= pull) cash -= pull;
-                        else { pull -= cash; cash = 0; investments = Math.max(0, investments - pull); }
-                    } else {
-                        investments += delta;
-                    }
-
-                    results[i] = Math.max(0, retirement + roth + hsa + investments + cash + otherAssets);
-                }
-                return results;
-            },
-
-            runMonteCarlo: function (iterations = 1000) {
-                const results = [];
-                for (let i = 0; i < iterations; i++) {
-                    results.push(this.projectPath(config));
-                }
-
-                const numYears = results[0].length;
-                const percentiles = { p10: [], p25: [], p50: [], p75: [], p90: [], successRate: 0, legacyRate: 0 };
-                const legacyGoal = config.goals[2]?.target || 5000000;
-
-                for (let y = 0; y < numYears; y++) {
-                    const yearValues = results.map(r => r[y]).sort((a, b) => a - b);
-                    percentiles.p10.push(yearValues[Math.floor(iterations * 0.1)]);
-                    percentiles.p25.push(yearValues[Math.floor(iterations * 0.25)]);
-                    percentiles.p50.push(yearValues[Math.floor(iterations * 0.5)]);
-                    percentiles.p75.push(yearValues[Math.floor(iterations * 0.75)]);
-                    percentiles.p90.push(yearValues[Math.floor(iterations * 0.9)]);
-
-                    if (y === numYears - 1) {
-                        const successes = yearValues.filter(v => v > 0).length;
-                        percentiles.successRate = (successes / iterations) * 100;
-                        const legacyMet = yearValues.filter(v => v >= legacyGoal).length;
-                        percentiles.legacyRate = (legacyMet / iterations) * 100;
-                    }
-                }
-                return percentiles;
-            }
-        };
+        // Legacy calculation engines removed (now handled by classes at script top)
 
         // Raw data from original dashboard
-        let rawData = {
-            years: Array.from({ length: 46 }, (_, i) => 2026 + i),
-            ages: Array.from({ length: 46 }, (_, i) => 50 + i),
+        // Initial projection
+        let rawData = SimulationEngine.run();
 
-            optimistic: {
-                accounts: {
-                    CashSavings: [6280, 5042, 6426, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    HSA: [258710, 286030, 316235, 349629, 386550, 427370, 472500, 522396, 577561, 638551, 705982, 780534, 862959, 954087, 1054839, 1166230, 1289384, 1425543, 1576080, 1742514, 1926524, 2129965, 2354889, 2603565, 2878502, 3182472, 3518541, 3890099, 4300893, 4755068, 5257203, 5812364, 6426149, 7104751, 7855013, 8684502, 9601585, 10615513, 11736511, 12975887, 14346140, 15861093, 17536024, 19387828, 21435183, 23698739],
-                    Investments: [68323, 77763, 90607, 60793, 0, 0, 698271, 595091, 474136, 335124, 176271, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33513, 110207, 207034, 326524, 470486, 644663, 852148, 1098964, 1389658, 1731974, 2131629, 2596488, 3135362, 3755364, 4469752, 5287084, 6219761, 7280600, 8470517, 9751585, 11129576],
-                    RetirementSavings: [3037143, 3377104, 3753356, 4159975, 4245534, 4220182, 4412637, 4618983, 4840527, 5078703, 5335097, 5607060, 5745452, 5866195, 5984601, 6089475, 6190814, 6289286, 6384470, 6475729, 6562313, 6643368, 6717952, 6785016, 6843371, 7275087, 7727703, 8197080, 8680264, 9174858, 9678118, 10189030, 10701063, 11212367, 11713712, 12202132, 12670200, 13109221, 13516228, 13873716, 14177951, 14416949, 14577285, 14643942, 14613784, 14471207],
-                    RothIRA: [316201, 349592, 386509, 427324, 713258, 1035502, 1398047, 1805309, 2262170, 2774040, 3346895, 3987355, 4662129, 5414603, 6253147, 7189982, 8232768, 9392875, 10682875, 12116670, 13709637, 15478785, 17442917, 19622833, 22041535, 24369121, 26942500, 29787628, 32933202, 36410948, 40255944, 44506972, 49206908, 54403157, 60148131, 66499774, 73522150, 81286089, 89869900, 99360161, 109852594, 121453028, 134278468, 148458275, 164135468, 181468174],
-                    Housing: [710640, 748161, 787664, 829253, 873038, 919134, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    OtherAssets: [519999, 540799, 562431, 584929, 608326, 632659, 657965, 684284, 711655, 740122, 769727, 800516, 832536, 865838, 900471, 936490, 973950, 1012908, 1053424, 1095561, 1139384, 1184959, 1232357, 1281652, 1332918, 1386234, 1441684, 1499351, 1559325, 1621698, 1686566, 1754029, 1824190, 1897158, 1973044, 2051966, 2134044, 2219406, 2308182, 2400510, 2496530, 2596391, 2700247, 2808257, 2920587, 3037411],
-                    Debt: [-4583, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                income: {
-                    Work: [147996, 152506, 157155, 80972, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    SocialSecurity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41844, 42696, 43560, 44448, 45348, 46272, 47208, 48168, 49152, 50148, 51168, 52212, 53268, 54348, 55452, 56580, 57732, 58908, 60096, 61320, 62568, 63840, 65136, 66456, 67812, 69192, 70596, 72024, 73488, 74988, 76512, 78060, 79656, 81264],
-                    RMD: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 278185, 306965, 337454, 372594, 411386, 454200, 498872, 550758, 604579, 667402, 732107, 802771, 879875, 956877, 1047769, 1137189, 1232865, 1334902, 1443295, 1541467, 1641998],
-                    Drawdown: [5117, 2590, 0, 55369, 172026, 215143, 192562, 163759, 171051, 177024, 183028, 189082, 190280, 214054, 221983, 237452, 244586, 250603, 256568, 262634, 268832, 275185, 281687, 288339, 295160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    HomeSale: [0, 0, 0, 0, 0, 0, 827420, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                expenses: {
-                    Medical: [3000, 3080, 3163, 3248, 3335, 3425, 3517, 3612, 3709, 3808, 3911, 4016, 4124, 4235, 4349, 3582, 3296, 3385, 3476, 3569, 3665, 3764, 3865, 3969, 4075, 4185, 4297, 4413, 4532, 4653, 4778, 4907, 5039, 5174, 5313, 5456, 5603, 5754, 5908, 6067, 6230, 6398, 6570, 6746, 6927, 7114],
-                    Housing: [31200, 31200, 31200, 31200, 31200, 31200, 40618, 41443, 42285, 43144, 44021, 44916, 45828, 46760, 47710, 48679, 49668, 50678, 51707, 52758, 53830, 54924, 56040, 57179, 58341, 59526, 60736, 61970, 63229, 64514, 65825, 67163, 68527, 69920, 71341, 72790, 74269, 75779, 77318, 78890, 80493, 82128, 83797, 85500, 87237, 89010],
-                    General: [60000, 61219, 62463, 63732, 65027, 66348, 67697, 69072, 70476, 71908, 73369, 74860, 76381, 77933, 79517, 81132, 82781, 84463, 86179, 87931, 89717, 91541, 93401, 95299, 97235, 99211, 101227, 103284, 105382, 107524, 109709, 111938, 114213, 116533, 118901, 121318, 123783, 126298, 128864, 131483, 134155, 136881, 139662, 142500, 145396, 148350],
-                    Taxes: [31313, 32391, 33537, 12563, 72463, 114168, 80729, 49630, 54682, 58161, 61725, 65290, 105789, 127821, 133967, 148504, 154186, 158348, 162411, 166542, 170770, 175103, 179547, 184103, 188775, 113754, 73748, 80800, 91493, 106441, 119735, 134574, 151920, 169928, 191069, 212851, 236703, 262791, 288823, 319696, 350039, 382553, 418640, 455588, 489200, 524745],
-                    LTC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24611, 126365, 233571]
-                },
-                taxes: {
-                    Federal: [19980, 20729, 21523, 6352, 82818, 120956, 48645, 50045, 51484, 52963, 54483, 57452, 120914, 130789, 135162, 142286, 146476, 150324, 154200, 158162, 162222, 166387, 170658, 175038, 179531, 58409, 65146, 72848, 83380, 95065, 108128, 122731, 139837, 157599, 178490, 200016, 223607, 249429, 275190, 305786, 335846, 368071, 402495, 439115, 472393, 507596],
-                    FICA: [11321, 11666, 12022, 6194, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    CapGains: [0, 0, 0, 5897, 7652, 0, 991, 3096, 5198, 7242, 9245, 10929, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                }
-            },
-
-            average: {
-                accounts: {
-                    CashSavings: [6256, 4274, 5633, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    HSA: [254595, 277003, 301384, 327910, 356771, 388172, 422337, 459509, 499953, 543957, 591833, 643923, 700598, 762261, 829352, 902347, 981767, 1068178, 1162194, 1264484, 1375778, 1496867, 1628613, 1771956, 1927915, 2097600, 2282220, 2483090, 2701639, 2939424, 3198138, 3479622, 3785881, 4119095, 4481637, 4876089, 5305258, 5772200, 6280240, 6832996, 7434402, 8088741, 8800671, 9575262, 10418029, 11334972],
-                    Investments: [67336, 75500, 85791, 51940, 0, 0, 635786, 514566, 375660, 218996, 43048, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    RetirementSavings: [2988996, 3271262, 3578860, 3904156, 3881076, 3748770, 3825523, 3902598, 3979864, 4057168, 4134343, 4020633, 3893228, 3742823, 3566413, 3347817, 3094806, 2805308, 2475952, 2102906, 1681962, 1208519, 677566, 83638, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    RothIRA: [311172, 338560, 368358, 400779, 676862, 983360, 1323106, 1699187, 2114962, 2574095, 3080571, 3638734, 4212708, 4843642, 5536717, 6300534, 7138599, 8057630, 9064934, 10168467, 11376892, 12699639, 14146971, 15730061, 16926143, 18327294, 19809036, 21417818, 23164731, 25061837, 27122269, 29360311, 31791490, 34432707, 37302361, 40420439, 43808699, 47490818, 51492544, 55841886, 60569324, 65708020, 71294048, 77333712, 83759571, 90593057],
-                    Housing: [704700, 735706, 768077, 801873, 837155, 873990, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    OtherAssets: [517500, 535612, 554358, 573761, 593843, 614627, 636139, 658404, 681448, 705299, 729984, 755534, 781978, 809347, 837674, 866993, 897337, 928744, 961250, 994894, 1029715, 1065755, 1103057, 1141664, 1181622, 1222979, 1265783, 1310085, 1355938, 1403396, 1452515, 1503353, 1555971, 1610430, 1666795, 1725133, 1785512, 1848005, 1912685, 1979629, 2048916, 2120628, 2194851, 2271670, 2351179, 2433470],
-                    Debt: [-4583, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                income: {
-                    Work: [147996, 151755, 155609, 79781, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    SocialSecurity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44412, 45540, 46692, 47880, 49104, 50352, 51624, 52932, 54276, 55656, 57072, 58524, 60012, 61536, 63096, 64704, 66348, 68028, 69756, 71532, 73344, 75204, 77124, 79080, 81084, 83148, 85260, 87420, 89640, 91920, 94260, 96648, 99108, 101628],
-                    RMD: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    Drawdown: [5107, 3311, 0, 55688, 175489, 217160, 195064, 166541, 174037, 180271, 186595, 228320, 217500, 222621, 228502, 244718, 252467, 259165, 265847, 272661, 279639, 286794, 294131, 301655, 266463, 135029, 126317, 129562, 132896, 136322, 139831, 143426, 147124, 150915, 154791, 158781, 162875, 167066, 171370, 175791, 180321, 184965, 189727, 227203, 368008, 518033],
-                    HomeSale: [0, 0, 0, 0, 0, 0, 781469, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                expenses: {
-                    Medical: [3000, 3100, 3204, 3312, 3423, 3539, 3657, 3780, 3907, 4039, 4174, 4315, 4460, 4610, 4764, 3973, 3683, 3806, 3934, 4066, 4203, 4344, 4490, 4641, 4797, 4958, 5125, 5297, 5475, 5659, 5849, 6046, 6249, 6459, 6676, 6900, 7132, 7372, 7620, 7876, 8140, 8414, 8697, 8989, 9291, 9603],
-                    Housing: [31200, 31200, 31200, 31200, 31200, 31200, 41846, 42909, 43999, 45117, 46263, 47438, 48643, 49878, 51145, 52444, 53776, 55142, 56543, 57979, 59452, 60962, 62510, 64098, 65726, 67396, 69108, 70863, 72663, 74508, 76401, 78342, 80331, 82372, 84464, 86610, 88809, 91065, 93378, 95750, 98182, 100676, 103233, 105855, 108544, 111301],
-                    General: [60000, 61524, 63086, 64689, 66332, 68017, 69744, 71516, 73332, 75195, 77105, 79063, 81072, 83131, 85242, 87407, 89628, 91904, 94239, 96632, 99087, 101604, 104184, 106831, 109544, 112326, 115180, 118105, 121105, 124181, 127335, 130570, 133886, 137287, 140774, 144350, 148016, 151776, 155631, 159584, 163637, 167794, 172056, 176426, 180907, 185502],
-                    Taxes: [31303, 32070, 32876, 12178, 74533, 114403, 79814, 48334, 52796, 55918, 59051, 97504, 127736, 130541, 134041, 148770, 154482, 158662, 162753, 166913, 171172, 175538, 180016, 184607, 146406, 11884, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    LTC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32579, 168372, 313253]
-                },
-                taxes: {
-                    Federal: [19972, 20463, 20981, 6067, 86499, 120638, 47671, 48882, 50123, 51397, 52702, 116572, 128323, 131441, 134857, 141920, 146063, 149873, 153713, 157638, 161660, 165785, 170015, 174353, 12840, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    FICA: [11321, 11609, 11904, 6103, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    CapGains: [0, 0, 0, 6009, 6543, 0, 849, 2673, 4522, 6349, 8167, 2116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                }
-            },
-
-            pessimistic: {
-                accounts: {
-                    CashSavings: [6233, 3510, 4850, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    HSA: [250480, 268121, 287005, 307219, 328857, 352018, 376811, 403349, 431757, 462166, 494717, 529559, 566856, 606780, 649516, 695261, 744228, 796644, 852752, 912811, 977101, 1045918, 1119582, 1198434, 1282840, 1373190, 1469904, 1573430, 1684246, 1802868, 1929844, 2065763, 2211255, 2366993, 2533701, 2712149, 2903166, 3107636, 3326507, 3560793, 3811579, 4080029, 4367385, 4674980, 5004239, 5356688],
-                    Investments: [66349, 73269, 81096, 43340, 0, 0, 576522, 438713, 283823, 112033, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    RetirementSavings: [2940847, 3167111, 3409894, 3660388, 3539110, 3314157, 3294377, 3266772, 3230629, 3185179, 3034212, 2692766, 2389080, 2058645, 1692894, 1273678, 809046, 296714, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    RothIRA: [306142, 327704, 350784, 375490, 642744, 934936, 1253980, 1601926, 1980971, 2393474, 2841964, 3329150, 3817332, 4346340, 4919215, 5542177, 6216037, 6944559, 7464903, 7828652, 8222938, 8649261, 9101042, 9579944, 10087738, 10700594, 11305735, 11948904, 12632644, 13359668, 14132863, 14955335, 15830378, 16761548, 17752607, 18807610, 19930878, 21127028, 22401005, 23758083, 25203907, 26744528, 28386395, 30092988, 31726502, 33263397],
-                    Housing: [698759, 723356, 748818, 775176, 802463, 830709, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    OtherAssets: [514999, 530450, 546363, 562754, 579637, 597026, 614936, 633385, 652386, 671958, 692116, 712880, 734266, 756294, 778983, 802353, 826423, 851216, 876753, 903055, 930147, 958051, 986793, 1016397, 1046888, 1078295, 1110644, 1143963, 1178282, 1213631, 1250040, 1287541, 1326167, 1365952, 1406931, 1449139, 1492613, 1537391, 1583513, 1631018, 1679949, 1730347, 1782258, 1835726, 1890797, 1947521],
-                    Debt: [-4583, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                income: {
-                    Work: [147996, 151003, 154071, 78601, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    SocialSecurity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47124, 48564, 50040, 51564, 53136, 54756, 56424, 58152, 59916, 61752, 63624, 65568, 67572, 69624, 71748, 73932, 76188, 78516, 80904, 83376, 85908, 88536, 91224, 94008, 96876, 99828, 102876, 106008, 109236, 112572, 116004, 119532, 123180, 126936],
-                    RMD: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    Drawdown: [5097, 4032, 0, 56059, 178996, 219337, 197775, 170123, 177975, 184620, 208644, 259233, 230908, 230046, 235319, 252695, 261219, 268717, 276233, 186597, 188846, 185611, 190967, 196467, 202127, 139601, 143913, 148362, 152944, 157666, 162544, 167563, 172752, 178085, 183602, 189278, 195130, 201168, 207387, 213808, 220429, 227245, 234279, 284591, 472943, 676048],
-                    HomeSale: [0, 0, 0, 0, 0, 0, 737445, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                expenses: {
-                    Medical: [3000, 3120, 3246, 3377, 3513, 3655, 3802, 3956, 4115, 4281, 4454, 4634, 4820, 5015, 5217, 4404, 4112, 4277, 4450, 4629, 4816, 5010, 5212, 5422, 5641, 5868, 6105, 6351, 6607, 6874, 7151, 7439, 7739, 8051, 8376, 8714, 9065, 9431, 9811, 10206, 10618, 11046, 11492, 11955, 12437, 12938],
-                    Housing: [31200, 31200, 31200, 31200, 31200, 31200, 43106, 44420, 45774, 47169, 48606, 50088, 51615, 53188, 54809, 56480, 58201, 59975, 61803, 63687, 65628, 67629, 69690, 71814, 74003, 76259, 78583, 80978, 83446, 85990, 88611, 91312, 94095, 96963, 99918, 102964, 106102, 109336, 112669, 116103, 119642, 123289, 127046, 130919, 134909, 139021],
-                    General: [60000, 61828, 63713, 65655, 67656, 69718, 71843, 74033, 76290, 78615, 81011, 83480, 86025, 88647, 91349, 94133, 97002, 99959, 103006, 106145, 109381, 112715, 116150, 119690, 123339, 127098, 130972, 134964, 139078, 143317, 147685, 152187, 156825, 161605, 166531, 171607, 176838, 182228, 187782, 193505, 199404, 205481, 211744, 218198, 224849, 231703],
-                    Taxes: [31293, 31748, 32220, 11889, 76626, 114763, 79022, 47713, 51795, 54552, 74571, 121030, 135570, 131759, 133983, 149240, 155037, 159259, 163397, 70287, 69935, 62010, 63538, 65108, 66716, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    LTC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43049, 223927, 419320]
-                },
-                taxes: {
-                    Federal: [19964, 20197, 20442, 5870, 90040, 120354, 47277, 48409, 49568, 50754, 81210, 139898, 130779, 131550, 134487, 141595, 145706, 149482, 65118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    FICA: [11321, 11551, 11786, 6012, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    CapGains: [0, 0, 0, 5862, 5485, 0, 701, 2227, 3798, 5378, 3999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                }
-            }
-        };
+        // Names and colors
 
         // Names and colors
         const accountNames = {
@@ -6187,26 +6147,6 @@
             }
         }
 
-        function recalculate() {
-            // Recalculate the entire financial plan with new settings
-            console.log('Recalculating financial plan...');
-
-            // Update the dashboard which regenerates all projections
-            updateDashboard();
-
-            // Force update all charts
-            Object.keys(charts).forEach(key => {
-                if (charts[key] && typeof charts[key].update === 'function') {
-                    charts[key].update();
-                }
-            });
-
-            // Update button to show success
-            updateApplyButton('applied');
-
-            console.log('Recalculation complete');
-        }
-
         // Track if settings have changed
         let settingsChanged = false;
 
@@ -6259,65 +6199,6 @@
             }
         }
 
-
-        function updateDashboard() {
-            // ISSUE-017 FIX: Calculate and update all dashboard metrics
-            const scenario = config.currentScenario || 'average';
-            const data = rawData[scenario];
-            const assets = config.settings.assets;
-            const personal = config.settings.personal;
-
-            // Calculate current net worth
-            const currentNW = (assets.retirement || 0) +
-                (assets.roth || 0) +
-                (assets.hsa || 0) +
-                (assets.investments || 0) +
-                (assets.cash || 0) +
-                (assets.otherAssets || 0) +
-                (assets.homeValue || 0) -
-                (assets.mortgage || 0);
-
-            // Find peak net worth from projection data
-            let peakNW = currentNW;
-            let peakAge = personal.age;
-            let peakYear = new Date().getFullYear();
-
-            if (data && data.netWorth) {
-                data.netWorth.forEach((nw, idx) => {
-                    if (nw > peakNW) {
-                        peakNW = nw;
-                        peakAge = personal.age + idx;
-                        peakYear = new Date().getFullYear() + idx;
-                    }
-                });
-            }
-
-            // Update Current Net Worth
-            const metricCurrentNW = document.getElementById('metricCurrentNW');
-            if (metricCurrentNW) {
-                metricCurrentNW.textContent = formatCurrency(currentNW);
-            }
-
-            // Update Peak Net Worth
-            const metricPeakNW = document.getElementById('metricPeakNW');
-            if (metricPeakNW) {
-                metricPeakNW.textContent = formatCurrency(peakNW);
-            }
-
-            const metricPeakYear = document.getElementById('metricPeakYear');
-            if (metricPeakYear) {
-                metricPeakYear.textContent = `Age ${peakAge} (${peakYear})`;
-            }
-
-            // Calculate growth percentage
-            const growthPercent = currentNW > 0 ? ((peakNW - currentNW) / currentNW * 100) : 0;
-            const metricPeakGrowth = document.getElementById('metricPeakGrowth');
-            if (metricPeakGrowth) {
-                metricPeakGrowth.textContent = `+${growthPercent.toFixed(0)}%`;
-            }
-
-            console.log('Dashboard updated:', { currentNW: formatCurrency(currentNW), peakNW: formatCurrency(peakNW), peakAge, peakYear });
-        }
 
         function resetToDefaults() {
             if (confirm('Are you sure you want to reset all settings to defaults?')) {
@@ -7087,48 +6968,7 @@
         // CHARTS INITIALIZATION
         // ============================================
 
-        function initCharts() {
-            const textColor = config.theme === 'dark' ? '#9ca3af' : '#4b5563';
-            const gridColor = config.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-
-            Chart.defaults.color = textColor;
-            Chart.defaults.borderColor = gridColor;
-
-            initNetWorthChart();
-            initRealNominalChart();
-            initAllocationChart();
-            initStackedPortfolioChart();
-            initIncomeChart();
-            initSSComparisonChart();
-            initIncomeReplacementChart();
-            initSurplusGapChart();
-            initMoneyFlowChart();
-            initSuccessGauge();
-            initGapCalculator();
-            initExpensesChart();
-            initExpensePieChart();
-            initHealthcareChart();
-            initTaxesChart();
-            initCumulativeTaxChart();
-            initEffectiveTaxChart();
-            initTaxBracketChart();
-            initWithdrawalChart();
-            initSWRChart();
-            initRothConversionChart();
-            initRMDChart();
-            initMortgageChart();
-            initAccountTrendsChart();
-            initScenarioComparisonChart();
-            initMonteCarloChart();
-            initSequenceRiskChart();
-            initLegacyChart();
-            initWhatIfChart();
-            initDebtPayoffChart();
-            initMarketRiskChart();
-            initSSExplorerChart();
-            initRothExplorerChart();
-            initSparklines();
-        }
+        // initCharts was moved to the bottom of the script for robustness
 
         function initNetWorthChart() {
             const ctx = document.getElementById('chartNetWorth').getContext('2d');
@@ -8252,40 +8092,53 @@
                 charts.ssExplorer.update();
             }
         }
+        function optimizeRothStrategy() {
+            // Logic to find optimal conversion amount based on filling status and brackets
+            const status = config.settings.taxSettings.filingStatus;
+            const targetBracketRate = parseFloat(document.getElementById('rothTargetBracket').value) || 0.22;
+            const brackets = TaxCalculator.brackets[status];
+            const targetLimit = brackets.find(b => b.rate === targetBracketRate)?.limit || 100000;
+
+            // Simplified: set conversion to fill up to the target bracket limit based on average income
+            const avgTaxableIncome = 150000; // Placeholder for more complex logic
+            const optimalAmount = Math.max(0, targetLimit - avgTaxableIncome);
+
+            document.getElementById('rothConvAmount').value = Math.round(optimalAmount / 1000) * 1000;
+            document.getElementById('rothStartAge').value = config.settings.personal.retireAge;
+            document.getElementById('rothEndAge').value = 72;
+            updateRothExplorer();
+        }
+
         function updateRothExplorer() {
             const amount = parseFloat(document.getElementById('rothConvAmount').value) || 0;
             const start = parseInt(document.getElementById('rothStartAge').value) || 55;
-            const end = parseInt(document.getElementById('rothEndAge').value) || 65;
+            const end = parseInt(document.getElementById('rothEndAge').value) || 72;
 
-            const baseline = getNetWorthSeries('average');
-            const years = rawData.years.length;
-            let rothStrategy = [...baseline];
-            let taxImpact = 0;
-            let legacyBoost = 0;
+            // Deep clone config to simulate strategy
+            const localConfig = JSON.parse(JSON.stringify(config));
+            localConfig.settings.taxes.rothConversionEnabled = true;
+            localConfig.settings.taxes.rothConversion = amount;
+            localConfig.settings.taxes.rothConvStart = config.startYear + (start - config.settings.personal.age);
+            localConfig.settings.taxes.rothConvEnd = config.startYear + (end - config.settings.personal.age);
 
-            // Simplified simulation
-            rothStrategy = baseline.map((v, i) => {
-                const age = rawData.ages[i];
-                if (age >= start && age <= end) {
-                    taxImpact += amount * 0.24; // Assume 24% tax on conversion
-                    return v * 1.05; // Assume 5% better growth over long term due to tax-free
-                }
-                if (age > end) {
-                    return v * 1.15; // Compound effect
-                }
-                return v;
-            });
+            const benchmark = SimulationEngine.project(config, 'average');
+            const strategy = SimulationEngine.project(localConfig, 'average');
 
-            legacyBoost = rothStrategy[rothStrategy.length - 1] - baseline[baseline.length - 1];
-            taxImpact = legacyBoost * 0.15; // Simplified tax savings estimate
+            const baselineNW = benchmark.accounts.RetirementSavings.map((v, i) => v + benchmark.accounts.RothIRA[i] + benchmark.accounts.Investments[i]);
+            const strategyNW = strategy.accounts.RetirementSavings.map((v, i) => v + strategy.accounts.RothIRA[i] + strategy.accounts.Investments[i]);
 
-            document.getElementById('rothTotalTax').textContent = formatCurrency(2450000 + taxImpact * 0.1);
-            document.getElementById('rothTaxSavings').textContent = "+" + formatCurrency(taxImpact);
-            document.getElementById('rothLegacyBoost').textContent = "+" + formatCurrency(legacyBoost);
+            const totalBaselineTax = benchmark.expenses.Taxes.reduce((a, b) => a + b, 0);
+            const totalStrategyTax = strategy.expenses.Taxes.reduce((a, b) => a + b, 0);
+            const taxSavings = totalBaselineTax - totalStrategyTax;
+            const legacyBoost = strategyNW[strategyNW.length - 1] - baselineNW[baselineNW.length - 1];
+
+            document.getElementById('rothTotalTax').textContent = formatCurrency(totalStrategyTax);
+            document.getElementById('rothTaxSavings').textContent = (taxSavings >= 0 ? "+" : "") + formatCurrency(taxSavings);
+            document.getElementById('rothLegacyBoost').textContent = (legacyBoost >= 0 ? "+" : "") + formatCurrency(legacyBoost);
 
             if (charts.rothExplorer) {
-                charts.rothExplorer.data.datasets[0].data = baseline;
-                charts.rothExplorer.data.datasets[1].data = rothStrategy;
+                charts.rothExplorer.data.datasets[0].data = baselineNW;
+                charts.rothExplorer.data.datasets[1].data = strategyNW;
                 charts.rothExplorer.update();
             }
         }
@@ -8312,11 +8165,13 @@
         }
 
         function resetRothExplorer() {
-            document.getElementById('rothConvAmount').value = 50000;
-            document.getElementById('rothStartAge').value = 55;
-            document.getElementById('rothEndAge').value = 65;
+            document.getElementById('rothConvAmount').value = 0;
+            document.getElementById('rothStartAge').value = config.settings.personal.retireAge;
+            document.getElementById('rothEndAge').value = 72;
+            document.getElementById('rothTargetBracket').value = "0.22";
             updateRothExplorer();
         }
+
 
         function initDebtPayoffChart() {
             const ctx = document.getElementById('chartDebtPayoff').getContext('2d');
@@ -8876,6 +8731,7 @@
                 // Refresh UI components
                 updateDashboard();
                 refreshAllCharts();
+                updateApplyButton('applied');
 
                 showNotification('Projections recalculated!');
                 saveToLocalStorage();
@@ -9150,6 +9006,12 @@
 
         // Master Chart Initialization Function
         function initCharts() {
+            const textColor = config.theme === 'dark' ? '#9ca3af' : '#4b5563';
+            const gridColor = config.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+            Chart.defaults.color = textColor;
+            Chart.defaults.borderColor = gridColor;
+
             // Helper to safely call init functions
             const safeInit = (funcName) => {
                 try {
