@@ -1,8 +1,17 @@
 {
-  "timestamp": "2026-01-23T16:22:16.992Z",
-  "passed": 68,
-  "failed": 0,
+  "timestamp": "2026-01-23T17:49:53.230Z",
+  "passed": 65,
+  "failed": 2,
   "skipped": 0,
-  "duration": "0.04",
-  "errors": []
+  "duration": "0.10",
+  "errors": [
+    {
+      "test": "Contains config object",
+      "error": "Pattern not found"
+    },
+    {
+      "test": "rawData.years has 46 elements",
+      "error": "Found: none"
+    }
+  ]
 }

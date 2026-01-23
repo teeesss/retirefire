@@ -23,9 +23,19 @@ async function deploy() {
         await client.cd(remotePath);
 
         // Upload dist/index.html as index.html
+        // Upload dist/index.html
         const localFile = path.join(__dirname, '../dist/index.html');
         console.log(`Uploading dist/index.html to index.html...`);
         await client.uploadFrom(localFile, 'index.html');
+
+        // Upload assets directory
+        const assetsDir = path.join(__dirname, '../dist/assets');
+        console.log(`Uploading dist/assets to assets/...`);
+        await client.ensureDir('assets');
+        // purge old assets? maybe not needed if names are hashed, but good practice to clean up? 
+        // basic-ftp clearWorkingDir() might be too aggressive if other stuff is there. 
+        // We'll just upload (overwrite).
+        await client.uploadFromDir(assetsDir, 'assets');
 
         console.log('Deployment successful!');
     } catch (err) {
