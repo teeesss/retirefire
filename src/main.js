@@ -324,17 +324,17 @@ function applySettings() {
 
     // Social Security
     const ss = config.settings.socialSecurity;
-    ss.claimAge = parseInt(document.getElementById('inputSSAge').value);
-    ss.ss62 = parseFloat(document.getElementById('inputSS62').value);
-    ss.ss67 = parseFloat(document.getElementById('inputSS67').value);
-    ss.ss70 = parseFloat(document.getElementById('inputSS70').value);
-    ss.cola = parseFloat(document.getElementById('inputSSCola').value);
+    ss.claimAge = parseInt(document.getElementById('inputSSAge')?.value || 62);
+    ss.ss62 = parseFloat(document.getElementById('inputSS62')?.value || 1800);
+    ss.ss67 = parseFloat(document.getElementById('inputSS67')?.value || 2739);
+    ss.ss70 = parseFloat(document.getElementById('inputSS70')?.value || 3500);
+    ss.cola = parseFloat(document.getElementById('inputSSCola')?.value || 2.5); // Default COLA if missing
 
     // Taxes
     const tx = config.settings.taxSettings;
-    tx.filingStatus = document.getElementById('inputFilingStatus').value;
-    tx.state = document.getElementById('inputState').value;
-    tx.fedBracket = parseInt(document.getElementById('inputFedBracket').value);
+    tx.filingStatus = document.getElementById('inputFilingStatus')?.value || 'head';
+    tx.state = document.getElementById('inputState')?.value || 'FL';
+    tx.fedBracket = parseInt(document.getElementById('inputFedBracket')?.value || 22); // Default 22% bracket
 
     // BUG-003 FIX: Always close settings modal, even if recalculation fails
     // BUG-003 FIX: Always close settings modal, even if recalculation fails
@@ -344,6 +344,7 @@ function applySettings() {
 
     try {
         recalculate();
+        updateApplyButton('applied'); // Show green "Applied!" feedback
         showNotification("✅ Settings applied & plan recalculated!", "success");
     } catch (error) {
         console.error('Error during recalculation:', error);
