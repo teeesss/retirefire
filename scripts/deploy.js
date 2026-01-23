@@ -32,10 +32,8 @@ async function deploy() {
         const assetsDir = path.join(__dirname, '../dist/assets');
         console.log(`Uploading dist/assets to assets/...`);
         await client.ensureDir('assets');
-        // purge old assets? maybe not needed if names are hashed, but good practice to clean up? 
-        // basic-ftp clearWorkingDir() might be too aggressive if other stuff is there. 
-        // We'll just upload (overwrite).
-        await client.uploadFromDir(assetsDir, 'assets');
+        // ensureDir changes into the directory
+        await client.uploadFromDir(assetsDir, '.');
 
         console.log('Deployment successful!');
     } catch (err) {
