@@ -573,14 +573,48 @@ function updateTotalCrypto() {
     document.getElementById('inputCrypto').value = total.toFixed(0);
 }
 
+// ============================================
+// EXPOSE TO WINDOW (Required for HTML onclick attributes)
+// ============================================
+window.openSettings = openSettings;
+window.closeSettings = closeSettings;
+window.showSettingsSection = showSettingsSection;
+window.toggleSpouseFields = toggleSpouseFields;
+window.toggleHomeFields = toggleHomeFields;
+window.updateAllocDisplay = updateAllocDisplay;
+window.validateSettings = validateSettings;
+window.applySettings = applySettings;
+window.toggleTheme = toggleTheme;
+window.resetToDefaults = resetToDefaults;
+window.importSettings = importSettings;
+window.exportSettings = exportSettings;
+window.addEvent = addEvent;
+window.removeEvent = removeEvent;
+window.addRecurringEvent = addRecurringEvent;
+window.removeRecurringEvent = removeRecurringEvent;
+window.createCustomScenario = createCustomScenario;
+window.cloneScenario = cloneScenario;
+window.setScenario = setScenario;
+window.toggleComparison = toggleComparison;
+window.toggleRothConversion = toggleRothConversion;
+window.openGoalModal = openGoalModal;
+window.saveGoal = saveGoal;
+window.closeGoalModal = function () { document.getElementById('goalModal').classList.remove('active'); };
+
 // Initialize crypto sync
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(updateCryptoPrices, 1000);
 
+    // Init charts immediately
+    initCharts();
+
     // Add listeners to crypto inputs
     ['inputBTC', 'inputETH', 'inputSOL'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updateTotalExpenses); // Also update crypto? No, different function.
-        document.getElementById(id).addEventListener('input', updateTotalCrypto);
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateTotalExpenses);
+            el.addEventListener('input', updateTotalCrypto);
+        }
     });
 
     // Add listeners for expense running total
@@ -589,19 +623,26 @@ window.addEventListener('DOMContentLoaded', () => {
         if (el) el.addEventListener('input', updateTotalExpenses);
     });
     // Asset Allocation Dropdown Listener
-    document.getElementById('inputGlidePath').addEventListener('change', function () {
-        const val = this.value;
-        if (val === 'aggressive') {
-            setAllocation(90, 0, 3, 7);
-        } else if (val === 'moderate') {
-            setAllocation(60, 30, 5, 5);
-        } else if (val === 'conservative') {
-            setAllocation(40, 50, 10, 0);
-        }
-        // Custom: do nothing
-    });
+    const glidePath = document.getElementById('inputGlidePath');
+    if (glidePath) {
+        glidePath.addEventListener('change', function () {
+            const val = this.value;
+            if (val === 'aggressive') {
+                setAllocation(90, 0, 3, 7);
+            } else if (val === 'moderate') {
+                setAllocation(60, 30, 5, 5);
+            } else if (val === 'conservative') {
+                setAllocation(40, 50, 10, 0);
+            }
+            // Custom: do nothing
+        });
+    }
 
     updateTotalExpenses(); // Init
+    initSettingsChangeDetection(); // Init settings detection
+
+    // Initial Calculation
+    recalculate();
 });
 
 function saveGoal() {
