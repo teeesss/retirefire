@@ -2551,19 +2551,6 @@
                     <button class="scenario-btn custom" onclick="setScenario('custom')" id="customScenarioBtn"
                         style="display:none;">🎯 Custom</button>
                 </div>
-                <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 1.5rem; margin-right: 0.5rem;">🔀
-                    Compare:</span>
-                <div class="comparison-toggles">
-                    <button class="comparison-toggle active" onclick="toggleComparison('optimistic', this)">
-                        <span class="dot" style="background: #10b981;"></span> Optimistic
-                    </button>
-                    <button class="comparison-toggle active" onclick="toggleComparison('average', this)">
-                        <span class="dot" style="background: #3b82f6;"></span> Average
-                    </button>
-                    <button class="comparison-toggle active" onclick="toggleComparison('pessimistic', this)">
-                        <span class="dot" style="background: #ef4444;"></span> Pessimistic
-                    </button>
-                </div>
             </div>
         </header>
 
@@ -8863,7 +8850,10 @@
             // Risk
             safeUpdateElement('mLTCRisk', '70% Potential');
             const retirementSpend = config.settings.expenses?.annualSpending || 90000;
-            const withdrawalRate = (retirementSpend / (sc.accounts.RetirementSavings[peakIndex] || 1) * 100).toFixed(2);
+            // Calculate retirement year index (years from now until retirement)
+            const retirementYearIndex = Math.max(0, config.settings.personal.retireAge - config.settings.personal.age);
+            const retirementBalance = sc.accounts.RetirementSavings[retirementYearIndex] || sc.accounts.RetirementSavings[0] || 1;
+            const withdrawalRate = (retirementSpend / retirementBalance * 100).toFixed(2);
             safeUpdateElement('mWithdrawalRate', withdrawalRate + '%');
             safeUpdateElement('mStressTest', 'Passed');
         }
