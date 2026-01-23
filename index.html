@@ -8784,33 +8784,30 @@
             safeUpdateElement('metricTaxes', formatCurrency(totalTaxes));
 
             // --- Comprehensive Metrics Dashboard (US-013) ---
-            // Elements below appear missing in current DOM, commenting out
-            /*
+
             // Financial Health
             const outOfMoney = netWorths.findIndex(nw => nw <= 0);
             safeUpdateElement('mNeverRunOut', outOfMoney === -1 ? 'Never' : 'Age ' + rawData.ages[outOfMoney]);
             safeUpdateElement('mSuccessRate', successRate + '%');
- 
-            const retirementSpend = config.settings.expenses.annualSpending;
+
+            const retirementSpend = config.settings.expenses?.annualSpending || 90000;
             const assetsRequired = retirementSpend * 25;
-            const currentAssets = config.settings.assets.retirement + config.settings.assets.roth + config.settings.assets.hsa + config.settings.assets.investments;
+            const currentAssets = (config.settings.assets?.retirement || 0) + (config.settings.assets?.roth || 0) + (config.settings.assets?.hsa || 0) + (config.settings.assets?.investments || 0);
             const savingsRatio = (currentAssets / assetsRequired * 100).toFixed(0);
             safeUpdateElement('mSavingsRatio', savingsRatio + '%');
- 
+
             // Progress Tracking
             const monthsToRetire = Math.max(0, (config.settings.personal.retireAge - config.settings.personal.age) * 12);
             safeUpdateElement('mRetireCount', monthsToRetire + ' mo');
- 
+
             const monthsRemaining = (config.settings.personal.longevity - config.settings.personal.age) * 12;
             safeUpdateElement('mLifeRemaining', monthsRemaining + ' mo');
- 
-            const yearlySavings = config.settings.income.contribution401k + config.settings.income.rothContrib + config.settings.income.hsaContrib;
-            const savingsRate = (yearlySavings / config.settings.income.work * 100).toFixed(1);
+
+            const yearlySavings = (config.settings.income?.contribution401k || 0) + (config.settings.income?.rothContrib || 0) + (config.settings.income?.hsaContrib || 0);
+            const savingsRate = (yearlySavings / (config.settings.income?.work || 1) * 100).toFixed(1);
             safeUpdateElement('mSavingsRate', savingsRate + '%');
- 
-            // Debt & Cash Flow
-            safeUpdateElement('mDebtFree', 'Sep 2027'); // Simplified for now
-            */
+
+            // Debt & Cash Flow continues below
             const debtRatio = (config.settings.housing.mortgagePayment * 12 / config.settings.income.work * 100).toFixed(1);
             safeUpdateElement('mDebtRatio', debtRatio + '%');
 
@@ -8849,7 +8846,6 @@
 
             // Risk
             safeUpdateElement('mLTCRisk', '70% Potential');
-            const retirementSpend = config.settings.expenses?.annualSpending || 90000;
             // Calculate retirement year index (years from now until retirement)
             const retirementYearIndex = Math.max(0, config.settings.personal.retireAge - config.settings.personal.age);
             const retirementBalance = sc.accounts.RetirementSavings[retirementYearIndex] || sc.accounts.RetirementSavings[0] || 1;
