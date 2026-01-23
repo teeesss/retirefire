@@ -10,6 +10,46 @@ import { formatCurrency, formatPercent } from './utils/Formatters.js';
 let charts = {};
 // window.charts = charts; // Optional debugging
 
+// Track initialization state
+let isInitialized = false;
+
+// ============================================
+// CHART DESTRUCTION HELPER (Fixes HMR/double-init)
+// ============================================
+
+/**
+ * Safely destroy an existing chart before recreating it.
+ * This prevents "Canvas is already in use" errors with Vite HMR.
+ * @param {string} chartKey - The key in the charts object (e.g., 'netWorth')
+ * @returns {boolean} - True if a chart was destroyed
+ */
+function destroyChart(chartKey) {
+    if (charts[chartKey]) {
+        try {
+            charts[chartKey].destroy();
+            delete charts[chartKey];
+            return true;
+        } catch (e) {
+            console.warn(`Failed to destroy chart ${chartKey}:`, e.message);
+        }
+    }
+    return false;
+}
+
+/**
+ * Destroy all existing charts (useful for full re-init)
+ */
+function destroyAllCharts() {
+    Object.keys(charts).forEach(key => destroyChart(key));
+}
+
+// Vite HMR cleanup
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+        console.log('Vite HMR: Cleaning up charts...');
+        destroyAllCharts();
+    });
+}
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -626,12 +666,14 @@ window.closeGoalModal = function () { document.getElementById('goalModal').class
 window.initCharts = initCharts; // Should be handled by DOMContentLoaded but useful for debug
 window.updateNetWorthChart = updateNetWorthChart; // Used by toggleComparison
 
-// Initialize crypto sync
+// Initialize crypto sync and event listeners
 window.addEventListener('DOMContentLoaded', () => {
+    // Skip if already initialized (prevents double-init from multiple listeners)
+    if (isInitialized) return;
+
     setTimeout(updateCryptoPrices, 1000);
 
-    // Init charts immediately
-    initCharts();
+    // Note: initCharts() is called in the main initialization section at bottom of file
 
     // Add listeners to crypto inputs
     ['inputBTC', 'inputETH', 'inputSOL'].forEach(id => {
@@ -665,9 +707,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     updateTotalExpenses(); // Init
     initSettingsChangeDetection(); // Init settings detection
-
-    // Initial Calculation
-    recalculate();
 });
 
 function saveGoal() {
@@ -3127,6 +3166,9 @@ function initGapCalculator() {
 
 // Master Chart Initialization Function
 function initCharts() {
+    // Destroy all existing charts first (prevents HMR errors)
+    destroyAllCharts();
+
     const textColor = config.theme === 'dark' ? '#9ca3af' : '#4b5563';
     const gridColor = config.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
 
@@ -3171,6 +3213,10 @@ function initCharts() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Prevent double initialization
+    if (isInitialized) return;
+    isInitialized = true;
+
     loadFromLocalStorage();
 
     // Apply theme
@@ -3180,7 +3226,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize charts
     initCharts();
 
-    // Update dashboard
+    // Update dashboard and recalculate
+    recalculate();
     updateDashboard();
 
     // Set up auto-save
