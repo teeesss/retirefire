@@ -136,24 +136,24 @@
 - [x] E2E test verifies sidebar exists with 11 nav items
 - [x] E2E test verifies all 9 section anchors exist
 
-### US-033: User Feedback Fixes Round 2 (Active)
+### US-033: User Feedback Fixes Round 2 ✅ COMPLETE
 **As a** user
 **I want** the settings panel to be clearer and "Apply" to give feedback without closing
 **So that** I understand what I am changing and can tweak values easily
 
 **Acceptance Criteria:**
 - [x] **Docs**: Update all .md files and tracking. (2026-01-23)
-- [ ] **Nav**: Add Descriptions to ALL settings sections.
-- [ ] **Nav**: Add "Back" / "Next" buttons or clear navigation flow.
-- [ ] **SS**: Fix Social Security section (add description, ensure fields match request).
-- [ ] **Assets**: Clarify "Asset Allocation" vs "Glide Path".
-- [ ] **UX**: "Apply" button should NOT close modal, just recalculate & notify.
-- [ ] **Housing**: Default "Plan to Sell" = NO.
-- [ ] **Healthcare**: Set defaults (Curr: $5k, Pre-Med: $5k, Med: $6k).
-- [ ] **Taxes**: Add description.
-- [ ] **Events**: detailed separation of One-Time vs Recurring.
-- [ ] **Events**: Add Start/End Age to Recurring Events.
-- [ ] **Scenarios**: Add description explaining "Custom Scenarios".
+- [x] **Nav**: Add Descriptions to ALL settings sections. (2026-01-23 - All 15 sections have descriptions)
+- [x] **Nav**: Add "Back" / "Next" buttons or clear navigation flow. (Already exists - line 4352)
+- [x] **SS**: Fix Social Security section (add description, ensure fields match request). (Has description lines 4640-4643)
+- [x] **Assets**: Clarify "Asset Allocation" vs "Glide Path". (Info box lines 4534-4538 explains difference)
+- [x] **UX**: "Apply" button should NOT close modal, just recalculate & notify. (Implemented - line 6186 commented out)
+- [x] **Housing**: Default "Plan to Sell" = NO. (Set - line 4785)
+- [x] **Healthcare**: Set defaults (Curr: $5k, Pre-Med: $5k, Med: $6k). (Set - lines 4821, 4825, 4830)
+- [x] **Taxes**: Add description. (Has description lines 4950-4953)
+- [x] **Events**: detailed separation of One-Time vs Recurring. (Separate sections with IDs settings-events and settings-recurring)
+- [x] **Events**: Add Start/End Age to Recurring Events. (Implemented - lines 5086-5093)
+- [x] **Scenarios**: Add description explaining "Custom Scenarios". (Has description lines 5143-5146)
 
 ---
 
