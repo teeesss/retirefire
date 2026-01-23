@@ -6154,8 +6154,8 @@
             inc.work = parseFloat(document.getElementById('inputWorkIncome').value);
             inc.growth = parseFloat(document.getElementById('inputIncomeGrowth').value);
             inc.contribution401k = parseFloat(document.getElementById('input401kContrib').value);
-            inc.employerMatch = parseFloat(document.getElementById('inputEmployerMatch').value);
-            inc.rothContrib = parseFloat(document.getElementById('inputRothContrib').value);
+            inc.employerMatch = parseFloat(document.getElementById('inputEmployerMatch')?.value || 0);
+            inc.rothContrib = parseFloat(document.getElementById('inputRothContrib')?.value || 0);
             inc.hsaContrib = parseFloat(document.getElementById('inputHSAContrib').value);
 
             // Expenses
@@ -6167,8 +6167,8 @@
             exp.annualSpending = exp.general + exp.travel + exp.utilities + exp.misc;
 
             exp.phases = [
-                { startAge: config.settings.personal.retireAge, endAge: 60, multiplier: parseFloat(document.getElementById('inputPhase1Mult').value), description: 'Active Retirement' },
-                { startAge: 60, endAge: 70, multiplier: parseFloat(document.getElementById('inputPhase2Mult').value), description: 'Slow Down' }
+                { startAge: config.settings.personal.retireAge, endAge: 60, multiplier: parseFloat(document.getElementById('inputPhase1Mult')?.value || 1.0), description: 'Active Retirement' },
+                { startAge: 60, endAge: 70, multiplier: parseFloat(document.getElementById('inputPhase2Mult')?.value || 0.9), description: 'Slow Down' }
             ];
 
             // Social Security
@@ -8862,6 +8862,7 @@
 
             // Risk
             safeUpdateElement('mLTCRisk', '70% Potential');
+            const retirementSpend = config.settings.expenses?.annualSpending || 90000;
             const withdrawalRate = (retirementSpend / (sc.accounts.RetirementSavings[peakIndex] || 1) * 100).toFixed(2);
             safeUpdateElement('mWithdrawalRate', withdrawalRate + '%');
             safeUpdateElement('mStressTest', 'Passed');
