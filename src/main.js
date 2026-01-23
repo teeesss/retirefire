@@ -576,6 +576,18 @@ function updateTotalCrypto() {
 // ============================================
 // EXPOSE TO WINDOW (Required for HTML onclick attributes)
 // ============================================
+// ============================================
+// EXPOSE TO WINDOW (Required for HTML onclick attributes)
+// ============================================
+console.log('Main.js loaded v2.0 - Globals exposed');
+
+// Theme & Storage
+window.toggleTheme = toggleTheme;
+window.resetToDefaults = resetToDefaults;
+window.importSettings = importSettings;
+window.exportSettings = exportSettings;
+
+// Settings UI
 window.openSettings = openSettings;
 window.closeSettings = closeSettings;
 window.showSettingsSection = showSettingsSection;
@@ -583,23 +595,36 @@ window.toggleSpouseFields = toggleSpouseFields;
 window.toggleHomeFields = toggleHomeFields;
 window.updateAllocDisplay = updateAllocDisplay;
 window.validateSettings = validateSettings;
-window.applySettings = applySettings;
-window.toggleTheme = toggleTheme;
-window.resetToDefaults = resetToDefaults;
-window.importSettings = importSettings;
-window.exportSettings = exportSettings;
+window.applySettings = applySettings; // Calls recalculate
+
+// Calculations & Updates
+window.recalculate = recalculate;
+window.updateTotalExpenses = updateTotalExpenses;
+window.updateTotalCrypto = updateTotalCrypto;
+window.setAllocation = setAllocation;
+window.updateDashboard = updateDashboard;
+
+// Events
 window.addEvent = addEvent;
 window.removeEvent = removeEvent;
 window.addRecurringEvent = addRecurringEvent;
 window.removeRecurringEvent = removeRecurringEvent;
+
+// Scenarios
 window.createCustomScenario = createCustomScenario;
 window.cloneScenario = cloneScenario;
 window.setScenario = setScenario;
 window.toggleComparison = toggleComparison;
 window.toggleRothConversion = toggleRothConversion;
+
+// Goals
 window.openGoalModal = openGoalModal;
 window.saveGoal = saveGoal;
 window.closeGoalModal = function () { document.getElementById('goalModal').classList.remove('active'); };
+
+// Charts & Init (Just in case)
+window.initCharts = initCharts; // Should be handled by DOMContentLoaded but useful for debug
+window.updateNetWorthChart = updateNetWorthChart; // Used by toggleComparison
 
 // Initialize crypto sync
 window.addEventListener('DOMContentLoaded', () => {
