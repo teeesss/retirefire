@@ -8,6 +8,7 @@
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
+| **ISSUE-061** | Production site broken - JavaScript not loading (closing tags in partial) | ✅ FIXED | Removed `</body></html>` and duplicate `<script>` tag from `settings-and-modals.html`. Added build validation test. |
 | **ISSUE-058** | Mortgage balance stuck at $250k (no principal paydown) | ✅ FIXED | Implemented standard amortization formula in `SimulationEngine.js`. Mortgage now correctly pays down over time. |
 | **ISSUE-059** | Roth slider step too large, no number input | ✅ FIXED | Added number input synced with slider, reduced step to 500. Users can now enter exact amounts. |
 | **ISSUE-060** | RMDs showing $0 (logic missing) | ✅ FIXED | Implemented IRS Uniform Lifetime Table (age 73+) in `SimulationEngine.js`. RMDs now calculated and taxed correctly. |

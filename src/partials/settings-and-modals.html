@@ -1,59 +1,59 @@
-﻿        <!-- Settings Panel Overlay -->
+        <!-- Settings Panel Overlay -->
         <!-- CLEAN REBUILT Settings Panel Overlay -->
         <div class="settings-overlay" id="settingsOverlay">
             <div class="settings-panel">
                 <div class="settings-header">
                     <div style="display:flex; align-items:center; gap:1rem;">
-                        <button class="btn btn-sm btn-ghost" onclick="closeSettings()">â† Back</button>
-                        <h2>âš™ï¸ Plan Settings & Assumptions</h2>
+                        <button class="btn btn-sm btn-ghost" onclick="closeSettings()">← Back</button>
+                        <h2>⚙️ Plan Settings & Assumptions</h2>
                     </div>
-                    <button class="settings-close" onclick="closeSettings()">Ã—</button>
+                    <button class="settings-close" onclick="closeSettings()">×</button>
                 </div>
                 <div class="settings-body">
                     <div class="settings-sidebar">
-                        <div class="settings-nav-item active" onclick="showSettingsSection('personal', this)">ðŸ‘¤
+                        <div class="settings-nav-item active" onclick="showSettingsSection('personal', this)">👤
                             Personal
                             Info
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('spouse', this)">ðŸ‘«
+                        <div class="settings-nav-item" onclick="showSettingsSection('spouse', this)">👫
                             Spouse/Partner
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('assets', this)">ðŸ’° Assets</div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('income', this)">ðŸ’µ Income</div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('socialsecurity', this)">ðŸ›ï¸
+                        <div class="settings-nav-item" onclick="showSettingsSection('assets', this)">💰 Assets</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('income', this)">💵 Income</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('socialsecurity', this)">🏛️
                             Social
                             Security
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('expenses', this)">ðŸ“¤ Expenses
+                        <div class="settings-nav-item" onclick="showSettingsSection('expenses', this)">📤 Expenses
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('housing', this)">ðŸ  Housing
+                        <div class="settings-nav-item" onclick="showSettingsSection('housing', this)">🏠 Housing
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('healthcare', this)">ðŸ¥
+                        <div class="settings-nav-item" onclick="showSettingsSection('healthcare', this)">🏥
                             Healthcare
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('rates', this)">ðŸ“ˆ Return Rates
+                        <div class="settings-nav-item" onclick="showSettingsSection('rates', this)">📈 Return Rates
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('inflation', this)">ðŸ“Š Inflation
+                        <div class="settings-nav-item" onclick="showSettingsSection('inflation', this)">📊 Inflation
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('taxes', this)">ðŸ›ï¸ Tax Settings
+                        <div class="settings-nav-item" onclick="showSettingsSection('taxes', this)">🏛️ Tax Settings
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('events', this)">ðŸ“… One-Time
+                        <div class="settings-nav-item" onclick="showSettingsSection('events', this)">📅 One-Time
                             Events
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('recurring', this)">ðŸ”„ Recurring
+                        <div class="settings-nav-item" onclick="showSettingsSection('recurring', this)">🔄 Recurring
                             Events
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('scenarios', this)">ðŸŽ¯ Custom
+                        <div class="settings-nav-item" onclick="showSettingsSection('scenarios', this)">🎯 Custom
                             Scenarios
                         </div>
-                        <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">ðŸŽ¯ Goals</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">🎯 Goals</div>
                     </div>
                     <div class="settings-content">
                         <!-- ============================================ -->
                         <!-- SECTION: Personal Info (DEFAULT ACTIVE) -->
                         <!-- ============================================ -->
                         <div class="settings-section active" id="settings-personal">
-                            <h3>ðŸ‘¤ Personal Information</h3>
+                            <h3>👤 Personal Information</h3>
                             <p class="section-description">
                                 Configure your basic profile information. These settings establish the timeline for
                                 your
@@ -101,7 +101,7 @@
                         <!-- SECTION: Spouse/Partner -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-spouse">
-                            <h3>ðŸ‘« Spouse/Partner Information</h3>
+                            <h3>👫 Spouse/Partner Information</h3>
                             <p class="section-description">
                                 Add a spouse or partner to create a combined financial plan. We'll simulate their
                                 income,
@@ -145,7 +145,7 @@
                         <!-- SECTION: Assets -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-assets">
-                            <h3>ðŸ’° Current Assets</h3>
+                            <h3>💰 Current Assets</h3>
                             <p class="section-description">
                                 Enter your current investment and cash balances. This forms the starting point of
                                 your
@@ -178,7 +178,7 @@
                                 </div>
                             </div>
 
-                            <h3 style="margin-top: 1.5rem;">â‚¿ Crypto Assets</h3>
+                            <h3 style="margin-top: 1.5rem;">₿ Crypto Assets</h3>
                             <div class="settings-grid settings-grid-3">
                                 <div class="input-group">
                                     <label>Bitcoin (BTC)</label>
@@ -202,7 +202,7 @@
                                 </div>
                             </div>
 
-                            <h3 style="margin-top: 1.5rem;">ðŸ“ˆ Asset Allocation & Glide Path</h3>
+                            <h3 style="margin-top: 1.5rem;">📈 Asset Allocation & Glide Path</h3>
                             <div class="alert info" style="margin-bottom: 1rem; font-size: 0.8rem;">
                                 <strong>Asset Allocation</strong> is your current mix of stocks/bonds.
                                 <strong>Glide Path</strong> (if not "Custom") automatically adjusts this mix to
@@ -275,7 +275,7 @@
                         <!-- SECTION: Income -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-income">
-                            <h3>ðŸ’µ Income Sources</h3>
+                            <h3>💵 Income Sources</h3>
                             <p class="section-description">
                                 Define your income during your working years and any non-portfolio income (pensions,
                                 side
@@ -314,7 +314,7 @@
                         <!-- SECTION: Social Security -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-socialsecurity">
-                            <h3>ðŸ›ï¸ Social Security</h3>
+                            <h3>🏛️ Social Security</h3>
                             <p class="section-description">
                                 Optimize your claiming strategy. Compare benefits at different claiming ages to
                                 maximize
@@ -348,7 +348,7 @@
                         <!-- SECTION: Expenses -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-expenses">
-                            <h3>ðŸ“¤ Annual Expenses</h3>
+                            <h3>📤 Annual Expenses</h3>
                             <p class="section-description">
                                 Estimate your future living costs. You can categorize them to better understand your
                                 spending structure.
@@ -406,7 +406,7 @@
                         <!-- SECTION: Housing -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-housing">
-                            <h3>ðŸ  Housing</h3>
+                            <h3>🏠 Housing</h3>
                             <p class="section-description">
                                 Manage your primary residence assets. You can model selling your home in the future
                                 to
@@ -457,7 +457,7 @@
                                         <input type="number" id="inputHomeInsurance" value="2400">
                                     </div>
                                 </div>
-                                <h4 style="margin-top: 1.5rem;">ðŸ¡ Home Sale Plans</h4>
+                                <h4 style="margin-top: 1.5rem;">🏡 Home Sale Plans</h4>
                                 <div class="settings-grid settings-grid-3">
                                     <div class="input-group">
                                         <label>Plan to Sell Home?</label>
@@ -491,7 +491,7 @@
                         <!-- SECTION: Healthcare -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-healthcare">
-                            <h3>ðŸ¥ Healthcare Costs</h3>
+                            <h3>🏥 Healthcare Costs</h3>
                             <p class="section-description">
                                 Healthcare is often the largest expense in retirement. Model pre-Medicare (ACA) and
                                 Medicare premiums separately.
@@ -531,7 +531,7 @@
                         <!-- SECTION: Return Rates -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-rates">
-                            <h3>ðŸ“ˆ Investment Return Rates</h3>
+                            <h3>📈 Investment Return Rates</h3>
                             <p class="section-description">
                                 Set your expected annual growth rates for different asset classes. These assumptions
                                 drive the core Monte Carlo simulations.
@@ -599,7 +599,7 @@
                         <!-- SECTION: Inflation -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-inflation">
-                            <h3>ðŸ“Š Inflation Assumptions</h3>
+                            <h3>📊 Inflation Assumptions</h3>
                             <p class="section-description">
                                 Inflation erodes purchasing power over time. Even small differences here can have a
                                 huge
@@ -628,7 +628,7 @@
                         <!-- SECTION: Tax Settings -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-taxes">
-                            <h3>ðŸ›ï¸ Tax Settings</h3>
+                            <h3>🏛️ Tax Settings</h3>
                             <p class="section-description">
                                 Configure your tax environment. We calculate progressive federal brackets and
                                 state-specific rules.
@@ -649,7 +649,7 @@
                                     <input type="number" id="inputCapGainsTax" value="15" step="1">
                                 </div>
                             </div>
-                            <h3 style="margin-top: 1.5rem;">ðŸ”„ Roth Conversion Strategy</h3>
+                            <h3 style="margin-top: 1.5rem;">🔄 Roth Conversion Strategy</h3>
                             <div class="settings-grid settings-grid-3">
                                 <div class="input-group">
                                     <label>Annual Roth Conversion Amount</label>
@@ -679,7 +679,7 @@
                         <!-- SECTION: One-Time Events -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-events">
-                            <h3>ðŸ“… One-Time Financial Events</h3>
+                            <h3>📅 One-Time Financial Events</h3>
 
                             <p class="section-description">
                                 <strong>What are One-Time Events?</strong><br>
@@ -687,11 +687,11 @@
                                 specific
                                 year.
                                 Examples include:<br>
-                                â€¢ Inheritance or gift received<br>
-                                â€¢ Large home purchase or sale (if not using Housing section)<br>
-                                â€¢ College tuition payment<br>
-                                â€¢ Wedding expenses<br>
-                                â€¢ Starting a business (seed capital)<br><br>
+                                • Inheritance or gift received<br>
+                                • Large home purchase or sale (if not using Housing section)<br>
+                                • College tuition payment<br>
+                                • Wedding expenses<br>
+                                • Starting a business (seed capital)<br><br>
 
                                 <strong>How to use:</strong> Enter the year, describe the event, specify the amount,
                                 and
@@ -742,18 +742,18 @@
                         <!-- SECTION: Recurring Events -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-recurring">
-                            <h3>ðŸ”„ Recurring Cash Flow Events</h3>
+                            <h3>🔄 Recurring Cash Flow Events</h3>
 
                             <p class="section-description">
                                 <strong>What are Recurring Events?</strong><br>
                                 These are income or expenses that happen <strong>every year</strong> for a specific
                                 age
                                 range. Perfect for modeling:<br>
-                                â€¢ **Travel phases**: "Ages 55-65: $40k/year extra travel"<br>
-                                â€¢ **Part-time income**: "Ages 60-70: $25k/year consulting"<br>
-                                â€¢ **Education costs**: "Ages 50-54: $30k/year for kid's college"<br>
-                                â€¢ **Rental property income** (if not using main income fields)<br>
-                                â€¢ **Club memberships** or **hobbies** with ongoing costs<br><br>
+                                • **Travel phases**: "Ages 55-65: $40k/year extra travel"<br>
+                                • **Part-time income**: "Ages 60-70: $25k/year consulting"<br>
+                                • **Education costs**: "Ages 50-54: $30k/year for kid's college"<br>
+                                • **Rental property income** (if not using main income fields)<br>
+                                • **Club memberships** or **hobbies** with ongoing costs<br><br>
 
                                 <strong>How to use:</strong><br>
                                 1. Enter the <strong>Start Age</strong> and <strong>End Age</strong> for when this
@@ -821,7 +821,7 @@
 
                             <div
                                 style="margin-top: 1rem; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary); border-radius: 0.25rem; font-size: 0.85rem;">
-                                <strong>ðŸ’¡ Example:</strong> If you plan to travel heavily from ages 60-70, add a
+                                <strong>💡 Example:</strong> If you plan to travel heavily from ages 60-70, add a
                                 recurring
                                 expense: "Start Age: 60, End Age: 70, Description: Enhanced Travel, Amount: $40,000,
                                 Type:
@@ -833,7 +833,7 @@
                         <!-- SECTION: Custom Scenarios -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-scenarios">
-                            <h3>ðŸŽ¯ Custom Scenarios</h3>
+                            <h3>🎯 Custom Scenarios</h3>
                             <p class="section-description">
                                 Create alternative versions of the future (e.g., "High Inflation", "Bull Market").
                                 These
@@ -869,7 +869,7 @@
                         <!-- SECTION: Goals -->
                         <!-- ============================================ -->
                         <div class="settings-section" id="settings-goals">
-                            <h3>ðŸŽ¯ Financial Goals</h3>
+                            <h3>🎯 Financial Goals</h3>
                             <p class="section-description">
                                 Set target milestones for your retirement journey. These goals help track your
                                 progress
@@ -893,7 +893,7 @@
                                     <input type="number" id="goalRetireIncome" value="120000">
                                 </div>
                             </div>
-                            <h4 style="margin-top: 1.5rem;">ðŸ”¥ FIRE Targets</h4>
+                            <h4 style="margin-top: 1.5rem;">🔥 FIRE Targets</h4>
                             <div class="settings-grid settings-grid-3">
                                 <div class="input-group">
                                     <label>FIRE Number (25x Expenses)</label>
@@ -912,14 +912,14 @@
                 </div>
                 <div class="settings-footer">
                     <div>
-                        <button class="btn btn-outline" onclick="resetToDefaults()">ðŸ”„ Reset to Defaults</button>
-                        <button class="btn btn-outline" onclick="importSettings()">ðŸ“¥ Import</button>
-                        <button class="btn btn-outline" onclick="exportSettings()">ðŸ“¤ Export</button>
+                        <button class="btn btn-outline" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+                        <button class="btn btn-outline" onclick="importSettings()">📥 Import</button>
+                        <button class="btn btn-outline" onclick="exportSettings()">📤 Export</button>
                     </div>
                     <div>
                         <button class="btn btn-outline" onclick="closeSettings()">Cancel</button>
                         <button class="btn btn-warning" id="applySettingsBtn" onclick="applySettings()">
-                            <span id="applyBtnIcon">âš ï¸</span>
+                            <span id="applyBtnIcon">⚠️</span>
                             <span id="applyBtnText">Apply & Recalculate</span>
                         </button>
                     </div>
@@ -931,8 +931,8 @@
         <div class="modal-overlay" id="comparisonOverlay">
             <div class="modal-content-large">
                 <div class="modal-header">
-                    <h3 class="modal-title">ðŸ”€ Strategy Comparison</h3>
-                    <button class="settings-close" onclick="closeComparisonModal()">Ã—</button>
+                    <h3 class="modal-title">🔀 Strategy Comparison</h3>
+                    <button class="settings-close" onclick="closeComparisonModal()">×</button>
                 </div>
                 <div class="modal-body" id="comparisonModalContent">
                     <table class="comparison-table"
@@ -963,8 +963,8 @@
         <div class="modal-overlay" id="yearDetailModal">
             <div class="modal" style="max-width: 800px;">
                 <div class="modal-header">
-                    <h3>ðŸ“… Year <span id="modalYear">2026</span> Details (Age <span id="modalAge">50</span>)</h3>
-                    <button class="settings-close" onclick="closeYearModal()">Ã—</button>
+                    <h3>📅 Year <span id="modalYear">2026</span> Details (Age <span id="modalAge">50</span>)</h3>
+                    <button class="settings-close" onclick="closeYearModal()">×</button>
                 </div>
                 <div class="modal-body" id="yearModalBody"></div>
                 <div class="modal-footer">
@@ -977,8 +977,8 @@
         <div class="modal-overlay" id="goalModal">
             <div class="modal">
                 <div class="modal-header">
-                    <h3>ðŸŽ¯ Add New Goal</h3>
-                    <button class="settings-close" onclick="closeGoalModal()">Ã—</button>
+                    <h3>🎯 Add New Goal</h3>
+                    <button class="settings-close" onclick="closeGoalModal()">×</button>
                 </div>
                 <div class="modal-body">
                     <div class="input-group" style="margin-bottom: 1rem;">
@@ -1002,8 +1002,3 @@
                 </div>
             </div>
         </div>
-
-        <script type="module" src="/src/main.js"></script>
-</body>
-
-</html>
