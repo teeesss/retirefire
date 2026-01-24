@@ -1,0 +1,95 @@
+﻿
+                    <!-- Enhanced Monte Carlo Analysis -->
+                    <div class="card span-6" id="section-montecarlo">
+                        <div class="card-header">
+                            <div class="card-title">ðŸŽ² Monte Carlo Analysis</div>
+                            <button class="btn-primary" onclick="runMonteCarloSimulation()">
+                                â–¶ï¸ Run Again
+                            </button>
+                        </div>
+
+                        <!-- Monte Carlo Explanation -->
+                        <div class="monte-carlo-info">
+                            <p>We run <strong>1,000 simulations</strong> (randomizing and varying values for a more
+                                realistic
+                                projection that accounts for market ups and downs) to determine a realistic range for
+                                your
+                                projected
+                                savings outcomes.</p>
+                            <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.8rem;">Your projected
+                                savings are
+                                compared in the chart below based upon your <strong>average assumptions</strong>.</p>
+                        </div>
+
+                        <!-- Simulation Results -->
+                        <div class="simulation-results">
+                            <div class="simulation-result success">
+                                <div class="result-icon">ðŸŽ¯</div>
+                                <div class="result-content">
+                                    <div class="result-label">Probability of Success to Age 95</div>
+                                    <div class="result-value" id="mcSuccessRate">99%</div>
+                                </div>
+                            </div>
+                            <div class="simulation-result success">
+                                <div class="result-icon">ðŸ’°</div>
+                                <div class="result-content">
+                                    <div class="result-label">Probability of $5M Legacy Goal</div>
+                                    <div class="result-value" id="mcLegacyRate">98%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart with Confidence Bands -->
+                        <div class="chart-container large">
+                            <canvas id="chartMonteCarlo"></canvas>
+                        </div>
+
+                        <!-- Percentile Stats -->
+                        <div class="stats-row" style="margin-top: 1rem;">
+                            <div class="stat-item">
+                                <div class="label">10th %ile</div>
+                                <div class="value negative" id="mc10">$16.5M</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="label">25th %ile</div>
+                                <div class="value" style="color: var(--warning);" id="mc25">$39.8M</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="label">Median</div>
+                                <div class="value" style="color: var(--primary);" id="mc50">$91.2M</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="label">75th %ile</div>
+                                <div class="value positive" id="mc75">$194.7M</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="label">90th %ile</div>
+                                <div class="value positive" id="mc90">$348.5M</div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Toggle -->
+                        <div class="monte-carlo-comparison">
+                            <div class="comparison-toggle">
+                                <label class="toggle-label">
+                                    <input type="checkbox" id="showLinearProjection" checked
+                                        onchange="toggleLinearProjection()">
+                                    <span>Show Linear Projection</span>
+                                </label>
+                                <label class="toggle-label">
+                                    <input type="checkbox" id="showConfidenceBands" checked
+                                        onchange="toggleConfidenceBands()">
+                                    <span>Show Confidence Bands</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Info Note -->
+                        <div class="monte-carlo-note">
+                            <div class="note-icon">â„¹ï¸</div>
+                            <div class="note-text">
+                                This analysis has no impact on results seen on any other page of the planner.
+                                <a href="#" onclick="showMonteCarloHelp(); return false;">Learn More</a>
+                            </div>
+                        </div>
+                    </div>

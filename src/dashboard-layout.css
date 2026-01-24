@@ -1,0 +1,23 @@
+/* Dashboard Layout Improvements (US-044) */
+
+/* Reduce chart heights for better vertical density */
+.chart-container.small { height: 180px !important; }
+.chart-container.medium { height: 250px !important; }
+.chart-container.large { height: 320px !important; }
+.chart-container.xlarge { height: 400px !important; }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .span-1, .span-2, .span-3, .span-4, .span-5, .span-6 {
+        grid-column: 1 / -1 !important;
+    }
+    
+    /* Ensure cards have margin on mobile */
+    .card {
+        margin-bottom: 1rem;
+    }
+}

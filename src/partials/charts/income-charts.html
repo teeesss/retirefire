@@ -1,0 +1,93 @@
+﻿                        <div class="chart-container large">
+                            <canvas id="chartSurplusGap"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ“ˆ Lifetime Cash Flow (Cumulative)</div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartLifetimeCashFlow"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Social Security Comparison -->
+                    <div class="card span-3" id="section-socialsecurity">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ›ï¸ Social Security Claiming Strategy</div>
+                        </div>
+                        <div class="ss-comparison" id="ssComparison">
+                            <!-- US-042: Auto-Calculation Inputs -->
+                            <div
+                                style="width: 100%; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--border-color);">
+                                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                                    <div style="flex: 1;">
+                                        <label
+                                            style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Current
+                                            Salary</label>
+                                        <input type="number" id="ssInputSalary" class="modern-input"
+                                            style="width: 100%;" placeholder="Annual Income">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label
+                                            style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Career
+                                            Profile</label>
+                                        <select id="ssInputProfile" class="modern-select" style="width: 100%;">
+                                            <option value="max">Max ($176k+)</option>
+                                            <option value="high" selected>High ($100k+)</option>
+                                            <option value="medium">Avg ($60k+)</option>
+                                            <option value="low">Low (&lt;$40k)</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" style="height: 34px;"
+                                        onclick="calculateAndSetSS()">
+                                        Calculate
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ss-option" onclick="selectSSAge(62, this)">
+                                <div class="age">62</div>
+                                <div class="monthly" id="ss62">$2,739/mo</div>
+                                <div class="lifetime">Lifetime: <span id="ss62Lifetime">$985K</span></div>
+                            </div>
+                            <div class="ss-option selected" onclick="selectSSAge(67, this)">
+                                <div class="age">67</div>
+                                <div class="monthly" id="ss67">$3,913/mo</div>
+                                <div class="lifetime">Lifetime: <span id="ss67Lifetime">$1.13M</span></div>
+                            </div>
+                            <div class="ss-option" onclick="selectSSAge(70, this)">
+                                <div class="age">70</div>
+                                <div class="monthly" id="ss70">$4,857/mo</div>
+                                <div class="lifetime">Lifetime: <span id="ss70Lifetime">$1.17M</span></div>
+                            </div>
+                        </div>
+                        <div class="chart-container medium">
+                            <canvas id="chartSSComparison"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Income Replacement Ratio -->
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ“‰ Income Replacement Ratio</div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartIncomeReplacement"></canvas>
+                        </div>
+                        <div class="stats-row" style="margin-top: 1rem;">
+                            <div class="stat-item">
+                                <div class="label">Pre-Retirement</div>
+                                <div class="value" id="preRetirementIncome">$148K/yr</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="label">Post-Retirement</div>
+                                <div class="value" id="postRetirementIncome">$95K/yr</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="label">Replacement</div>
+                                <div class="value" id="replacementRatio">64%</div>
+                            </div>
+                        </div>
+                    </div>
+

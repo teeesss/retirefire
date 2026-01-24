@@ -1,0 +1,92 @@
+﻿                    <!-- Main Net Worth Chart -->
+                    <div class="card span-6" id="section-networth">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ“ˆ Net Worth Projection - All Scenarios</div>
+                            <div class="tabs" style="background: transparent; padding: 0;">
+                                <button class="tab active"
+                                    onclick="setChartType('networth', 'line', this)">Line</button>
+                                <button class="tab" onclick="setChartType('networth', 'area', this)">Area</button>
+                                <button class="tab" onclick="setNetWorthScale('linear', this)">Linear</button>
+                                <button class="tab" onclick="setNetWorthScale('logarithmic', this)">Log</button>
+                            </div>
+                        </div>
+                        <div class="chart-container xlarge">
+                            <canvas id="chartNetWorth"></canvas>
+                        </div>
+                        <div class="legend" id="netWorthLegend"></div>
+                    </div>
+
+                    <!-- Real vs Nominal -->
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ’µ Real vs Nominal Net Worth</div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartRealNominal"></canvas>
+                        </div>
+                        <div class="legend">
+                            <div class="legend-item"><span class="legend-color" style="background: #3b82f6"></span>
+                                Nominal
+                            </div>
+                            <div class="legend-item"><span class="legend-color" style="background: #10b981"></span> Real
+                                (Inflation-Adjusted)</div>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Allocation Over Time -->
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ¥§ Asset Allocation - <span id="allocationYearLabel">2026</span>
+                            </div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartAllocation"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Stacked Portfolio -->
+                    <div class="card span-4">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ“Š Portfolio Composition Over Time</div>
+                            <div class="tabs" style="background: transparent; padding: 0;">
+                                <button class="tab active" onclick="setStackedView('absolute', this)">Absolute</button>
+                                <button class="tab" onclick="setStackedView('percentage', this)">Percentage</button>
+                            </div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartStackedPortfolio"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Account Breakdown -->
+                    <div class="card span-2">
+                        <div class="card-header">
+                            <div class="card-title" id="accountBreakdownTitle">ðŸ’° Account Breakdown</div>
+                        </div>
+                        <div class="account-breakdown" id="accountBreakdown"></div>
+                    </div>
+
+                    <!-- Income Sources -->
+                    <div class="card span-3" id="section-income">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ’µ Income Sources Over Time</div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartIncome"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Income Breakdown Current Year -->
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ“¥ Cash Flow - <span id="cashFlowYearLabel">2026</span></div>
+                        </div>
+                        <div id="cashFlowDetails" style="font-size: 0.85rem;"></div>
+                    </div>
+
+                    <!-- Surplus / Gap Analysis -->
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">âš–ï¸ Surplus / Gap Analysis</div>
+                        </div>
+                        <div class="chart-container large">

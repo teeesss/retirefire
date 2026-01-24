@@ -1,0 +1,550 @@
+﻿
+                    <!-- Sequence of Returns Risk -->
+                    <div class="card span-2">
+                        <div class="card-header">
+                            <div class="card-title">âš ï¸ Sequence of Returns Risk</div>
+                        </div>
+                        <div class="chart-container medium">
+                            <canvas id="chartSequenceRisk"></canvas>
+                        </div>
+                        <div class="insight-card warning" style="margin-top: 1rem;">
+                            <div class="insight-title">Critical Years: 53-58</div>
+                            <div class="insight-text">Early retirement years are most sensitive to market downturns.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Planning -->
+                    <div class="card span-3" id="section-legacy">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ›ï¸ Estate/Legacy Value</div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="chartLegacy"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced What-If Explorer -->
+                    <div class="card span-6" id="whatIfExplorer">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ”® What-If Scenario Explorer</div>
+                            <button class="btn-outline" onclick="resetWhatIf()">â†º Reset</button>
+                        </div>
+
+                        <div class="what-if-intro">
+                            <p>Explore how different life events and market conditions could impact your financial plan.
+                            </p>
+                        </div>
+
+                        <!-- Scenario Categories -->
+                        <div class="scenario-categories">
+                            <div class="scenario-category">
+                                <h4>ðŸ“‰ Market Stress Tests</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn active" data-scenario="baseline"
+                                        onclick="runWhatIf('baseline', this)">
+                                        <span class="scenario-icon">ðŸ“Š</span>
+                                        <span class="scenario-name">Baseline Plan</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="crash55"
+                                        onclick="runWhatIf('crash55', this)">
+                                        <span class="scenario-icon">ðŸ“‰</span>
+                                        <span class="scenario-name">30% Crash at 55</span>
+                                        <span class="scenario-impact negative">âˆ’$1.2M</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="crash60"
+                                        onclick="runWhatIf('crash60', this)">
+                                        <span class="scenario-icon">ðŸ“‰</span>
+                                        <span class="scenario-name">30% Crash at 60</span>
+                                        <span class="scenario-impact negative">âˆ’$890K</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="bear" onclick="runWhatIf('bear', this)">
+                                        <span class="scenario-icon">ðŸ»</span>
+                                        <span class="scenario-name">5-Year Bear Market</span>
+                                        <span class="scenario-impact negative">âˆ’$2.1M</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="scenario-category">
+                                <h4>ðŸ’° Income Changes</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="parttime"
+                                        onclick="runWhatIf('parttime', this)">
+                                        <span class="scenario-icon">ðŸ’¼</span>
+                                        <span class="scenario-name">Part-Time Work 55-60</span>
+                                        <span class="scenario-impact positive">+$450K</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="delay62"
+                                        onclick="runWhatIf('delay62', this)">
+                                        <span class="scenario-icon">â³</span>
+                                        <span class="scenario-name">Delay Retirement to 55</span>
+                                        <span class="scenario-impact positive">+$1.8M</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="ssdelay"
+                                        onclick="runWhatIf('ssdelay', this)">
+                                        <span class="scenario-icon">ðŸ‡ºðŸ‡¸</span>
+                                        <span class="scenario-name">Delay SS to 67</span>
+                                        <span class="scenario-impact positive">+$340K</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="scenario-category">
+                                <h4>ðŸ“ˆ Economic Factors</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="inflation"
+                                        onclick="runWhatIf('inflation', this)">
+                                        <span class="scenario-icon">ðŸ“ˆ</span>
+                                        <span class="scenario-name">High Inflation (4%)</span>
+                                        <span class="scenario-impact negative">âˆ’$1.5M</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="lowreturns"
+                                        onclick="runWhatIf('lowreturns', this)">
+                                        <span class="scenario-icon">ðŸ“‰</span>
+                                        <span class="scenario-name">Low Returns (4%)</span>
+                                        <span class="scenario-impact negative">âˆ’$3.2M</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="scenario-category">
+                                <h4>ðŸ¥ Life Events</h4>
+                                <div class="scenario-buttons">
+                                    <button class="scenario-btn" data-scenario="longevity"
+                                        onclick="runWhatIf('longevity', this)">
+                                        <span class="scenario-icon">âŒ›</span>
+                                        <span class="scenario-name">Live to 100</span>
+                                        <span class="scenario-impact warning">âˆ’$2.8M</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="healthcare"
+                                        onclick="runWhatIf('healthcare', this)">
+                                        <span class="scenario-icon">ðŸ¥</span>
+                                        <span class="scenario-name">Major Healthcare Expense</span>
+                                        <span class="scenario-impact negative">âˆ’$250K</span>
+                                    </button>
+                                    <button class="scenario-btn" data-scenario="ltc" onclick="runWhatIf('ltc', this)">
+                                        <span class="scenario-icon">ðŸ </span>
+                                        <span class="scenario-name">Long-Term Care Needed</span>
+                                        <span class="scenario-impact negative">âˆ’$400K</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Result Chart -->
+                        <div class="what-if-result">
+                            <div class="chart-container medium">
+                                <canvas id="chartWhatIf"></canvas>
+                            </div>
+
+                            <!-- Impact Summary -->
+                            <div class="impact-summary" id="impactSummary">
+                                <div class="impact-card">
+                                    <span class="impact-label">Net Worth at 95</span>
+                                    <span class="impact-value positive" id="whatIfNW95">$233.8M</span>
+                                </div>
+                                <div class="impact-card">
+                                    <span class="impact-label">Success Rate</span>
+                                    <span class="impact-value positive" id="whatIfSuccess">99%</span>
+                                </div>
+                                <div class="impact-card">
+                                    <span class="impact-label">Legacy Goal Met</span>
+                                    <span class="impact-value positive" id="whatIfLegacy">Yes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Debt Payoff Explorer -->
+                    <div class="card span-6" id="debtPayoffExplorer">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ’¸ Debt Payoff Explorer</div>
+                        </div>
+                        <div class="debt-explorer-container">
+                            <div class="debt-list-section">
+                                <h4>Select Debts to Include</h4>
+                                <div id="debtExplorerList">
+                                    <div class="debt-explorer-item">
+                                        <input type="checkbox" id="includeMortgage" checked
+                                            onchange="updateDebtCalculations()">
+                                        <label for="includeMortgage" class="debt-info">
+                                            <span class="debt-icon">ðŸ </span>
+                                            <div class="debt-name-bal">
+                                                <span class="debt-name">Mortgage</span>
+                                                <span class="debt-bal">$425,000 @ 3.5%</span>
+                                            </div>
+                                        </label>
+                                        <span class="debt-min-pay">$2,800/mo</span>
+                                    </div>
+                                    <div class="debt-explorer-item">
+                                        <input type="checkbox" id="includeCC" checked
+                                            onchange="updateDebtCalculations()">
+                                        <label for="includeCC" class="debt-info">
+                                            <span class="debt-icon">ðŸ’³</span>
+                                            <div class="debt-name-bal">
+                                                <span class="debt-name">Credit Cards</span>
+                                                <span class="debt-bal">$12,500 @ 18.9%</span>
+                                            </div>
+                                        </label>
+                                        <span class="debt-min-pay">$450/mo</span>
+                                    </div>
+                                    <div class="debt-explorer-item">
+                                        <input type="checkbox" id="includeCar" checked
+                                            onchange="updateDebtCalculations()">
+                                        <label for="includeCar" class="debt-info">
+                                            <span class="debt-icon">ðŸš—</span>
+                                            <div class="debt-name-bal">
+                                                <span class="debt-name">Car Loan</span>
+                                                <span class="debt-bal">$28,000 @ 5.2%</span>
+                                            </div>
+                                        </label>
+                                        <span class="debt-min-pay">$650/mo</span>
+                                    </div>
+                                </div>
+
+                                <div class="extra-payment-box">
+                                    <label>Monthly Extra Payment:</label>
+                                    <div class="input-with-prefix">
+                                        <span>$</span>
+                                        <input type="number" id="extraDebtPayment" value="500" step="100"
+                                            oninput="updateDebtCalculations()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="debt-analysis-section">
+                                <div class="strategy-picker">
+                                    <button class="strategy-tab active" onclick="setDebtStrategy('avalanche', this)">ðŸ›¡ï¸
+                                        Avalanche</button>
+                                    <button class="strategy-tab" onclick="setDebtStrategy('snowball', this)">â„ï¸
+                                        Snowball</button>
+                                </div>
+
+                                <div class="debt-impact-cards">
+                                    <div class="impact-mini-card success">
+                                        <div class="impact-val" id="debtInterestSaved">$24,150</div>
+                                        <div class="impact-label">Interest Saved</div>
+                                    </div>
+                                    <div class="impact-mini-card info">
+                                        <div class="impact-val" id="debtTimeSaved">32 months</div>
+                                        <div class="impact-label">Time Saved</div>
+                                    </div>
+                                    <div class="impact-mini-card warning">
+                                        <div class="impact-val" id="debtFinalDate">Sep 2031</div>
+                                        <div class="impact-label">Final Payoff</div>
+                                    </div>
+                                </div>
+
+                                <div class="chart-container-small">
+                                    <canvas id="chartDebtPayoff"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Market Risk Explorer -->
+                    <div class="card span-6" id="marketRiskExplorer">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ“‰ Market Risk Explorer</div>
+                            <button class="btn-outline" onclick="resetMarketRisk()">â†º Reset</button>
+                        </div>
+                        <div class="market-risk-container">
+                            <div class="risk-scenarios-panel">
+                                <h4>Select Stress Test</h4>
+                                <div class="risk-buttons">
+                                    <button class="risk-btn active" onclick="runMarketRisk('baseline', this)">
+                                        <div class="risk-name">Standard Plan (6%)</div>
+                                        <div class="risk-desc">Your baseline assumptions</div>
+                                    </button>
+                                    <button class="risk-btn" onclick="runMarketRisk('dotcom', this)">
+                                        <div class="risk-name">2000-2002 Dot Com Crash</div>
+                                        <div class="risk-desc">-45% over 3 years at start</div>
+                                    </button>
+                                    <button class="risk-btn" onclick="runMarketRisk('gfc', this)">
+                                        <div class="risk-name">2008 Financial Crisis</div>
+                                        <div class="risk-desc">-37% in one year at retirement</div>
+                                    </button>
+                                    <button class="risk-btn" onclick="runMarketRisk('stagflation', this)">
+                                        <div class="risk-name">1970s Stagflation</div>
+                                        <div class="risk-desc">Low returns + high inflation</div>
+                                    </button>
+                                    <button class="risk-btn" onclick="runMarketRisk('lostdecade', this)">
+                                        <div class="risk-name">Lost Decade (0% Returns)</div>
+                                        <div class="risk-desc">10 years of flat growth</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="risk-analysis-panel">
+                                <div class="risk-impact-metrics">
+                                    <div class="risk-metric">
+                                        <span class="label">Plan Endures Until</span>
+                                        <span class="value" id="riskEndDate">Age 95+</span>
+                                    </div>
+                                    <div class="risk-metric">
+                                        <span class="label">Legacy at 95</span>
+                                        <span class="value" id="riskLegacyValue">$233.8M</span>
+                                    </div>
+                                    <div class="risk-metric">
+                                        <span class="label">Shortfall Amount</span>
+                                        <span class="value negative" id="riskShortfall">$0</span>
+                                    </div>
+                                </div>
+
+                                <div class="chart-container large">
+                                    <canvas id="chartMarketRisk"></canvas>
+                                </div>
+
+                                <div class="risk-insight">
+                                    <p id="riskInsightText">Your plan is resilient. Even with a 2008-style crash at
+                                        retirement, you
+                                        have a 99% probability of success.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Security Explorer -->
+                    <div class="card span-6" id="section-explorers">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ‡ºðŸ‡¸ Social Security Optimizer</div>
+                            <a href="https://www.ssa.gov/myaccount/" target="_blank" class="btn-sm btn-outline"
+                                style="text-decoration: none;">ðŸ” Find My Benefit</a>
+                        </div>
+                        <div class="ss-explorer-container">
+                            <div class="ss-setup-panel">
+                                <div class="ss-input-group">
+                                    <label>Monthly Benefit at Full Retirement Age (67):</label>
+                                    <div class="input-with-prefix large">
+                                        <span>$</span>
+                                        <input type="number" id="ssPiaInput" value="3000" step="100"
+                                            oninput="updateSSExplorer()">
+                                    </div>
+                                </div>
+
+                                <div class="claiming-age-selector">
+                                    <label>Select Claiming Age:</label>
+                                    <div class="age-tabs">
+                                        <button class="age-tab" data-age="62"
+                                            onclick="setSSClaimAge(62, this)">62<br><small>-30%</small></button>
+                                        <button class="age-tab active" data-age="67"
+                                            onclick="setSSClaimAge(67, this)">67<br><small>100%</small></button>
+                                        <button class="age-tab" data-age="70"
+                                            onclick="setSSClaimAge(70, this)">70<br><small>+24%</small></button>
+                                    </div>
+                                </div>
+
+                                <div class="ss-impact-summary">
+                                    <div class="ss-metric-card">
+                                        <span class="label">Monthly Benefit</span>
+                                        <span class="value" id="ssMonthlyValue">$3,000</span>
+                                    </div>
+                                    <div class="ss-metric-card">
+                                        <span class="label">Annual Benefit</span>
+                                        <span class="value" id="ssAnnualValue">$36,000</span>
+                                    </div>
+                                    <div class="ss-metric-card">
+                                        <span class="label">Lifetime (to 95)</span>
+                                        <span class="value" id="ssLifetimeValue">$1,008,000</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ss-analysis-panel">
+                                <div class="break-even-insight" id="ssBreakEvenText">
+                                    Claiming at 70 instead of 62 breaks even at age 78.
+                                </div>
+                                <div class="chart-container large">
+                                    <canvas id="chartSSExplorer"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Roth Conversion Explorer -->
+                    <div class="card span-6" id="rothExplorer">
+                        <div class="card-header">
+                            <div class="card-title">ðŸ”„ Roth Conversion Optimizer</div>
+                            <button class="btn-outline" onclick="resetRothExplorer()">â†º Reset</button>
+                        </div>
+                        <div class="roth-explorer-container">
+                            <div class="roth-setup-panel">
+                                <div class="roth-input-group">
+                                    <label>Annual Conversion Amount:</label>
+                                    <div class="input-with-prefix">
+                                        <span>$</span>
+                                        <input type="number" id="rothConvAmount" value="50000" step="10000"
+                                            oninput="updateRothExplorer()">
+                                    </div>
+                                </div>
+
+                                <div class="roth-range-inputs">
+                                    <div class="roth-input-group">
+                                        <label>Start Age:</label>
+                                        <input type="number" id="rothStartAge" value="55" min="53" max="95"
+                                            oninput="updateRothExplorer()">
+                                    </div>
+                                    <div class="roth-input-group">
+                                        <label>End Age:</label>
+                                        <input type="number" id="rothEndAge" value="65" min="53" max="95"
+                                            oninput="updateRothExplorer()">
+                                    </div>
+                                    <div class="roth-input-group">
+                                        <label>Target Bracket:</label>
+                                        <select id="rothTargetBracket" onchange="updateRothExplorer()">
+                                            <option value="0.10">10% Bracket</option>
+                                            <option value="0.12">12% Bracket</option>
+                                            <option value="0.22" selected>22% Bracket</option>
+                                            <option value="0.24">24% Bracket</option>
+                                            <option value="0.32">32% Bracket</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button class="btn-primary" style="width: 100%; margin-top: 1rem;"
+                                    onclick="optimizeRothStrategy()">
+                                    âœ¨ Optimize Conversion Strategy
+                                </button>
+
+
+                                <div class="roth-impact-indicators">
+                                    <div class="roth-impact-card">
+                                        <span class="label">Total Taxes Paid</span>
+                                        <span class="value" id="rothTotalTax">$2.4M</span>
+                                    </div>
+                                    <div class="roth-impact-card success">
+                                        <span class="label">Tax Savings</span>
+                                        <span class="value" id="rothTaxSavings">+$142K</span>
+                                    </div>
+                                    <div class="roth-impact-card success">
+                                        <span class="label">Legacy Increase</span>
+                                        <span class="value" id="rothLegacyBoost">+$310K</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="roth-analysis-panel">
+                                <div class="chart-container large">
+                                    <canvas id="chartRothExplorer"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Goals Tracking -->
+                    <div class="card span-3">
+                        <div class="card-header">
+                            <div class="card-title">ðŸŽ¯ Goal Tracking</div>
+                            <button class="btn btn-sm btn-outline" onclick="openGoalModal()">+ Add Goal</button>
+                        </div>
+                        <div id="goalsContainer">
+                            <div class="goal-item">
+                                <div class="goal-icon"
+                                    style="background: rgba(16, 185, 129, 0.2); color: var(--success);">
+                                    ðŸŽ‰</div>
+                                <div class="goal-info">
+                                    <div class="goal-title">Early Retirement at 53</div>
+                                    <div class="goal-detail">Target: $4M Net Worth</div>
+                                    <div class="goal-progress">
+                                        <div class="goal-progress-fill"
+                                            style="width: 100%; background: var(--success);">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="goal-status">
+                                    <div class="goal-percentage positive">âœ“ 106%</div>
+                                    <div class="goal-remaining">Achieved!</div>
+                                </div>
+                            </div>
+                            <div class="goal-item">
+                                <div class="goal-icon"
+                                    style="background: rgba(59, 130, 246, 0.2); color: var(--primary);">
+                                    ðŸ’°</div>
+                                <div class="goal-info">
+                                    <div class="goal-title">$10M by Age 70</div>
+                                    <div class="goal-detail">Target: $10,000,000</div>
+                                    <div class="goal-progress">
+                                        <div class="goal-progress-fill" style="width: 42%; background: var(--primary);">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="goal-status">
+                                    <div class="goal-percentage">42%</div>
+                                    <div class="goal-remaining">$5.8M to go</div>
+                                </div>
+                            </div>
+                            <div class="goal-item">
+                                <div class="goal-icon"
+                                    style="background: rgba(139, 92, 246, 0.2); color: var(--purple);">
+                                    ðŸ›ï¸</div>
+                                <div class="goal-info">
+                                    <div class="goal-title">Leave $5M Legacy</div>
+                                    <div class="goal-detail">Target: $5,000,000 at 95</div>
+                                    <div class="goal-progress">
+                                        <div class="goal-progress-fill" style="width: 85%; background: var(--purple);">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="goal-status">
+                                    <div class="goal-percentage">On Track</div>
+                                    <div class="goal-remaining">Est: $233M</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Milestones Timeline -->
+                    <div class="card span-6">
+                        <div class="card-header">
+                            <div class="card-title">ðŸŽ¯ Your Financial Journey - Key Milestones</div>
+                        </div>
+                        <div class="milestone-timeline enhanced" id="milestoneTimeline">
+                            <!-- TODAY -->
+                            <div class="milestone today" style="border-color: var(--primary);">
+                                <div class="milestone-badge">ðŸ‘</div>
+                                <div class="milestone-date">
+                                    <div class="milestone-year">TODAY</div>
+                                    <div class="milestone-age">You: 50</div>
+                                </div>
+                                <div class="milestone-content">
+                                    <h4>You're making plans and making stuff happen</h4>
+                                    <p>Current net worth: <strong id="milestoneCurrentNW">$4.2M</strong></p>
+                                </div>
+                            </div>
+
+                            <!-- Debt Freedom -->
+                            <div class="milestone" style="border-color: var(--success);">
+                                <div class="milestone-badge">ðŸ’³</div>
+                                <div class="milestone-date">
+                                    <div class="milestone-year">Sep 2027</div>
+                                    <div class="milestone-age">You: 51</div>
+                                </div>
+                                <div class="milestone-content">
+                                    <h4>Debt (Non-Mortgage) Freedom</h4>
+                                    <p>We estimate you'll have everything paid off. No more credit card debt!</p>
+                                </div>
+                            </div>
+
+                            <!-- Early Retirement -->
+                            <div class="milestone featured" style="border-color: var(--warning);">
+                                <div class="milestone-badge">ðŸŽ‰</div>
+                                <div class="milestone-date">
+                                    <div class="milestone-year">Jul 2029</div>
+                                    <div class="milestone-age">You: 53</div>
+                                </div>
+                                <div class="milestone-content">
+                                    <h4>You've reached your retirement age!</h4>
+                                    <p>Work income ends. Living off investments and savings begins.</p>
+                                </div>
+                            </div>
+
+                            <!-- Roth Conversions -->
+                            <div class="milestone" style="border-color: var(--purple);">
+                                <div class="milestone-badge">ðŸ”„</div>
+                                <div class="milestone-date">
+                                    <div class="milestone-year">Jan 2030</div>
+                                    <div class="milestone-age">You: 54</div>
+                                </div>
+                                <div class="milestone-content">
+                                    <h4>Roth Conversion Ladder Begins</h4>

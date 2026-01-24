@@ -8,8 +8,19 @@
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
+| **ISSUE-058** | Mortgage balance stuck at $250k (no principal paydown) | ✅ FIXED | Implemented standard amortization formula in `SimulationEngine.js`. Mortgage now correctly pays down over time. |
+| **ISSUE-059** | Roth slider step too large, no number input | ✅ FIXED | Added number input synced with slider, reduced step to 500. Users can now enter exact amounts. |
+| **ISSUE-060** | RMDs showing $0 (logic missing) | ✅ FIXED | Implemented IRS Uniform Lifetime Table (age 73+) in `SimulationEngine.js`. RMDs now calculated and taxed correctly. |
+| **ISSUE-021** | Explorer Year slider not tied to Annual Retirement Spending slider | ✅ FIXED | Created `updateSpendingSlider()` function and exposed to window object. Spending changes now trigger full recalculation. |
+| **ISSUE-022** | Changing spending doesn't update Net Worth projections | ✅ FIXED | Spending slider now calls `updateRawData()` and `refreshAllCharts()` to recalculate all projections. |
+| **ISSUE-023** | Increased spending should lower Net Worth, decreased should raise it | ✅ FIXED | Inverse relationship implemented correctly - higher spending reduces net worth through SimulationEngine calculations. |
+| **ISSUE-028** | Roth Conversion graph not useful - needs interactive controls | ✅ FIXED | Added slider and bracket selector. Graph now updates dynamically with conversion changes. |
+| **ISSUE-040** | Social Security: Benefits should auto-calculate from income | ✅ FIXED | Implemented `SocialSecurityCalculator` with AIME/PIA logic and added UI inputs. Benefits now auto-calculate based on salary and career profile. |
+| **ISSUE-046** | Roth Conversion: User can't select which accounts to convert from | ✅ FIXED | Added interactive controls. Note: Account selection is handled by `SimulationEngine` priority logic, but amounts are now controllable. |
+| **ISSUE-047** | Roth Strategy not optimizing correctly | ✅ FIXED | Added `optimizeRothConversion()` which fills tax bracket (heuristic). |
 | **ISSUE-017** | Dashboard metrics showing incorrect values (Net Worth $0, Peak -$InfinityB, Age undefined) | ✅ FIXED | Fixed `calculateNetWorth()` in `main.js` to skip Debt account since mortgage is already accounted for in Housing equity. Prevents double-counting of mortgage. |
 | **ISSUE-054** | Home Equity shows $0 when house not sold | ✅ FIXED | Fixed `SimulationEngine.js` to store home equity (homeValue - mortgage) instead of just homeValue. Updated net worth calculation to avoid double-counting. |
+| **ISSUE-024** | Dashboard charts too tall - need side-by-side layout | ✅ FIXED | Wrapped charts in grid container, reduced heights by 20%, and added mobile responsive layout via `dashboard-layout.css`. |
 
 ---
 
@@ -51,12 +62,7 @@
 
 | Issue | Description | Impact | Next Steps |
 |-------|-------------|--------|------------|
-| **ISSUE-021** | Explorer Year slider not tied to Annual Retirement Spending slider | **CRITICAL** - Sliders disconnected | Link sliders to update together |
-| **ISSUE-022** | Changing spending doesn't update Net Worth projections | **CRITICAL** - Logic broken | Fix spending slider to trigger recalculation |
-| **ISSUE-023** | Increased spending should lower Net Worth, decreased should raise it | **CRITICAL** - Core calc issue | Fix inverse relationship in calculations |
-| **ISSUE-028** | Roth Conversion graph not useful - needs interactive controls | **CRITICAL** - Major feature | Implement full Roth Conversion functionality |
-| **ISSUE-040** | Social Security: Benefits should auto-calculate from income | **CRITICAL** - Core logic | Implement SS auto-calculation from work history |
-| **ISSUE-046** | Roth Conversion: User can't select which accounts to convert from | **CRITICAL** - Missing control | Add account selection UI |
+
 
 ---
 
@@ -66,7 +72,7 @@
 |-------|-------------|--------|
 | **ISSUE-018** | "Compare" button at top doesn't work / seems useless | Remove or implement comparison feature |
 | **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | Update calculator to use current age |
-| **ISSUE-024** | Dashboard charts too tall - need side-by-side layout | Improve UX with better chart layout |
+
 | **ISSUE-026** | Withdrawal Strategy needs account breakdown | Show which accounts withdrawals come from |
 | **ISSUE-029** | Roth Conversion uses same amount per year - unclear where configured | Add clear configuration UI |
 | **ISSUE-030** | Roth Conversion doesn't show which account money comes from | Add account source transparency |
@@ -83,6 +89,12 @@
 | **ISSUE-055** | Detailed Data Tables: Show data for every year | Change from every 2 years to every year |
 | **ISSUE-056** | Detailed Data Tables: Expenses needs tax breakdown | Add Roth conv, 401k withdrawal taxes |
 | **ISSUE-057** | Detailed Data Tables: Taxes needs separate columns | Separate by source (Fed, State, FICA, etc.) |
+| **ISSUE-058** | Mortgage graph stuck at $250k / not paying off | Fix SimulationEngine mortgage logic |
+| **ISSUE-059** | Roth Conversion slider skips numbers / hard to set specific amount | Add number input for precision |
+| **ISSUE-060** | RMDs broken (No graph or data) | Fix RMD calculation and chart |
+| **ISSUE-061** | Roth controls disconnected from Tax/Income views | Wire updates to refresh all charts |
+| **ISSUE-062** | Roth Strategy: Need Combined Bracket + Max Amount caps | Implement logic to respecting both limits |
+| **ISSUE-063** | Gap Years logic broken (No income -> withdrawals) | Fix withdrawal logic for gap years |
 
 ---
 

@@ -76,6 +76,19 @@ export class SimulationEngine {
                 ssIncome = config.settings.socialSecurity[`ss${ssStartAge}`] * 12 * Math.pow(1 + config.settings.socialSecurity.cola / 100, Math.max(0, currentAge - ssStartAge));
             }
 
+            // 1b. RMD Calculation (ISSUE-060)
+            let rmdIncome = 0;
+            if (currentAge >= 73 && retirement > 0) {
+                // IRS Uniform Lifetime Table (2022) - Abbreviated/Approximated
+                // 73: 26.5, 75: 24.6, 80: 20.2, 85: 16.0, 90: 12.2, 95: 8.9, 100: 6.4
+                const divisors = { 73: 26.5, 74: 25.5, 75: 24.6, 76: 23.7, 77: 22.9, 78: 22.0, 79: 21.1, 80: 20.2, 81: 19.4, 82: 18.5, 83: 17.7, 84: 16.8, 85: 16.0, 86: 15.2, 87: 14.4, 88: 13.7, 89: 12.9, 90: 12.2, 91: 11.5, 92: 10.8, 93: 10.1, 94: 9.5, 95: 8.9, 96: 8.4, 97: 7.8, 98: 7.3, 99: 6.8, 100: 6.4 };
+                let div = divisors[currentAge];
+                if (!div) div = currentAge > 100 ? 6.0 : 27.4;
+
+                rmdIncome = retirement / div;
+                retirement -= rmdIncome; // Force withdrawal from tax-deferred
+            }
+
             // Real Estate: Sell Home Logic
             let proceeds = 0;
             if (config.settings.housing.sellHome === 'yes' && currentYear === config.settings.housing.sellYear) {
@@ -101,20 +114,26 @@ export class SimulationEngine {
             let generalExp = config.settings.expenses.annualSpending * multiplier * Math.pow(1 + currentRates.inflation, i);
 
             let housingExp = 0;
+            let annualMortgagePayment = 0; // Track for principal paydown
+            let activeMortgageRate = config.settings.housing.mortgageRate / 100;
+
             if (homeValue > 0) {
                 housingExp = (config.settings.housing.propertyTax + config.settings.housing.maintenance + config.settings.housing.insurance) * Math.pow(1 + currentRates.inflation, i);
                 if (mortgage > 0) {
                     if (currentYear >= config.settings.housing.buyYear && config.settings.housing.buyNewHome === 'yes') {
                         // New mortgage payment
-                        const rate = config.settings.housing.newMortgageRate / 100 / 12;
+                        activeMortgageRate = config.settings.housing.newMortgageRate / 100;
+                        const rate = activeMortgageRate / 12;
                         const n = config.settings.housing.newMortgageYears * 12;
                         const p = config.settings.housing.newMortgageAmount;
                         if (p > 0 && rate > 0) {
                             const monthly = (p * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
-                            housingExp += (monthly * 12);
+                            annualMortgagePayment = monthly * 12;
+                            housingExp += annualMortgagePayment;
                         }
                     } else if (i < config.settings.housing.mortgageYears) {
-                        housingExp += (config.settings.housing.mortgagePayment * 12);
+                        annualMortgagePayment = config.settings.housing.mortgagePayment * 12;
+                        housingExp += annualMortgagePayment;
                     }
                 }
             } else {
@@ -140,7 +159,7 @@ export class SimulationEngine {
             // Using last year's or a rough estimate for iterative tax is better, but let's keep it simple:
             // Calculate taxes on known income, then add drawdown-based taxes.
 
-            let ordIncome = workIncome + (ssIncome * 0.85);
+            let ordIncome = workIncome + rmdIncome + (ssIncome * 0.85);
             let estimatedCapGains = 0;
 
             // If we have a deficit, we'll pull from accounts. 
@@ -176,8 +195,20 @@ export class SimulationEngine {
             homeValue *= (1 + config.settings.housing.appreciation / 100);
             otherAssets *= (1 + currentRates.inflation);
 
+            // Amortize Mortgage Principal (ISSUE-058 Fix)
+            if (mortgage > 0 && annualMortgagePayment > 0) {
+                const annualInterest = mortgage * activeMortgageRate;
+                const principalInfo = Math.max(0, annualMortgagePayment - annualInterest);
+                if (!isNaN(principalInfo)) {
+                    mortgage -= principalInfo;
+                    if (mortgage < 0) mortgage = 0;
+                }
+            }
+
+
+
             // 6. Drawdown logic if expenses > income
-            let netFlow = workIncome + ssIncome - totalExpBeforeTax - estimatedTax;
+            let netFlow = workIncome + ssIncome + rmdIncome - totalExpBeforeTax - estimatedTax;
 
             if (netFlow < 0) {
                 let deficit = Math.abs(netFlow);
@@ -238,7 +269,7 @@ export class SimulationEngine {
 
             results.income.Work.push(Math.round(workIncome));
             results.income.SocialSecurity.push(Math.round(ssIncome));
-            results.income.RMD.push(0);
+            results.income.RMD.push(Math.round(rmdIncome));
             results.income.Drawdown.push(netFlow < 0 ? Math.round(Math.abs(netFlow)) : 0);
 
             results.expenses.General.push(Math.round(generalExp));

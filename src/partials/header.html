@@ -1,0 +1,33 @@
+<header>
+    <div class="header-top">
+        <div class="header-title">
+            <h1>📊 Retirement Financial Planner Pro</h1>
+            <p>Comprehensive 45-year projection • Interactive Dashboard • Multi-Scenario Analysis</p>
+        </div>
+        <div class="header-actions">
+            <div class="sync-indicator">
+                <span class="sync-dot"></span>
+                <span>Auto-saved</span>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
+            <button class="btn btn-outline" onclick="openSettings()">⚙️ Settings</button>
+            <button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportCSV()">📊 CSV</button>
+            <button class="btn btn-outline" onclick="exportJSON()">💾 Save</button>
+            <button class="btn btn-primary" onclick="recalculate()">🔄 Recalculate</button>
+        </div>
+    </div>
+    <div class="header-controls">
+        <span style="font-size: 0.8rem; color: var(--text-muted); margin-right: 0.5rem;">📊 View
+            Scenario:</span>
+        <div class="scenario-toggle" id="scenarioButtons">
+            <button class="scenario-btn optimistic active" onclick="setScenario('optimistic')">✨
+                Optimistic</button>
+            <button class="scenario-btn average" onclick="setScenario('average')">📈 Average</button>
+            <button class="scenario-btn pessimistic" onclick="setScenario('pessimistic')">⚡
+                Pessimistic</button>
+            <button class="scenario-btn custom" onclick="setScenario('custom')" id="customScenarioBtn"
+                style="display:none;">🎯 Custom</button>
+        </div>
+    </div>
+</header>

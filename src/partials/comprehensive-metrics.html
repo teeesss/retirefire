@@ -1,0 +1,172 @@
+<div class="card span-6">
+    <div class="card-header">
+        <div class="card-title">🔍 Comprehensive Plan Metrics</div>
+        <div class="sync-indicator">
+            <span class="status-excelling" style="padding: 2px 6px; border-radius: 4px;">Excelling</span>
+            <span class="status-progressing" style="padding: 2px 6px; border-radius: 4px;">Progressing</span>
+            <span class="status-vulnerable" style="padding: 2px 6px; border-radius: 4px;">Vulnerable</span>
+        </div>
+    </div>
+
+    <div class="metrics-grid" id="comprehensiveMetrics">
+        <!-- Row 1: Health & Progress -->
+        <div class="metrics-category">
+            <h3>🏦 Financial Health</h3>
+            <div class="metric-row">
+                <span class="metric-label">Out of Money Date</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mNeverRunOut">Never</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Chance of Success</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mSuccessRate">99%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Savings to Need Ratio</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mSavingsRatio">188%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-category">
+            <h3>📈 Progress Tracking</h3>
+            <div class="metric-row">
+                <span class="metric-label">Total Annual Expenses</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mTotalExpenses">$90,000</span>
+                    <span class="metric-status status-informational">Info</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Retirement Countdown</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mRetireCount">42 mo</span>
+                    <span class="metric-status status-informational">Info</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Life Opportunity</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mLifeRemaining">551 mo</span>
+                    <span class="metric-status status-informational">Info</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Savings Rate</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mSavingsRate">0%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Debt & Taxes -->
+        <div class="metrics-category">
+            <h3>💳 Debt & Cash Flow</h3>
+            <div class="metric-row">
+                <span class="metric-label">Debt Freedom Date</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mDebtFree">Sep 2027</span>
+                    <span class="metric-status status-progressing">Progressing</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Total Debt Ratio</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mDebtRatio">25.1%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">12mo Cash Flow</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mCashFlow12">-$5,112</span>
+                    <span class="metric-status status-vulnerable">Vulnerable</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-category">
+            <h3>⚖️ Taxes & Housing</h3>
+            <div class="metric-row">
+                <span class="metric-label">Effective Tax (Lifetime)</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mTaxLifetime">10.3%</span>
+                    <span class="metric-status status-informational">Info</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Effective Tax (2026)</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mTaxNextYear">17.5%</span>
+                    <span class="metric-status status-informational">Info</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Housing Expense Ratio</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mHousingRatio">21.1%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3: Legacy & Risk -->
+        <div class="metrics-category">
+            <h3>🎁 Legacy & Estate</h3>
+            <div class="metric-row">
+                <span class="metric-label">Financial Legacy Goal</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mLegacyScore">1754%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Estate Documents</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mEstateDocs">0/7</span>
+                    <span class="metric-status status-vulnerable">Vulnerable</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Roth Estate Impact</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mRothLegacy">+$4.3M</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-category">
+            <h3>🛡️ Risk Protection</h3>
+            <div class="metric-row">
+                <span class="metric-label">LTC Risk</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mLTCRisk">70% Potential</span>
+                    <span class="metric-status status-progressing">Progressing</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Withdrawal Rate</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mWithdrawalRate">1.4%</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Market Stress Test</span>
+                <div class="metric-value-group">
+                    <span class="metric-value" id="mStressTest">Passed</span>
+                    <span class="metric-status status-excelling">Excelling</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

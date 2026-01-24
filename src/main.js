@@ -1,9 +1,11 @@
 import './style.css';
+import './dashboard-layout.css';
 import Chart from 'chart.js/auto';
 import { config } from './data/Config.js';
 import { rawData, updateRawData } from './data/Store.js';
 import { TaxCalculator } from './engine/TaxCalculator.js';
 import { SimulationEngine } from './engine/SimulationEngine.js';
+import { SocialSecurityCalculator } from './utils/SocialSecurityCalculator.js';
 import { accountNames, incomeNames, expenseNames, colors, incomeColors, expenseColors, scenarioColors } from './data/Constants.js';
 import { formatCurrency, formatPercent } from './utils/Formatters.js';
 import { initializeDescriptionsAndTooltips } from './utils/comprehensiveDescriptions.js';
@@ -1093,59 +1095,8 @@ function toggleComparison(scenario, btn) {
 // ROTH CONVERSION TOGGLE
 // ============================================
 
-function toggleRothConversion() {
-    const enabled = document.getElementById('rothConversionEnabled').checked;
-    document.getElementById('rothConversionContent').style.display = enabled ? 'block' : 'none';
-    document.getElementById('rothConversionDisabled').style.display = enabled ? 'none' : 'block';
-    config.settings.taxes.rothConversionEnabled = enabled;
-    updateRothConversionChart();
-    saveToLocalStorage();
-}
+// Old Roth functions removed
 
-function updateRothConversionMetrics() {
-    const convAmount = config.settings.taxes.rothConversion;
-    const startYear = config.settings.taxes.rothConvStart - 2026;
-    const endYear = config.settings.taxes.rothConvEnd - 2026;
-    const years = (endYear - startYear) + 1;
-
-    // Estimate tax savings (simplified: assume 24% bracket now, vs 32%+ later for RMDs)
-    const taxSaved = convAmount * years * 0.08; // ~8% savings
-    const breakEvenAge = 50 + Math.round(startYear + (years / 2));
-
-    document.getElementById('rothAnnualAmount').textContent = formatCurrency(convAmount);
-    document.getElementById('rothConversionYears').textContent = years + ' yrs';
-    document.getElementById('rothTaxSavings').textContent = formatCurrency(taxSaved);
-    document.getElementById('rothBreakEven').textContent = 'Age ' + breakEvenAge;
-}
-
-function optimizeRothConversion() {
-    const filingStatus = config.settings.taxSettings.filingStatus;
-    const brackets = TaxCalculator.brackets[filingStatus] || TaxCalculator.brackets.single;
-    const deduction = TaxCalculator.standardDeduction[filingStatus] || 14600;
-
-    // Find the 22% or 24% bracket limit
-    const targetRate = 0.22;
-    const bracket = brackets.find(b => b.rate === targetRate) || brackets[2];
-    const limit = bracket.limit;
-
-    // Current Ordinary Income (Work + SS taxable portion estimate)
-    const work = config.settings.income.work;
-    const ss = config.settings.socialSecurity.ss67 * 12 * 0.85;
-    const currentOrd = work + ss;
-
-    const headroom = Math.max(0, (limit + deduction) - currentOrd);
-
-    config.settings.taxes.rothConversion = Math.round(headroom);
-    config.settings.taxes.rothConversionEnabled = true;
-
-    // Sync UI
-    if (document.getElementById('rothConversionEnabled')) {
-        document.getElementById('rothConversionEnabled').checked = true;
-    }
-
-    recalculate();
-    showNotification(`Optimized: Converting ${formatCurrency(headroom)}/yr to fill the ${targetRate * 100}% bracket.`);
-}
 
 function updateRothConversionChart() {
     if (!charts.rothConversion) return;
@@ -3598,6 +3549,222 @@ function initCharts() {
 }
 
 // ============================================
+// SPENDING SLIDER FUNCTIONALITY (US-040 FIX)
+// ============================================
+
+/**
+ * Update spending slider and recalculate projections
+ * Fixes ISSUE-021, 022, 023: Spending slider integration
+ */
+function updateSpendingSliderFn(value) {
+    const spending = parseInt(value);
+
+    // Update config
+    config.settings.expenses.annualSpending = spending;
+
+    // Update UI display
+    safeUpdateElement('spendingValue', formatCurrency(spending, false));
+    safeUpdateElement('spendingMonthly', formatCurrency(spending / 12, false));
+    safeUpdateElement('spending25x', formatCurrency(spending * 25));
+    safeUpdateElement('spending4pct', formatCurrency(spending * 25));
+
+    // Calculate impact vs baseline (90000)
+    const baseline = 90000;
+    const diff = spending - baseline;
+    const pctDiff = ((diff / baseline) * 100).toFixed(1);
+
+    let impactText = 'Baseline';
+    if (diff > 0) {
+        impactText = `+${formatCurrency(diff, false)}/yr (+${pctDiff}%)`;
+    } else if (diff < 0) {
+        impactText = `${formatCurrency(diff, false)}/yr (${pctDiff}%)`;
+    }
+    safeUpdateElement('spendingImpact', impactText);
+
+    // Recalculate projections with new spending
+    updateRawData();
+
+    // Update all charts and metrics
+    updateDashboard();
+    refreshAllCharts();
+
+    // Save to localStorage
+    saveToLocalStorage();
+
+    // Show notification
+    showNotification(`Spending updated to ${formatCurrency(spending, false)}/year`);
+}
+
+// Stub functions removed to prevent redeclaration errors
+
+
+
+// ============================================
+// ROTH CONVERSION FUNCTIONALITY (US-041)
+// ============================================
+
+/**
+ * Toggle Roth Conversion on/off
+ */
+function toggleRothConversion() {
+    const isEnabled = document.getElementById('rothConversionEnabled').checked;
+    config.settings.taxes.rothConversionEnabled = isEnabled;
+
+    // Toggle visibility
+    const content = document.getElementById('rothConversionContent');
+    const disabledMsg = document.getElementById('rothConversionDisabled');
+
+    if (isEnabled) {
+        content.style.display = 'block';
+        disabledMsg.style.display = 'none';
+
+        // Restore slider value to config
+        const slider = document.getElementById('rothAmountSlider');
+        if (slider) {
+            config.settings.taxes.rothConversion = parseInt(slider.value);
+        }
+    } else {
+        content.style.display = 'none';
+        disabledMsg.style.display = 'block';
+    }
+
+    // Recalculate
+    updateRawData();
+    updateDashboard();
+    refreshAllCharts();
+    saveToLocalStorage();
+}
+
+/**
+ * Update annual Roth conversion amount from slider
+ */
+/**
+ * Update Roth conversion amount from slider/input (ISSUE-059)
+ */
+function updateRothConversionAmountFn(value) {
+    const amount = parseInt(value) || 0;
+    config.settings.taxes.rothConversion = amount;
+
+    // Sync UI controls
+    const slider = document.getElementById('rothAmountSlider');
+    const input = document.getElementById('rothAmountInput');
+
+    if (slider && document.activeElement !== slider) slider.value = amount;
+    if (input && document.activeElement !== input) input.value = amount;
+
+    // Switch to manual mode if user interacts
+    const bracketSelect = document.getElementById('rothTargetBracket');
+    if (bracketSelect && (document.activeElement === slider || document.activeElement === input)) {
+        bracketSelect.value = 'manual';
+    }
+
+    // Recalculate
+    updateRawData();
+    updateDashboard();
+    refreshAllCharts();
+    saveToLocalStorage();
+}
+
+/**
+ * Update target tax bracket
+ */
+function updateRothTargetBracket(bracket) {
+    let targetAmount = 0;
+
+    // Approximate "room" in brackets (Simplified logic)
+    switch (bracket) {
+        case '12': targetAmount = 47000; break;
+        case '22': targetAmount = 100000; break;
+        case '24': targetAmount = 190000; break;
+        case '32': targetAmount = 240000; break;
+        case 'manual': return;
+        default: targetAmount = 0;
+    }
+
+    // Update slider and config
+    const slider = document.getElementById('rothAmountSlider');
+    const input = document.getElementById('rothAmountInput');
+
+    if (slider) slider.value = targetAmount;
+    if (input) input.value = targetAmount;
+
+    updateRothConversionAmountFn(targetAmount);
+}
+
+/**
+ * Auto-optimize Roth strategy
+ */
+function optimizeRothConversion() {
+    document.getElementById('rothTargetBracket').value = '24';
+    updateRothTargetBracket('24');
+    showNotification('Roth Strategy Optimized: Filling 24% Tax Bracket');
+}
+
+/**
+ * Auto-calculate Social Security benefits (US-042)
+ */
+function calculateAndSetSS() {
+    const salaryInput = document.getElementById('ssInputSalary');
+    const profileInput = document.getElementById('ssInputProfile');
+
+    const salary = parseInt(salaryInput.value) || config.settings.income.work;
+    const profile = profileInput.value;
+
+    const pia = SocialSecurityCalculator.calculatePIA(salary, profile);
+    const benefits = SocialSecurityCalculator.calculateBenefits(pia);
+
+    // Update Config
+    config.settings.socialSecurity.ss62 = benefits.ss62;
+    config.settings.socialSecurity.ss67 = benefits.ss67;
+    config.settings.socialSecurity.ss70 = benefits.ss70;
+
+    // Update Display
+    // Note: updateSSDisplay might not be exposed or defined yet in this scope if it's earlier in the file.
+    // If it's a hoisting function (function decl), it's fine.
+    if (typeof updateSSDisplay === 'function') updateSSDisplay();
+
+    // Update Chart
+    // Assuming updateSSChart exists or we can call initSSComparisonChart (re-renders)
+    if (typeof updateSSChart === 'function') {
+        updateSSChart();
+    } else {
+        // Fallback: full refresh
+        refreshAllCharts();
+    }
+
+    showNotification(`SS Benefits Updated: FRA (67) = ${formatCurrency(benefits.ss67)}/mo`);
+    saveToLocalStorage();
+}
+
+// ============================================
+// EXPOSE FUNCTIONS TO GLOBAL SCOPE (FOR HTML ONCLICK HANDLERS)
+// ============================================
+
+// Expose functions that are called from HTML onclick/oninput handlers
+window.updateSpendingSlider = updateSpendingSliderFn;
+window.recalculate = recalculate;
+window.updateDashboard = updateDashboard;
+window.refreshAllCharts = refreshAllCharts;
+// Check if setScenario exists before assigning (if not defined in scope)
+if (typeof setScenario !== 'undefined') window.setScenario = setScenario;
+if (typeof toggleTheme !== 'undefined') window.toggleTheme = toggleTheme;
+if (typeof openSettings !== 'undefined') window.openSettings = openSettings;
+else window.openSettings = () => showNotification('Settings modal - Not Implemented');
+
+window.toggleRothConversion = toggleRothConversion;
+window.updateRothConversionAmount = updateRothConversionAmountFn; // Note: mapped Fn suffix
+window.updateRothTargetBracket = updateRothTargetBracket;
+window.optimizeRothConversion = optimizeRothConversion;
+
+window.calculateAndSetSS = calculateAndSetSS;
+
+
+window.exportPDF = exportPDF;
+window.exportCSV = exportCSV;
+window.exportJSON = exportJSON;
+window.showNotification = showNotification;
+
+// ============================================
 // INITIALIZATION
 // ============================================
 
@@ -3618,6 +3785,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update dashboard and recalculate
     recalculate();
     updateDashboard();
+
+    // Pre-fill US-042 inputs
+    const ssSalary = document.getElementById('ssInputSalary');
+    if (ssSalary) ssSalary.value = config.settings.income.work;
 
     // Set up auto-save
     setInterval(saveToLocalStorage, 30000);

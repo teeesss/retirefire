@@ -1,0 +1,109 @@
+<!-- Roth Conversion Controls (Dedicated Module) -->
+<div class="roth-conversion-module"
+    style="margin-bottom: 1rem; padding: 15px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">
+
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0; color: var(--primary);">🔄 Roth Conversion Strategy</h3>
+        <div class="checkbox-group">
+            <input type="checkbox" id="rothConversionEnabled" checked onchange="toggleRothConversion()">
+            <label for="rothConversionEnabled" style="margin-right: 10px;">Enable Conversions</label>
+            <button class="btn btn-sm btn-primary" onclick="optimizeRothConversion()">⚡ Auto-Optimize</button>
+        </div>
+    </div>
+
+    <!-- Strategy Mode Selector -->
+    <div class="metric-row" style="margin-bottom: 15px;">
+        <label style="font-weight: 500;">Conversion Strategy:</label>
+        <select id="rothStrategyMode" class="modern-select"
+            style="padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color);"
+            onchange="updateRothStrategy(this.value)">
+            <option value="manual">Manual Amount</option>
+            <option value="bracket">Fill Tax Bracket</option>
+            <option value="hybrid">Hybrid (Bracket + Cap)</option>
+        </select>
+    </div>
+
+    <!-- Bracket Selection (shown when mode = 'bracket' or 'hybrid') -->
+    <div id="rothBracketControls" style="display: none;">
+        <div class="metric-row" style="margin-bottom: 10px;">
+            <label style="font-weight: 500;">Target Tax Bracket:</label>
+            <select id="rothTargetBracket" class="modern-select"
+                style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color);"
+                onchange="updateRothTargetBracket(this.value)">
+                <option value="12">Fill 12% Bracket ($47k single / $94k joint)</option>
+                <option value="22" selected>Fill 22% Bracket ($100k single / $201k joint)</option>
+                <option value="24">Fill 24% Bracket ($191k single / $383k joint)</option>
+                <option value="32">Fill 32% Bracket ($243k single / $487k joint)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Hybrid Cap (shown when mode = 'hybrid') -->
+    <div id="rothHybridCap" style="display: none;">
+        <div class="metric-row" style="margin-bottom: 10px;">
+            <label style="font-weight: 500;">Annual Cap (Hybrid Mode):</label>
+            <div class="input-with-prefix" style="display: flex; align-items: center; gap: 4px;">
+                <span style="color: var(--text-muted);">$</span>
+                <input type="number" id="rothMaxCap" value="100000" class="modern-input"
+                    style="width: 120px; padding: 4px 8px;" onchange="updateRothMaxCap(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Amount Controls (shown when mode = 'manual') -->
+    <div id="rothManualControls">
+        <div class="metric-row" style="margin-bottom: 5px;">
+            <label style="font-weight: 500;">Annual Conversion Amount:</label>
+            <div class="input-with-prefix" style="display: flex; align-items: center; gap: 4px;">
+                <span style="color: var(--text-muted);">$</span>
+                <input type="number" id="rothAmountInput" value="240808" class="modern-input"
+                    style="width: 120px; padding: 4px 8px; font-weight: bold; color: var(--primary);"
+                    onchange="updateRothConversionAmount(this.value)">
+            </div>
+        </div>
+        <input type="range" id="rothAmountSlider" class="year-slider" min="0" max="500000" step="500" value="240808"
+            oninput="updateRothConversionAmount(this.value)">
+        <div
+            style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+            <span>$0</span>
+            <span>$500k</span>
+        </div>
+    </div>
+
+    <!-- Conversion Period -->
+    <div class="metric-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+        <label style="font-weight: 500;">Conversion Period:</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="number" id="rothStartYear" value="2026" min="2026" max="2071" class="modern-input"
+                style="width: 80px; padding: 4px;" onchange="updateRothPeriod()">
+            <span>to</span>
+            <input type="number" id="rothEndYear" value="2047" min="2026" max="2071" class="modern-input"
+                style="width: 80px; padding: 4px;" onchange="updateRothPeriod()">
+        </div>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="stats-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+        <div class="stat-item">
+            <div class="label">Strategy</div>
+            <div class="value" id="rothStrategyDesc">Manual Amount</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">Total Converted</div>
+            <div class="value" id="rothTotalConverted">$5.1M</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">Years Converting</div>
+            <div class="value" id="rothConversionYears">21 yrs</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">Tax Savings</div>
+            <div class="value positive" id="rothTaxSavings">$1.2M</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">Legacy Boost</div>
+            <div class="value positive" id="rothLegacyBoost">+$4.3M</div>
+        </div>
+    </div>
+</div>

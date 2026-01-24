@@ -1,0 +1,134 @@
+<div class="card span-6" id="coach-insights"
+    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid var(--primary); margin-bottom: 20px;">
+    <div class="card-header">
+        <div class="card-title">🤖 Plan Optimizer & Coach</div>
+    </div>
+    <div id="coachMessageList" style="padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+        <!-- Populated by JS -->
+        <div style="color: var(--text-muted);">Analyzing your plan for optimizations...</div>
+    </div>
+</div>
+
+<!-- Key Metrics Dashboard -->
+<div class="dashboard-grid">
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Current Net Worth</div>
+                <div class="card-value" id="metricCurrentNW">$4.24M</div>
+                <div class="card-subtitle">Age 50 (2026)</div>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="openSettings('assets')">✏️ Edit</button>
+        </div>
+        <div class="mini-chart"><canvas id="sparkNW"></canvas></div>
+    </div>
+
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Peak Net Worth</div>
+                <div class="card-value" id="metricPeakNW">$233.8M</div>
+                <div class="card-subtitle" id="metricPeakYear">Age 95 (2071)</div>
+            </div>
+            <span class="trend up" id="metricPeakGrowth">+5,422%</span>
+        </div>
+        <div class="mini-chart"><canvas id="sparkGrowth"></canvas></div>
+    </div>
+
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Success Rate</div>
+                <div class="card-value" id="metricSuccess">99%</div>
+                <div class="card-subtitle">Monte Carlo</div>
+            </div>
+        </div>
+        <!-- Replaced SVG with Canvas for consistent Chart.js usage and testing -->
+        <div class="mini-chart" style="height: 100px; display: flex; justify-content: center;">
+            <canvas id="gaugeSuccess"></canvas>
+        </div>
+    </div>
+
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Wellness Score</div>
+                <div class="card-value" id="metricWellness">85</div>
+                <div class="card-subtitle">Composite Score</div>
+            </div>
+        </div>
+        <div style="font-size: 2rem; text-align: center; padding-top: 10px;" id="wellnessEmoji">⭐
+        </div>
+    </div>
+
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Retirement Age</div>
+                <div class="card-value" id="metricRetireAge">53</div>
+                <div class="card-subtitle" id="metricRetireYear">Year 2029</div>
+            </div>
+            <span class="trend up">🎯 On Track</span>
+        </div>
+    </div>
+
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Social Security</div>
+                <div class="card-value" id="metricSS">$2,739</div>
+                <div class="card-subtitle" id="metricSSAge">Starting Age 62</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card span-1">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Lifetime Taxes</div>
+                <div class="card-value" id="metricTaxes">$7.0M</div>
+                <div class="card-subtitle">Estimated Total</div>
+            </div>
+            <span class="trend down">💰 Optimized</span>
+        </div>
+    </div>
+</div>
+
+<!-- NEW FEATURE ROW: Money Flows & Gap Calculator -->
+<div class="dashboard-grid" style="margin-top: 20px;">
+    <!-- Money Flow Visualization -->
+    <div class="card span-4">
+        <div class="card-header">
+            <div class="card-title">💸 Annual Money Flow</div>
+        </div>
+        <div class="chart-container large">
+            <canvas id="chartMoneyFlow"></canvas>
+        </div>
+    </div>
+
+    <!-- Savings Gap Calculator -->
+    <div class="card span-2">
+        <div class="card-header">
+            <div class="card-title">🎯 "What You Need" Calculator</div>
+        </div>
+        <div style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+            <div class="metric-row">
+                <span class="metric-label">Target Monthly Income</span>
+                <input type="number" id="calcTargetIncome" class="modern-input" value="12000"
+                    onchange="initGapCalculator()">
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Projected Monthly Income</span>
+                <span class="metric-value" id="calcProjectedIncome">$0</span>
+            </div>
+            <hr style="border-color: var(--border-color);">
+            <div class="metric-row">
+                <span class="metric-label" id="calcResultLabel">Status</span>
+                <span class="metric-value" id="calcResultValue" style="font-weight: 800;">Calculated...</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="calcProgressBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+</div>
