@@ -35,15 +35,29 @@ export class TaxCalculator {
         hoh: 21900
     };
 
-    static calculateFederalSocialSecurity(totalIncome, status) {
-        const deduction = this.standardDeduction[status] || 14600;
-        let taxableIncome = Math.max(0, totalIncome - deduction);
+    static ltcgBrackets = {
+        single: [
+            { limit: 47025, rate: 0.00 },
+            { limit: 518950, rate: 0.15 },
+            { limit: Infinity, rate: 0.20 }
+        ],
+        married: [
+            { limit: 94050, rate: 0.00 },
+            { limit: 583750, rate: 0.15 },
+            { limit: Infinity, rate: 0.20 }
+        ],
+        hoh: [
+            { limit: 63000, rate: 0.00 },
+            { limit: 551350, rate: 0.15 },
+            { limit: Infinity, rate: 0.20 }
+        ]
+    };
+
+    static calculateProgressive(taxableIncome, brackets) {
         let tax = 0;
         let prevLimit = 0;
 
-        const statusBrackets = this.brackets[status] || this.brackets.single;
-
-        for (const bracket of statusBrackets) {
+        for (const bracket of brackets) {
             if (taxableIncome > bracket.limit) {
                 tax += (bracket.limit - prevLimit) * bracket.rate;
                 prevLimit = bracket.limit;
@@ -55,25 +69,54 @@ export class TaxCalculator {
         return tax;
     }
 
+    static calculateFederalSocialSecurity(totalIncome, status) {
+        const deduction = this.standardDeduction[status] || 14600;
+        const taxableIncome = Math.max(0, totalIncome - deduction);
+        const statusBrackets = this.brackets[status] || this.brackets.single;
+        return this.calculateProgressive(taxableIncome, statusBrackets);
+    }
+
     static calculateCombined(income, spouseIncome, status) {
         const total = (income || 0) + (spouseIncome || 0);
         return this.calculateFederalSocialSecurity(total, status);
     }
 
-    static getTaxes(income, filingStatus, state, isEarned = true) {
+    static calculateTaxBreakdown(ordIncome, capGains, filingStatus, state, isEarned = true) {
         const deduction = this.standardDeduction[filingStatus] || 14600;
-        const taxable = Math.max(0, income - deduction);
-        const fed = this.calculateFederalSocialSecurity(income, filingStatus); // Re-use our progressive logic
+        
+        // 1. Ordinary Income Tax
+        const taxableOrd = Math.max(0, ordIncome - deduction);
+        const ordBrackets = this.brackets[filingStatus] || this.brackets.single;
+        const fedOrd = this.calculateProgressive(taxableOrd, ordBrackets);
 
-        // Mock state tax for now
-        const stateRates = { 'CA': 0.093, 'NY': 0.065, 'FL': 0, 'TX': 0 };
-        const st = taxable * (stateRates[state] || 0);
+        // 2. Capital Gains Tax
+        // CG sits on top of ordinary income for bracket determination
+        const totalTaxable = taxableOrd + (capGains || 0);
+        const cgBrackets = this.ltcgBrackets[filingStatus] || this.ltcgBrackets.single;
+        
+        const totalCGTax = this.calculateProgressive(totalTaxable, cgBrackets);
+        const ordCGTax = this.calculateProgressive(taxableOrd, cgBrackets);
+        const fedCG = Math.max(0, totalCGTax - ordCGTax);
 
-        // FICA
+        // 3. FICA (Simplified)
         const ficaRate = 0.0765;
         const ficaCap = 176100;
-        const fi = isEarned ? Math.min(income, ficaCap) * ficaRate : 0;
+        const fica = isEarned ? Math.min(ordIncome, ficaCap) * ficaRate : 0;
 
-        return { federal: fed, state: st, fica: fi, total: fed + st + fi };
+        // 4. State Tax (Mock)
+        const stateRates = { 'CA': 0.093, 'NY': 0.065, 'FL': 0, 'TX': 0, 'IL': 0.0495 };
+        const st = (taxableOrd + (capGains || 0)) * (stateRates[state] || 0);
+
+        return {
+            federalOrd: Math.round(fedOrd),
+            federalCG: Math.round(fedCG),
+            fica: Math.round(fica),
+            state: Math.round(st),
+            total: Math.round(fedOrd + fedCG + fica + st)
+        };
+    }
+
+    static getTaxes(income, filingStatus, state, isEarned = true) {
+        return this.calculateTaxBreakdown(income, 0, filingStatus, state, isEarned);
     }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-<body>
 </head>
 
 <body>
@@ -42,7 +41,8 @@
                     <button class="scenario-btn optimistic active" onclick="setScenario('optimistic')">✨
                         Optimistic</button>
                     <button class="scenario-btn average" onclick="setScenario('average')">📈 Average</button>
-                    <button class="scenario-btn pessimistic" onclick="setScenario('pessimistic')">⚡ Pessimistic</button>
+                    <button class="scenario-btn pessimistic" onclick="setScenario('pessimistic')">⚡
+                        Pessimistic</button>
                     <button class="scenario-btn custom" onclick="setScenario('custom')" id="customScenarioBtn"
                         style="display:none;">🎯 Custom</button>
                 </div>
@@ -102,6 +102,18 @@
 
             <!-- Main Content -->
             <div class="main-content" id="dashboard-top">
+                <!-- Digital Coach Insights -->
+                <div class="card span-6" id="coach-insights"
+                    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid var(--primary); margin-bottom: 20px;">
+                    <div class="card-header">
+                        <div class="card-title">🤖 Plan Optimizer & Coach</div>
+                    </div>
+                    <div id="coachMessageList" style="padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Populated by JS -->
+                        <div style="color: var(--text-muted);">Analyzing your plan for optimizations...</div>
+                    </div>
+                </div>
+
                 <!-- Key Metrics Dashboard -->
                 <div class="dashboard-grid">
                     <div class="card span-1">
@@ -139,6 +151,18 @@
                         <!-- Replaced SVG with Canvas for consistent Chart.js usage and testing -->
                         <div class="mini-chart" style="height: 100px; display: flex; justify-content: center;">
                             <canvas id="gaugeSuccess"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card span-1">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Wellness Score</div>
+                                <div class="card-value" id="metricWellness">85</div>
+                                <div class="card-subtitle">Composite Score</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 2rem; text-align: center; padding-top: 10px;" id="wellnessEmoji">⭐
                         </div>
                     </div>
 
@@ -397,7 +421,8 @@
                     <div class="year-slider-container">
                         <label>
                             <span>📅 Explore Year:</span>
-                            <span><strong id="selectedYear">2026</strong> (Age <strong id="selectedAge">50</strong>) -
+                            <span><strong id="selectedYear">2026</strong> (Age <strong id="selectedAge">50</strong>)
+                                -
                                 <span id="selectedScenarioLabel">Optimistic</span> Scenario</span>
                         </label>
                         <input type="range" id="yearSlider" class="year-slider" min="0" max="45" value="0">
@@ -464,7 +489,8 @@
                         <canvas id="chartRealNominal"></canvas>
                     </div>
                     <div class="legend">
-                        <div class="legend-item"><span class="legend-color" style="background: #3b82f6"></span> Nominal
+                        <div class="legend-item"><span class="legend-color" style="background: #3b82f6"></span>
+                            Nominal
                         </div>
                         <div class="legend-item"><span class="legend-color" style="background: #10b981"></span> Real
                             (Inflation-Adjusted)</div>
@@ -474,7 +500,8 @@
                 <!-- Portfolio Allocation Over Time -->
                 <div class="card span-3">
                     <div class="card-header">
-                        <div class="card-title">🥧 Asset Allocation - <span id="allocationYearLabel">2026</span></div>
+                        <div class="card-title">🥧 Asset Allocation - <span id="allocationYearLabel">2026</span>
+                        </div>
                     </div>
                     <div class="chart-container large">
                         <canvas id="chartAllocation"></canvas>
@@ -528,6 +555,15 @@
                     </div>
                     <div class="chart-container large">
                         <canvas id="chartSurplusGap"></canvas>
+                    </div>
+                </div>
+
+                <div class="card span-3">
+                    <div class="card-header">
+                        <div class="card-title">📈 Lifetime Cash Flow (Cumulative)</div>
+                    </div>
+                    <div class="chart-container large">
+                        <canvas id="chartLifetimeCashFlow"></canvas>
                     </div>
                 </div>
 
@@ -687,9 +723,11 @@
                     <div class="legend">
                         <div class="legend-item"><span class="legend-color" style="background: #10b981"></span> Your
                             Rate</div>
-                        <div class="legend-item"><span class="legend-color" style="background: #f59e0b"></span> 4% Rule
+                        <div class="legend-item"><span class="legend-color" style="background: #f59e0b"></span> 4%
+                            Rule
                         </div>
-                        <div class="legend-item"><span class="legend-color" style="background: #ef4444"></span> Danger
+                        <div class="legend-item"><span class="legend-color" style="background: #ef4444"></span>
+                            Danger
                             Zone
                         </div>
                     </div>
@@ -701,7 +739,10 @@
                         <div class="card-title">🔄 Roth Conversion Strategy</div>
                         <div class="checkbox-group">
                             <input type="checkbox" id="rothConversionEnabled" checked onchange="toggleRothConversion()">
-                            <label for="rothConversionEnabled">Enable Roth Ladder</label>
+                            <label for="rothConversionEnabled" style="margin-right: 10px;">Enable Roth
+                                Ladder</label>
+                            <button class="btn btn-sm btn-primary" onclick="optimizeRothConversion()">⚡
+                                Auto-Optimize</button>
                         </div>
                     </div>
                     <div id="rothConversionContent">
@@ -727,7 +768,8 @@
                             <canvas id="chartRothConversion"></canvas>
                         </div>
                         <div class="legend" style="margin-top: 0.5rem;">
-                            <div class="legend-item"><span class="legend-color" style="background: #8b5cf6"></span> With
+                            <div class="legend-item"><span class="legend-color" style="background: #8b5cf6"></span>
+                                With
                                 Conversions</div>
                             <div class="legend-item"><span class="legend-color" style="background: #94a3b8"></span>
                                 Without
@@ -738,7 +780,8 @@
                         style="display: none; padding: 2rem; text-align: center; color: var(--text-muted);">
                         <p style="font-size: 1.5rem;">🚫</p>
                         <p>Roth conversions disabled</p>
-                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Enable to see tax optimization strategy</p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Enable to see tax optimization strategy
+                        </p>
                     </div>
                 </div>
 
@@ -784,6 +827,8 @@
                 <div class="card span-6">
                     <div class="card-header">
                         <div class="card-title">🔀 Scenario Comparison at Key Ages</div>
+                        <button class="btn btn-sm btn-outline" onclick="openComparisonModal()">Side-by-Side
+                            Comparison</button>
                     </div>
                     <div class="chart-container large">
                         <canvas id="chartScenarioComparison"></canvas>
@@ -803,7 +848,8 @@
                     <div class="monte-carlo-info">
                         <p>We run <strong>1,000 simulations</strong> (randomizing and varying values for a more
                             realistic
-                            projection that accounts for market ups and downs) to determine a realistic range for your
+                            projection that accounts for market ups and downs) to determine a realistic range for
+                            your
                             projected
                             savings outcomes.</p>
                         <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.8rem;">Your projected
@@ -894,7 +940,8 @@
                     </div>
                     <div class="insight-card warning" style="margin-top: 1rem;">
                         <div class="insight-title">Critical Years: 53-58</div>
-                        <div class="insight-text">Early retirement years are most sensitive to market downturns.</div>
+                        <div class="insight-text">Early retirement years are most sensitive to market downturns.
+                        </div>
                     </div>
                 </div>
 
@@ -916,7 +963,8 @@
                     </div>
 
                     <div class="what-if-intro">
-                        <p>Explore how different life events and market conditions could impact your financial plan.</p>
+                        <p>Explore how different life events and market conditions could impact your financial plan.
+                        </p>
                     </div>
 
                     <!-- Scenario Categories -->
@@ -1464,7 +1512,8 @@
                             </div>
                             <div class="milestone-content">
                                 <h4>You start Social Security</h4>
-                                <p>In today's dollars you'll be receiving <strong>$2,739/month</strong> ($32,868/year)
+                                <p>In today's dollars you'll be receiving <strong>$2,739/month</strong>
+                                    ($32,868/year)
                                 </p>
                             </div>
                         </div>
@@ -1517,7 +1566,8 @@
                             </div>
                             <div class="milestone-content">
                                 <h4>You have reached your plan longevity age</h4>
-                                <p>Projected estate value: <strong id="milestoneLegacy">$233M</strong> (optimistic)</p>
+                                <p>Projected estate value: <strong id="milestoneLegacy">$233M</strong> (optimistic)
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1580,19 +1630,22 @@
                     </div>
                     <div class="insight-card positive">
                         <div class="insight-title">✅ HSA Triple Tax Advantage</div>
-                        <div class="insight-text">$234K HSA will grow tax-free and cover significant medical expenses
+                        <div class="insight-text">$234K HSA will grow tax-free and cover significant medical
+                            expenses
                             tax-free.
                         </div>
                     </div>
                     <div class="insight-card info">
                         <div class="insight-title">💡 SS Optimization</div>
-                        <div class="insight-text">Delaying SS to 67 would increase lifetime benefits by ~15%. Consider
+                        <div class="insight-text">Delaying SS to 67 would increase lifetime benefits by ~15%.
+                            Consider
                             if assets
                             can bridge the gap.</div>
                     </div>
                     <div class="insight-card warning">
                         <div class="insight-title">⚠️ Asset Location</div>
-                        <div class="insight-text">Consider holding bonds in tax-deferred accounts and equities in Roth
+                        <div class="insight-text">Consider holding bonds in tax-deferred accounts and equities in
+                            Roth
                             for
                             optimal tax efficiency.</div>
                     </div>
@@ -1615,20 +1668,23 @@
                                     <div class="metric-status">EXCELLING</div>
                                     <div class="metric-title">Out of Money Date</div>
                                     <div class="metric-value">Never</div>
-                                    <div class="metric-desc">Given your assumptions, you won't run out of money.</div>
+                                    <div class="metric-desc">Given your assumptions, you won't run out of money.
+                                    </div>
                                 </div>
                                 <div class="metric-card excelling">
                                     <div class="metric-status">EXCELLING</div>
                                     <div class="metric-title">Retirement Success</div>
                                     <div class="metric-value">99%</div>
-                                    <div class="metric-desc">Monte Carlo probability of financial security through age
+                                    <div class="metric-desc">Monte Carlo probability of financial security through
+                                        age
                                         95.</div>
                                 </div>
                                 <div class="metric-card excelling">
                                     <div class="metric-status">EXCELLING</div>
                                     <div class="metric-title">Savings to Need Ratio</div>
                                     <div class="metric-value">188%</div>
-                                    <div class="metric-desc">Your projected savings at retirement is 188% of your need.
+                                    <div class="metric-desc">Your projected savings at retirement is 188% of your
+                                        need.
                                     </div>
                                 </div>
                                 <div class="metric-card informational">
@@ -1655,14 +1711,16 @@
                                     <div class="metric-status">EXCELLING</div>
                                     <div class="metric-title">Life Opportunity</div>
                                     <div class="metric-value">551 months</div>
-                                    <div class="metric-desc">Time to plan, learn, and grow your financial confidence.
+                                    <div class="metric-desc">Time to plan, learn, and grow your financial
+                                        confidence.
                                     </div>
                                 </div>
                                 <div class="metric-card progressing">
                                     <div class="metric-status">PROGRESSING</div>
                                     <div class="metric-title">Savings Rate</div>
                                     <div class="metric-value">14.6%</div>
-                                    <div class="metric-desc">You're saving 14.6% of household income. Target 20%.</div>
+                                    <div class="metric-desc">You're saving 14.6% of household income. Target 20%.
+                                    </div>
                                 </div>
                                 <div class="metric-card progressing">
                                     <div class="metric-status">PROGRESSING</div>
@@ -1687,7 +1745,8 @@
                                     <div class="metric-status">EXCELLING</div>
                                     <div class="metric-title">Total Debt Ratio</div>
                                     <div class="metric-value">25.1%</div>
-                                    <div class="metric-desc">Of household income going to debt (target &lt;36%).</div>
+                                    <div class="metric-desc">Of household income going to debt (target &lt;36%).
+                                    </div>
                                 </div>
                                 <div class="metric-card excelling">
                                     <div class="metric-status">EXCELLING</div>
@@ -1750,7 +1809,8 @@
                                     <div class="metric-status">PROGRESSING</div>
                                     <div class="metric-title">Housing at Retirement</div>
                                     <div class="metric-value">$787,614</div>
-                                    <div class="metric-desc">Projected property value with 79.5% equity ($626K).</div>
+                                    <div class="metric-desc">Projected property value with 79.5% equity ($626K).
+                                    </div>
                                 </div>
                                 <div class="metric-card excelling">
                                     <div class="metric-status">EXCELLING</div>
@@ -1769,7 +1829,8 @@
                                     <div class="metric-status">EXCELLING</div>
                                     <div class="metric-title">Financial Legacy Goal</div>
                                     <div class="metric-value">1754%</div>
-                                    <div class="metric-desc">On track to achieve 1754% of your $5M legacy goal.</div>
+                                    <div class="metric-desc">On track to achieve 1754% of your $5M legacy goal.
+                                    </div>
                                 </div>
                                 <div class="metric-card vulnerable">
                                     <div class="metric-status">VULNERABLE</div>
@@ -1825,951 +1886,1000 @@
                         </div>
                     </div>
                     <div class="data-table-container" id="dataTableContainer"></div>
-                </div>
-
-                <footer>
-                    <p>Retirement Financial Planner Pro | Interactive Dashboard | Data as of January 18, 2026</p>
-                    <p style="margin-top: 0.5rem; font-size: 0.7rem;">
-                        Projections are estimates based on assumptions provided. This is not financial advice. Consult a
-                        qualified financial advisor.
-                    </p>
-                </footer>
-            </div>
-        </div> <!-- End main-content -->
-    </div> <!-- End main-layout -->
-
-    <!-- Settings Panel Overlay -->
-    <!-- CLEAN REBUILT Settings Panel Overlay -->
-    <div class="settings-overlay" id="settingsOverlay">
-        <div class="settings-panel">
-            <div class="settings-header">
-                <div style="display:flex; align-items:center; gap:1rem;">
-                    <button class="btn btn-sm btn-ghost" onclick="closeSettings()">← Back</button>
-                    <h2>⚙️ Plan Settings & Assumptions</h2>
-                </div>
-                <button class="settings-close" onclick="closeSettings()">×</button>
-            </div>
-            <div class="settings-body">
-                <div class="settings-sidebar">
-                    <div class="settings-nav-item active" onclick="showSettingsSection('personal', this)">👤 Personal
-                        Info
-                    </div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('spouse', this)">👫 Spouse/Partner</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('assets', this)">💰 Assets</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('income', this)">💵 Income</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('socialsecurity', this)">🏛️ Social
-                        Security
-                    </div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('expenses', this)">📤 Expenses</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('housing', this)">🏠 Housing</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('healthcare', this)">🏥 Healthcare</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('rates', this)">📈 Return Rates</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('inflation', this)">📊 Inflation</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('taxes', this)">🏛️ Tax Settings</div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('events', this)">📅 One-Time Events
-                    </div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('recurring', this)">🔄 Recurring Events
-                    </div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('scenarios', this)">🎯 Custom Scenarios
-                    </div>
-                    <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">🎯 Goals</div>
-                </div>
-                <div class="settings-content">
-                    <!-- ============================================ -->
-                    <!-- SECTION: Personal Info (DEFAULT ACTIVE) -->
-                    <!-- ============================================ -->
-                    <div class="settings-section active" id="settings-personal">
-                        <h3>👤 Personal Information</h3>
-                        <p class="section-description">
-                            Configure your basic profile information. These settings establish the timeline for your
-                            entire retirement plan.
+                    <footer>
+                        <p>Retirement Financial Planner Pro | Interactive Dashboard | Data as of January 18, 2026</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.7rem;">
+                            Projections are estimates based on assumptions provided. This is not financial advice.
+                            Consult a qualified financial advisor.
                         </p>
-                        <div class="settings-grid">
-                            <div class="input-group">
-                                <label>Your Name</label>
-                                <input type="text" id="inputName" value="">
-                            </div>
-                            <div class="input-group">
-                                <label>Current Age</label>
-                                <input type="number" id="inputAge" value="50" min="20" max="80">
-                            </div>
-                            <div class="input-group">
-                                <label>Retirement Age</label>
-                                <input type="number" id="inputRetireAge" value="53" min="50" max="75">
-                            </div>
-                            <div class="input-group">
-                                <label>Life Expectancy</label>
-                                <input type="number" id="inputLongevity" value="95" min="75" max="110">
-                            </div>
-                            <div class="input-group">
-                                <label>State of Residence</label>
-                                <select id="inputState">
-                                    <option value="CA">California</option>
-                                    <option value="TX">Texas (No State Tax)</option>
-                                    <option value="FL" selected>Florida (No State Tax)</option>
-                                    <option value="NY">New York</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Filing Status</label>
-                                <select id="inputFilingStatus">
-                                    <option value="single">Single</option>
-                                    <option value="married">Married Filing Jointly</option>
-                                    <option value="head" selected>Head of Household</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    </footer>
+                </div> <!-- End main-content -->
+            </div> <!-- End main-layout -->
+        </div> <!-- End container -->
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Spouse/Partner -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-spouse">
-                        <h3>👫 Spouse/Partner Information</h3>
-                        <p class="section-description">
-                            Add a spouse or partner to create a combined financial plan. We'll simulate their income,
-                            social security, and longevity alongside yours.
-                        </p>
-                        <div class="checkbox-group" style="margin-bottom: 1rem;">
-                            <input type="checkbox" id="hasSpouse" onchange="toggleSpouseFields()">
-                            <label for="hasSpouse">Include Spouse/Partner in Planning</label>
+        <!-- Settings Panel Overlay -->
+        <!-- CLEAN REBUILT Settings Panel Overlay -->
+        <div class="settings-overlay" id="settingsOverlay">
+            <div class="settings-panel">
+                <div class="settings-header">
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <button class="btn btn-sm btn-ghost" onclick="closeSettings()">← Back</button>
+                        <h2>⚙️ Plan Settings & Assumptions</h2>
+                    </div>
+                    <button class="settings-close" onclick="closeSettings()">×</button>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-sidebar">
+                        <div class="settings-nav-item active" onclick="showSettingsSection('personal', this)">👤
+                            Personal
+                            Info
                         </div>
-                        <div id="spouseFields" style="display: none;">
+                        <div class="settings-nav-item" onclick="showSettingsSection('spouse', this)">👫 Spouse/Partner
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('assets', this)">💰 Assets</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('income', this)">💵 Income</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('socialsecurity', this)">🏛️ Social
+                            Security
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('expenses', this)">📤 Expenses</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('housing', this)">🏠 Housing</div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('healthcare', this)">🏥 Healthcare
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('rates', this)">📈 Return Rates
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('inflation', this)">📊 Inflation
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('taxes', this)">🏛️ Tax Settings
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('events', this)">📅 One-Time Events
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('recurring', this)">🔄 Recurring
+                            Events
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('scenarios', this)">🎯 Custom
+                            Scenarios
+                        </div>
+                        <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">🎯 Goals</div>
+                    </div>
+                    <div class="settings-content">
+                        <!-- ============================================ -->
+                        <!-- SECTION: Personal Info (DEFAULT ACTIVE) -->
+                        <!-- ============================================ -->
+                        <div class="settings-section active" id="settings-personal">
+                            <h3>👤 Personal Information</h3>
+                            <p class="section-description">
+                                Configure your basic profile information. These settings establish the timeline for your
+                                entire retirement plan.
+                            </p>
                             <div class="settings-grid">
                                 <div class="input-group">
-                                    <label>Spouse Name</label>
-                                    <input type="text" id="inputSpouseName" value="">
+                                    <label>Your Name</label>
+                                    <input type="text" id="inputName" value="">
                                 </div>
                                 <div class="input-group">
-                                    <label>Spouse Age</label>
-                                    <input type="number" id="inputSpouseAge" value="48" min="20" max="80">
+                                    <label>Current Age</label>
+                                    <input type="number" id="inputAge" value="50" min="20" max="80">
                                 </div>
                                 <div class="input-group">
-                                    <label>Spouse Retirement Age</label>
-                                    <input type="number" id="inputSpouseRetireAge" value="60" min="50" max="75">
+                                    <label>Retirement Age</label>
+                                    <input type="number" id="inputRetireAge" value="53" min="50" max="75">
                                 </div>
                                 <div class="input-group">
-                                    <label>Spouse Life Expectancy</label>
-                                    <input type="number" id="inputSpouseLongevity" value="90" min="75" max="110">
+                                    <label>Life Expectancy</label>
+                                    <input type="number" id="inputLongevity" value="95" min="75" max="110">
                                 </div>
                                 <div class="input-group">
-                                    <label>Spouse Annual Income</label>
-                                    <input type="number" id="inputSpouseIncome" value="75000">
-                                </div>
-                                <div class="input-group">
-                                    <label>Spouse SS Benefit (at FRA)</label>
-                                    <input type="number" id="inputSpouseSS" value="1800">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ============================================ -->
-                    <!-- SECTION: Assets -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-assets">
-                        <h3>💰 Current Assets</h3>
-                        <p class="section-description">
-                            Enter your current investment and cash balances. This forms the starting point of your
-                            financial projection.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Retirement Accounts (401k/IRA)</label>
-                                <input type="number" id="inputRetirement" value="3000000">
-                            </div>
-                            <div class="input-group">
-                                <label>Roth Accounts</label>
-                                <input type="number" id="inputRoth" value="311000">
-                            </div>
-                            <div class="input-group">
-                                <label>Health Savings Account (HSA)</label>
-                                <input type="number" id="inputHSA" value="250000">
-                            </div>
-                            <div class="input-group">
-                                <label>Taxable Brokerage</label>
-                                <input type="number" id="inputInvestments" value="67000">
-                            </div>
-                            <div class="input-group">
-                                <label>Cash / Emergency Fund</label>
-                                <input type="number" id="inputCash" value="10000">
-                            </div>
-                            <div class="input-group">
-                                <label>Other Assets (Real Estate, etc.)</label>
-                                <input type="number" id="inputOtherAssets" value="517000">
-                            </div>
-                        </div>
-
-                        <h3 style="margin-top: 1.5rem;">₿ Crypto Assets</h3>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Bitcoin (BTC)</label>
-                                <input type="number" id="inputBTC" value="2.5" step="0.001">
-                                <span class="input-hint" id="btcPriceLabel">Price: $93,000</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Ethereum (ETH)</label>
-                                <input type="number" id="inputETH" value="15.0" step="0.01">
-                                <span class="input-hint" id="ethPriceLabel">Price: $3,200</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Solana (SOL)</label>
-                                <input type="number" id="inputSOL" value="100.0" step="0.1">
-                                <span class="input-hint" id="solPriceLabel">Price: $130</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Total Crypto Value</label>
-                                <input type="number" id="inputCrypto" value="293500" readonly
-                                    style="background: var(--bg-card);">
-                            </div>
-                        </div>
-
-                        <h3 style="margin-top: 1.5rem;">📈 Asset Allocation & Glide Path</h3>
-                        <div class="alert info" style="margin-bottom: 1rem; font-size: 0.8rem;">
-                            <strong>Asset Allocation</strong> is your current mix of stocks/bonds.
-                            <strong>Glide Path</strong> (if not "Custom") automatically adjusts this mix to become more
-                            conservative as you age.
-                        </div>
-                        <div class="settings-grid settings-grid-4">
-                            <div class="input-group">
-                                <label>Stocks %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputGlideStocks" min="0" max="100" value="90"
-                                        style="flex:1"
-                                        oninput="document.getElementById('inputGlideStocksNum').value=this.value; updateAllocDisplay()">
-                                    <input type="number" id="inputGlideStocksNum" value="90" min="0" max="100"
-                                        style="width: 60px;"
-                                        oninput="document.getElementById('inputGlideStocks').value=this.value; updateAllocDisplay()">
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Bonds %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputGlideBonds" min="0" max="100" value="0" style="flex:1"
-                                        oninput="document.getElementById('inputGlideBondsNum').value=this.value; updateAllocDisplay()">
-                                    <input type="number" id="inputGlideBondsNum" value="0" min="0" max="100"
-                                        style="width: 60px;"
-                                        oninput="document.getElementById('inputGlideBonds').value=this.value; updateAllocDisplay()">
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Cash %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputGlideCash" min="0" max="100" value="3" style="flex:1"
-                                        oninput="document.getElementById('inputGlideCashNum').value=this.value; updateAllocDisplay()">
-                                    <input type="number" id="inputGlideCashNum" value="3" min="0" max="100"
-                                        style="width: 60px;"
-                                        oninput="document.getElementById('inputGlideCash').value=this.value; updateAllocDisplay()">
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Crypto %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputGlideCrypto" min="0" max="100" value="7" style="flex:1"
-                                        oninput="document.getElementById('inputGlideCryptoNum').value=this.value; updateAllocDisplay()">
-                                    <input type="number" id="inputGlideCryptoNum" value="7" min="0" max="100"
-                                        style="width: 60px;"
-                                        oninput="document.getElementById('inputGlideCrypto').value=this.value; updateAllocDisplay()">
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Glide Path</label>
-                                <select id="inputGlidePath">
-                                    <option value="custom">Custom</option>
-                                    <option value="aggressive">Aggressive (90/10)</option>
-                                    <option value="moderate">Moderate (60/40)</option>
-                                    <option value="conservative">Conservative (40/60)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Total Debt (excl. Mortgage)</label>
-                            <input type="number" id="inputDebt" value="4583">
-                        </div>
-                    </div>
-
-                    <!-- ============================================ -->
-                    <!-- SECTION: Income -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-income">
-                        <h3>💵 Income Sources</h3>
-                        <p class="section-description">
-                            Define your income during your working years and any non-portfolio income (pensions, side
-                            hustles) expected in retirement.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Annual Work Income (Gross)</label>
-                                <input type="number" id="inputWorkIncome" value="148000">
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Income Growth Rate</label>
-                                <input type="number" id="inputIncomeGrowth" value="3" step="0.1">
-                                <span class="input-hint">% per year until retirement</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Side Income / Rental / Part-time</label>
-                                <input type="number" id="inputSideIncome" value="0">
-                            </div>
-                            <div class="input-group">
-                                <label>Pension Income (Annual)</label>
-                                <input type="number" id="inputPension" value="0">
-                            </div>
-                            <div class="input-group">
-                                <label>Annual 401k Contribution</label>
-                                <input type="number" id="input401kContrib" value="23500">
-                            </div>
-                            <div class="input-group">
-                                <label>Annual HSA Contribution</label>
-                                <input type="number" id="inputHSAContrib" value="8300">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ============================================ -->
-                    <!-- SECTION: Social Security -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-socialsecurity">
-                        <h3>🏛️ Social Security</h3>
-                        <p class="section-description">
-                            Optimize your claiming strategy. Compare benefits at different claiming ages to maximize
-                            lifetime value.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>SS Benefit at 62 (Monthly)</label>
-                                <input type="number" id="inputSS62" value="1800">
-                            </div>
-                            <div class="input-group">
-                                <label>SS Benefit at FRA (Monthly)</label>
-                                <input type="number" id="inputSS67" value="2739">
-                            </div>
-                            <div class="input-group">
-                                <label>SS Benefit at 70 (Monthly)</label>
-                                <input type="number" id="inputSS70" value="3500">
-                            </div>
-                            <div class="input-group">
-                                <label>Planned SS Start Age</label>
-                                <input type="number" id="inputSSAge" value="62" min="62" max="70">
-                            </div>
-                            <div class="input-group">
-                                <label>Full Retirement Age (FRA)</label>
-                                <input type="number" id="inputFRA" value="67" min="65" max="67">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ============================================ -->
-                    <!-- SECTION: Expenses -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-expenses">
-                        <h3>📤 Annual Expenses</h3>
-                        <p class="section-description">
-                            Estimate your future living costs. You can categorize them to better understand your
-                            spending structure.
-                        </p>
-                        <div
-                            style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center; border: 1px solid var(--border-color);">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total
-                                Annual Expenses</div>
-                            <div id="totalExpensesDisplay"
-                                style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">$0</div>
-                        </div>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>General Living Expenses</label>
-                                <input type="number" id="inputExpensesGeneral" value="60000">
-                                <span class="input-hint">Groceries, Dining, Hobbies</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Retirement Spending (% of current)</label>
-                                <input type="number" id="inputRetireSpendPct" value="90" min="50" max="120">
-                                <span class="input-hint">% - typically 70-90%</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Utilities & Services</label>
-                                <input type="number" id="inputExpensesUtilities" value="6000">
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Travel Budget</label>
-                                <input type="number" id="inputExpensesTravel" value="12000">
-                            </div>
-                            <div class="input-group">
-                                <label>Discretionary / Misc</label>
-                                <input type="number" id="inputExpensesMisc" value="3000">
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Gifts/Charity</label>
-                                <input type="number" id="inputGifts" value="5000">
-                            </div>
-                            <div class="input-group">
-                                <label>Vehicle Expenses</label>
-                                <input type="number" id="inputVehicle" value="4000">
-                            </div>
-                        </div>
-                        <div
-                            style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 600; color: var(--text-secondary);">Total Annual
-                                Expenses:</span>
-                            <span id="totalExpensesDisplay"
-                                style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">$0</span>
-                        </div>
-                    </div>
-
-                    <!-- ============================================ -->
-                    <!-- SECTION: Housing -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-housing">
-                        <h3>🏠 Housing</h3>
-                        <p class="section-description">
-                            Manage your primary residence assets. You can model selling your home in the future to
-                            unlock equity for retirement.
-                        </p>
-                        <div class="checkbox-group" style="margin-bottom: 1rem;">
-                            <input type="checkbox" id="ownsHome" checked onchange="toggleHomeFields()">
-                            <label for="ownsHome">Currently Own Home</label>
-                        </div>
-                        <div id="homeFields">
-                            <div class="settings-grid settings-grid-3">
-                                <div class="input-group">
-                                    <label>Home Value</label>
-                                    <input type="number" id="inputHomeValue" value="675000">
-                                </div>
-                                <div class="input-group">
-                                    <label>Home Appreciation Rate</label>
-                                    <input type="number" id="inputHomeAppreciation" value="3.5" step="0.1">
-                                    <span class="input-hint">% per year</span>
-                                </div>
-                                <div class="input-group">
-                                    <label>Mortgage Balance</label>
-                                    <input type="number" id="inputMortgageBalance" value="250000">
-                                </div>
-                                <div class="input-group">
-                                    <label>Mortgage Interest Rate</label>
-                                    <input type="number" id="inputMortgageRate" value="3.5" step="0.1">
-                                    <span class="input-hint">%</span>
-                                </div>
-                                <div class="input-group">
-                                    <label>Monthly Mortgage Payment</label>
-                                    <input type="number" id="inputMortgagePayment" value="2600">
-                                </div>
-                                <div class="input-group">
-                                    <label>Years Remaining</label>
-                                    <input type="number" id="inputMortgageYears" value="8" min="0" max="30">
-                                </div>
-                                <div class="input-group">
-                                    <label>Annual Property Tax</label>
-                                    <input type="number" id="inputPropertyTax" value="8000">
-                                </div>
-                                <div class="input-group">
-                                    <label>Annual Maintenance</label>
-                                    <input type="number" id="inputHomeMaint" value="5000">
-                                </div>
-                                <div class="input-group">
-                                    <label>Annual Insurance</label>
-                                    <input type="number" id="inputHomeInsurance" value="2400">
-                                </div>
-                            </div>
-                            <h4 style="margin-top: 1.5rem;">🏡 Home Sale Plans</h4>
-                            <div class="settings-grid settings-grid-3">
-                                <div class="input-group">
-                                    <label>Plan to Sell Home?</label>
-                                    <select id="inputPlanToSell">
-                                        <option value="yes">Yes</option>
-                                        <option value="no" selected>No</option>
+                                    <label>State of Residence</label>
+                                    <select id="inputState">
+                                        <option value="CA">California</option>
+                                        <option value="TX">Texas (No State Tax)</option>
+                                        <option value="FL" selected>Florida (No State Tax)</option>
+                                        <option value="NY">New York</option>
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
                                 <div class="input-group">
-                                    <label>Year to Sell</label>
-                                    <input type="number" id="inputSellYear" value="2032" min="2026" max="2071">
+                                    <label>Filing Status</label>
+                                    <select id="inputFilingStatus">
+                                        <option value="single">Single</option>
+                                        <option value="married">Married Filing Jointly</option>
+                                        <option value="head" selected>Head of Household</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Spouse/Partner -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-spouse">
+                            <h3>👫 Spouse/Partner Information</h3>
+                            <p class="section-description">
+                                Add a spouse or partner to create a combined financial plan. We'll simulate their
+                                income,
+                                social security, and longevity alongside yours.
+                            </p>
+                            <div class="checkbox-group" style="margin-bottom: 1rem;">
+                                <input type="checkbox" id="hasSpouse" onchange="toggleSpouseFields()">
+                                <label for="hasSpouse">Include Spouse/Partner in Planning</label>
+                            </div>
+                            <div id="spouseFields" style="display: none;">
+                                <div class="settings-grid">
+                                    <div class="input-group">
+                                        <label>Spouse Name</label>
+                                        <input type="text" id="inputSpouseName" value="">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Spouse Age</label>
+                                        <input type="number" id="inputSpouseAge" value="48" min="20" max="80">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Spouse Retirement Age</label>
+                                        <input type="number" id="inputSpouseRetireAge" value="60" min="50" max="75">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Spouse Life Expectancy</label>
+                                        <input type="number" id="inputSpouseLongevity" value="90" min="75" max="110">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Spouse Annual Income</label>
+                                        <input type="number" id="inputSpouseIncome" value="75000">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Spouse SS Benefit (at FRA)</label>
+                                        <input type="number" id="inputSpouseSS" value="1800">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Assets -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-assets">
+                            <h3>💰 Current Assets</h3>
+                            <p class="section-description">
+                                Enter your current investment and cash balances. This forms the starting point of your
+                                financial projection.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Retirement Accounts (401k/IRA)</label>
+                                    <input type="number" id="inputRetirement" value="3000000">
                                 </div>
                                 <div class="input-group">
-                                    <label>Sale Costs (%)</label>
-                                    <input type="number" id="inputSaleCosts" value="6" step="0.5">
+                                    <label>Roth Accounts</label>
+                                    <input type="number" id="inputRoth" value="311000">
                                 </div>
                                 <div class="input-group">
-                                    <label>Future Monthly Rent</label>
-                                    <input type="number" id="inputFutureRent" value="3000">
+                                    <label>Health Savings Account (HSA)</label>
+                                    <input type="number" id="inputHSA" value="250000">
                                 </div>
                                 <div class="input-group">
-                                    <label>Rent Inflation Rate</label>
-                                    <input type="number" id="inputRentInflation" value="3" step="0.1">
-                                    <span class="input-hint">% per year</span>
+                                    <label>Taxable Brokerage</label>
+                                    <input type="number" id="inputInvestments" value="67000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Cash / Emergency Fund</label>
+                                    <input type="number" id="inputCash" value="10000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Other Assets (Real Estate, etc.)</label>
+                                    <input type="number" id="inputOtherAssets" value="517000">
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Healthcare -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-healthcare">
-                        <h3>🏥 Healthcare Costs</h3>
-                        <p class="section-description">
-                            Healthcare is often the largest expense in retirement. Model pre-Medicare (ACA) and
-                            Medicare premiums separately.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Current Annual Premium</label>
-                                <input type="number" id="inputHealthPremium" value="5000">
+                            <h3 style="margin-top: 1.5rem;">₿ Crypto Assets</h3>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Bitcoin (BTC)</label>
+                                    <input type="number" id="inputBTC" value="2.5" step="0.001">
+                                    <span class="input-hint" id="btcPriceLabel">Price: $93,000</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Ethereum (ETH)</label>
+                                    <input type="number" id="inputETH" value="15.0" step="0.01">
+                                    <span class="input-hint" id="ethPriceLabel">Price: $3,200</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Solana (SOL)</label>
+                                    <input type="number" id="inputSOL" value="100.0" step="0.1">
+                                    <span class="input-hint" id="solPriceLabel">Price: $130</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Total Crypto Value</label>
+                                    <input type="number" id="inputCrypto" value="293500" readonly
+                                        style="background: var(--bg-card);">
+                                </div>
                             </div>
-                            <div class="input-group">
-                                <label>Pre-Medicare Premium (55-64)</label>
-                                <input type="number" id="inputPreMedicare" value="5000">
-                                <span class="input-hint">ACA/COBRA marketplace</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Medicare Premium (65+)</label>
-                                <input type="number" id="inputMedicare" value="6000">
-                                <span class="input-hint">Parts B, D, Medigap</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Healthcare Inflation</label>
-                                <input type="number" id="inputHealthInflation" value="5" step="0.1">
-                                <span class="input-hint">%</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Out-of-Pocket</label>
-                                <input type="number" id="inputHealthOOP" value="3000">
-                            </div>
-                            <div class="input-group">
-                                <label>Long-Term Care Insurance</label>
-                                <input type="number" id="inputLTCPremium" value="0">
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Return Rates -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-rates">
-                        <h3>📈 Investment Return Rates</h3>
-                        <p class="section-description">
-                            Set your expected annual growth rates for different asset classes. These assumptions
-                            drive the core Monte Carlo simulations.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Optimistic Return %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputReturnOpt" min="5" max="15" step="0.1" value="10"
-                                        style="flex:1"
-                                        oninput="document.getElementById('inputReturnOptNum').value=this.value">
-                                    <input type="number" id="inputReturnOptNum" value="10" min="5" max="15" step="0.1"
-                                        style="width: 70px;"
-                                        oninput="document.getElementById('inputReturnOpt').value=this.value">
-                                </div>
+                            <h3 style="margin-top: 1.5rem;">📈 Asset Allocation & Glide Path</h3>
+                            <div class="alert info" style="margin-bottom: 1rem; font-size: 0.8rem;">
+                                <strong>Asset Allocation</strong> is your current mix of stocks/bonds.
+                                <strong>Glide Path</strong> (if not "Custom") automatically adjusts this mix to become
+                                more
+                                conservative as you age.
                             </div>
-                            <div class="input-group">
-                                <label>Average Return %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputReturnAvg" min="3" max="12" step="0.1" value="7"
-                                        style="flex:1"
-                                        oninput="document.getElementById('inputReturnAvgNum').value=this.value">
-                                    <input type="number" id="inputReturnAvgNum" value="7" min="3" max="12" step="0.1"
-                                        style="width: 70px;"
-                                        oninput="document.getElementById('inputReturnAvg').value=this.value">
+                            <div class="settings-grid settings-grid-4">
+                                <div class="input-group">
+                                    <label>Stocks %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputGlideStocks" min="0" max="100" value="90"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputGlideStocksNum').value=this.value; updateAllocDisplay()">
+                                        <input type="number" id="inputGlideStocksNum" value="90" min="0" max="100"
+                                            style="width: 60px;"
+                                            oninput="document.getElementById('inputGlideStocks').value=this.value; updateAllocDisplay()">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Pessimistic Return %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputReturnPes" min="0" max="8" step="0.1" value="4"
-                                        style="flex:1"
-                                        oninput="document.getElementById('inputReturnPesNum').value=this.value">
-                                    <input type="number" id="inputReturnPesNum" value="4" min="0" max="8" step="0.1"
-                                        style="width: 70px;"
-                                        oninput="document.getElementById('inputReturnPes').value=this.value">
+                                <div class="input-group">
+                                    <label>Bonds %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputGlideBonds" min="0" max="100" value="0"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputGlideBondsNum').value=this.value; updateAllocDisplay()">
+                                        <input type="number" id="inputGlideBondsNum" value="0" min="0" max="100"
+                                            style="width: 60px;"
+                                            oninput="document.getElementById('inputGlideBonds').value=this.value; updateAllocDisplay()">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Bond Returns %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputReturnBonds" min="1" max="8" step="0.1" value="4"
-                                        style="flex:1"
-                                        oninput="document.getElementById('inputReturnBondsNum').value=this.value">
-                                    <input type="number" id="inputReturnBondsNum" value="4" min="1" max="8" step="0.1"
-                                        style="width: 70px;"
-                                        oninput="document.getElementById('inputReturnBonds').value=this.value">
+                                <div class="input-group">
+                                    <label>Cash %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputGlideCash" min="0" max="100" value="3"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputGlideCashNum').value=this.value; updateAllocDisplay()">
+                                        <input type="number" id="inputGlideCashNum" value="3" min="0" max="100"
+                                            style="width: 60px;"
+                                            oninput="document.getElementById('inputGlideCash').value=this.value; updateAllocDisplay()">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Crypto %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputGlideCrypto" min="0" max="100" value="7"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputGlideCryptoNum').value=this.value; updateAllocDisplay()">
+                                        <input type="number" id="inputGlideCryptoNum" value="7" min="0" max="100"
+                                            style="width: 60px;"
+                                            oninput="document.getElementById('inputGlideCrypto').value=this.value; updateAllocDisplay()">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Glide Path</label>
+                                    <select id="inputGlidePath">
+                                        <option value="custom">Custom</option>
+                                        <option value="aggressive">Aggressive (90/10)</option>
+                                        <option value="moderate">Moderate (60/40)</option>
+                                        <option value="conservative">Conservative (40/60)</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label>Cash Returns %</label>
-                                <div style="display:flex; align-items: center; gap: 0.5rem;">
-                                    <input type="range" id="inputReturnCash" min="0" max="6" step="0.1" value="2"
-                                        style="flex:1"
-                                        oninput="document.getElementById('inputReturnCashNum').value=this.value">
-                                    <input type="number" id="inputReturnCashNum" value="2" min="0" max="6" step="0.1"
-                                        style="width: 70px;"
-                                        oninput="document.getElementById('inputReturnCash').value=this.value">
+                                <label>Total Debt (excl. Mortgage)</label>
+                                <input type="number" id="inputDebt" value="4583">
+                            </div>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Income -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-income">
+                            <h3>💵 Income Sources</h3>
+                            <p class="section-description">
+                                Define your income during your working years and any non-portfolio income (pensions,
+                                side
+                                hustles) expected in retirement.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Annual Work Income (Gross)</label>
+                                    <input type="number" id="inputWorkIncome" value="148000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Income Growth Rate</label>
+                                    <input type="number" id="inputIncomeGrowth" value="3" step="0.1">
+                                    <span class="input-hint">% per year until retirement</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Side Income / Rental / Part-time</label>
+                                    <input type="number" id="inputSideIncome" value="0">
+                                </div>
+                                <div class="input-group">
+                                    <label>Pension Income (Annual)</label>
+                                    <input type="number" id="inputPension" value="0">
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual 401k Contribution</label>
+                                    <input type="number" id="input401kContrib" value="23500">
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual HSA Contribution</label>
+                                    <input type="number" id="inputHSAContrib" value="8300">
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Inflation -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-inflation">
-                        <h3>📊 Inflation Assumptions</h3>
-                        <p class="section-description">
-                            Inflation erodes purchasing power over time. Even small differences here can have a huge
-                            impact over 45 years.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Optimistic Inflation: <span id="infOptVal">2.03%</span></label>
-                                <input type="range" id="inputInfOpt" min="1" max="5" step="0.1" value="2.03"
-                                    oninput="document.getElementById('infOptVal').textContent=this.value+'%'">
-                            </div>
-                            <div class="input-group">
-                                <label>Average Inflation: <span id="infAvgVal">2.54%</span></label>
-                                <input type="range" id="inputInfAvg" min="1" max="5" step="0.1" value="2.54"
-                                    oninput="document.getElementById('infAvgVal').textContent=this.value+'%'">
-                            </div>
-                            <div class="input-group">
-                                <label>Pessimistic Inflation: <span id="infPesVal">3.05%</span></label>
-                                <input type="range" id="inputInfPes" min="1" max="6" step="0.1" value="3.05"
-                                    oninput="document.getElementById('infPesVal').textContent=this.value+'%'">
+                        <!-- ============================================ -->
+                        <!-- SECTION: Social Security -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-socialsecurity">
+                            <h3>🏛️ Social Security</h3>
+                            <p class="section-description">
+                                Optimize your claiming strategy. Compare benefits at different claiming ages to maximize
+                                lifetime value.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>SS Benefit at 62 (Monthly)</label>
+                                    <input type="number" id="inputSS62" value="1800">
+                                </div>
+                                <div class="input-group">
+                                    <label>SS Benefit at FRA (Monthly)</label>
+                                    <input type="number" id="inputSS67" value="2739">
+                                </div>
+                                <div class="input-group">
+                                    <label>SS Benefit at 70 (Monthly)</label>
+                                    <input type="number" id="inputSS70" value="3500">
+                                </div>
+                                <div class="input-group">
+                                    <label>Planned SS Start Age</label>
+                                    <input type="number" id="inputSSAge" value="62" min="62" max="70">
+                                </div>
+                                <div class="input-group">
+                                    <label>Full Retirement Age (FRA)</label>
+                                    <input type="number" id="inputFRA" value="67" min="65" max="67">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Tax Settings -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-taxes">
-                        <h3>🏛️ Tax Settings</h3>
-                        <p class="section-description">
-                            Configure your tax environment. We calculate progressive federal brackets and
-                            state-specific rules.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Effective Federal Tax Rate</label>
-                                <input type="number" id="inputFedTax" value="22" step="1">
-                                <span class="input-hint">% (current effective rate)</span>
+                        <!-- ============================================ -->
+                        <!-- SECTION: Expenses -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-expenses">
+                            <h3>📤 Annual Expenses</h3>
+                            <p class="section-description">
+                                Estimate your future living costs. You can categorize them to better understand your
+                                spending structure.
+                            </p>
+                            <div
+                                style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center; border: 1px solid var(--border-color);">
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total
+                                    Annual Expenses</div>
+                                <div id="totalExpensesDisplay"
+                                    style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">$0</div>
                             </div>
-                            <div class="input-group">
-                                <label>State Income Tax Rate</label>
-                                <input type="number" id="inputStateTax" value="0" step="0.1">
-                                <span class="input-hint">% (0 for TX, FL, etc.)</span>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>General Living Expenses</label>
+                                    <input type="number" id="inputExpensesGeneral" value="60000">
+                                    <span class="input-hint">Groceries, Dining, Hobbies</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Retirement Spending (% of current)</label>
+                                    <input type="number" id="inputRetireSpendPct" value="90" min="50" max="120">
+                                    <span class="input-hint">% - typically 70-90%</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Utilities & Services</label>
+                                    <input type="number" id="inputExpensesUtilities" value="6000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Travel Budget</label>
+                                    <input type="number" id="inputExpensesTravel" value="12000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Discretionary / Misc</label>
+                                    <input type="number" id="inputExpensesMisc" value="3000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Gifts/Charity</label>
+                                    <input type="number" id="inputGifts" value="5000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Vehicle Expenses</label>
+                                    <input type="number" id="inputVehicle" value="4000">
+                                </div>
                             </div>
-                            <div class="input-group">
-                                <label>Capital Gains Rate</label>
-                                <input type="number" id="inputCapGainsTax" value="15" step="1">
+                            <div
+                                style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: var(--text-secondary);">Total Annual
+                                    Expenses:</span>
+                                <span id="totalExpensesDisplay"
+                                    style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">$0</span>
                             </div>
                         </div>
-                        <h3 style="margin-top: 1.5rem;">🔄 Roth Conversion Strategy</h3>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Annual Roth Conversion Amount</label>
-                                <input type="number" id="inputRothConversion" value="240808">
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Housing -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-housing">
+                            <h3>🏠 Housing</h3>
+                            <p class="section-description">
+                                Manage your primary residence assets. You can model selling your home in the future to
+                                unlock equity for retirement.
+                            </p>
+                            <div class="checkbox-group" style="margin-bottom: 1rem;">
+                                <input type="checkbox" id="ownsHome" checked onchange="toggleHomeFields()">
+                                <label for="ownsHome">Currently Own Home</label>
                             </div>
-                            <div class="input-group">
-                                <label>Conversion Start Year</label>
-                                <input type="number" id="inputRothConvStart" value="2030">
-                            </div>
-                            <div class="input-group">
-                                <label>Conversion End Year</label>
-                                <input type="number" id="inputRothConvEnd" value="2050">
-                            </div>
-                            <div class="input-group">
-                                <label>Target Tax Bracket for Conversions</label>
-                                <select id="inputRothConvBracket">
-                                    <option value="12">12%</option>
-                                    <option value="22">22%</option>
-                                    <option value="24" selected>24%</option>
-                                    <option value="32">32%</option>
-                                </select>
+                            <div id="homeFields">
+                                <div class="settings-grid settings-grid-3">
+                                    <div class="input-group">
+                                        <label>Home Value</label>
+                                        <input type="number" id="inputHomeValue" value="675000">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Home Appreciation Rate</label>
+                                        <input type="number" id="inputHomeAppreciation" value="3.5" step="0.1">
+                                        <span class="input-hint">% per year</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Mortgage Balance</label>
+                                        <input type="number" id="inputMortgageBalance" value="250000">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Mortgage Interest Rate</label>
+                                        <input type="number" id="inputMortgageRate" value="3.5" step="0.1">
+                                        <span class="input-hint">%</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Monthly Mortgage Payment</label>
+                                        <input type="number" id="inputMortgagePayment" value="2600">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Years Remaining</label>
+                                        <input type="number" id="inputMortgageYears" value="8" min="0" max="30">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Annual Property Tax</label>
+                                        <input type="number" id="inputPropertyTax" value="8000">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Annual Maintenance</label>
+                                        <input type="number" id="inputHomeMaint" value="5000">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Annual Insurance</label>
+                                        <input type="number" id="inputHomeInsurance" value="2400">
+                                    </div>
+                                </div>
+                                <h4 style="margin-top: 1.5rem;">🏡 Home Sale Plans</h4>
+                                <div class="settings-grid settings-grid-3">
+                                    <div class="input-group">
+                                        <label>Plan to Sell Home?</label>
+                                        <select id="inputPlanToSell">
+                                            <option value="yes">Yes</option>
+                                            <option value="no" selected>No</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Year to Sell</label>
+                                        <input type="number" id="inputSellYear" value="2032" min="2026" max="2071">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Sale Costs (%)</label>
+                                        <input type="number" id="inputSaleCosts" value="6" step="0.5">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Future Monthly Rent</label>
+                                        <input type="number" id="inputFutureRent" value="3000">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Rent Inflation Rate</label>
+                                        <input type="number" id="inputRentInflation" value="3" step="0.1">
+                                        <span class="input-hint">% per year</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: One-Time Events -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-events">
-                        <h3>📅 One-Time Financial Events</h3>
-
-                        <p class="section-description">
-                            <strong>What are One-Time Events?</strong><br>
-                            These are significant financial events that happen <strong>once</strong> at a specific year.
-                            Examples include:<br>
-                            • Inheritance or gift received<br>
-                            • Large home purchase or sale (if not using Housing section)<br>
-                            • College tuition payment<br>
-                            • Wedding expenses<br>
-                            • Starting a business (seed capital)<br><br>
-
-                            <strong>How to use:</strong> Enter the year, describe the event, specify the amount, and
-                            choose whether it's income (money coming in) or expense (money going out). Click "Add
-                            One-Time Event" and it will appear in your projection for that specific year only.
-                        </p>
-
-                        <div class="input-row" style="margin-bottom: 1rem;">
-                            <div class="input-group">
-                                <label>Year</label>
-                                <input type="number" id="eventYear" value="2030" min="2026" max="2071">
+                        <!-- ============================================ -->
+                        <!-- SECTION: Healthcare -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-healthcare">
+                            <h3>🏥 Healthcare Costs</h3>
+                            <p class="section-description">
+                                Healthcare is often the largest expense in retirement. Model pre-Medicare (ACA) and
+                                Medicare premiums separately.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Current Annual Premium</label>
+                                    <input type="number" id="inputHealthPremium" value="5000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Pre-Medicare Premium (55-64)</label>
+                                    <input type="number" id="inputPreMedicare" value="5000">
+                                    <span class="input-hint">ACA/COBRA marketplace</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Medicare Premium (65+)</label>
+                                    <input type="number" id="inputMedicare" value="6000">
+                                    <span class="input-hint">Parts B, D, Medigap</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Healthcare Inflation</label>
+                                    <input type="number" id="inputHealthInflation" value="5" step="0.1">
+                                    <span class="input-hint">%</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Out-of-Pocket</label>
+                                    <input type="number" id="inputHealthOOP" value="3000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Long-Term Care Insurance</label>
+                                    <input type="number" id="inputLTCPremium" value="0">
+                                </div>
                             </div>
-                            <div class="input-group">
-                                <label>Description</label>
-                                <input type="text" id="eventDesc" placeholder="e.g., Inheritance">
-                            </div>
-                            <div class="input-group">
-                                <label>Amount</label>
-                                <input type="number" id="eventAmount" value="0">
-                            </div>
-                            <div class="input-group">
-                                <label>Type</label>
-                                <select id="eventType">
-                                    <option value="income">Income (+)</option>
-                                    <option value="expense">Expense (-)</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" onclick="addEvent()">Add One-Time Event</button>
-                        </div>
-                        <table class="events-table">
-                            <thead>
-                                <tr>
-                                    <th>Year</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Type</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="eventsTableBody">
-                                <!-- Dynamic -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- ============================================ -->
-                    <!-- SECTION: Recurring Events -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-recurring">
-                        <h3>🔄 Recurring Cash Flow Events</h3>
-
-                        <p class="section-description">
-                            <strong>What are Recurring Events?</strong><br>
-                            These are income or expenses that happen <strong>every year</strong> for a specific age
-                            range. Perfect for modeling:<br>
-                            • **Travel phases**: "Ages 55-65: $40k/year extra travel"<br>
-                            • **Part-time income**: "Ages 60-70: $25k/year consulting"<br>
-                            • **Education costs**: "Ages 50-54: $30k/year for kid's college"<br>
-                            • **Rental property income** (if not using main income fields)<br>
-                            • **Club memberships** or **hobbies** with ongoing costs<br><br>
-
-                            <strong>How to use:</strong><br>
-                            1. Enter the <strong>Start Age</strong> and <strong>End Age</strong> for when this event
-                            occurs (inclusive)<br>
-                            2. Describe what it is (e.g., "Extra Travel Budget")<br>
-                            3. Enter the <strong>Annual Amount</strong> (how much per year)<br>
-                            4. Choose <strong>Expense</strong> (money out) or <strong>Income</strong> (money in)<br>
-                            5. Click "Add Recurring Event"<br><br>
-
-                            The planner will automatically apply this amount EVERY year from Start Age to End Age in
-                            your projection. You can add multiple recurring events to model complex spending/income
-                            phases.
-                        </p>
-
-                        <div class="input-row" style="margin-bottom: 1rem;">
-                            <div class="input-group">
-                                <label>Start Age</label>
-                                <input type="number" id="recurStartAge" value="55" min="50" max="95">
-                                <span class="input-hint">When does this begin?</span>
-                            </div>
-                            <div class="input-group">
-                                <label>End Age</label>
-                                <input type="number" id="recurEndAge" value="65" min="50" max="95">
-                                <span class="input-hint">When does this end?</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Description</label>
-                                <input type="text" id="recurDescription" placeholder="e.g., Extra Travel">
-                                <span class="input-hint">What is this for?</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Amount</label>
-                                <input type="number" id="recurAmount" value="10000">
-                                <span class="input-hint">Per year</span>
-                            </div>
-                            <div class="input-group">
-                                <label>Type</label>
-                                <select id="recurType">
-                                    <option value="expense">Expense (-)</option>
-                                    <option value="income">Income (+)</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" onclick="addRecurringEvent()">Add Recurring Event</button>
                         </div>
 
-                        <table class="events-table">
-                            <thead>
-                                <tr>
-                                    <th>Age Range</th>
-                                    <th>Description</th>
-                                    <th>Annual Amount</th>
-                                    <th>Type</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recurringEventsTableBody">
-                                <!-- Dynamic -->
-                            </tbody>
-                        </table>
+                        <!-- ============================================ -->
+                        <!-- SECTION: Return Rates -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-rates">
+                            <h3>📈 Investment Return Rates</h3>
+                            <p class="section-description">
+                                Set your expected annual growth rates for different asset classes. These assumptions
+                                drive the core Monte Carlo simulations.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Optimistic Return %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputReturnOpt" min="5" max="15" step="0.1" value="10"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputReturnOptNum').value=this.value">
+                                        <input type="number" id="inputReturnOptNum" value="10" min="5" max="15"
+                                            step="0.1" style="width: 70px;"
+                                            oninput="document.getElementById('inputReturnOpt').value=this.value">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Average Return %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputReturnAvg" min="3" max="12" step="0.1" value="7"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputReturnAvgNum').value=this.value">
+                                        <input type="number" id="inputReturnAvgNum" value="7" min="3" max="12"
+                                            step="0.1" style="width: 70px;"
+                                            oninput="document.getElementById('inputReturnAvg').value=this.value">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Pessimistic Return %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputReturnPes" min="0" max="8" step="0.1" value="4"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputReturnPesNum').value=this.value">
+                                        <input type="number" id="inputReturnPesNum" value="4" min="0" max="8" step="0.1"
+                                            style="width: 70px;"
+                                            oninput="document.getElementById('inputReturnPes').value=this.value">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Bond Returns %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputReturnBonds" min="1" max="8" step="0.1" value="4"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputReturnBondsNum').value=this.value">
+                                        <input type="number" id="inputReturnBondsNum" value="4" min="1" max="8"
+                                            step="0.1" style="width: 70px;"
+                                            oninput="document.getElementById('inputReturnBonds').value=this.value">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Cash Returns %</label>
+                                    <div style="display:flex; align-items: center; gap: 0.5rem;">
+                                        <input type="range" id="inputReturnCash" min="0" max="6" step="0.1" value="2"
+                                            style="flex:1"
+                                            oninput="document.getElementById('inputReturnCashNum').value=this.value">
+                                        <input type="number" id="inputReturnCashNum" value="2" min="0" max="6"
+                                            step="0.1" style="width: 70px;"
+                                            oninput="document.getElementById('inputReturnCash').value=this.value">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        <div
-                            style="margin-top: 1rem; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary); border-radius: 0.25rem; font-size: 0.85rem;">
-                            <strong>💡 Example:</strong> If you plan to travel heavily from ages 60-70, add a recurring
-                            expense: "Start Age: 60, End Age: 70, Description: Enhanced Travel, Amount: $40,000, Type:
-                            Expense". The planner will deduct $40k every year from age 60 to 70.
+                        <!-- ============================================ -->
+                        <!-- SECTION: Inflation -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-inflation">
+                            <h3>📊 Inflation Assumptions</h3>
+                            <p class="section-description">
+                                Inflation erodes purchasing power over time. Even small differences here can have a huge
+                                impact over 45 years.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Optimistic Inflation: <span id="infOptVal">2.03%</span></label>
+                                    <input type="range" id="inputInfOpt" min="1" max="5" step="0.1" value="2.03"
+                                        oninput="document.getElementById('infOptVal').textContent=this.value+'%'">
+                                </div>
+                                <div class="input-group">
+                                    <label>Average Inflation: <span id="infAvgVal">2.54%</span></label>
+                                    <input type="range" id="inputInfAvg" min="1" max="5" step="0.1" value="2.54"
+                                        oninput="document.getElementById('infAvgVal').textContent=this.value+'%'">
+                                </div>
+                                <div class="input-group">
+                                    <label>Pessimistic Inflation: <span id="infPesVal">3.05%</span></label>
+                                    <input type="range" id="inputInfPes" min="1" max="6" step="0.1" value="3.05"
+                                        oninput="document.getElementById('infPesVal').textContent=this.value+'%'">
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Custom Scenarios -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-scenarios">
-                        <h3>🎯 Custom Scenarios</h3>
-                        <p class="section-description">
-                            Create alternative versions of the future (e.g., "High Inflation", "Bull Market"). These
-                            will appear as toggle buttons on the main dashboard for quick comparison.
-                        </p>
-                        <div class="input-group" style="max-width: 300px; margin-bottom: 1rem;">
-                            <label>Scenario Name</label>
-                            <input type="text" id="customScenarioName" placeholder="My Custom Scenario">
-                        </div>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Market Return %</label>
-                                <input type="number" id="customReturn" value="7" step="0.5">
+                        <!-- ============================================ -->
+                        <!-- SECTION: Tax Settings -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-taxes">
+                            <h3>🏛️ Tax Settings</h3>
+                            <p class="section-description">
+                                Configure your tax environment. We calculate progressive federal brackets and
+                                state-specific rules.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Effective Federal Tax Rate</label>
+                                    <input type="number" id="inputFedTax" value="22" step="1">
+                                    <span class="input-hint">% (current effective rate)</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>State Income Tax Rate</label>
+                                    <input type="number" id="inputStateTax" value="0" step="0.1">
+                                    <span class="input-hint">% (0 for TX, FL, etc.)</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Capital Gains Rate</label>
+                                    <input type="number" id="inputCapGainsTax" value="15" step="1">
+                                </div>
                             </div>
-                            <div class="input-group">
-                                <label>Inflation %</label>
-                                <input type="number" id="customInflation" value="2.5" step="0.1">
-                            </div>
-                            <div class="input-group">
-                                <label>SS COLA %</label>
-                                <input type="number" id="customCOLA" value="2" step="0.1">
+                            <h3 style="margin-top: 1.5rem;">🔄 Roth Conversion Strategy</h3>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Annual Roth Conversion Amount</label>
+                                    <input type="number" id="inputRothConversion" value="240808">
+                                </div>
+                                <div class="input-group">
+                                    <label>Conversion Start Year</label>
+                                    <input type="number" id="inputRothConvStart" value="2030">
+                                </div>
+                                <div class="input-group">
+                                    <label>Conversion End Year</label>
+                                    <input type="number" id="inputRothConvEnd" value="2050">
+                                </div>
+                                <div class="input-group">
+                                    <label>Target Tax Bracket for Conversions</label>
+                                    <select id="inputRothConvBracket">
+                                        <option value="12">12%</option>
+                                        <option value="22">22%</option>
+                                        <option value="24" selected>24%</option>
+                                        <option value="32">32%</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div style="margin-top: 1rem;">
-                            <button class="btn btn-primary" onclick="createCustomScenario()">Create
-                                Scenario</button>
-                            <button class="btn btn-outline" onclick="cloneScenario()">Clone Current
-                                Scenario</button>
-                        </div>
-                    </div>
 
-                    <!-- ============================================ -->
-                    <!-- SECTION: Goals -->
-                    <!-- ============================================ -->
-                    <div class="settings-section" id="settings-goals">
-                        <h3>🎯 Financial Goals</h3>
-                        <p class="section-description">
-                            Set target milestones for your retirement journey. These goals help track your progress
-                            and provide benchmarks for success.
-                        </p>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>Target Retirement Net Worth</label>
-                                <input type="number" id="goalRetirementNW" value="4000000">
+                        <!-- ============================================ -->
+                        <!-- SECTION: One-Time Events -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-events">
+                            <h3>📅 One-Time Financial Events</h3>
+
+                            <p class="section-description">
+                                <strong>What are One-Time Events?</strong><br>
+                                These are significant financial events that happen <strong>once</strong> at a specific
+                                year.
+                                Examples include:<br>
+                                • Inheritance or gift received<br>
+                                • Large home purchase or sale (if not using Housing section)<br>
+                                • College tuition payment<br>
+                                • Wedding expenses<br>
+                                • Starting a business (seed capital)<br><br>
+
+                                <strong>How to use:</strong> Enter the year, describe the event, specify the amount, and
+                                choose whether it's income (money coming in) or expense (money going out). Click "Add
+                                One-Time Event" and it will appear in your projection for that specific year only.
+                            </p>
+
+                            <div class="input-row" style="margin-bottom: 1rem;">
+                                <div class="input-group">
+                                    <label>Year</label>
+                                    <input type="number" id="eventYear" value="2030" min="2026" max="2071">
+                                </div>
+                                <div class="input-group">
+                                    <label>Description</label>
+                                    <input type="text" id="eventDesc" placeholder="e.g., Inheritance">
+                                </div>
+                                <div class="input-group">
+                                    <label>Amount</label>
+                                    <input type="number" id="eventAmount" value="0">
+                                </div>
+                                <div class="input-group">
+                                    <label>Type</label>
+                                    <select id="eventType">
+                                        <option value="income">Income (+)</option>
+                                        <option value="expense">Expense (-)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="addEvent()">Add One-Time Event</button>
                             </div>
-                            <div class="input-group">
-                                <label>Target Age 70 Net Worth</label>
-                                <input type="number" id="goalAge70NW" value="10000000">
+                            <table class="events-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eventsTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Recurring Events -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-recurring">
+                            <h3>🔄 Recurring Cash Flow Events</h3>
+
+                            <p class="section-description">
+                                <strong>What are Recurring Events?</strong><br>
+                                These are income or expenses that happen <strong>every year</strong> for a specific age
+                                range. Perfect for modeling:<br>
+                                • **Travel phases**: "Ages 55-65: $40k/year extra travel"<br>
+                                • **Part-time income**: "Ages 60-70: $25k/year consulting"<br>
+                                • **Education costs**: "Ages 50-54: $30k/year for kid's college"<br>
+                                • **Rental property income** (if not using main income fields)<br>
+                                • **Club memberships** or **hobbies** with ongoing costs<br><br>
+
+                                <strong>How to use:</strong><br>
+                                1. Enter the <strong>Start Age</strong> and <strong>End Age</strong> for when this event
+                                occurs (inclusive)<br>
+                                2. Describe what it is (e.g., "Extra Travel Budget")<br>
+                                3. Enter the <strong>Annual Amount</strong> (how much per year)<br>
+                                4. Choose <strong>Expense</strong> (money out) or <strong>Income</strong> (money in)<br>
+                                5. Click "Add Recurring Event"<br><br>
+
+                                The planner will automatically apply this amount EVERY year from Start Age to End Age in
+                                your projection. You can add multiple recurring events to model complex spending/income
+                                phases.
+                            </p>
+
+                            <div class="input-row" style="margin-bottom: 1rem;">
+                                <div class="input-group">
+                                    <label>Start Age</label>
+                                    <input type="number" id="recurStartAge" value="55" min="50" max="95">
+                                    <span class="input-hint">When does this begin?</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>End Age</label>
+                                    <input type="number" id="recurEndAge" value="65" min="50" max="95">
+                                    <span class="input-hint">When does this end?</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Description</label>
+                                    <input type="text" id="recurDescription" placeholder="e.g., Extra Travel">
+                                    <span class="input-hint">What is this for?</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Amount</label>
+                                    <input type="number" id="recurAmount" value="10000">
+                                    <span class="input-hint">Per year</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Type</label>
+                                    <select id="recurType">
+                                        <option value="expense">Expense (-)</option>
+                                        <option value="income">Income (+)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="addRecurringEvent()">Add Recurring
+                                    Event</button>
                             </div>
-                            <div class="input-group">
-                                <label>Legacy Goal (Estate Value)</label>
-                                <input type="number" id="goalLegacy" value="1000000">
-                            </div>
-                            <div class="input-group">
-                                <label>Annual Retirement Income Goal</label>
-                                <input type="number" id="goalRetireIncome" value="120000">
+
+                            <table class="events-table">
+                                <thead>
+                                    <tr>
+                                        <th>Age Range</th>
+                                        <th>Description</th>
+                                        <th>Annual Amount</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recurringEventsTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+
+                            <div
+                                style="margin-top: 1rem; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary); border-radius: 0.25rem; font-size: 0.85rem;">
+                                <strong>💡 Example:</strong> If you plan to travel heavily from ages 60-70, add a
+                                recurring
+                                expense: "Start Age: 60, End Age: 70, Description: Enhanced Travel, Amount: $40,000,
+                                Type:
+                                Expense". The planner will deduct $40k every year from age 60 to 70.
                             </div>
                         </div>
-                        <h4 style="margin-top: 1.5rem;">🔥 FIRE Targets</h4>
-                        <div class="settings-grid settings-grid-3">
-                            <div class="input-group">
-                                <label>FIRE Number (25x Expenses)</label>
-                                <input type="number" id="goalFIRE" value="2500000" readonly
-                                    style="background: var(--bg-tertiary);">
-                                <span class="input-hint">Auto-calculated based on expenses</span>
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Custom Scenarios -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-scenarios">
+                            <h3>🎯 Custom Scenarios</h3>
+                            <p class="section-description">
+                                Create alternative versions of the future (e.g., "High Inflation", "Bull Market"). These
+                                will appear as toggle buttons on the main dashboard for quick comparison.
+                            </p>
+                            <div class="input-group" style="max-width: 300px; margin-bottom: 1rem;">
+                                <label>Scenario Name</label>
+                                <input type="text" id="customScenarioName" placeholder="My Custom Scenario">
                             </div>
-                            <div class="input-group">
-                                <label>Coast FIRE Number</label>
-                                <input type="number" id="goalCoastFIRE" value="1200000" readonly
-                                    style="background: var(--bg-tertiary);">
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Market Return %</label>
+                                    <input type="number" id="customReturn" value="7" step="0.5">
+                                </div>
+                                <div class="input-group">
+                                    <label>Inflation %</label>
+                                    <input type="number" id="customInflation" value="2.5" step="0.1">
+                                </div>
+                                <div class="input-group">
+                                    <label>SS COLA %</label>
+                                    <input type="number" id="customCOLA" value="2" step="0.1">
+                                </div>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn btn-primary" onclick="createCustomScenario()">Create
+                                    Scenario</button>
+                                <button class="btn btn-outline" onclick="cloneScenario()">Clone Current
+                                    Scenario</button>
+                            </div>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- SECTION: Goals -->
+                        <!-- ============================================ -->
+                        <div class="settings-section" id="settings-goals">
+                            <h3>🎯 Financial Goals</h3>
+                            <p class="section-description">
+                                Set target milestones for your retirement journey. These goals help track your progress
+                                and provide benchmarks for success.
+                            </p>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>Target Retirement Net Worth</label>
+                                    <input type="number" id="goalRetirementNW" value="4000000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Target Age 70 Net Worth</label>
+                                    <input type="number" id="goalAge70NW" value="10000000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Legacy Goal (Estate Value)</label>
+                                    <input type="number" id="goalLegacy" value="1000000">
+                                </div>
+                                <div class="input-group">
+                                    <label>Annual Retirement Income Goal</label>
+                                    <input type="number" id="goalRetireIncome" value="120000">
+                                </div>
+                            </div>
+                            <h4 style="margin-top: 1.5rem;">🔥 FIRE Targets</h4>
+                            <div class="settings-grid settings-grid-3">
+                                <div class="input-group">
+                                    <label>FIRE Number (25x Expenses)</label>
+                                    <input type="number" id="goalFIRE" value="2500000" readonly
+                                        style="background: var(--bg-tertiary);">
+                                    <span class="input-hint">Auto-calculated based on expenses</span>
+                                </div>
+                                <div class="input-group">
+                                    <label>Coast FIRE Number</label>
+                                    <input type="number" id="goalCoastFIRE" value="1200000" readonly
+                                        style="background: var(--bg-tertiary);">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="settings-footer">
-                <div>
-                    <button class="btn btn-outline" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
-                    <button class="btn btn-outline" onclick="importSettings()">📥 Import</button>
-                    <button class="btn btn-outline" onclick="exportSettings()">📤 Export</button>
-                </div>
-                <div>
-                    <button class="btn btn-outline" onclick="closeSettings()">Cancel</button>
-                    <button class="btn btn-warning" id="applySettingsBtn" onclick="applySettings()">
-                        <span id="applyBtnIcon">⚠️</span>
-                        <span id="applyBtnText">Apply & Recalculate</span>
-                    </button>
+                <div class="settings-footer">
+                    <div>
+                        <button class="btn btn-outline" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+                        <button class="btn btn-outline" onclick="importSettings()">📥 Import</button>
+                        <button class="btn btn-outline" onclick="exportSettings()">📤 Export</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline" onclick="closeSettings()">Cancel</button>
+                        <button class="btn btn-warning" id="applySettingsBtn" onclick="applySettings()">
+                            <span id="applyBtnIcon">⚠️</span>
+                            <span id="applyBtnText">Apply & Recalculate</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Year Detail Modal -->
-    <div class="modal-overlay" id="yearDetailModal">
-        <div class="modal" style="max-width: 800px;">
-            <div class="modal-header">
-                <h3>📅 Year <span id="modalYear">2026</span> Details (Age <span id="modalAge">50</span>)</h3>
-                <button class="settings-close" onclick="closeYearModal()">×</button>
-            </div>
-            <div class="modal-body" id="yearModalBody"></div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeYearModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Goal Modal -->
-    <div class="modal-overlay" id="goalModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>🎯 Add New Goal</h3>
-                <button class="settings-close" onclick="closeGoalModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="input-group" style="margin-bottom: 1rem;">
-                    <label>Goal Name</label>
-                    <input type="text" id="newGoalName" placeholder="e.g., Travel Fund">
+        <!-- Scenario Comparison Modal -->
+        <div class="modal-overlay" id="comparisonOverlay">
+            <div class="modal-content-large">
+                <div class="modal-header">
+                    <h3 class="modal-title">🔀 Strategy Comparison</h3>
+                    <button class="settings-close" onclick="closeComparisonModal()">×</button>
                 </div>
-                <div class="settings-grid">
-                    <div class="input-group">
-                        <label>Target Amount</label>
-                        <input type="number" id="newGoalAmount" value="100000">
-                    </div>
-                    <div class="input-group">
-                        <label>Target Age/Year</label>
-                        <input type="number" id="newGoalYear" value="2035">
+                <div class="modal-body" id="comparisonModalContent">
+                    <table class="comparison-table"
+                        style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="text-align: left; padding: 12px;">Metric</th>
+                                <th style="text-align: right; padding: 12px;">Current (Avg)</th>
+                                <th style="text-align: right; padding: 12px;">Alternative (Avg)</th>
+                                <th style="text-align: right; padding: 12px;">Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                    <div class="comparison-charts" style="height: 300px;">
+                        <canvas id="chartComparisonNW"></canvas>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeGoalModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveGoal()">Add Goal</button>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeComparisonModal()">Close</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script type="module" src="/src/main.js"></script>
+        <!-- Year Detail Modal -->
+        <div class="modal-overlay" id="yearDetailModal">
+            <div class="modal" style="max-width: 800px;">
+                <div class="modal-header">
+                    <h3>📅 Year <span id="modalYear">2026</span> Details (Age <span id="modalAge">50</span>)</h3>
+                    <button class="settings-close" onclick="closeYearModal()">×</button>
+                </div>
+                <div class="modal-body" id="yearModalBody"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeYearModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goal Modal -->
+        <div class="modal-overlay" id="goalModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>🎯 Add New Goal</h3>
+                    <button class="settings-close" onclick="closeGoalModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <label>Goal Name</label>
+                        <input type="text" id="newGoalName" placeholder="e.g., Travel Fund">
+                    </div>
+                    <div class="settings-grid">
+                        <div class="input-group">
+                            <label>Target Amount</label>
+                            <input type="number" id="newGoalAmount" value="100000">
+                        </div>
+                        <div class="input-group">
+                            <label>Target Age/Year</label>
+                            <input type="number" id="newGoalYear" value="2035">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeGoalModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveGoal()">Add Goal</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>

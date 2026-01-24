@@ -60,7 +60,13 @@ export let config = {
             sellYear: 2032,
             saleCosts: 6,
             futureRent: 3000,
-            rentInflation: 3
+            rentInflation: 3,
+            buyNewHome: 'no',
+            buyYear: 2033,
+            newHomeValue: 400000,
+            newMortgageAmount: 0,
+            newMortgageRate: 6.5,
+            newMortgageYears: 30
         },
         income: {
             work: 150000,
@@ -127,7 +133,14 @@ export let config = {
             rothConversion: 240808,
             rothConvStart: 2030,
             rothConvEnd: 2050,
-            rothConversionEnabled: true
+            rothConversionEnabled: true,
+            withdrawalStrategy: 'grow_tax_deferred' // options: 'grow_tax_deferred', 'minimize_rmds'
+        },
+        goals: {
+            retirementNW: 4000000,
+            age70NW: 10000000,
+            legacy: 5000000,
+            retireIncome: 120000
         }
     },
 

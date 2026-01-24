@@ -1,0 +1,364 @@
+# .cursorrules - RetireFire Project Rules
+
+---
+
+## 🚨 CRITICAL SAFETY RULES
+
+### NEVER RUN These Commands
+
+**ABSOLUTELY FORBIDDEN** - These commands can destroy the system:
+
+```bash
+rm -rf /
+rm -rf ~
+rm -rf *
+format c:
+del /f /s /q
+rmdir /s /q
+:(){:|:&};:
+dd if=
+mkfs.
+> /dev/sda
+chmod -R 777 /
+```
+
+**If any command looks suspicious or destructive, STOP and ask the user first.**
+
+---
+
+## 🧠 AI Assistant Context
+
+### Project Overview
+You are working on **RetireFire**, a high-fidelity financial planning application built to rival professional tools like **RightCapital**, **eMoney**, and **ProjectionLab**.
+
+**Tech Stack:**
+- **Frontend**: React, Vite, Tailwind CSS
+- **Charts**: Chart.js
+- **Testing**: Vitest + Puppeteer
+- **Build**: Vite
+- **Deployment**: Automated FTP
+
+**Target Audience:** CFA/CFP-level financial professionals and serious retirement planners
+
+---
+
+## 📋 Mandatory Workflow
+
+### Before Answering Complex Questions
+1. **Always query Pinecone** to check for relevant past context or saved decisions
+2. **Check existing documentation** (README.md, TASKS.md, ISSUES.md, PROJECT_STATUS.md)
+3. **Review .cursorrules** (this file) for project-specific rules
+
+### When User Makes Design Decisions
+- **Automatically save to Pinecone** using upsert/save tool
+- **Update relevant documentation** (TASKS.md, ISSUES.md, PROJECT_STATUS.md)
+- **Document in code comments** if applicable
+
+### Always Follow These Files
+- ✅ `.cursorrules` (this file)
+- ✅ `defaultProfile.json` (update as needed)
+- ✅ `/docs/guides/Coding_Standards.md`
+- ✅ `TASKS.md` (check for completed tasks to avoid redoing work)
+
+---
+
+## 📝 Continuous Documentation Updates
+
+### Update As You Go (Not at the End)
+
+**Always update these files during work:**
+
+1. **TASKS.md**
+   - Mark tasks as complete (✅) when done
+   - Do NOT remove completed tasks (keep for history)
+   - Add new tasks as they arise
+   - Update progress tracking
+
+2. **ISSUES.md**
+   - Add new issues when discovered
+   - Document resolutions to prevent future problems
+   - Mark as fixed (✅) when resolved
+   - Keep for reference (don't delete)
+
+3. **PROJECT_STATUS.md**
+   - Update after major milestones
+   - Keep current status only (last 2 weeks)
+   - Archive old updates
+
+4. **README.md**
+   - Update when project scope changes
+   - Keep links current
+   - Update status badges
+
+5. **QUICKSTART.md**
+   - Update when setup process changes
+   - Keep commands current
+   - Test instructions regularly
+
+---
+
+## 🧪 Testing Requirements
+
+### Before Marking Any Task as Done
+
+1. **Run tests**: `npm test`
+2. **Fix any failures**: All tests must pass
+3. **Check for regressions**: Verify existing functionality still works
+4. **Update test results**: Update `/docs/testing/TEST_RESULTS.md`
+
+### Lint Errors
+- **Run and fix** all lint errors before committing
+- **No warnings** in production builds
+- **Follow ESLint rules** strictly
+
+---
+
+## 🧹 Cleanup Rules
+
+### Log Files
+- **Clean up old *.txt log files** after they are used
+- **Move to `/docs/completed/`** if needed for reference
+- **Delete** if no longer needed
+
+### White Screen Issues
+- **Always verify** application is working and running
+- **Check console** for errors
+- **Test in browser** before marking complete
+
+---
+
+## 📂 Documentation Structure Rules
+
+### CRITICAL: Only 5 MD Files Allowed in Root
+
+**Root directory MUST contain ONLY these files:**
+1. `README.md` - Project overview and entry point
+2. `TASKS.md` - Current work and sprint planning
+3. `ISSUES.md` - Active bugs and known issues
+4. `PROJECT_STATUS.md` - Current project health
+5. `QUICKSTART.md` - Getting started guide
+
+**Any other MD files MUST go in `/docs/` subdirectories.**
+
+---
+
+## Before Creating ANY New MD File
+
+### Ask These Questions:
+
+1. **Can this go in an existing file?**
+   - Completion summary → Update TASKS.md, move to `/docs/completed/`
+   - Bug fix → Update ISSUES.md
+   - Status update → Update PROJECT_STATUS.md
+   - Test results → Update `/docs/testing/TEST_RESULTS.md`
+
+2. **Is this temporary?**
+   - Use code comments instead
+   - Delete after use
+   - Don't create MD files for temporary notes
+
+3. **Where does this belong?**
+   - Test docs → `/docs/testing/`
+   - Guides → `/docs/guides/`
+   - Completed work → `/docs/completed/`
+   - Historical → `/docs/archive/`
+
+---
+
+## File Lifecycle
+
+### Active → Completed → Archive → Delete
+
+1. **Active** (root or `/docs/`)
+   - Currently being used
+   - Updated frequently
+
+2. **Completed** (`/docs/completed/`)
+   - Work is done
+   - Named: `YYYY-MM-DESCRIPTION.md`
+   - Reviewed quarterly
+
+3. **Archive** (`/docs/archive/`)
+   - Historical value only
+   - Reviewed yearly
+
+4. **Delete**
+   - No longer relevant
+   - Information captured elsewhere
+
+---
+
+## Mandatory Actions
+
+### When Completing a Task:
+1. ✅ Update TASKS.md (mark as complete)
+2. ✅ Update ISSUES.md (if fixing a bug)
+3. ✅ Update PROJECT_STATUS.md (if significant)
+4. ❌ DO NOT create "COMPLETION_SUMMARY.md"
+5. ❌ DO NOT create "ACHIEVEMENT.md"
+6. ❌ DO NOT create "REPORT.md"
+
+### When Fixing a Bug:
+1. ✅ Update ISSUES.md (mark as fixed)
+2. ✅ Update TASKS.md (if part of sprint)
+3. ❌ DO NOT create "BUG_FIX_SUMMARY.md"
+4. ❌ DO NOT create "FIX_REPORT.md"
+
+### When Running Tests:
+1. ✅ Update `/docs/testing/TEST_RESULTS.md`
+2. ❌ DO NOT create "TEST_ANALYSIS_REPORT.md"
+3. ❌ DO NOT create "TEST_FAILURE_ANALYSIS.md"
+4. ❌ DO NOT create "TEST_SUITE_SUMMARY.md"
+5. ❌ DO NOT create "COMPREHENSIVE_TEST_REPORT.md"
+
+### When Documenting:
+1. ✅ Update existing files first
+2. ✅ Use `/docs/` subdirectories
+3. ❌ DO NOT create multiple files for same topic
+4. ❌ DO NOT create files in root (except the 5 allowed)
+
+---
+
+## Documentation Folders
+
+### `/docs/testing/`
+- `TEST_GUIDE.md` - How to run and write tests
+- `TEST_RESULTS.md` - Latest test run results (auto-updated)
+
+### `/docs/guides/`
+- `Coding_Standards.md` - Code style and patterns
+- `Deployment_Guide.md` - How to deploy
+- Other evergreen guides
+
+### `/docs/completed/`
+- `YYYY-MM-DESCRIPTION.md` - Completed epics, sprints
+- Review quarterly, move to archive or delete
+
+### `/docs/archive/`
+- Historical documentation
+- Review yearly, delete if obsolete
+
+---
+
+## Update Frequency
+
+| File | Update When | Keep Current |
+|------|-------------|--------------|
+| `TASKS.md` | Daily | Last 2 sprints only |
+| `ISSUES.md` | As bugs found/fixed | Active issues only |
+| `PROJECT_STATUS.md` | Weekly | Last 2 weeks only |
+| `README.md` | Rarely | Always current |
+| `QUICKSTART.md` | As setup changes | Always current |
+
+---
+
+## Enforcement Rules
+
+### Before Committing:
+
+```bash
+# Check root directory
+ls *.md
+
+# Should see ONLY:
+# - README.md
+# - TASKS.md
+# - ISSUES.md
+# - PROJECT_STATUS.md
+# - QUICKSTART.md
+
+# If you see more, move them:
+# - Completed work → docs/completed/
+# - Test docs → docs/testing/
+# - Guides → docs/guides/
+# - Old docs → docs/archive/
+```
+
+### Weekly Cleanup:
+
+1. Review TASKS.md - remove completed tasks
+2. Review ISSUES.md - remove fixed issues
+3. Update PROJECT_STATUS.md - keep only current status
+4. Move any stray MD files to appropriate folders
+
+### Monthly Cleanup:
+
+1. Review root directory - should have exactly 5 MD files
+2. Review `/docs/testing/` - keep only current guide and results
+3. Move completed work to `/docs/completed/`
+
+### Quarterly Cleanup:
+
+1. Review `/docs/completed/` - move to archive or delete
+2. Review `/docs/guides/` - update or remove outdated
+3. Clean up any stray files
+
+---
+
+## Code Quality Rules
+
+### Testing
+- ✅ All new features MUST include tests
+- ✅ Maintain 100% test pass rate
+- ✅ Run `npm test` before committing
+- ✅ Run full suite before deployment
+
+### Documentation
+- ✅ Update TASKS.md when completing tasks
+- ✅ Update ISSUES.md when fixing bugs
+- ✅ Update PROJECT_STATUS.md for major changes
+- ✅ Keep documentation current and consolidated
+
+### Code Style
+- ✅ Follow patterns in `/docs/guides/Coding_Standards.md`
+- ✅ Use consistent naming conventions
+- ✅ Comment complex logic
+- ✅ Keep functions focused and small
+
+---
+
+## Project-Specific Rules
+
+### Financial Calculations
+- ✅ Always use `formatCurrency()` for money displays
+- ✅ Always use `formatPercent()` for percentages
+- ✅ Test all tax calculations
+- ✅ Validate all projections
+
+### Charts
+- ✅ Use consistent color palette
+- ✅ Enable tooltips on all charts
+- ✅ Update charts after data changes
+- ✅ Test chart rendering
+
+### Settings
+- ✅ Save to localStorage after changes
+- ✅ Validate input ranges
+- ✅ Provide clear labels
+- ✅ Show impact of changes
+
+---
+
+## Summary
+
+**Keep it simple:**
+- 5 files in root (max)
+- Organized folders for everything else
+- Regular cleanup
+- Delete obsolete files
+
+**Keep it current:**
+- Update TASKS.md and ISSUES.md frequently
+- Archive completed work
+- Remove outdated information
+
+**Keep it consolidated:**
+- One file per topic
+- Merge duplicates
+- Link instead of duplicate
+
+---
+
+**Last Updated**: 2026-01-24  
+**Review**: Before every commit  
+**Enforcement**: Mandatory

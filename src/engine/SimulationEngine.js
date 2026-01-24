@@ -34,7 +34,8 @@ export class SimulationEngine {
             taxes: {
                 Federal: [],
                 FICA: [],
-                CapGains: []
+                CapGains: [],
+                State: []
             },
             netWorth: []
         };
@@ -45,8 +46,8 @@ export class SimulationEngine {
         let hsa = config.settings.assets.hsa;
         let investments = config.settings.assets.investments;
         let cash = config.settings.assets.cash;
-        let mortgage = config.settings.assets.mortgage;
-        let homeValue = config.settings.assets.homeValue;
+        let mortgage = config.settings.housing.mortgageBalance || 0;
+        let homeValue = config.settings.housing.homeValue || 0;
         let otherAssets = config.settings.assets.otherAssets;
 
         const rates = {
@@ -75,23 +76,57 @@ export class SimulationEngine {
                 ssIncome = config.settings.socialSecurity[`ss${ssStartAge}`] * 12 * Math.pow(1 + config.settings.socialSecurity.cola / 100, Math.max(0, currentAge - ssStartAge));
             }
 
-            // 2. Expenses
-            // General Spending
-            let generalExp = config.settings.expenses.annualSpending * Math.pow(1 + currentRates.inflation, i);
-
-            // Housing
-            let housingExp = (config.settings.housing.propertyTax + config.settings.housing.maintenance + config.settings.housing.insurance) * Math.pow(1 + currentRates.inflation, i);
-            if (config.settings.housing.mortgageBalance > 0 && i < config.settings.housing.mortgageYears) {
-                housingExp += (config.settings.housing.mortgagePayment * 12);
+            // Real Estate: Sell Home Logic
+            let proceeds = 0;
+            if (config.settings.housing.sellHome === 'yes' && currentYear === config.settings.housing.sellYear) {
+                proceeds = homeValue * (1 - config.settings.housing.saleCosts / 100) - mortgage;
+                investments += proceeds;
+                homeValue = 0;
+                mortgage = 0;
             }
 
-            // Healthcare
+            // Real Estate: Buy Home Logic
+            if (config.settings.housing.buyNewHome === 'yes' && currentYear === config.settings.housing.buyYear) {
+                const upfront = config.settings.housing.newHomeValue - config.settings.housing.newMortgageAmount;
+                investments -= upfront;
+                homeValue = config.settings.housing.newHomeValue;
+                mortgage = config.settings.housing.newMortgageAmount;
+            }
+
+            // 2. Expenses (Partial for tax calculation)
+            let multiplier = 1.0;
+            const activePhase = (config.settings.expenses.phases || []).find(p => currentAge >= p.startAge && currentAge < p.endAge);
+            if (activePhase) multiplier = activePhase.multiplier;
+
+            let generalExp = config.settings.expenses.annualSpending * multiplier * Math.pow(1 + currentRates.inflation, i);
+
+            let housingExp = 0;
+            if (homeValue > 0) {
+                housingExp = (config.settings.housing.propertyTax + config.settings.housing.maintenance + config.settings.housing.insurance) * Math.pow(1 + currentRates.inflation, i);
+                if (mortgage > 0) {
+                    if (currentYear >= config.settings.housing.buyYear && config.settings.housing.buyNewHome === 'yes') {
+                        // New mortgage payment
+                        const rate = config.settings.housing.newMortgageRate / 100 / 12;
+                        const n = config.settings.housing.newMortgageYears * 12;
+                        const p = config.settings.housing.newMortgageAmount;
+                        if (p > 0 && rate > 0) {
+                            const monthly = (p * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
+                            housingExp += (monthly * 12);
+                        }
+                    } else if (i < config.settings.housing.mortgageYears) {
+                        housingExp += (config.settings.housing.mortgagePayment * 12);
+                    }
+                }
+            } else {
+                // Renting
+                housingExp = config.settings.housing.futureRent * 12 * Math.pow(1 + config.settings.housing.rentInflation / 100, Math.max(0, currentYear - config.settings.housing.sellYear));
+            }
+
             let medicalExp = 0;
             if (currentAge < 65) medicalExp = config.settings.healthcare.preMedicare;
             else medicalExp = config.settings.healthcare.medicare + config.settings.healthcare.outOfPocket;
             medicalExp *= Math.pow(1 + config.settings.healthcare.inflation / 100, i);
 
-            // LTC
             let ltcExp = 0;
             if (currentAge >= config.settings.healthcare.ltcAge) {
                 ltcExp = config.settings.healthcare.ltcCost * Math.pow(1 + config.settings.healthcare.ltcInflation / 100, i);
@@ -99,17 +134,41 @@ export class SimulationEngine {
 
             let totalExpBeforeTax = generalExp + housingExp + medicalExp + ltcExp;
 
-            // Simple logic for taxes - will be refined below
-            let estimatedTax = TaxCalculator.calculateFederalSocialSecurity(workIncome + ssIncome, config.settings.taxSettings.filingStatus);
+            // 3. Tax Calculation Breakdown
+            // Ordinary Income = Work + Social Security (Simplified 85% taxable) + RMDs/Deferred Drawdown
+            // We need to know drawdown BEFORE we can calculate tax, but tax affects drawdown.
+            // Using last year's or a rough estimate for iterative tax is better, but let's keep it simple:
+            // Calculate taxes on known income, then add drawdown-based taxes.
 
-            // 3. Retirement Contributions
+            let ordIncome = workIncome + (ssIncome * 0.85);
+            let estimatedCapGains = 0;
+
+            // If we have a deficit, we'll pull from accounts. 
+            // We assume 50% of Investment account withdrawals are capital gains.
+            let preTaxGap = Math.max(0, totalExpBeforeTax - (workIncome + ssIncome));
+            if (preTaxGap > 0 && investments > 0) {
+                const pullFromInvestments = Math.min(investments, preTaxGap);
+                estimatedCapGains = pullFromInvestments * 0.5; // Assumption: 50% cost basis
+            }
+
+            const taxBreakdown = TaxCalculator.calculateTaxBreakdown(
+                ordIncome,
+                estimatedCapGains,
+                config.settings.taxSettings.filingStatus,
+                config.settings.taxSettings.state,
+                workIncome > 0
+            );
+
+            let estimatedTax = taxBreakdown.total;
+
+            // 4. Retirement Contributions
             if (workIncome > 0) {
                 retirement += config.settings.income.contribution401k + config.settings.income.employerMatch;
                 roth += config.settings.income.rothContrib;
                 hsa += config.settings.income.hsaContrib;
             }
 
-            // 4. Growth
+            // 5. Growth
             retirement *= (1 + currentRates.return);
             roth *= (1 + currentRates.return);
             hsa *= (1 + currentRates.return);
@@ -117,40 +176,32 @@ export class SimulationEngine {
             homeValue *= (1 + config.settings.housing.appreciation / 100);
             otherAssets *= (1 + currentRates.inflation);
 
-            // 5. Drawdown logic if expenses > income
+            // 6. Drawdown logic if expenses > income
             let netFlow = workIncome + ssIncome - totalExpBeforeTax - estimatedTax;
 
             if (netFlow < 0) {
                 let deficit = Math.abs(netFlow);
+                const strategy = config.settings.taxes.withdrawalStrategy || 'grow_tax_deferred';
 
-                // Investements first
-                if (investments >= deficit) {
-                    investments -= deficit;
-                    deficit = 0;
+                let order = [];
+                if (strategy === 'minimize_rmds') {
+                    order = ['RetirementSavings', 'Investments', 'RothIRA'];
                 } else {
-                    deficit -= investments;
-                    investments = 0;
+                    order = ['Investments', 'RetirementSavings', 'RothIRA'];
                 }
 
-                // Retirement Savings next
-                if (deficit > 0) {
-                    if (retirement >= deficit) {
-                        retirement -= deficit;
-                        deficit = 0;
-                    } else {
-                        deficit -= retirement;
-                        retirement = 0;
-                    }
-                }
+                for (let accountName of order) {
+                    if (deficit <= 0) break;
 
-                // Roth last
-                if (deficit > 0) {
-                    if (roth >= deficit) {
-                        roth -= deficit;
-                        deficit = 0;
-                    } else {
-                        deficit -= roth;
-                        roth = 0;
+                    if (accountName === 'Investments') {
+                        if (investments >= deficit) { investments -= deficit; deficit = 0; }
+                        else { deficit -= investments; investments = 0; }
+                    } else if (accountName === 'RetirementSavings') {
+                        if (retirement >= deficit) { retirement -= deficit; deficit = 0; }
+                        else { deficit -= retirement; retirement = 0; }
+                    } else if (accountName === 'RothIRA') {
+                        if (roth >= deficit) { roth -= deficit; deficit = 0; }
+                        else { deficit -= roth; roth = 0; }
                     }
                 }
             } else {
@@ -163,8 +214,13 @@ export class SimulationEngine {
                 if (retirement >= convAmount) {
                     retirement -= convAmount;
                     roth += convAmount;
-                    // Tax on conversion is handled by estimatedTax in next iteration or we should add it here
-                    estimatedTax += convAmount * (config.settings.taxSettings.fedBracket / 100);
+                    // Additional tax on conversion
+                    const convTax = convAmount * (config.settings.taxSettings.fedBracket / 100);
+                    estimatedTax += convTax;
+                    // If we pay tax from conversion, we actually have less to add to Roth or we pull from else
+                    // Let's assume tax is paid from investments/cash
+                    if (investments >= convTax) investments -= convTax;
+                    else if (cash >= convTax) cash -= convTax;
                 }
             }
 
@@ -174,13 +230,15 @@ export class SimulationEngine {
             results.accounts.HSA.push(Math.round(hsa));
             results.accounts.Investments.push(Math.round(investments));
             results.accounts.CashSavings.push(Math.round(cash));
-            results.accounts.Housing.push(Math.round(homeValue));
+            // FIX: Housing should represent HOME EQUITY (homeValue - mortgage), not just homeValue
+            results.accounts.Housing.push(Math.round(Math.max(0, homeValue - mortgage)));
             results.accounts.OtherAssets.push(Math.round(otherAssets));
-            results.accounts.Debt.push(Math.round(-mortgage));
+            // FIX: Debt should only show mortgage if home exists, otherwise 0
+            results.accounts.Debt.push(homeValue > 0 ? Math.round(-mortgage) : 0);
 
             results.income.Work.push(Math.round(workIncome));
             results.income.SocialSecurity.push(Math.round(ssIncome));
-            results.income.RMD.push(0); // TODO: Implement RMD
+            results.income.RMD.push(0);
             results.income.Drawdown.push(netFlow < 0 ? Math.round(Math.abs(netFlow)) : 0);
 
             results.expenses.General.push(Math.round(generalExp));
@@ -189,7 +247,14 @@ export class SimulationEngine {
             results.expenses.LTC.push(Math.round(ltcExp));
             results.expenses.Taxes.push(Math.round(estimatedTax));
 
-            results.netWorth.push(Math.round(retirement + roth + hsa + investments + cash + homeValue + otherAssets - mortgage));
+            results.taxes.Federal.push(Math.round(taxBreakdown.federalOrd));
+            results.taxes.FICA.push(Math.round(taxBreakdown.fica));
+            results.taxes.CapGains.push(Math.round(taxBreakdown.federalCG));
+            results.taxes.State.push(Math.round(taxBreakdown.state));
+
+            // FIX: Net worth calculation - homeValue and mortgage are already accounted for in Housing equity
+            // Don't double-count by including both homeValue and -mortgage
+            results.netWorth.push(Math.round(retirement + roth + hsa + investments + cash + (homeValue - mortgage) + otherAssets));
         }
 
         return results;

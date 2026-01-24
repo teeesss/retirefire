@@ -6,6 +6,8 @@ import { TaxCalculator } from './engine/TaxCalculator.js';
 import { SimulationEngine } from './engine/SimulationEngine.js';
 import { accountNames, incomeNames, expenseNames, colors, incomeColors, expenseColors, scenarioColors } from './data/Constants.js';
 import { formatCurrency, formatPercent } from './utils/Formatters.js';
+import { initializeDescriptionsAndTooltips } from './utils/comprehensiveDescriptions.js';
+import { initializeExplorerSections } from './utils/explorerSections.js';
 
 let charts = {};
 // window.charts = charts; // Optional debugging
@@ -62,6 +64,10 @@ function calculateNetWorth(scenario, yearIndex) {
     if (!accounts) return 0;
     let total = 0;
     for (let key in accounts) {
+        // FIX: Skip Debt account since mortgage is already accounted for in Housing equity
+        // Housing = homeValue - mortgage, so including Debt (-mortgage) would double-count
+        if (key === 'Debt') continue;
+
         if (accounts[key]?.[yearIndex] !== undefined) {
             total += accounts[key][yearIndex];
         }
@@ -96,7 +102,31 @@ function getTotalExpenses(scenario, yearIndex) {
 function getTotalTaxes(scenario, yearIndex) {
     const taxes = rawData[scenario]?.taxes;
     if (!taxes) return 0;
-    return (taxes.Federal?.[yearIndex] || 0) + (taxes.FICA?.[yearIndex] || 0) + (taxes.CapGains?.[yearIndex] || 0);
+    return (taxes.Federal?.[yearIndex] || 0) + (taxes.FICA?.[yearIndex] || 0) + (taxes.CapGains?.[yearIndex] || 0) + (taxes.State?.[yearIndex] || 0);
+}
+
+function calculateWellnessScore(scenario) {
+    const data = rawData[scenario];
+    const mc = rawData.monteCarlo || { successRate: 0 };
+
+    // 50% Success Rate
+    const successPoints = (mc.successRate || 0) * 0.5;
+
+    // 25% Debt
+    let debtPoints = 0;
+    const debtIdx = data.accounts.Debt.findIndex(v => v >= 0);
+    const retireIdx = rawData.ages.findIndex(a => a >= config.settings.personal.retireAge);
+    if (debtIdx !== -1) {
+        if (debtIdx <= retireIdx) debtPoints = 25;
+        else debtPoints = 15;
+    }
+
+    // 25% Legacy
+    const finalNW = calculateNetWorthFromData(data, rawData.years.length - 1);
+    const goal = config.goals.find(g => g.name.includes('Legacy'))?.target || 5000000;
+    const legacyPoints = Math.min(25, (finalNW / goal) * 25);
+
+    return Math.round(successPoints + debtPoints + legacyPoints);
 }
 
 // ============================================
@@ -133,8 +163,6 @@ function updateChartColors() {
 function saveToLocalStorage() {
     try {
         localStorage.setItem('retirementPlannerConfig', JSON.stringify(config));
-        localStorage.setItem('retirementPlannerEvents', JSON.stringify(config.events));
-        localStorage.setItem('retirementPlannerGoals', JSON.stringify(config.goals));
     } catch (e) {
         console.warn('Could not save to localStorage:', e);
     }
@@ -145,15 +173,14 @@ function loadFromLocalStorage() {
         const savedConfig = localStorage.getItem('retirementPlannerConfig');
         if (savedConfig) {
             const parsed = JSON.parse(savedConfig);
-            Object.assign(config, parsed);
-        }
-        const savedEvents = localStorage.getItem('retirementPlannerEvents');
-        if (savedEvents) {
-            config.events = JSON.parse(savedEvents);
-        }
-        const savedGoals = localStorage.getItem('retirementPlannerGoals');
-        if (savedGoals) {
-            config.goals = JSON.parse(savedGoals);
+            // Deeply merge or carefully assign to preserve structure
+            Object.keys(parsed).forEach(key => {
+                if (typeof parsed[key] === 'object' && parsed[key] !== null && !Array.isArray(parsed[key])) {
+                    config[key] = { ...config[key], ...parsed[key] };
+                } else {
+                    config[key] = parsed[key];
+                }
+            });
         }
     } catch (e) {
         console.warn('Could not load from localStorage:', e);
@@ -165,10 +192,79 @@ function loadFromLocalStorage() {
 // ============================================
 
 function openSettings(section) {
+    populateSettingsUI();
     document.getElementById('settingsOverlay').classList.add('active');
     if (section) {
         const navItem = document.querySelector(`.settings-nav-item[onclick*="'${section}'"]`);
         if (navItem) showSettingsSection(section, navItem);
+    }
+}
+
+function populateSettingsUI() {
+    const s = config.settings;
+
+    // Personal
+    document.getElementById('inputName').value = s.personal.name || '';
+    document.getElementById('inputAge').value = s.personal.age;
+    document.getElementById('inputRetireAge').value = s.personal.retireAge;
+    document.getElementById('inputLongevity').value = s.personal.longevity;
+    document.getElementById('inputState').value = s.taxSettings.state;
+    document.getElementById('inputFilingStatus').value = s.taxSettings.filingStatus;
+
+    // Assets
+    document.getElementById('inputRetirement').value = s.assets.retirement;
+    document.getElementById('inputRoth').value = s.assets.roth;
+    document.getElementById('inputHSA').value = s.assets.hsa;
+    document.getElementById('inputInvestments').value = s.assets.investments;
+    document.getElementById('inputCash').value = s.assets.cash;
+    document.getElementById('inputOtherAssets').value = s.assets.otherAssets;
+    document.getElementById('inputBTC').value = s.assets.btc;
+    document.getElementById('inputETH').value = s.assets.eth;
+    document.getElementById('inputSOL').value = s.assets.sol;
+
+    // Glide Path
+    document.getElementById('inputGlideStocks').value = s.glidePath.stocks;
+    document.getElementById('inputGlideBonds').value = s.glidePath.bonds;
+    document.getElementById('inputGlideCash').value = s.glidePath.cash;
+    document.getElementById('inputGlideCrypto').value = s.glidePath.crypto;
+
+    // Rates
+    document.getElementById('inputReturnOpt').value = s.rates.optimistic;
+    document.getElementById('inputReturnAvg').value = s.rates.average;
+    document.getElementById('inputReturnPes').value = s.rates.pessimistic;
+    document.getElementById('inputReturnBonds').value = s.rates.bonds;
+    document.getElementById('inputReturnCash').value = s.rates.cash;
+
+    // Income
+    document.getElementById('inputWorkIncome').value = s.income.work;
+    document.getElementById('inputIncomeGrowth').value = s.income.growth;
+    document.getElementById('input401kContrib').value = s.income.contribution401k;
+    if (document.getElementById('inputEmployerMatch')) document.getElementById('inputEmployerMatch').value = s.income.employerMatch;
+    if (document.getElementById('inputRothContrib')) document.getElementById('inputRothContrib').value = s.income.rothContrib;
+    document.getElementById('inputHSAContrib').value = s.income.hsaContrib;
+
+    // Expenses
+    document.getElementById('inputExpensesGeneral').value = s.expenses.general;
+    document.getElementById('inputExpensesTravel').value = s.expenses.travel;
+    document.getElementById('inputExpensesUtilities').value = s.expenses.utilities;
+    document.getElementById('inputExpensesMisc').value = s.expenses.misc;
+
+    // Taxes
+    document.getElementById('inputRothConversion').value = s.taxes.rothConversion;
+    document.getElementById('inputRothConvStart').value = s.taxes.rothConvStart;
+    document.getElementById('inputRothConvEnd').value = s.taxes.rothConvEnd;
+    document.getElementById('inputRothConvBracket').value = s.taxes.rothConvBracket || '24';
+
+    // Goals
+    if (document.getElementById('goalRetirementNW')) document.getElementById('goalRetirementNW').value = s.goals?.retirementNW || 4000000;
+    if (document.getElementById('goalAge70NW')) document.getElementById('goalAge70NW').value = s.goals?.age70NW || 10000000;
+    if (document.getElementById('goalLegacy')) document.getElementById('goalLegacy').value = s.goals?.legacy || 5000000;
+    if (document.getElementById('goalRetireIncome')) document.getElementById('goalRetireIncome').value = s.goals?.retireIncome || 120000;
+
+    // Phases
+    if (s.expenses.phases && s.expenses.phases.length >= 2) {
+        if (document.getElementById('inputPhase1Mult')) document.getElementById('inputPhase1Mult').value = s.expenses.phases[0].multiplier;
+        if (document.getElementById('inputPhase2Mult')) document.getElementById('inputPhase2Mult').value = s.expenses.phases[1].multiplier;
     }
 }
 
@@ -335,6 +431,13 @@ function applySettings() {
     tx.filingStatus = document.getElementById('inputFilingStatus')?.value || 'head';
     tx.state = document.getElementById('inputState')?.value || 'FL';
     tx.fedBracket = parseInt(document.getElementById('inputFedBracket')?.value || 22); // Default 22% bracket
+
+    // Goals (US-034/BUG FIX)
+    const gls = config.settings.goals;
+    gls.retirementNW = parseFloat(document.getElementById('goalRetirementNW')?.value || 4000000);
+    gls.age70NW = parseFloat(document.getElementById('goalAge70NW')?.value || 10000000);
+    gls.legacy = parseFloat(document.getElementById('goalLegacy')?.value || 5000000);
+    gls.retireIncome = parseFloat(document.getElementById('goalRetireIncome')?.value || 120000);
 
     // BUG-003 FIX: Always close settings modal, even if recalculation fails
     // BUG-003 FIX: Always close settings modal, even if recalculation fails
@@ -567,6 +670,85 @@ function openGoalModal() {
     document.getElementById('goalModal').classList.add('active');
 }
 
+function openComparisonModal() {
+    document.getElementById('comparisonOverlay').classList.add('active');
+    renderComparison();
+}
+
+function closeComparisonModal() {
+    document.getElementById('comparisonOverlay').classList.remove('active');
+}
+
+function renderComparison() {
+    const sc = 'average';
+    const currentData = rawData[sc];
+
+    // Generate Alternative Data: Average scenario but with different withdrawal strategy or roth disabled
+    const altConfig = JSON.parse(JSON.stringify(config));
+    // Toggle Roth for comparison if enabled, or toggle strategy
+    if (altConfig.settings.taxes.rothConversionEnabled) {
+        altConfig.settings.taxes.rothConversionEnabled = false;
+    } else {
+        altConfig.settings.taxes.withdrawalStrategy =
+            altConfig.settings.taxes.withdrawalStrategy === 'minimize_rmds' ? 'grow_tax_deferred' : 'minimize_rmds';
+    }
+
+    const altData = SimulationEngine.project(altConfig, sc);
+
+    const years = [10, 20, rawData.years.length - 1];
+    const metrics = [
+        { label: 'Net Worth Year 10', getter: (d, i) => calculateNetWorthFromData(d, i), index: 10 },
+        { label: 'Net Worth Year 20', getter: (d, i) => calculateNetWorthFromData(d, i), index: 20 },
+        { label: 'Final Net Worth', getter: (d, i) => calculateNetWorthFromData(d, i), index: rawData.years.length - 1 },
+        { label: 'Total Taxes Paid', getter: (d) => d.expenses.Taxes.reduce((a, b) => a + b, 0) }
+    ];
+
+    const tbody = document.getElementById('comparisonTableBody');
+    tbody.innerHTML = metrics.map(m => {
+        const valA = m.index !== undefined ? m.getter(currentData, m.index) : m.getter(currentData);
+        const valB = m.index !== undefined ? m.getter(altData, m.index) : m.getter(altData);
+        const diff = valA - valB;
+        const diffClass = diff >= 0 ? 'positive' : 'negative';
+
+        return `
+            <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 10px;">${m.label}</td>
+                <td style="text-align: right; padding: 10px;">${formatCurrency(valA)}</td>
+                <td style="text-align: right; padding: 10px;">${formatCurrency(valB)}</td>
+                <td style="text-align: right; padding: 10px;" class="${diffClass}">${diff >= 0 ? '+' : ''}${formatCurrency(diff)}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Update Comparison Chart
+    const ctx = document.getElementById('chartComparisonNW').getContext('2d');
+    destroyChart('comparisonNW');
+    charts.comparisonNW = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: rawData.years,
+            datasets: [
+                { label: 'Current Strategy', data: rawData.years.map((_, i) => calculateNetWorthFromData(currentData, i)), borderColor: '#3b82f6', fill: false },
+                { label: 'Alternative Strategy', data: rawData.years.map((_, i) => calculateNetWorthFromData(altData, i)), borderColor: '#10b981', fill: false }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { ticks: { callback: (v) => formatCurrency(v) } } }
+        }
+    });
+}
+
+function calculateNetWorthFromData(data, yearIndex) {
+    if (!data) return 0;
+    let total = 0;
+    for (let key in data.accounts) {
+        total += data.accounts[key][yearIndex] || 0;
+    }
+    return total;
+}
+
 // ============================================
 // CRYPTO PRICE SYNC (Coinbase API)
 // ============================================
@@ -657,6 +839,11 @@ window.cloneScenario = cloneScenario;
 window.setScenario = setScenario;
 window.toggleComparison = toggleComparison;
 window.toggleRothConversion = toggleRothConversion;
+window.optimizeRothConversion = optimizeRothConversion;
+
+// Goals
+window.openComparisonModal = openComparisonModal;
+window.closeComparisonModal = closeComparisonModal;
 
 // Goals
 window.openGoalModal = openGoalModal;
@@ -711,20 +898,43 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function saveGoal() {
-    const name = document.getElementById('newGoalName').value;
-    const target = parseFloat(document.getElementById('newGoalAmount').value);
-    const year = parseInt(document.getElementById('newGoalYear').value);
+    const nameInput = document.getElementById('newGoalName');
+    const amountInput = document.getElementById('newGoalAmount');
+    const yearInput = document.getElementById('newGoalYear');
+    const btn = document.querySelector('#goalModal .btn-primary');
 
-    if (!name || !target) {
-        showNotification('Please fill all fields', 'error');
+    const name = nameInput.value.trim();
+    const target = parseFloat(amountInput.value);
+    const year = parseInt(yearInput.value);
+
+    if (!name || isNaN(target) || isNaN(year)) {
+        showNotification('Please fill all fields with valid numbers', 'error');
         return;
     }
 
-    config.goals.push({ name, target, year, current: calculateNetWorth(config.currentScenario, 0) });
+    // Process Goal
+    btn.disabled = true;
+    btn.textContent = 'Adding...';
+
+    config.goals = config.goals || [];
+    config.goals.push({
+        name,
+        target,
+        year,
+        current: calculateNetWorth(config.currentScenario, 0)
+    });
+
     renderGoals();
-    closeGoalModal();
     saveToLocalStorage();
-    showNotification('Goal added!');
+    showNotification(`Goal "${name}" added!`, 'success');
+
+    // UI Reset
+    setTimeout(() => {
+        closeGoalModal();
+        nameInput.value = '';
+        btn.disabled = false;
+        btn.textContent = 'Add Goal';
+    }, 300);
 }
 
 function renderGoals() {
@@ -906,6 +1116,35 @@ function updateRothConversionMetrics() {
     document.getElementById('rothConversionYears').textContent = years + ' yrs';
     document.getElementById('rothTaxSavings').textContent = formatCurrency(taxSaved);
     document.getElementById('rothBreakEven').textContent = 'Age ' + breakEvenAge;
+}
+
+function optimizeRothConversion() {
+    const filingStatus = config.settings.taxSettings.filingStatus;
+    const brackets = TaxCalculator.brackets[filingStatus] || TaxCalculator.brackets.single;
+    const deduction = TaxCalculator.standardDeduction[filingStatus] || 14600;
+
+    // Find the 22% or 24% bracket limit
+    const targetRate = 0.22;
+    const bracket = brackets.find(b => b.rate === targetRate) || brackets[2];
+    const limit = bracket.limit;
+
+    // Current Ordinary Income (Work + SS taxable portion estimate)
+    const work = config.settings.income.work;
+    const ss = config.settings.socialSecurity.ss67 * 12 * 0.85;
+    const currentOrd = work + ss;
+
+    const headroom = Math.max(0, (limit + deduction) - currentOrd);
+
+    config.settings.taxes.rothConversion = Math.round(headroom);
+    config.settings.taxes.rothConversionEnabled = true;
+
+    // Sync UI
+    if (document.getElementById('rothConversionEnabled')) {
+        document.getElementById('rothConversionEnabled').checked = true;
+    }
+
+    recalculate();
+    showNotification(`Optimized: Converting ${formatCurrency(headroom)}/yr to fill the ${targetRate * 100}% bracket.`);
 }
 
 function updateRothConversionChart() {
@@ -1571,6 +1810,57 @@ function initSurplusGapChart() {
     });
 }
 
+function initLifetimeCashFlowChart() {
+    const canvas = document.getElementById('chartLifetimeCashFlow');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    // Calculate cumulative surplus/gap
+    let cumulative = 0;
+    const data = rawData.years.map((_, i) => {
+        const income = getTotalIncome(config.currentScenario, i);
+        const expenses = getTotalExpenses(config.currentScenario, i);
+        cumulative += (income - expenses);
+        return cumulative;
+    });
+
+    charts.lifetimeCashFlow = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: rawData.years,
+            datasets: [{
+                label: 'Cumulative Cash Flow',
+                data: data,
+                borderColor: '#10b981',
+                backgroundColor: '#10b98120',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `Cumulative: ${formatCurrency(ctx.raw)}`
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { callback: (v) => formatCurrency(v) }
+                },
+                x: {
+                    ticks: { maxTicksLimit: 10 }
+                }
+            }
+        }
+    });
+}
+
 
 
 function initSuccessGauge() {
@@ -1707,6 +1997,7 @@ function initTaxesChart() {
             labels: rawData.years,
             datasets: [
                 { label: 'Federal', data: taxes.Federal, backgroundColor: '#ef4444' },
+                { label: 'State', data: taxes.State, backgroundColor: '#3b82f6' },
                 { label: 'FICA', data: taxes.FICA, backgroundColor: '#f59e0b' },
                 { label: 'Capital Gains', data: taxes.CapGains, backgroundColor: '#8b5cf6' }
             ]
@@ -2869,6 +3160,73 @@ function updateMetrics() {
     const withdrawalRate = (retirementSpend / retirementBalance * 100).toFixed(2);
     safeUpdateElement('mWithdrawalRate', withdrawalRate + '%');
     safeUpdateElement('mStressTest', 'Passed');
+
+    // Wellness Score
+    const wellness = calculateWellnessScore(config.currentScenario);
+    safeUpdateElement('metricWellness', wellness);
+    let emoji = '⭐️';
+    if (wellness >= 90) emoji = '🚀';
+    else if (wellness >= 75) emoji = '🏆';
+    else if (wellness >= 50) emoji = '⚖️';
+    else emoji = '⚠️';
+    safeUpdateElement('wellnessEmoji', emoji);
+
+    // Coach Insights
+    updateCoachInsights();
+}
+
+function updateCoachInsights() {
+    const insights = [];
+    const sc = rawData[config.currentScenario];
+    const mc = rawData.monteCarlo || { successRate: 0 };
+
+    // 1. Success Rate Insight
+    if (mc.successRate > 95) {
+        insights.push({
+            type: 'success',
+            title: '🎉 High Confidence',
+            text: 'Your plan is extremely robust. Consider increasing your "Active Retirement" spending or gifting legacy earlier.'
+        });
+    } else if (mc.successRate < 70) {
+        insights.push({
+            type: 'warning',
+            title: '⚠️ Probability Alert',
+            text: `Your success rate is ${mc.successRate.toFixed(0)}%. Consider delaying retirement by 2 years to significantly improve stability.`
+        });
+    }
+
+    // 2. Liquidity / Age 60 Insight
+    const taxableIdx = sc.accounts.Investments.findIndex((v, i) => v <= 0 && rawData.ages[i] < 60);
+    if (taxableIdx !== -1) {
+        insights.push({
+            type: 'warning',
+            title: '⚖️ Liquidity Gap',
+            text: 'You may run out of taxable funds before age 60. You might face 10% penalties to access retirement accounts early.'
+        });
+    }
+
+    // 3. Tax Optimization Insight
+    if (!config.settings.taxes.rothConversionEnabled && sc.taxes.Federal.some(t => t > 50000)) {
+        insights.push({
+            type: 'info',
+            title: '🏛️ Tax Opportunity',
+            text: 'Your future tax burden is high. A Roth Conversion Ladder could save you over $100k in lifetime taxes.'
+        });
+    }
+
+    const list = document.getElementById('coachMessageList');
+    if (list) {
+        if (insights.length === 0) {
+            list.innerHTML = '<div style="color: var(--text-muted);">Your plan looks well-balanced. No critical optimizations found.</div>';
+        } else {
+            list.innerHTML = insights.map(ins => `
+                <div class="coach-insight-item" style="border-left: 4px solid ${ins.type === 'warning' ? '#ef4444' : (ins.type === 'success' ? '#10b981' : '#3b82f6')}; padding-left: 10px; margin-bottom: 5px;">
+                    <strong style="display: block;">${ins.title}</strong>
+                    <span style="font-size: 0.9rem;">${ins.text}</span>
+                </div>
+            `).join('');
+        }
+    }
 }
 function updateDashboard() {
     updateMetrics();
@@ -3176,6 +3534,35 @@ function initCharts() {
     Chart.defaults.color = textColor;
     Chart.defaults.borderColor = gridColor;
 
+    // Enable global tooltips and interaction (US-028)
+    Chart.defaults.plugins.tooltip = {
+        ...Chart.defaults.plugins.tooltip,
+        enabled: true,
+        mode: 'index',
+        intersect: false,
+        backgroundColor: config.theme === 'dark' ? 'rgba(17, 24, 39, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+        titleColor: config.theme === 'dark' ? '#f3f4f6' : '#111827',
+        bodyColor: config.theme === 'dark' ? '#d1d5db' : '#374151',
+        borderColor: gridColor,
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+            label: function (context) {
+                let label = context.dataset.label || '';
+                if (label) label += ': ';
+                if (context.parsed.y !== null) {
+                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(context.parsed.y);
+                }
+                return label;
+            }
+        }
+    };
+    Chart.defaults.interaction = {
+        mode: 'index',
+        intersect: false
+    };
+
     const initFunctions = [
         initNetWorthChart, initSuccessGauge, initRealNominalChart, initAllocationChart,
         initStackedPortfolioChart, initIncomeChart, initSSComparisonChart, initIncomeReplacementChart,
@@ -3184,7 +3571,8 @@ function initCharts() {
         initSWRChart, initRothConversionChart, initRMDChart, initMortgageChart,
         initAccountTrendsChart, initScenarioComparisonChart, initMonteCarloChart,
         initSequenceRiskChart, initLegacyChart, initWhatIfChart, initDebtPayoffChart,
-        initMarketRiskChart, initSSExplorerChart, initRothExplorerChart, initSurplusGapChart
+        initMarketRiskChart, initSSExplorerChart, initRothExplorerChart, initSurplusGapChart,
+        initLifetimeCashFlowChart
     ];
 
     initFunctions.forEach(func => {
@@ -3236,6 +3624,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize sidebar navigation
     initSidebarNavigation();
+
+    // Initialize comprehensive descriptions and tooltips for ALL sections and charts
+    setTimeout(() => {
+        initializeDescriptionsAndTooltips(charts);
+    }, 1000);
+
+    // Initialize explorer sections (ISSUE-037, 038, 039 fix)
+    initializeExplorerSections();
 });
 
 // Sidebar Navigation

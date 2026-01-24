@@ -1,17 +1,8 @@
 {
-  "timestamp": "2026-01-23T17:49:53.230Z",
-  "passed": 65,
-  "failed": 2,
-  "skipped": 0,
-  "duration": "0.10",
-  "errors": [
-    {
-      "test": "Contains config object",
-      "error": "Pattern not found"
-    },
-    {
-      "test": "rawData.years has 46 elements",
-      "error": "Found: none"
-    }
-  ]
+  "timestamp": "2026-01-24T02:33:39.232Z",
+  "results": {
+    "Unit Tests": "✅ PASSED",
+    "E2E Tests": "❌ FAILED",
+    "Linting": "⏭️  SKIPPED"
+  }
 }
