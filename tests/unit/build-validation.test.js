@@ -67,6 +67,18 @@ describe('Build Validation', () => {
                     `${partial} should not contain DOCTYPE declaration`);
             });
         });
+
+        it('should not have wrapper dashboard-grid div in charts-grid.html', () => {
+            const content = readFileSync(resolve('src/partials/charts-grid.html'), 'utf-8');
+
+            // Charts-grid should NOT wrap content in dashboard-grid
+            // It should just contain load tags
+            const lines = content.trim().split('\n');
+            const firstNonCommentLine = lines.find(line => !line.trim().startsWith('<!--'));
+
+            expect(firstNonCommentLine).not.toMatch(/<div[^>]*class="dashboard-grid"/i,
+                'charts-grid.html should not wrap content in dashboard-grid div');
+        });
     });
 
     describe('Main index.html Structure', () => {
