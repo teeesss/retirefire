@@ -14,6 +14,8 @@ describe('SettingsHandler', () => {
         config.settings.personal = { name: 'Test', age: 40, retireAge: 65, longevity: 90 };
         vi.spyOn(SettingsHandler, 'save').mockImplementation(() => { });
         vi.spyOn(SettingsHandler, 'notify').mockImplementation(() => { });
+        // Mock validate directly if logic is complex or DOM dependent
+        // But better to test usage
         window.recalculate = vi.fn();
     });
 
@@ -25,13 +27,18 @@ describe('SettingsHandler', () => {
 
     it('should validate invalid age inputs', () => {
         document.getElementById('inputAge').value = '101';
+        // Mock getElementById to return values for validation if needed
+        // Here we rely on JSDOM
         const isValid = SettingsHandler.validate();
         expect(isValid).toBe(false);
     });
 
     it('should validate retirement age logic', () => {
+        // Must set valid values for other fields first
         document.getElementById('inputAge').value = '40';
-        document.getElementById('inputRetireAge').value = '35'; // Impossible
+        document.getElementById('inputLongevity').value = '90';
+
+        document.getElementById('inputRetireAge').value = '35'; // Invalid: < Age
         const isValid = SettingsHandler.validate();
         expect(isValid).toBe(false);
     });

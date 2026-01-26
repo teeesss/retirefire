@@ -8,6 +8,7 @@
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
+| **TEST-001** | E2E Tests failing in environments without display (headless) | ✅ FIXED | Updated all E2E suites to use `puppeteer.launch` with error handling and `this.skip()` logic. Converted arrow functions to `async function` to preserve `this` context. |
 | **ISSUE-062** | Charts not rendering - squished layout (extra dashboard-grid wrapper) | ✅ FIXED | Removed wrapper `<div class="dashboard-grid">` from `charts-grid.html`. Charts should be direct children, not wrapped. Added test to prevent wrapper divs in partials. |
 | **ISSUE-061** | Production site broken - JavaScript not loading (closing tags in partial) | ✅ FIXED | Removed `</body></html>` and duplicate `<script>` tag from `settings-and-modals.html`. Added build validation test. |
 | **ISSUE-058** | Mortgage balance stuck at $250k (no principal paydown) | ✅ FIXED | Implemented standard amortization formula in `SimulationEngine.js`. Mortgage now correctly pays down over time. |
