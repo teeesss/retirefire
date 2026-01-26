@@ -1,140 +1,29 @@
-﻿                    <!-- Roth Conversions -->
-                    <div class="card span-3" id="section-roth">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ”„ Roth Conversion Strategy</div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="rothConversionEnabled" checked
-                                    onchange="toggleRothConversion()">
-                                <label for="rothConversionEnabled" style="margin-right: 10px;">Enable Roth
-                                    Ladder</label>
-                                <button class="btn btn-sm btn-primary" onclick="optimizeRothConversion()">âš¡
-                                    Auto-Optimize</button>
-                            </div>
-                        </div>
-                        <div id="rothConversionContent">
-                            <!-- Interactive Roth Controls (US-041) -->
-                            <div class="roth-controls"
-                                style="margin-bottom: 1rem; padding: 15px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">
+<!-- Withdrawal Strategy Charts -->
+<div class="card span-6" id="section-withdrawals">
+    <div class="card-header">
+        <div class="card-title">&#128184; Withdrawal Strategy & Drawdown</div>
+    </div>
+    <div class="chart-container large">
+        <canvas id="chartWithdrawal"></canvas>
+    </div>
+</div>
 
-                                <div class="metric-row" style="margin-bottom: 5px;">
-                                    <label style="font-weight: 500;">Target Tax Bracket Cap:</label>
-                                    <select id="rothTargetBracket" class="modern-select"
-                                        style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color);"
-                                        onchange="updateRothTargetBracket(this.value)">
-                                        <option value="12">Fill 12% Bracket ($47k single / $94k joint)</option>
-                                        <option value="22">Fill 22% Bracket ($100k single / $201k joint)</option>
-                                        <option value="24">Fill 24% Bracket ($191k single / $383k joint)</option>
-                                        <option value="32">Fill 32% Bracket ($243k single / $487k joint)</option>
-                                        <option value="manual" selected>Manual Amount</option>
-                                    </select>
-                                </div>
-
-                                <div class="metric-row">
-                                    <label style="font-weight: 500;">Annual Conversion Amount:</label>
-                                    <div class="input-with-prefix"
-                                        style="display: flex; align-items: center; gap: 4px;">
-                                        <span style="color: var(--text-muted);">$</span>
-                                        <input type="number" id="rothAmountInput" value="240808" class="modern-input"
-                                            style="width: 120px; padding: 4px 8px; font-weight: bold; color: var(--primary);"
-                                            onchange="updateRothConversionAmount(this.value)">
-                                    </div>
-                                </div>
-                                <input type="range" id="rothAmountSlider" class="year-slider" min="0" max="500000"
-                                    step="500" value="240808" oninput="updateRothConversionAmount(this.value)">
-
-                                <div
-                                    style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
-                                    <span>$0</span>
-                                    <span>$500k</span>
-                                </div>
-                            </div>
-
-                            <div class="stats-row" style="margin-bottom: 1rem;">
-                                <div class="stat-item">
-                                    <div class="label">Total Converted</div>
-                                    <div class="value" id="rothTotalConverted">$5.1M</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="label">Years Converting</div>
-                                    <div class="value" id="rothConversionYears">21 yrs</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="label">Tax Savings</div>
-                                    <div class="value positive" id="rothTaxSavings">$1.2M</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="label">Legacy Boost</div>
-                                    <div class="value positive" id="rothLegacyBoost">+$4.3M</div>
-                                </div>
-                            </div>
-                            <div class="chart-container medium">
-                                <canvas id="chartRothConversion"></canvas>
-                            </div>
-                            <div class="legend" style="margin-top: 0.5rem;">
-                                <div class="legend-item"><span class="legend-color" style="background: #8b5cf6"></span>
-                                    With
-                                    Conversions</div>
-                                <div class="legend-item"><span class="legend-color" style="background: #94a3b8"></span>
-                                    Without
-                                    Conversions</div>
-                            </div>
-                        </div>
-                        <div id="rothConversionDisabled"
-                            style="display: none; padding: 2rem; text-align: center; color: var(--text-muted);">
-                            <p style="font-size: 1.5rem;">ðŸš«</p>
-                            <p>Roth conversions disabled</p>
-                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Enable to see tax optimization strategy
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- RMD Projections -->
-                    <div class="card span-2">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ“‹ Required Minimum Distributions</div>
-                        </div>
-                        <div class="chart-container medium">
-                            <canvas id="chartRMD"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Mortgage Amortization -->
-                    <div class="card span-2">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ  Mortgage Payoff</div>
-                        </div>
-                        <div class="chart-container medium">
-                            <canvas id="chartMortgage"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Account Trends -->
-                    <div class="card span-6">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ“ˆ Individual Account Trends</div>
-                            <div class="tabs" id="accountTabs" style="background: transparent; padding: 0;">
-                                <button class="tab active" onclick="showAccountTrends('all', this)">All</button>
-                                <button class="tab" onclick="showAccountTrends('retirement', this)">401(k)/IRA</button>
-                                <button class="tab" onclick="showAccountTrends('roth', this)">Roth IRA</button>
-                                <button class="tab" onclick="showAccountTrends('hsa', this)">HSA</button>
-                                <button class="tab" onclick="showAccountTrends('taxable', this)">Taxable</button>
-                                <button class="tab" onclick="showAccountTrends('other', this)">Other</button>
-                            </div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartAccountTrends"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Scenario Comparison -->
-                    <div class="card span-6">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ”€ Scenario Comparison at Key Ages</div>
-                            <button class="btn btn-sm btn-outline" onclick="openComparisonModal()">Side-by-Side
-                                Comparison</button>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartScenarioComparison"></canvas>
-                        </div>
-                    </div>
-
+<div class="card span-6">
+    <div class="card-header">
+        <div class="card-title">&#128201; Safe Withdrawal Rate Analysis</div>
+    </div>
+    <div class="chart-container large">
+        <canvas id="chartSWR"></canvas>
+    </div>
+    <div class="legend" style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+        <div class="legend-item"><span class="legend-color"
+                style="background: #10b981; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+            Your Rate</div>
+        <div class="legend-item"><span class="legend-color"
+                style="background: #f59e0b; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+            4% Rule</div>
+        <div class="legend-item"><span class="legend-color"
+                style="background: #ef4444; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+            Danger Zone</div>
+    </div>
+</div>

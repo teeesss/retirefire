@@ -119,6 +119,7 @@ See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed status.
 ## 📖 Documentation
 
 ### Core Documentation
+- **[Architecture Guide](docs/guides/Architecture.md)** - Project modularity and structure
 - **[TASKS.md](TASKS.md)** - Current work and sprint planning
 - **[ISSUES.md](ISSUES.md)** - Active bugs and known issues
 - **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Overall project health

@@ -1,48 +1,56 @@
-﻿                <!-- Main Charts Grid -->
-                <div class="dashboard-grid">
-                    <!-- Year Explorer -->
-                    <div class="card span-6">
-                        <div class="year-slider-container">
-                            <label>
-                                <span>ðŸ“… Explore Year:</span>
-                                <span><strong id="selectedYear">2026</strong> (Age <strong id="selectedAge">50</strong>)
-                                    -
-                                    <span id="selectedScenarioLabel">Optimistic</span> Scenario</span>
-                            </label>
-                            <input type="range" id="yearSlider" class="year-slider" min="0" max="45" value="0">
-                            <div class="year-display">
-                                <span>2026 (Age 50)</span>
-                                <span>2038 (Age 62) - SS Starts</span>
-                                <span>2041 (Age 65) - Medicare</span>
-                                <span>2071 (Age 95)</span>
-                            </div>
-                        </div>
-                        <div class="year-slider-container"
-                            style="margin-top: 1rem; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));">
-                            <label>
-                                <span>ðŸ’° Annual Retirement Spending:</span>
-                                <span><strong id="spendingValue">$90,000</strong>/year</span>
-                            </label>
-                            <input type="range" id="spendingSlider" class="year-slider" min="50000" max="200000"
-                                step="5000" value="90000" oninput="updateSpendingSlider(this.value)">
-                            <div class="stats-row" style="margin-top: 0.75rem;">
-                                <div class="stat-item">
-                                    <div class="label">Impact</div>
-                                    <div class="value" id="spendingImpact">Baseline</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="label">Monthly</div>
-                                    <div class="value" id="spendingMonthly">$7,500</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="label">25x Rule</div>
-                                    <div class="value" id="spending25x">$2.25M</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="label">4% SWR Portfolio</div>
-                                    <div class="value" id="spending4pct">$2.25M</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stats-row" id="yearStats"></div>
-                    </div>
+﻿<!-- Year Explorer -->
+<div class="card span-6">
+    <div class="year-slider-container">
+        <label>
+            <span>📅 Explore Year:</span>
+            <span><strong id="selectedYear">2026</strong> (Age <strong id="selectedAge">50</strong>)
+                -
+                <span id="selectedScenarioLabel">Optimistic</span> Scenario</span>
+        </label>
+        <input type="range" id="yearSlider" class="year-slider" min="0" max="45" value="0">
+        <div class="year-display">
+            <span>2026 (Age 50)</span>
+            <span>2038 (Age 62) - SS Starts</span>
+            <span>2041 (Age 65) - Medicare</span>
+            <span>2071 (Age 95)</span>
+        </div>
+    </div>
+    <div class="year-slider-container"
+        style="margin-top: 1rem; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));">
+        <label>
+            <span>&#128176; Annual Retirement Spending:</span>
+            <span><strong id="spendingValue">$90,000</strong>/year</span>
+        </label>
+        <input type="range" id="spendingSlider" class="year-slider" min="50000" max="200000" step="5000" value="90000"
+            oninput="updateSpendingSlider(this.value)">
+        <div class="stats-row" style="margin-top: 0.75rem;">
+            <div class="stat-item">
+                <div class="label">Impact</div>
+                <div class="value" id="spendingImpact">Baseline</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">Monthly</div>
+                <div class="value" id="spendingMonthly">$7,500</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">25x Rule</div>
+                <div class="value" id="spending25x">$2.25M</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">4% SWR Portfolio</div>
+                <div class="value" id="spending4pct">$2.25M</div>
+            </div>
+        </div>
+    </div>
+    <div class="stats-row" id="yearStats"></div>
+
+    <div style="margin-top: 1.5rem;">
+        <h4 id="accountBreakdownTitle" style="margin-bottom: 0.75rem;">💰 Account Breakdown</h4>
+        <div id="accountBreakdown"></div>
+    </div>
+
+    <div style="margin-top: 1.5rem;">
+        <h4 style="margin-bottom: 0.75rem;">💵 Cash Flow Details</h4>
+        <div id="cashFlowDetails"></div>
+    </div>
+</div>

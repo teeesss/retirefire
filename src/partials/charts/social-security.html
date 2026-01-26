@@ -1,0 +1,82 @@
+<!-- Social Security Strategy Explorer -->
+<div class="card span-6" id="section-socialsecurity">
+    <div class="card-header">
+        <div class="card-title">&#127963; Social Security Claiming Strategy Explorer</div>
+    </div>
+    <div class="explorer-container">
+        <div class="stats-row" style="margin-bottom: 1.5rem;">
+            <div class="stat-item">
+                <div class="label">Monthly Benefit</div>
+                <div class="value" id="ssMonthlyValue">$0</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">Annual Benefit</div>
+                <div class="value" id="ssAnnualValue">$0</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">Lifetime (to 95)</div>
+                <div class="value" id="ssLifetimeValue">$0</div>
+            </div>
+        </div>
+
+        <div class="chart-container large">
+            <canvas id="chartSSExplorer"></canvas>
+        </div>
+
+        <div class="control-row"
+            style="margin-top: 1.5rem; display: flex; gap: 20px; align-items: center; justify-content: center;">
+            <div class="claim-age-selector">
+                <label>Claiming Age: <strong id="currentSSClaimAge">62</strong></label>
+                <div class="age-tabs" style="display: flex; gap: 5px; margin-top: 5px;">
+                    <button class="tab age-tab active" onclick="setSSClaimAge(62, this)">62</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(63, this)">63</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(64, this)">64</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(65, this)">65</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(66, this)">66</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(67, this)">67</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(68, this)">68</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(69, this)">69</button>
+                    <button class="tab age-tab" onclick="setSSClaimAge(70, this)">70</button>
+                </div>
+            </div>
+
+            <div class="pia-input-group">
+                <label>PIA (FRA Amount):</label>
+                <input type="number" id="ssPiaInput" value="2739" class="modern-input" style="width: 100px;"
+                    onchange="updateSSExplorer()">
+            </div>
+        </div>
+
+        <div class="alert info" style="margin-top: 1.5rem;">
+            <p id="ssBreakEvenText">Full Retirement Age (67) is the standard benchmark for your benefits.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card span-6">
+    <div class="card-header">
+        <div class="card-title">&#128200; Social Security Cumulative Comparison</div>
+    </div>
+
+    <div class="stats-row" style="margin-bottom: 1rem; justify-content: space-around; text-align: center;">
+        <div class="stat-item">
+            <div class="label">Age 62</div>
+            <div class="value" id="ss62" style="font-size: 1rem;">$1,800/mo</div>
+            <div class="label" id="ss62Lifetime" style="font-size: 0.8rem; color: var(--text-muted);">Life: $700k</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">Age 67 (FRA)</div>
+            <div class="value" id="ss67" style="font-size: 1rem;">$2,739/mo</div>
+            <div class="label" id="ss67Lifetime" style="font-size: 0.8rem; color: var(--text-muted);">Life: $900k</div>
+        </div>
+        <div class="stat-item">
+            <div class="label">Age 70</div>
+            <div class="value" id="ss70" style="font-size: 1rem;">$3,500/mo</div>
+            <div class="label" id="ss70Lifetime" style="font-size: 0.8rem; color: var(--text-muted);">Life: $1.1M</div>
+        </div>
+    </div>
+
+    <div class="chart-container large">
+        <canvas id="chartSSComparison"></canvas>
+    </div>
+</div>

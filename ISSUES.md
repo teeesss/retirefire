@@ -23,6 +23,10 @@
 | **ISSUE-017** | Dashboard metrics showing incorrect values (Net Worth $0, Peak -$InfinityB, Age undefined) | ✅ FIXED | Fixed `calculateNetWorth()` in `main.js` to skip Debt account since mortgage is already accounted for in Housing equity. Prevents double-counting of mortgage. |
 | **ISSUE-054** | Home Equity shows $0 when house not sold | ✅ FIXED | Fixed `SimulationEngine.js` to store home equity (homeValue - mortgage) instead of just homeValue. Updated net worth calculation to avoid double-counting. |
 | **ISSUE-024** | Dashboard charts too tall - need side-by-side layout | ✅ FIXED | Wrapped charts in grid container, reduced heights by 20%, and added mobile responsive layout via `dashboard-layout.css`. |
+| **ISSUE-064** | JS Crash on non-dashboard views (null element access) | ✅ FIXED | Implemented `safeUpdateElement` in `main.js`. Added null checks to `.theme-toggle` and other direct DOM queries. |
+| **ISSUE-065** | What-If Explorer buttons not detected by Puppeteer | ✅ FIXED | Converted What-If cards from `div` to `button` elements. Fixed `runWhatIf` handler mapping. |
+| **BUILD-001** | `vite build` fails with `build-html` transformation error | ✅ FIXED | Root cause: Missing closing parenthesis in `safeUpdateElement()` call at line 1420 of `main.js`. esbuild parser failed on `}).join('');` - should be `}).join(''));`. Fixed syntax error and build now succeeds. |
+| **REFAC-001** | `main.js` is too large (4000+ lines), making troubleshooting difficult | ✅ FIXED | Broken down into 15+ specialized modules across `/src/ui`, `/src/charts`, and `/src/state`. Reduced `main.js` to ~150 lines. |
 
 ---
 

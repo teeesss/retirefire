@@ -1,95 +1,96 @@
-﻿
-                    <!-- Enhanced Monte Carlo Analysis -->
-                    <div class="card span-6" id="section-montecarlo">
-                        <div class="card-header">
-                            <div class="card-title">ðŸŽ² Monte Carlo Analysis</div>
-                            <button class="btn-primary" onclick="runMonteCarloSimulation()">
-                                â–¶ï¸ Run Again
-                            </button>
-                        </div>
+<!-- Enhanced Monte Carlo Analysis -->
+<div class="card span-6" id="section-montecarlo">
+    <div class="card-header">
+        <div class="card-title">&#127922; Monte Carlo Analysis</div>
+        <button class="btn btn-primary" onclick="runMonteCarloSimulation()">
+            &#9654; Run Again
+        </button>
+    </div>
 
-                        <!-- Monte Carlo Explanation -->
-                        <div class="monte-carlo-info">
-                            <p>We run <strong>1,000 simulations</strong> (randomizing and varying values for a more
-                                realistic
-                                projection that accounts for market ups and downs) to determine a realistic range for
-                                your
-                                projected
-                                savings outcomes.</p>
-                            <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.8rem;">Your projected
-                                savings are
-                                compared in the chart below based upon your <strong>average assumptions</strong>.</p>
-                        </div>
+    <!-- Monte Carlo Explanation -->
+    <div class="monte-carlo-info"
+        style="padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; margin-bottom: 20px;">
+        <p>Advanced statistical analysis using <strong>1,000+ random market simulations</strong> based on historical
+            returns and volatility. This provides a rigorous stress test of your financial plan.</p>
 
-                        <!-- Simulation Results -->
-                        <div class="simulation-results">
-                            <div class="simulation-result success">
-                                <div class="result-icon">ðŸŽ¯</div>
-                                <div class="result-content">
-                                    <div class="result-label">Probability of Success to Age 95</div>
-                                    <div class="result-value" id="mcSuccessRate">99%</div>
-                                </div>
-                            </div>
-                            <div class="simulation-result success">
-                                <div class="result-icon">ðŸ’°</div>
-                                <div class="result-content">
-                                    <div class="result-label">Probability of $5M Legacy Goal</div>
-                                    <div class="result-value" id="mcLegacyRate">98%</div>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Controls for US-046 -->
+        <div class="mc-controls"
+            style="display: flex; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); flex-wrap: wrap;">
+            <div class="control-group">
+                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Market Volatility</label>
+                <select id="mcVolatility" class="btn-sm"
+                    style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary);">
+                    <option value="0.10">Low (10%)</option>
+                    <option value="0.15" selected>Normal (15%)</option>
+                    <option value="0.25">High (25%)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Spending Scenario</label>
+                <select id="mcSpendScenario" class="btn-sm"
+                    style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary);">
+                    <option value="1.0" selected>Planned</option>
+                    <option value="1.1">+10% Spending</option>
+                    <option value="0.9">-10% Spending</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Precision</label>
+                <select id="mcIterations" class="btn-sm"
+                    style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary);">
+                    <option value="100">Fast (100)</option>
+                    <option value="1000" selected>Standard (1,000)</option>
+                    <option value="5000">Precision (5,000)</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
-                        <!-- Chart with Confidence Bands -->
-                        <div class="chart-container large">
-                            <canvas id="chartMonteCarlo"></canvas>
-                        </div>
+    <!-- Simulation Metrics -->
+    <div class="mc-metrics-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div class="mc-metric-card success"
+            style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--success);">
+            <div class="mc-metric-label" style="font-size: 0.8rem; color: var(--text-muted);">Probability of Success to
+                Age 95</div>
+            <div class="mc-metric-value" id="mcSuccessRate"
+                style="font-size: 1.5rem; font-weight: 800; color: var(--success);">99%</div>
+        </div>
+        <div class="mc-metric-card legacy"
+            style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--primary);">
+            <div class="mc-metric-label" style="font-size: 0.8rem; color: var(--text-muted);">Probability of $5M Legacy
+                Goal</div>
+            <div class="mc-metric-value" id="mcLegacyRate"
+                style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">98%</div>
+        </div>
+    </div>
 
-                        <!-- Percentile Stats -->
-                        <div class="stats-row" style="margin-top: 1rem;">
-                            <div class="stat-item">
-                                <div class="label">10th %ile</div>
-                                <div class="value negative" id="mc10">$16.5M</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="label">25th %ile</div>
-                                <div class="value" style="color: var(--warning);" id="mc25">$39.8M</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="label">Median</div>
-                                <div class="value" style="color: var(--primary);" id="mc50">$91.2M</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="label">75th %ile</div>
-                                <div class="value positive" id="mc75">$194.7M</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="label">90th %ile</div>
-                                <div class="value positive" id="mc90">$348.5M</div>
-                            </div>
-                        </div>
+    <!-- Chart with Confidence Bands -->
+    <div class="chart-container xlarge">
+        <canvas id="chartMonteCarlo"></canvas>
+    </div>
 
-                        <!-- Comparison Toggle -->
-                        <div class="monte-carlo-comparison">
-                            <div class="comparison-toggle">
-                                <label class="toggle-label">
-                                    <input type="checkbox" id="showLinearProjection" checked
-                                        onchange="toggleLinearProjection()">
-                                    <span>Show Linear Projection</span>
-                                </label>
-                                <label class="toggle-label">
-                                    <input type="checkbox" id="showConfidenceBands" checked
-                                        onchange="toggleConfidenceBands()">
-                                    <span>Show Confidence Bands</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Info Note -->
-                        <div class="monte-carlo-note">
-                            <div class="note-icon">â„¹ï¸</div>
-                            <div class="note-text">
-                                This analysis has no impact on results seen on any other page of the planner.
-                                <a href="#" onclick="showMonteCarloHelp(); return false;">Learn More</a>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Percentile Stats -->
+    <div class="stats-row"
+        style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: center;">
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">10th %ile</div>
+            <div class="value negative" id="mc10" style="font-weight: 700;">$16.5M</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">25th %ile</div>
+            <div class="value" id="mc25" style="color: var(--warning); font-weight: 700;">$39.8M</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Median</div>
+            <div class="value" id="mc50" style="color: var(--primary); font-weight: 700;">$91.2M</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">75th %ile</div>
+            <div class="value positive" id="mc75" style="font-weight: 700;">$194.7M</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">90th %ile</div>
+            <div class="value positive" id="mc90" style="font-weight: 700;">$348.5M</div>
+        </div>
+    </div>
+</div>

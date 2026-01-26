@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Retirement Financial Planner Pro - Comprehensive Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -30,8 +27,40 @@
                 <!-- Comprehensive Metrics Dashboard -->
                 <load src="src/partials/comprehensive-metrics.html" />
 
-                <!-- Charts Grid (All Charts) -->
-                <load src="src/partials/charts-grid.html" />
+                <!-- Charts Grid (Flattened to ensure injection) -->
+                <div class="dashboard-grid">
+                    <load src="src/partials/charts/year-explorer.html" />
+                    <load src="src/partials/charts/networth-charts.html" />
+                    <load src="src/partials/charts/income-charts.html" />
+                    <load src="src/partials/charts/expense-tax-charts.html" />
+                    <load src="src/partials/charts/taxes.html" />
+                    <load src="src/partials/charts/withdrawal-strategy-charts.html" />
+                    <load src="src/partials/charts/social-security.html" />
+                    <load src="src/partials/charts/roth.html" />
+                    <load src="src/partials/charts/montecarlo-analysis.html" />
+                    <load src="src/partials/charts/explorers.html" />
+                    <load src="src/partials/charts/data-tables.html" />
+
+                    <!-- Placeholder containers for missing charts referenced in main.js -->
+                    <div style="display:none;">
+                        <canvas id="chartRealNominal"></canvas>
+                        <canvas id="chartStackedPortfolio"></canvas>
+                        <canvas id="chartIncomeReplacement"></canvas>
+                        <canvas id="chartCumulativeTax"></canvas>
+                        <canvas id="chartEffectiveTax"></canvas>
+                        <canvas id="chartTaxBracket"></canvas>
+                        <canvas id="chartRothConversion"></canvas>
+                        <canvas id="chartRMD"></canvas>
+                        <canvas id="chartMortgage"></canvas>
+                        <canvas id="chartAccountTrends"></canvas>
+                        <canvas id="chartScenarioComparison"></canvas>
+                        <canvas id="chartSequenceRisk"></canvas>
+                        <canvas id="chartLegacy"></canvas>
+                        <canvas id="chartDebtPayoff"></canvas>
+                        <canvas id="chartMarketRisk"></canvas>
+                        <canvas id="chartRothExplorer"></canvas>
+                    </div>
+                </div>
 
                 <!-- Footer -->
                 <div class="card span-6">
@@ -44,7 +73,7 @@
     <!-- Settings Panel & Modals -->
     <load src="src/partials/settings-and-modals.html" />
 
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="src/main.js"></script>
 </body>
 
 </html>

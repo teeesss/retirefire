@@ -1,0 +1,69 @@
+<!-- Roth Conversion Analysis -->
+<div class="card span-6" id="section-roth">
+    <div class="card-header">
+        <div class="card-title">&#128260; Roth Conversion Strategy</div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="rothConversionEnabled" checked onchange="toggleRothConversion()">
+            <label for="rothConversionEnabled">Enable Strategy</label>
+        </div>
+    </div>
+    <div id="rothConversionContent">
+        <div class="stats-row"
+            style="margin-bottom: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+            <div class="stat-item">
+                <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Annual Conversion</div>
+                <div class="value" id="rothAnnualAmount" style="font-weight: 700;">$0</div>
+            </div>
+            <div class="stat-item">
+                <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Years Converting</div>
+                <div class="value" id="rothConversionYears" style="font-weight: 700;">0 yrs</div>
+            </div>
+            <div class="stat-item">
+                <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Tax Savings</div>
+                <div class="value positive" id="rothTaxSavings" style="font-weight: 700;">$0</div>
+            </div>
+            <div class="stat-item">
+                <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Legacy Boost</div>
+                <div class="value positive" id="rothLegacyBoost" style="font-weight: 700;">$0</div>
+            </div>
+        </div>
+
+        <div class="controls-grid"
+            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+            <div class="input-group">
+                <label style="font-size: 0.75rem;">Annual Amount</label>
+                <input type="number" id="rothConvAmount" value="50000" step="5000"
+                    oninput="updateRothConversionAmountFn(this.value)" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label style="font-size: 0.75rem;">Start Age</label>
+                <input type="number" id="rothStartAge" value="53" min="50" max="75" oninput="updateRothExplorer()"
+                    style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label style="font-size: 0.75rem;">End Age</label>
+                <input type="number" id="rothEndAge" value="72" min="60" max="95" oninput="updateRothExplorer()"
+                    style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label style="font-size: 0.75rem;">Target Bracket</label>
+                <select id="rothTargetBracket" onchange="updateRothTargetBracket(this.value)" style="width: 100%;">
+                    <option value="12">12% Bracket</option>
+                    <option value="22">22% Bracket</option>
+                    <option value="24" selected>24% Bracket</option>
+                    <option value="manual">Manual Amount</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="chart-container xlarge">
+            <canvas id="chartRothExplorer"></canvas>
+        </div>
+    </div>
+    <div id="rothConversionDisabled"
+        style="display: none; padding: 3rem; text-align: center; color: var(--text-muted);">
+        <p style="font-size: 2.5rem;">&#128302;</p>
+        <p>Roth conversions disabled</p>
+        <p style="font-size: 0.8rem; margin-top: 10px;">Enable strategy to visualize tax optimization results.</p>
+    </div>
+</div>

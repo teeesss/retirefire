@@ -37,6 +37,11 @@ export class SimulationEngine {
                 CapGains: [],
                 State: []
             },
+            drawdown: {
+                Investments: [],
+                RetirementSavings: [],
+                RothIRA: []
+            },
             netWorth: []
         };
 
@@ -210,6 +215,7 @@ export class SimulationEngine {
             // 6. Drawdown logic if expenses > income
             let netFlow = workIncome + ssIncome + rmdIncome - totalExpBeforeTax - estimatedTax;
 
+            let yearlyDrawdownDetail = { Investments: 0, RetirementSavings: 0, RothIRA: 0 };
             if (netFlow < 0) {
                 let deficit = Math.abs(netFlow);
                 const strategy = config.settings.taxes.withdrawalStrategy || 'grow_tax_deferred';
@@ -225,19 +231,29 @@ export class SimulationEngine {
                     if (deficit <= 0) break;
 
                     if (accountName === 'Investments') {
-                        if (investments >= deficit) { investments -= deficit; deficit = 0; }
-                        else { deficit -= investments; investments = 0; }
+                        const amount = Math.min(investments, deficit);
+                        investments -= amount;
+                        deficit -= amount;
+                        yearlyDrawdownDetail.Investments = amount;
                     } else if (accountName === 'RetirementSavings') {
-                        if (retirement >= deficit) { retirement -= deficit; deficit = 0; }
-                        else { deficit -= retirement; retirement = 0; }
+                        const amount = Math.min(retirement, deficit);
+                        retirement -= amount;
+                        deficit -= amount;
+                        yearlyDrawdownDetail.RetirementSavings = amount;
                     } else if (accountName === 'RothIRA') {
-                        if (roth >= deficit) { roth -= deficit; deficit = 0; }
-                        else { deficit -= roth; roth = 0; }
+                        const amount = Math.min(roth, deficit);
+                        roth -= amount;
+                        deficit -= amount;
+                        yearlyDrawdownDetail.RothIRA = amount;
                     }
                 }
             } else {
                 investments += netFlow;
             }
+
+            results.drawdown.Investments.push(Math.round(yearlyDrawdownDetail.Investments));
+            results.drawdown.RetirementSavings.push(Math.round(yearlyDrawdownDetail.RetirementSavings));
+            results.drawdown.RothIRA.push(Math.round(yearlyDrawdownDetail.RothIRA));
 
             // Roth Conversion Ladder
             if (config.settings.taxes.rothConversionEnabled && currentYear >= config.settings.taxes.rothConvStart && currentYear <= config.settings.taxes.rothConvEnd) {
@@ -302,7 +318,7 @@ export class SimulationEngine {
         };
     }
 
-    static projectPath(config, volatility = 0.15) {
+    static projectPath(config, volatility = 0.15, spendMultiplier = 1.0) {
         const years = config.endYear - config.startYear + 1;
         let results = new Array(years);
         let currentConfig = JSON.parse(JSON.stringify(config));
@@ -341,8 +357,13 @@ export class SimulationEngine {
             }
 
             // Simplified drawdown/spending
-            const spend = config.settings.expenses.annualSpending * Math.pow(1 + infl, i);
-            const ss = (currentAge >= config.settings.socialSecurity.claimAge) ? 40000 : 0; // Mock SS
+            const spend = config.settings.expenses.annualSpending * spendMultiplier * Math.pow(1 + infl, i);
+            let ss = 0;
+            if (currentAge >= config.settings.socialSecurity.claimAge) {
+                const claimAge = config.settings.socialSecurity.claimAge;
+                const benefit = config.settings.socialSecurity['ss' + claimAge] || config.settings.socialSecurity.ss62 || 0;
+                ss = benefit * 12 * Math.pow(1 + config.settings.socialSecurity.cola / 100, currentAge - claimAge);
+            }
 
             let delta = (isRetired ? ss : config.settings.income.work) - spend;
             if (delta < 0) {
@@ -358,10 +379,10 @@ export class SimulationEngine {
         return results;
     }
 
-    static runMonteCarlo(iterations = 1000) {
+    static runMonteCarlo(iterations = 1000, volatility = 0.15, spendMultiplier = 1.0) {
         const runs = [];
         for (let i = 0; i < iterations; i++) {
-            runs.push(this.projectPath(config));
+            runs.push(this.projectPath(config, volatility, spendMultiplier));
         }
 
         const numYears = runs[0].length;

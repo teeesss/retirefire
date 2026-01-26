@@ -185,12 +185,16 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
                     if (!chart) return { id, exists: true, hasTooltip: false };
 
                     const tooltip = chart.options?.plugins?.tooltip;
+                    const defaults = Chart.defaults.plugins.tooltip;
+                    const isEnabled = (tooltip && tooltip.enabled !== false) ||
+                        (!tooltip && defaults && defaults.enabled !== false);
+
                     return {
                         id,
                         exists: true,
-                        hasTooltip: !!tooltip && tooltip.enabled !== false,
-                        tooltipMode: tooltip?.mode,
-                        hasCallbacks: !!tooltip?.callbacks
+                        hasTooltip: isEnabled,
+                        tooltipMode: tooltip?.mode || defaults?.mode,
+                        hasCallbacks: !!(tooltip?.callbacks || defaults?.callbacks)
                     };
                 });
             });

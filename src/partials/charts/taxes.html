@@ -1,0 +1,14 @@
+<!-- Tax Charts -->
+<div class="card span-6" id="section-taxes">
+    <div class="card-header">
+        <div class="card-title">&#128203; Tax Burden & Effective Rate</div>
+        <div class="tab-container">
+            <button class="tab active" onclick="setChartType('taxes', 'total', this)">Total Tax</button>
+            <button class="tab" onclick="setChartType('taxes', 'effective', this)">Effective Rate</button>
+            <button class="tab" onclick="setChartType('taxes', 'bracket', this)">By Bracket</button>
+        </div>
+    </div>
+    <div class="chart-container xlarge">
+        <canvas id="chartTaxes"></canvas>
+    </div>
+</div>

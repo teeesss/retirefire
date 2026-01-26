@@ -1,117 +1,42 @@
-﻿
-                    <!-- Expense Categories -->
-                    <div class="card span-3" id="section-expenses">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ“¤ Expense Categories Over Time</div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartExpenses"></canvas>
-                        </div>
-                    </div>
+<!-- Expense & Tax Charts -->
+<div class="card span-3" id="section-expenses">
+    <div class="card-header">
+        <div class="card-title">&#128181; Expense Categories Breakdown</div>
+    </div>
+    <div class="chart-container large">
+        <canvas id="chartExpenses"></canvas>
+    </div>
+</div>
 
-                    <!-- Expense Pie -->
-                    <div class="card span-3">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ¥§ Expenses - <span id="expenseYearLabel">2026</span></div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartExpensePie"></canvas>
-                        </div>
-                    </div>
+<div class="card span-3">
+    <div class="card-header">
+        <div class="card-title">&#129367; Expenses - <span id="expenseYearLabel">2026</span></div>
+    </div>
+    <div class="chart-container large">
+        <canvas id="chartExpensePie"></canvas>
+    </div>
+</div>
 
-                    <!-- Healthcare Costs -->
-                    <div class="card span-3">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ¥ Healthcare Cost Projection</div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartHealthcare"></canvas>
-                        </div>
-                        <div class="stats-row" style="margin-top: 1rem;">
-                            <div class="stat-item">
-                                <div class="label">Pre-Medicare (53-64)</div>
-                                <div class="value negative" id="preMedicareCost">$156K</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="label">Medicare (65+)</div>
-                                <div class="value" id="medicareCost">$89K</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="label">LTC (93+)</div>
-                                <div class="value negative" id="ltcCost">$784K</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tax Analysis -->
-                    <div class="card span-3" id="section-taxes">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ›ï¸ Tax Burden Analysis</div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartTaxes"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Cumulative Taxes -->
-                    <div class="card span-2">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ’¸ Cumulative Taxes</div>
-                        </div>
-                        <div class="chart-container medium">
-                            <canvas id="chartCumulativeTax"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Effective Tax Rate -->
-                    <div class="card span-2">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ“Š Effective Tax Rate</div>
-                        </div>
-                        <div class="chart-container medium">
-                            <canvas id="chartEffectiveTax"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Tax Bracket Visualization -->
-                    <div class="card span-2">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ“ˆ Tax Bracket by Year</div>
-                        </div>
-                        <div class="chart-container medium">
-                            <canvas id="chartTaxBracket"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Withdrawal Strategy -->
-                    <div class="card span-3" id="section-withdrawals">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ”„ Withdrawal Strategy</div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartWithdrawal"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Safe Withdrawal Rate -->
-                    <div class="card span-3">
-                        <div class="card-header">
-                            <div class="card-title">ðŸ“‰ Safe Withdrawal Rate Analysis</div>
-                        </div>
-                        <div class="chart-container large">
-                            <canvas id="chartSWR"></canvas>
-                        </div>
-                        <div class="legend">
-                            <div class="legend-item"><span class="legend-color" style="background: #10b981"></span> Your
-                                Rate</div>
-                            <div class="legend-item"><span class="legend-color" style="background: #f59e0b"></span> 4%
-                                Rule
-                            </div>
-                            <div class="legend-item"><span class="legend-color" style="background: #ef4444"></span>
-                                Danger
-                                Zone
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Roth Conversions -->
+<div class="card span-3">
+    <div class="card-header">
+        <div class="card-title">&#127973; Healthcare Cost Projection</div>
+    </div>
+    <div class="chart-container large">
+        <canvas id="chartHealthcare"></canvas>
+    </div>
+    <div class="stats-row"
+        style="margin-top: 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Pre-Medicare</div>
+            <div class="value negative" id="preMedicareCost" style="font-weight: 700;">$0</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Medicare (65+)</div>
+            <div class="value" id="medicareCost" style="font-weight: 700;">$0</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">LTC (90+)</div>
+            <div class="value negative" id="ltcCost" style="font-weight: 700;">$0</div>
+        </div>
+    </div>
+</div>

@@ -75,16 +75,35 @@ export const SocialSecurityCalculator = {
      * @returns {object} { ss62, ss67, ss70 }
      */
     calculateBenefits(pia) {
-        // Full Retirement Age (FRA) assumed 67
-        // Age 62: 70% of PIA (30% reduction)
-        const ss62 = Math.floor(pia * 0.70);
+        return {
+            ss62: this.calculateBenefitAtAge(pia, 62),
+            ss67: this.calculateBenefitAtAge(pia, 67),
+            ss70: this.calculateBenefitAtAge(pia, 70)
+        };
+    },
 
-        // Age 67: 100% of PIA
-        const ss67 = Math.floor(pia * 1.0);
+    /**
+     * Calculate benefit for a specific age (62-70)
+     * @param {number} pia - Monthly PIA
+     * @param {number} age - Claiming age
+     * @returns {number} Monthly benefit
+     */
+    calculateBenefitAtAge(pia, age) {
+        if (age < 62) return 0;
+        if (age > 70) age = 70;
 
-        // Age 70: 124% of PIA (8% credit for 3 years)
-        const ss70 = Math.floor(pia * 1.24);
-
-        return { ss62, ss67, ss70 };
+        let multiplier = 1.0;
+        if (age < 67) {
+            // Reduction: 5/9 of 1% per month for first 36 months, 5/12 of 1% thereafter
+            const monthsEarly = (67 - age) * 12;
+            const step1Months = Math.min(monthsEarly, 36);
+            const step2Months = Math.max(0, monthsEarly - 36);
+            multiplier = 1 - (step1Months * (5 / 900) + step2Months * (5 / 1200));
+        } else if (age > 67) {
+            // Credit: 2/3 of 1% per month for each month after age 66 (8% per year)
+            const monthsLate = (age - 67) * 12;
+            multiplier = 1 + (monthsLate * (8 / 1200));
+        }
+        return Math.floor(pia * multiplier);
     }
 };

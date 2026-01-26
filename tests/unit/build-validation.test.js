@@ -17,8 +17,7 @@ describe('Build Validation', () => {
                 'src/partials/comprehensive-metrics.html',
                 'src/partials/charts-grid.html',
                 'src/partials/footer.html',
-                'src/partials/settings-and-modals.html',
-                'src/partials/roth-controls.html'
+                'src/partials/settings-and-modals.html'
             ];
 
             partials.forEach(partial => {
@@ -43,7 +42,7 @@ describe('Build Validation', () => {
                 const content = readFileSync(resolve(partial), 'utf-8');
 
                 // Check for script tag with src="/src/main.js"
-                expect(content).not.toMatch(/<script[^>]*src="\/src\/main\.js"/i,
+                expect(content).not.toMatch(/<script[^>]*src="(?:\/)?src\/main\.js"/i,
                     `${partial} should not contain main.js script tag (should only be in index.html)`);
             });
         });
@@ -56,8 +55,7 @@ describe('Build Validation', () => {
                 'src/partials/comprehensive-metrics.html',
                 'src/partials/charts-grid.html',
                 'src/partials/footer.html',
-                'src/partials/settings-and-modals.html',
-                'src/partials/roth-controls.html'
+                'src/partials/settings-and-modals.html'
             ];
 
             partials.forEach(partial => {
@@ -84,7 +82,7 @@ describe('Build Validation', () => {
     describe('Main index.html Structure', () => {
         it('should have exactly one script tag for main.js', () => {
             const content = readFileSync(resolve('index.html'), 'utf-8');
-            const scriptMatches = content.match(/<script[^>]*src="\/src\/main\.js"/gi);
+            const scriptMatches = content.match(/<script[^>]*src="(?:\/)?src\/main\.js"/gi);
 
             expect(scriptMatches).not.toBeNull();
             expect(scriptMatches?.length).toBe(1);
@@ -94,7 +92,7 @@ describe('Build Validation', () => {
             const content = readFileSync(resolve('index.html'), 'utf-8');
 
             const lastLoadIndex = content.lastIndexOf('<load src=');
-            const scriptIndex = content.indexOf('<script type="module" src="/src/main.js"');
+            const scriptIndex = content.indexOf('<script type="module" src="src/main.js"');
 
             expect(scriptIndex).toBeGreaterThan(lastLoadIndex,
                 'Script tag should come after all <load> tags');

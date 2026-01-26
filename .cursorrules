@@ -152,8 +152,13 @@ You are working on **RetireFire**, a high-fidelity financial planning applicatio
 
 1. **Run tests**: `npm test`
 2. **Fix any failures**: All tests must pass
-3. **Check for regressions**: Verify existing functionality still works
-4. **Update test results**: Update `/docs/testing/TEST_RESULTS.md`
+3. **Verify in Browser**: Use `chrome-devtools` MCP to:
+   - Load the page (local or production)
+   - Check the console for errors
+   - Verify visual layout matches requirements
+   - Take a screenshot if necessary to confirm state
+4. **Check for regressions**: Verify existing functionality still works
+5. **Update test results**: Update `/docs/testing/TEST_RESULTS.md`
 
 ### Test Coverage Requirements (MANDATORY)
 **All new features MUST include:**

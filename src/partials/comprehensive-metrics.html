@@ -1,6 +1,6 @@
 <div class="card span-6">
     <div class="card-header">
-        <div class="card-title">🔍 Comprehensive Plan Metrics</div>
+        <div class="card-title">&#128269; Comprehensive Plan Metrics</div>
         <div class="sync-indicator">
             <span class="status-excelling" style="padding: 2px 6px; border-radius: 4px;">Excelling</span>
             <span class="status-progressing" style="padding: 2px 6px; border-radius: 4px;">Progressing</span>
@@ -10,7 +10,8 @@
 
     <div class="metrics-grid" id="comprehensiveMetrics">
         <!-- Row 1: Health & Progress -->
-        <div class="metrics-category">
+        <div class="metrics-category hover-card" id="section-health-summary"
+            onclick="scrollToSection('section-montecarlo')" style="cursor: pointer;">
             <h3>🏦 Financial Health</h3>
             <div class="metric-row">
                 <span class="metric-label">Out of Money Date</span>
@@ -35,8 +36,9 @@
             </div>
         </div>
 
-        <div class="metrics-category">
-            <h3>📈 Progress Tracking</h3>
+        <div class="metrics-category hover-card" id="section-progress-summary"
+            onclick="scrollToSection('section-expenses')" style="cursor: pointer;">
+            <h3>&#128200; Progress Tracking</h3>
             <div class="metric-row">
                 <span class="metric-label">Total Annual Expenses</span>
                 <div class="metric-value-group">
@@ -68,7 +70,8 @@
         </div>
 
         <!-- Row 2: Debt & Taxes -->
-        <div class="metrics-category">
+        <div class="metrics-category hover-card" id="section-debt-summary" onclick="scrollToSection('section-debt')"
+            style="cursor: pointer;">
             <h3>💳 Debt & Cash Flow</h3>
             <div class="metric-row">
                 <span class="metric-label">Debt Freedom Date</span>
@@ -93,7 +96,8 @@
             </div>
         </div>
 
-        <div class="metrics-category">
+        <div class="metrics-category hover-card" id="section-tax-summary" onclick="scrollToSection('section-taxes')"
+            style="cursor: pointer;">
             <h3>⚖️ Taxes & Housing</h3>
             <div class="metric-row">
                 <span class="metric-label">Effective Tax (Lifetime)</span>
@@ -119,7 +123,8 @@
         </div>
 
         <!-- Row 3: Legacy & Risk -->
-        <div class="metrics-category">
+        <div class="metrics-category hover-card" id="section-legacy-summary" onclick="scrollToSection('section-legacy')"
+            style="cursor: pointer;">
             <h3>🎁 Legacy & Estate</h3>
             <div class="metric-row">
                 <span class="metric-label">Financial Legacy Goal</span>
@@ -144,7 +149,8 @@
             </div>
         </div>
 
-        <div class="metrics-category">
+        <div class="metrics-category hover-card" id="section-risk-summary" onclick="scrollToSection('section-risk')"
+            style="cursor: pointer;">
             <h3>🛡️ Risk Protection</h3>
             <div class="metric-row">
                 <span class="metric-label">LTC Risk</span>
