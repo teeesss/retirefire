@@ -162,21 +162,58 @@ export function initTaxBracketChart() {
 export function initWithdrawalChart() {
     const ctx = getSafeCtx('chartWithdrawal');
     if (!ctx) return;
-    const income = rawData[config.currentScenario].income;
+    const scenario = config.currentScenario;
+    const data = rawData[scenario];
+    const drawdown = data.drawdown;
+    const income = data.income;
+
+    // Combine RetirementSavings drawdown with RMDs for "Tax-Deferred" category
+    const taxDeferredTotal = drawdown.RetirementSavings.map((v, i) => v + (income.RMD[i] || 0));
 
     charts.withdrawal = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: rawData.years,
             datasets: [
-                { label: 'Drawdown', data: income.Drawdown || [], backgroundColor: '#f59e0b' },
-                { label: 'RMD', data: income.RMD || [], backgroundColor: '#8b5cf6' },
-                { label: 'Social Security', data: income.SocialSecurity || [], backgroundColor: '#3b82f6' }
+                {
+                    label: 'Social Security',
+                    data: income.SocialSecurity || [],
+                    backgroundColor: '#3b82f6',
+                    stack: 's1'
+                },
+                {
+                    label: 'Taxable (Investments)',
+                    data: drawdown.Investments || [],
+                    backgroundColor: '#f59e0b',
+                    stack: 's1'
+                },
+                {
+                    label: 'Tax-Deferred (401k/IRA)',
+                    data: taxDeferredTotal,
+                    backgroundColor: '#8b5cf6',
+                    stack: 's1'
+                },
+                {
+                    label: 'Roth IRA',
+                    data: drawdown.RothIRA || [],
+                    backgroundColor: '#10b981',
+                    stack: 's1'
+                }
             ]
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: (v) => formatCurrency(v) } } }
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: { maxTicksLimit: 10 }
+                },
+                y: {
+                    stacked: true,
+                    ticks: { callback: (v) => formatCurrency(v) }
+                }
+            }
         }
     });
     applyTooltipConfig(charts.withdrawal.options);

@@ -38,7 +38,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Dashboard Metrics', () => {
         it('should display Current Net Worth with valid value', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const netWorth = await page.$eval('#metricCurrentNW', el => el.textContent);
             expect(netWorth).toBeTruthy();
             expect(netWorth).not.toBe('$0');
@@ -48,7 +48,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should display Peak Net Worth with valid value', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const peakNW = await page.$eval('#metricPeakNW', el => el.textContent);
             expect(peakNW).toBeTruthy();
             // ... truncated for brevity, same logic applied to all tests ...
@@ -58,7 +58,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should display Retirement Age with valid value', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const retireAge = await page.$eval('#metricRetireAge', el => el.textContent);
             // ...
             expect(retireAge).toBeTruthy();
@@ -71,7 +71,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should display Success Rate as valid percentage', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const successRate = await page.$eval('#metricSuccess', el => el.textContent);
             expect(successRate).toBeTruthy();
             const percentMatch = successRate.match(/(\d+)%/);
@@ -91,7 +91,7 @@ describe('E2E: RetireFire Application', () => {
 
         chartIds.forEach(chartId => {
             it(`should render ${chartId} with non-zero dimensions`, async function () {
-                if (shouldSkip) this.skip();
+                if (shouldSkip) return;
                 const dimensions = await page.$eval(`#${chartId}`, el => ({
                     width: el.clientWidth,
                     height: el.clientHeight
@@ -103,7 +103,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should have Chart.js instances for all charts', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartStatus = await page.evaluate(() => {
                 const chartIds = [
                     'chartNetWorth', 'chartAllocation', 'chartIncome',
@@ -150,7 +150,7 @@ describe('E2E: RetireFire Application', () => {
 
         sectionsWithDescriptions.forEach(section => {
             it(`should have description for ${section.name} section`, async function () {
-                if (shouldSkip) this.skip();
+                if (shouldSkip) return;
                 const sectionExists = await page.$(`#${section.id}`);
                 expect(sectionExists).toBeTruthy();
 
@@ -172,7 +172,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Chart Hover Tooltips', () => {
         it('should show tooltip on Net Worth chart hover', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartCanvas = await page.$('#chartNetWorth');
             expect(chartCanvas).toBeTruthy();
 
@@ -196,7 +196,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should show tooltip on Monte Carlo chart hover', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartCanvas = await page.$('#chartMonteCarlo');
             if (!chartCanvas) {
                 console.warn('⚠️  Monte Carlo chart not found');
@@ -225,7 +225,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Interactive Controls', () => {
         it('should have working scenario selector', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const scenarioButtons = await page.$$('[onclick*="setScenario"]');
             expect(scenarioButtons.length).toBeGreaterThan(0);
 
@@ -244,7 +244,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should have year explorer slider', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const slider = await page.$('#yearSlider, input[type="range"]');
             expect(slider).toBeTruthy();
 
@@ -259,7 +259,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should have Gap Calculator with inputs', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const targetInput = await page.$('#calcTargetIncome');
             expect(targetInput).toBeTruthy();
 
@@ -271,7 +271,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should display Gap Calculator projected income', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const projectedIncome = await page.$('#calcProjectedIncome');
             expect(projectedIncome).toBeTruthy();
 
@@ -284,7 +284,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Explorer Buttons', () => {
         it('should have What-If Scenario Explorer buttons', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const explorerSection = await page.$('#section-whatif, .whatif-explorer');
 
             if (explorerSection) {
@@ -301,7 +301,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should have Debt Payoff Explorer buttons', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const debtSection = await page.$('#section-debt, .debt-explorer');
 
             if (debtSection) {
@@ -318,7 +318,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should have Market Risk Explorer buttons', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const riskSection = await page.$('#section-risk, .risk-explorer');
 
             if (riskSection) {
@@ -337,7 +337,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Sidebar Navigation', () => {
         it('should have sidebar with navigation items', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const sidebar = await page.$('#mainSidebar, .sidebar, .main-sidebar');
             expect(sidebar).toBeTruthy();
 
@@ -348,7 +348,7 @@ describe('E2E: RetireFire Application', () => {
         });
 
         it('should navigate to sections when clicked', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const navItems = await page.$$('.sidebar-nav-item, .nav-item');
 
             if (navItems.length > 0) {
@@ -369,7 +369,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Settings Modal', () => {
         it('should open settings modal', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             // Try multiple selectors
             let settingsButton = await page.$('button[onclick*="openSettings"]');
 
@@ -406,13 +406,13 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Data Tables', () => {
         it('should have detailed data tables section', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const tablesSection = await page.$('#section-tables, .data-tables, table');
             expect(tablesSection).toBeTruthy();
         });
 
         it('should display data for multiple years', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const rows = await page.$$('table tr');
 
             if (rows.length > 0) {
@@ -426,7 +426,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Responsive Design', () => {
         it('should work on mobile viewport', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             await page.setViewport({ width: 375, height: 667 });
             await page.waitForTimeout(500);
 

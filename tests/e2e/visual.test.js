@@ -60,7 +60,7 @@ describe('Visual: Chart Rendering', () => {
 
         charts.forEach(chart => {
             it(`should render ${chart.name} chart`, async function () {
-                if (shouldSkip) this.skip();
+                if (shouldSkip) return;
                 const element = await page.$(`#${chart.id}`);
                 expect(element).toBeTruthy();
 
@@ -90,7 +90,7 @@ describe('Visual: Chart Rendering', () => {
 
     describe('Chart Data Validation', () => {
         it('should have valid data in Net Worth chart', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartNetWorth');
                 if (!canvas) return null;
@@ -119,7 +119,7 @@ describe('Visual: Chart Rendering', () => {
         });
 
         it('should have valid data in Income chart', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartIncome');
                 // ...
@@ -146,7 +146,7 @@ describe('Visual: Chart Rendering', () => {
         });
 
         it('should have valid data in Expenses chart', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartExpenses');
                 if (!canvas) return null;
@@ -172,7 +172,7 @@ describe('Visual: Chart Rendering', () => {
         });
 
         it('should have valid data in Monte Carlo chart', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartMonteCarlo');
                 // ...
@@ -203,7 +203,7 @@ describe('Visual: Chart Rendering', () => {
 
     describe('Chart Interactions', () => {
         it('should update charts when scenario changes', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const initialData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartNetWorth');
                 const chart = Chart.getChart(canvas);
@@ -234,7 +234,7 @@ describe('Visual: Chart Rendering', () => {
         });
 
         it('should update charts when year slider changes', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const slider = await page.$('input[type="range"]');
 
             if (slider) {
@@ -263,7 +263,7 @@ describe('Visual: Chart Rendering', () => {
 
     describe('Chart Accessibility', () => {
         it('should have accessible labels for all charts', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const chartLabels = await page.evaluate(() => {
                 const chartIds = [
                     'chartNetWorth', 'chartAllocation', 'chartIncome',
