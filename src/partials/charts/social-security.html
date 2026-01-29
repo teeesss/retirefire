@@ -56,6 +56,14 @@
 <div class="card span-3">
     <div class="card-header">
         <div class="card-title">📈 Social Security Cumulative Comparison</div>
+        <div class="control-group" style="margin-left: auto;">
+            <select id="ssViewToggle" class="btn-sm"
+                style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary);"
+                onchange="updateSSComparisonChart()">
+                <option value="annual">Annual View</option>
+                <option value="cumulative">Lifetime Total</option>
+            </select>
+        </div>
     </div>
 
     <div class="stats-row" style="margin-bottom: 1rem; justify-content: space-around; text-align: center;">

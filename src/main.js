@@ -229,6 +229,7 @@ window.runWhatIf = (sc, btn) => ExplorerHandler.runWhatIf(sc, btn);
 window.runMonteCarloSimulation = () => App.runMonteCarloSimulation();
 window.setSSClaimAge = (age, btn) => ExplorerHandler.setSSClaimAge?.(age, btn);
 window.updateSSExplorer = () => ExplorerHandler.updateSSExplorer();
+window.updateSSComparisonChart = () => IncomeExpenseCharts.updateSSComparisonChart?.();
 window.updateDebtCalculations = () => ExplorerHandler.updateDebtCalculations?.();
 
 window.openSettings = (section) => SettingsHandler.populateUI();

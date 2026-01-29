@@ -181,6 +181,11 @@ export class ExplorerHandler {
 
         // Update current claim age display
         this.safeUpdate('currentSSClaimAge', claimAge);
+
+        // Synchronize the comparison chart
+        if (window.updateSSComparisonChart) {
+            window.updateSSComparisonChart();
+        }
     }
 
     static safeUpdate(id, content) {

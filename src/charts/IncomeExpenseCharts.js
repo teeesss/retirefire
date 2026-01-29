@@ -93,15 +93,16 @@ export function initHealthcareChart() {
 export function initSSComparisonChart() {
     const ctx = getSafeCtx('chartSSComparison');
     if (!ctx) return;
-    const ss = config.settings.socialSecurity;
-    const labels = ['Claim @ 62', 'Claim @ 67 (FRA)', 'Claim @ 70'];
-    const data = [ss.ss62, ss.ss67, ss.ss70];
 
     charts.ssComparison = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
-            datasets: [{ label: 'Monthly Benefit', data: data, backgroundColor: ['#ef4444', '#3b82f6', '#10b981'] }]
+            labels: ['Claim @ 62', 'Claim @ 67 (FRA)', 'Claim @ 70'],
+            datasets: [{
+                label: 'Monthly Benefit',
+                data: [0, 0, 0],
+                backgroundColor: ['#ef4444', '#3b82f6', '#10b981']
+            }]
         },
         options: {
             responsive: true,
@@ -111,6 +112,47 @@ export function initSSComparisonChart() {
         }
     });
     applyTooltipConfig(charts.ssComparison.options);
+    updateSSComparisonChart(); // Initialize with current data
+}
+
+export function updateSSComparisonChart() {
+    if (!charts.ssComparison) return;
+
+    const pia = parseFloat(document.getElementById('ssPiaInput')?.value || 2800);
+    const viewMode = document.getElementById('ssViewToggle')?.value || 'annual';
+
+    // Calculate factors based on FRA 67
+    const getFactor = (age) => {
+        if (age === 67) return 1.0;
+        if (age < 67) return 1.0 - (67 - age) * 0.0667;
+        return 1.0 + (age - 67) * 0.08;
+    };
+
+    const f62 = getFactor(62);
+    const f67 = getFactor(67);
+    const f70 = getFactor(70);
+
+    let data, label;
+    if (viewMode === 'cumulative') {
+        // Lifetime cumulative to age 95
+        data = [
+            pia * f62 * 12 * (95 - 62),
+            pia * f67 * 12 * (95 - 67),
+            pia * f70 * 12 * (95 - 70)
+        ];
+        label = 'Lifetime Total (to 95)';
+    } else {
+        // Annual benefit
+        data = [
+            pia * f62 * 12,
+            pia * f67 * 12,
+            pia * f70 * 12
+        ];
+        label = 'Annual Benefit';
+    }
+
+    charts.ssComparison.data.datasets[0].data = data;
+    charts.ssComparison.data.datasets[0].label = label;
     charts.ssComparison.update();
 }
 
