@@ -26,8 +26,8 @@ describe('TaxCalculator', () => {
     });
 
     it('should calculate breakdown for HoH filing status', () => {
-        // HoH, Income 80k, FL
-        const breakdown = TaxCalculator.calculateTaxBreakdown(80000, 0, 'hoh', 'FL', true);
+        // HoH, Wages 80k, FL
+        const breakdown = TaxCalculator.calculateTaxBreakdown(80000, 0, 0, 'hoh', 'FL');
 
         // Deduction: 21900. Taxable: 58100.
         // 10% on 16550 -> 1655
@@ -38,8 +38,8 @@ describe('TaxCalculator', () => {
     });
 
     it('should calculate state tax for CA', () => {
-        // Single, Income 100k, CA (9.3%)
-        const breakdown = TaxCalculator.calculateTaxBreakdown(100000, 0, 'single', 'CA', true);
+        // Single, Wages 100k, CA (9.3%)
+        const breakdown = TaxCalculator.calculateTaxBreakdown(100000, 0, 0, 'single', 'CA');
 
         // Deduction: 14600. Taxable: 85400.
         // CA Tax: 85400 * 0.093 = 7942.2
@@ -48,13 +48,13 @@ describe('TaxCalculator', () => {
 
     it('should not charge FICA for non-earned income', () => {
         // Retirement drawdown/Pension (not earned)
-        const breakdown = TaxCalculator.calculateTaxBreakdown(100000, 0, 'single', 'FL', false);
+        const breakdown = TaxCalculator.calculateTaxBreakdown(0, 100000, 0, 'single', 'FL');
         expect(breakdown.fica).toBe(0);
         expect(breakdown.federalOrd).toBeGreaterThan(0);
     });
 
     it('should handle zero income correctly', () => {
-        const breakdown = TaxCalculator.calculateTaxBreakdown(0, 0, 'single', 'FL', false);
+        const breakdown = TaxCalculator.calculateTaxBreakdown(0, 0, 0, 'single', 'FL');
         expect(breakdown.total).toBe(0);
         expect(breakdown.federalOrd).toBe(0);
     });

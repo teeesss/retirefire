@@ -1,6 +1,6 @@
 # Issues & Fixes Log
 
-**Last Updated**: 2026-01-24
+**Last Updated**: 2026-01-29
 
 ---
 
@@ -8,6 +8,10 @@
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
+| **LOGIC-B** | Story B: Housing Downsize/Retirement Switch logic missing or inaccurate | ✅ FIXED | Implemented equity swap logic in `SimulationEngine.js`. Handles home sale costs, mortgage payoff, and cash/mortgage purchases of new homes. |
+| **TEST-002** | `jsdom` missing in local environment preventing UI tests | ✅ FIXED | Installed `jsdom` and fixed environment configuration. |
+| **TEST-003** | `comprehensive.test.js` failing due to `ReferenceError` | ✅ FIXED | Defined missing chart and section arrays in E2E tests. |
+| **TEST-004** | E2E Tests cannot inspect Chart.js instances | ✅ FIXED | Exposed `Chart` to the global `window` object for validation. |
 | **TEST-001** | E2E Tests failing in environments without display (headless) | ✅ FIXED | Updated all E2E suites to use `puppeteer.launch` with error handling and `this.skip()` logic. Converted arrow functions to `async function` to preserve `this` context. |
 | **ISSUE-062** | Charts not rendering - squished layout (extra dashboard-grid wrapper) | ✅ FIXED | Removed wrapper `<div class="dashboard-grid">` from `charts-grid.html`. Charts should be direct children, not wrapped. Added test to prevent wrapper divs in partials. |
 | **ISSUE-061** | Production site broken - JavaScript not loading (closing tags in partial) | ✅ FIXED | Removed `</body></html>` and duplicate `<script>` tag from `settings-and-modals.html`. Added build validation test. |

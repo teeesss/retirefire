@@ -1,6 +1,7 @@
+/** @vitest-environment jsdom */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { EventsHandler } from '../../src/ui/EventsHandler';
-import { config } from '../../src/data/Config';
+import { EventsHandler } from '../../src/ui/EventsHandler.js';
+import { config } from '../../src/data/Config.js';
 
 describe('EventsHandler', () => {
     beforeEach(() => {
@@ -11,10 +12,12 @@ describe('EventsHandler', () => {
             <input id="eventDescription" value="Boat Purchase" />
             <input id="eventAmount" value="50000" />
             <select id="eventType"><option value="expense" selected>Expense</option><option value="income">Income</option></select>
-            <tbody id="eventsTableBody">
-                <tr><td><button></button></td></tr>
-            </tbody>
-            <tbody id="recurringEventsTableBody"></tbody>
+            <table>
+                <tbody id="eventsTableBody">
+                    <tr><td><button></button></td></tr>
+                </tbody>
+                <tbody id="recurringEventsTableBody"></tbody>
+            </table>
         `;
         // Mock notifications and global functions
         vi.spyOn(EventsHandler, 'notify').mockImplementation(() => { });

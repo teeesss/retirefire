@@ -56,6 +56,7 @@ export class SettingsHandler {
         this.setVal('inputRothConvStart', s.taxes.rothConvStart);
         this.setVal('inputRothConvEnd', s.taxes.rothConvEnd);
         this.setVal('inputRothConvBracket', s.taxes.rothConvBracket || '24');
+        this.setVal('inputWithdrawalStrategy', s.taxes.withdrawalStrategy || 'grow_tax_deferred');
 
         // Social Security
         this.setVal('inputSSAge', s.socialSecurity.claimAge);
@@ -69,6 +70,34 @@ export class SettingsHandler {
         this.setVal('goalAge70NW', s.goals?.age70NW || 10000000);
         this.setVal('goalLegacy', s.goals?.legacy || 5000000);
         this.setVal('goalRetireIncome', s.goals?.retireIncome || 120000);
+
+        // Housing
+        const h = s.housing || {};
+        const ownsHome = document.getElementById('ownsHome');
+        if (ownsHome) ownsHome.checked = (h.homeValue > 0 || h.mortgageBalance > 0);
+
+        this.setVal('inputHomeValue', h.homeValue || 0);
+        this.setVal('inputHomeAppreciation', h.appreciation || 3.5);
+        this.setVal('inputMortgageBalance', h.mortgageBalance || 0);
+        this.setVal('inputMortgageRate', h.mortgageRate || 6.5);
+        this.setVal('inputMortgagePayment', h.mortgagePayment || 0);
+        this.setVal('inputMortgageYears', h.mortgageYears || 0);
+        this.setVal('inputPropertyTax', h.propertyTax || 0);
+        this.setVal('inputHomeMaint', h.maintenance || 0);
+        this.setVal('inputHomeInsurance', h.insurance || 0);
+
+        this.setVal('inputPlanToSell', h.sellHome || 'no');
+        this.setVal('inputSellYear', h.sellYear || 2030);
+        this.setVal('inputSaleCosts', h.saleCosts || 6);
+        this.setVal('inputFutureRent', h.futureRent || 0);
+        this.setVal('inputRentInflation', h.rentInflation || 3);
+
+        this.setVal('inputPlanToBuy', h.buyNewHome || 'no');
+        this.setVal('inputBuyYear', h.buyYear || 2031);
+        this.setVal('inputNewHomeValue', h.newHomeValue || 0);
+        this.setVal('inputNewMortgageAmount', h.newMortgageAmount || 0);
+        this.setVal('inputNewMortgageRate', h.newMortgageRate || 6.5);
+        this.setVal('inputNewMortgageYears', h.newMortgageYears || 30);
 
         // Open overlay
         document.getElementById('settingsOverlay')?.classList.add('active');
@@ -163,6 +192,7 @@ export class SettingsHandler {
         s.taxes.rothConvStart = parseInt(this.getVal('inputRothConvStart') || 2026);
         s.taxes.rothConvEnd = parseInt(this.getVal('inputRothConvEnd') || 2035);
         s.taxes.rothConvBracket = this.getVal('inputRothConvBracket') || '24';
+        s.taxes.withdrawalStrategy = this.getVal('inputWithdrawalStrategy') || 'grow_tax_deferred';
 
         s.taxSettings = s.taxSettings || {};
         s.taxSettings.filingStatus = this.getVal('inputFilingStatus') || 'head';
@@ -175,6 +205,37 @@ export class SettingsHandler {
         s.goals.age70NW = parseFloat(this.getVal('goalAge70NW') || 10000000);
         s.goals.legacy = parseFloat(this.getVal('goalLegacy') || 5000000);
         s.goals.retireIncome = parseFloat(this.getVal('goalRetireIncome') || 120000);
+
+        // Housing
+        s.housing = s.housing || {};
+        const followsOwnsHome = document.getElementById('ownsHome')?.checked;
+        if (!followsOwnsHome) {
+            s.housing.homeValue = 0;
+            s.housing.mortgageBalance = 0;
+        } else {
+            s.housing.homeValue = parseFloat(this.getVal('inputHomeValue'));
+            s.housing.mortgageBalance = parseFloat(this.getVal('inputMortgageBalance'));
+        }
+        s.housing.appreciation = parseFloat(this.getVal('inputHomeAppreciation'));
+        s.housing.mortgageRate = parseFloat(this.getVal('inputMortgageRate'));
+        s.housing.mortgagePayment = parseFloat(this.getVal('inputMortgagePayment'));
+        s.housing.mortgageYears = parseInt(this.getVal('inputMortgageYears'));
+        s.housing.propertyTax = parseFloat(this.getVal('inputPropertyTax'));
+        s.housing.maintenance = parseFloat(this.getVal('inputHomeMaint'));
+        s.housing.insurance = parseFloat(this.getVal('inputHomeInsurance'));
+
+        s.housing.sellHome = this.getVal('inputPlanToSell');
+        s.housing.sellYear = parseInt(this.getVal('inputSellYear'));
+        s.housing.saleCosts = parseFloat(this.getVal('inputSaleCosts'));
+        s.housing.futureRent = parseFloat(this.getVal('inputFutureRent'));
+        s.housing.rentInflation = parseFloat(this.getVal('inputRentInflation'));
+
+        s.housing.buyNewHome = this.getVal('inputPlanToBuy');
+        s.housing.buyYear = parseInt(this.getVal('inputBuyYear'));
+        s.housing.newHomeValue = parseFloat(this.getVal('inputNewHomeValue'));
+        s.housing.newMortgageAmount = parseFloat(this.getVal('inputNewMortgageAmount'));
+        s.housing.newMortgageRate = parseFloat(this.getVal('inputNewMortgageRate'));
+        s.housing.newMortgageYears = parseInt(this.getVal('inputNewMortgageYears'));
 
         this.save();
         recalculate();

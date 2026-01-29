@@ -49,6 +49,7 @@ describe('Integration: SimulationEngine + TaxCalculator', () => {
                     maintenance: 0,
                     insurance: 0,
                     mortgageBalance: 0,
+                    mortgageRate: 6.5,
                     mortgageYears: 0,
                     mortgagePayment: 0,
                     homeValue: 500000,
@@ -57,7 +58,11 @@ describe('Integration: SimulationEngine + TaxCalculator', () => {
                     saleCosts: 6,
                     futureRent: 0,
                     rentInflation: 0,
-                    buyNewHome: 'no'
+                    buyNewHome: 'no',
+                    newHomeValue: 0,
+                    newMortgageAmount: 0,
+                    newMortgageRate: 6.5,
+                    newMortgageYears: 30
                 },
                 healthcare: {
                     preMedicare: 0,
@@ -188,8 +193,8 @@ describe('Integration: Tax Calculations Across Scenarios', () => {
         const lowIncome = 50000;
         const highIncome = 200000;
 
-        const lowResult = TaxCalculator.calculateTaxBreakdown(lowIncome, 0, 'single', 'FL', true);
-        const highResult = TaxCalculator.calculateTaxBreakdown(highIncome, 0, 'single', 'FL', true);
+        const lowResult = TaxCalculator.calculateTaxBreakdown(lowIncome, 0, 0, 'single', 'FL');
+        const highResult = TaxCalculator.calculateTaxBreakdown(highIncome, 0, 0, 'single', 'FL');
 
         // FICA should be higher for higher income
         expect(highResult.fica).toBeGreaterThan(lowResult.fica);
@@ -201,8 +206,8 @@ describe('Integration: Tax Calculations Across Scenarios', () => {
     it('should handle state taxes correctly', () => {
         const income = 100000;
 
-        const flResult = TaxCalculator.calculateTaxBreakdown(income, 0, 'single', 'FL', true);
-        const caResult = TaxCalculator.calculateTaxBreakdown(income, 0, 'single', 'CA', true);
+        const flResult = TaxCalculator.calculateTaxBreakdown(income, 0, 0, 'single', 'FL');
+        const caResult = TaxCalculator.calculateTaxBreakdown(income, 0, 0, 'single', 'CA');
 
         // Florida has no state income tax
         expect(flResult.state).toBe(0);

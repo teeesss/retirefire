@@ -16,15 +16,36 @@ export function initTaxesChart() {
         data: {
             labels: rawData.years,
             datasets: [
-                { label: 'Federal', data: taxes.Federal, backgroundColor: '#ef4444', stack: 's1' },
+                { label: 'Federal Ordinary', data: taxes.Federal, backgroundColor: '#ef4444', stack: 's1' },
+                { label: 'Federal Cap Gains', data: taxes.CapGains, backgroundColor: '#f97316', stack: 's1' },
                 { label: 'FICA', data: taxes.FICA, backgroundColor: '#f59e0b', stack: 's1' },
-                { label: 'Cap Gains', data: taxes.CapGains, backgroundColor: '#3b82f6', stack: 's1' }
+                { label: 'State', data: taxes.State || [], backgroundColor: '#3b82f6', stack: 's1' }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } }
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { boxWidth: 12, padding: 8, font: { size: 11 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => {
+                            return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+                        },
+                        footer: (tooltipItems) => {
+                            const total = tooltipItems.reduce((sum, item) => sum + item.parsed.y, 0);
+                            return `Total: ${formatCurrency(total)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { stacked: true, ticks: { maxTicksLimit: 10 } },
+                y: { stacked: true, ticks: { callback: v => formatCurrency(v) } }
+            }
         }
     });
 }
@@ -36,7 +57,7 @@ export function initEffectiveTaxChart() {
     const scenario = config.currentScenario;
     const data = rawData[scenario];
     const rates = data.years.map((_, i) => {
-        const totalTax = (data.taxes.Federal[i] || 0) + (data.taxes.FICA[i] || 0) + (data.taxes.CapGains[i] || 0);
+        const totalTax = (data.taxes.Federal[i] || 0) + (data.taxes.FICA[i] || 0) + (data.taxes.CapGains[i] || 0) + (data.taxes.State?.[i] || 0);
         const totalInc = (data.income.Work[i] || 0) + (data.income.SocialSecurity[i] || 0) + (data.income.RMD[i] || 0) + (data.income.Drawdown[i] || 0);
         return totalInc > 0 ? (totalTax / totalInc) * 100 : 0;
     });
@@ -45,12 +66,31 @@ export function initEffectiveTaxChart() {
         type: 'line',
         data: {
             labels: rawData.years,
-            datasets: [{ label: 'Effective Tax Rate', data: rates, borderColor: '#8b5cf6', tension: 0.4 }]
+            datasets: [{
+                label: 'Effective Tax Rate',
+                data: rates,
+                borderColor: '#8b5cf6',
+                backgroundColor: '#8b5cf620',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { ticks: { callback: v => v.toFixed(1) + '%' } } }
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `Effective Rate: ${context.parsed.y.toFixed(2)}%`
+                    }
+                }
+            },
+            scales: {
+                y: { ticks: { callback: v => v.toFixed(1) + '%' } },
+                x: { ticks: { maxTicksLimit: 10 } }
+            }
         }
     });
 }

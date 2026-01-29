@@ -1,6 +1,7 @@
+/** @vitest-environment jsdom */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ExplorerHandler } from '../../src/ui/ExplorerHandler';
-import { config } from '../../src/data/Config';
+import { ExplorerHandler } from '../../src/ui/ExplorerHandler.js';
+import { config } from '../../src/data/Config.js';
 
 // Mock dependencies
 vi.mock('../../src/main.js', () => ({
@@ -8,7 +9,8 @@ vi.mock('../../src/main.js', () => ({
 }));
 vi.mock('../../src/engine/SimulationEngine.js', () => ({
     SimulationEngine: {
-        project: () => ({ years: [], accounts: { Investments: [], RetirementSavings: [] }, yearsCount: 0 })
+        project: () => ({ years: [], accounts: { Investments: [], RetirementSavings: [] }, yearsCount: 0 }),
+        run: () => ({ optimistic: {}, average: {}, pessimistic: {}, years: [], ages: [] })
     }
 }));
 

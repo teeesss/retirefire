@@ -46,14 +46,15 @@ export class SimulationEngine {
         };
 
         // Initialize starting values
-        let retirement = config.settings.assets.retirement;
-        let roth = config.settings.assets.roth;
-        let hsa = config.settings.assets.hsa;
-        let investments = config.settings.assets.investments;
-        let cash = config.settings.assets.cash;
-        let mortgage = config.settings.housing.mortgageBalance || 0;
-        let homeValue = config.settings.housing.homeValue || 0;
-        let otherAssets = config.settings.assets.otherAssets;
+        // Initialize starting values (robust defaults for US-033/034)
+        let retirement = config.settings.assets.retirement || 0;
+        let roth = config.settings.assets.roth || 0;
+        let hsa = config.settings.assets.hsa || 0;
+        let investments = config.settings.assets.investments || 0;
+        let cash = config.settings.assets.cash || 0;
+        let mortgage = config.settings.housing?.mortgageBalance || config.settings.assets.debt || 0;
+        let homeValue = config.settings.housing?.homeValue || 0;
+        let otherAssets = config.settings.assets.otherAssets || 0;
 
         const rates = {
             optimistic: { return: 0.08, inflation: 0.02 },
@@ -76,9 +77,11 @@ export class SimulationEngine {
             }
 
             let ssIncome = 0;
-            const ssStartAge = config.settings.socialSecurity.claimAge;
+            const ssStartAge = config.settings.socialSecurity.claimAge || 67;
             if (currentAge >= ssStartAge) {
-                ssIncome = config.settings.socialSecurity[`ss${ssStartAge}`] * 12 * Math.pow(1 + config.settings.socialSecurity.cola / 100, Math.max(0, currentAge - ssStartAge));
+                // Defensive lookup for ssBenefit: fallback to ss67 if specific age missing
+                const ssBenefit = config.settings.socialSecurity[`ss${ssStartAge}`] || config.settings.socialSecurity.ss67 || 0;
+                ssIncome = ssBenefit * 12 * Math.pow(1 + (config.settings.socialSecurity.cola || 0) / 100, Math.max(0, currentAge - ssStartAge));
             }
 
             // 1b. RMD Calculation (ISSUE-060)
@@ -119,31 +122,33 @@ export class SimulationEngine {
             let generalExp = config.settings.expenses.annualSpending * multiplier * Math.pow(1 + currentRates.inflation, i);
 
             let housingExp = 0;
-            let annualMortgagePayment = 0; // Track for principal paydown
-            let activeMortgageRate = config.settings.housing.mortgageRate / 100;
+            let annualMortgagePayment = 0;
+            let activeMortgageRate = (config.settings.housing?.mortgageRate || 0) / 100;
 
             if (homeValue > 0) {
-                housingExp = (config.settings.housing.propertyTax + config.settings.housing.maintenance + config.settings.housing.insurance) * Math.pow(1 + currentRates.inflation, i);
+                const h = config.settings.housing || {};
+                housingExp = ((h.propertyTax || 0) + (h.maintenance || 0) + (h.insurance || 0)) * Math.pow(1 + currentRates.inflation, i);
                 if (mortgage > 0) {
-                    if (currentYear >= config.settings.housing.buyYear && config.settings.housing.buyNewHome === 'yes') {
+                    if (currentYear >= (h.buyYear || 0) && h.buyNewHome === 'yes') {
                         // New mortgage payment
-                        activeMortgageRate = config.settings.housing.newMortgageRate / 100;
+                        activeMortgageRate = (h.newMortgageRate || 0) / 100;
                         const rate = activeMortgageRate / 12;
-                        const n = config.settings.housing.newMortgageYears * 12;
-                        const p = config.settings.housing.newMortgageAmount;
+                        const n = (h.newMortgageYears || 30) * 12;
+                        const p = (h.newMortgageAmount || 0);
                         if (p > 0 && rate > 0) {
                             const monthly = (p * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
                             annualMortgagePayment = monthly * 12;
                             housingExp += annualMortgagePayment;
                         }
-                    } else if (i < config.settings.housing.mortgageYears) {
-                        annualMortgagePayment = config.settings.housing.mortgagePayment * 12;
+                    } else if (i < (h.mortgageYears || 0)) {
+                        annualMortgagePayment = (h.mortgagePayment || 0) * 12;
                         housingExp += annualMortgagePayment;
                     }
                 }
             } else {
                 // Renting
-                housingExp = config.settings.housing.futureRent * 12 * Math.pow(1 + config.settings.housing.rentInflation / 100, Math.max(0, currentYear - config.settings.housing.sellYear));
+                const h = config.settings.housing || {};
+                housingExp = (h.futureRent || 0) * 12 * Math.pow(1 + (h.rentInflation || 3) / 100, Math.max(0, currentYear - (h.sellYear || 2030)));
             }
 
             let medicalExp = 0;
@@ -164,23 +169,29 @@ export class SimulationEngine {
             // Using last year's or a rough estimate for iterative tax is better, but let's keep it simple:
             // Calculate taxes on known income, then add drawdown-based taxes.
 
-            let ordIncome = workIncome + rmdIncome + (ssIncome * 0.85);
+            // Calculate taxes using improved breakdown
+            const otherOrdIncome = rmdIncome + (ssIncome * 0.85);
             let estimatedCapGains = 0;
 
-            // If we have a deficit, we'll pull from accounts. 
-            // We assume 50% of Investment account withdrawals are capital gains.
+            // Simple estimate for CG from investments to avoid circular reference
             let preTaxGap = Math.max(0, totalExpBeforeTax - (workIncome + ssIncome));
             if (preTaxGap > 0 && investments > 0) {
                 const pullFromInvestments = Math.min(investments, preTaxGap);
-                estimatedCapGains = pullFromInvestments * 0.5; // Assumption: 50% cost basis
+                estimatedCapGains = pullFromInvestments * 0.5;
+            }
+
+            // Include Roth conversion amount in other ordinary income if enabled
+            let rothConvToProcess = 0;
+            if (config.settings.taxes.rothConversionEnabled && currentYear >= config.settings.taxes.rothConvStart && currentYear <= config.settings.taxes.rothConvEnd) {
+                rothConvToProcess = config.settings.taxes.rothConversion || 0;
             }
 
             const taxBreakdown = TaxCalculator.calculateTaxBreakdown(
-                ordIncome,
+                workIncome,
+                otherOrdIncome + rothConvToProcess,
                 estimatedCapGains,
                 config.settings.taxSettings.filingStatus,
-                config.settings.taxSettings.state,
-                workIncome > 0
+                config.settings.taxSettings.state
             );
 
             let estimatedTax = taxBreakdown.total;
@@ -220,31 +231,56 @@ export class SimulationEngine {
                 let deficit = Math.abs(netFlow);
                 const strategy = config.settings.taxes.withdrawalStrategy || 'grow_tax_deferred';
 
-                let order = [];
-                if (strategy === 'minimize_rmds') {
-                    order = ['RetirementSavings', 'Investments', 'RothIRA'];
-                } else {
-                    order = ['Investments', 'RetirementSavings', 'RothIRA'];
+                if (strategy === 'proportional') {
+                    const totalLiquid = investments + retirement + roth;
+                    if (totalLiquid > 0) {
+                        const invPct = investments / totalLiquid;
+                        const retPct = retirement / totalLiquid;
+                        const rothPct = roth / totalLiquid;
+
+                        const invAmt = Math.min(investments, deficit * invPct);
+                        investments -= invAmt;
+                        yearlyDrawdownDetail.Investments = invAmt;
+
+                        const retAmt = Math.min(retirement, deficit * retPct);
+                        retirement -= retAmt;
+                        yearlyDrawdownDetail.RetirementSavings = retAmt;
+
+                        const rothAmt = Math.min(roth, deficit * rothPct);
+                        roth -= rothAmt;
+                        yearlyDrawdownDetail.RothIRA = rothAmt;
+
+                        deficit -= (invAmt + retAmt + rothAmt);
+                    }
                 }
 
-                for (let accountName of order) {
-                    if (deficit <= 0) break;
+                if (deficit > 0) {
+                    let order = [];
+                    if (strategy === 'minimize_rmds') {
+                        order = ['RetirementSavings', 'Investments', 'RothIRA'];
+                    } else {
+                        order = ['Investments', 'RetirementSavings', 'RothIRA'];
+                    }
 
-                    if (accountName === 'Investments') {
-                        const amount = Math.min(investments, deficit);
-                        investments -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.Investments = amount;
-                    } else if (accountName === 'RetirementSavings') {
-                        const amount = Math.min(retirement, deficit);
-                        retirement -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.RetirementSavings = amount;
-                    } else if (accountName === 'RothIRA') {
-                        const amount = Math.min(roth, deficit);
-                        roth -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.RothIRA = amount;
+                    for (let accountName of order) {
+                        if (deficit <= 0) break;
+
+                        if (accountName === 'Investments') {
+                            const amount = Math.min(investments, deficit);
+                            investments -= amount;
+                            deficit -= amount;
+                            yearlyDrawdownDetail.Investments += amount;
+                        } else if (accountName === 'RetirementSavings') {
+                            const amount = Math.min(retirement, deficit);
+                            retirement -= amount;
+                            deficit -= amount;
+                            yearlyDrawdownDetail.RetirementSavings += amount;
+                        } else if (accountName === 'RothIRA') {
+                            const amount = Math.min(roth, deficit);
+                            roth -= amount;
+                            deficit -= amount;
+                            yearlyDrawdownDetail.RothIRA += amount;
+                        }
                     }
                 }
             } else {
@@ -255,19 +291,17 @@ export class SimulationEngine {
             results.drawdown.RetirementSavings.push(Math.round(yearlyDrawdownDetail.RetirementSavings));
             results.drawdown.RothIRA.push(Math.round(yearlyDrawdownDetail.RothIRA));
 
-            // Roth Conversion Ladder
-            if (config.settings.taxes.rothConversionEnabled && currentYear >= config.settings.taxes.rothConvStart && currentYear <= config.settings.taxes.rothConvEnd) {
-                const convAmount = config.settings.taxes.rothConversion;
-                if (retirement >= convAmount) {
-                    retirement -= convAmount;
-                    roth += convAmount;
-                    // Additional tax on conversion
-                    const convTax = convAmount * (config.settings.taxSettings.fedBracket / 100);
-                    estimatedTax += convTax;
-                    // If we pay tax from conversion, we actually have less to add to Roth or we pull from else
-                    // Let's assume tax is paid from investments/cash
-                    if (investments >= convTax) investments -= convTax;
-                    else if (cash >= convTax) cash -= convTax;
+            // Roth Conversion Ladder (processed after initial tax est, but amount was included in breakdown)
+            if (rothConvToProcess > 0) {
+                if (retirement >= rothConvToProcess) {
+                    retirement -= rothConvToProcess;
+                    roth += rothConvToProcess;
+
+                    // Note: Taxes for this were already calculated in taxBreakdown above
+                    // We just need to pay them from liquid assets
+                    const convTax = taxBreakdown.federalOrd * (rothConvToProcess / (workIncome + otherOrdIncome + rothConvToProcess || 1));
+                    // Actually, let's keep it simple: the total estimatedTax already includes it.
+                    // If we pull tax for conversion specifically, we subtract it here.
                 }
             }
 
@@ -294,10 +328,10 @@ export class SimulationEngine {
             results.expenses.LTC.push(Math.round(ltcExp));
             results.expenses.Taxes.push(Math.round(estimatedTax));
 
-            results.taxes.Federal.push(Math.round(taxBreakdown.federalOrd));
-            results.taxes.FICA.push(Math.round(taxBreakdown.fica));
-            results.taxes.CapGains.push(Math.round(taxBreakdown.federalCG));
-            results.taxes.State.push(Math.round(taxBreakdown.state));
+            results.taxes.Federal.push(taxBreakdown.federalOrd);
+            results.taxes.FICA.push(taxBreakdown.fica);
+            results.taxes.CapGains.push(taxBreakdown.federalCG);
+            results.taxes.State.push(taxBreakdown.state);
 
             // FIX: Net worth calculation - homeValue and mortgage are already accounted for in Housing equity
             // Don't double-count by including both homeValue and -mortgage

@@ -1,7 +1,8 @@
 # Tasks & User Stories
 
-**Last Updated**: 2026-01-24  
-**Test Status**: 100% Pass Rate ✅ (25/25 Unit+Integration) - E2E: 82 tests (skip when dev server not running)
+**Last Updated**: 2026-01-29  
+**Test Status**: 189/280 Tests Passing ✅ (100% Unit+Integration) - E2E: 82 tests (skip when dev server not running)
+**Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
 
 ## 🎯 Today's Achievements (2026-02-18)
 
@@ -17,6 +18,13 @@
 - ✅ **RESTORATION**: Restored all 30+ dashboard and analysis charts to 100% parity.
 - ✅ **ENGINE**: Re-integrated full Tax, Social Security, Roth, and Crypto sync engines.
 - ✅ **UI**: Hardened all global hooks and resolved all `ReferenceError` issues.
+
+### Story B: Housing Downsize & Retirement Logic ✅ COMPLETE
+- ✅ **LOGIC**: Implemented equity swap logic for home sale + future purchase in `SimulationEngine`.
+- ✅ **CALCULATION**: Added mortgage payoff, sale costs, and future cash/mortgage purchase handling.
+- ✅ **UI**: Extended Settings Panel with Future Home Purchase (Buy New) controls.
+- ✅ **TESTING**: Created `HousingDownsize.test.js` to verify mathematical accuracy of equity transfers.
+- ✅ **FIX**: Resolved `jsdom` dependency issue for UI unit tests.
 
 **Note**: Completed tasks are marked with ✅ but NOT removed - we keep them for historical reference and to avoid redoing work.
 

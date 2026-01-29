@@ -90,6 +90,35 @@ export class DashboardDetails {
                 keys.forEach(k => html += `<td class="positive">${formatCurrency(income[k][i])}</td>`);
                 html += '</tr>';
             }
+        } else if (type === 'taxes') {
+            const taxes = rawData[scenario].taxes;
+            html += '<th>Federal Ord</th><th>Cap Gains</th><th>FICA</th><th>State</th><th>Total</th></tr></thead><tbody>';
+            for (let i = 0; i < rawData.years.length; i += 2) {
+                const total = (taxes.Federal[i] || 0) + (taxes.CapGains[i] || 0) + (taxes.FICA[i] || 0) + (taxes.State[i] || 0);
+                html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
+                         <td class="negative">${formatCurrency(taxes.Federal[i])}</td>
+                         <td class="negative">${formatCurrency(taxes.CapGains[i])}</td>
+                         <td class="negative">${formatCurrency(taxes.FICA[i])}</td>
+                         <td class="negative">${formatCurrency(taxes.State[i])}</td>
+                         <td class="negative"><strong>${formatCurrency(total)}</strong></td></tr>`;
+            }
+        } else if (type === 'expenses') {
+            const exp = rawData[scenario].expenses;
+            const keys = Object.keys(exp).filter(k => k !== 'Taxes');
+            keys.forEach(k => html += `<th>${expenseNames[k] || k}</th>`);
+            html += '<th>Taxes</th><th>Total</th></tr></thead><tbody>';
+            for (let i = 0; i < rawData.years.length; i += 2) {
+                html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>`;
+                let total = 0;
+                keys.forEach(k => {
+                    const val = exp[k][i] || 0;
+                    total += val;
+                    html += `<td class="negative">${formatCurrency(val)}</td>`;
+                });
+                const tax = getTotalTaxes(scenario, i);
+                html += `<td class="negative">${formatCurrency(tax)}</td>`;
+                html += `<td class="negative"><strong>${formatCurrency(total + tax)}</strong></td></tr>`;
+            }
         }
 
         html += '</tbody></table>';

@@ -81,11 +81,21 @@ export class TaxCalculator {
         return this.calculateFederalSocialSecurity(total, status);
     }
 
-    static calculateTaxBreakdown(ordIncome, capGains, filingStatus, state, isEarned = true) {
+    /**
+     * Calculates detailed tax breakdown
+     * @param {number} wages - Earned income (wages, self-employment) subject to FICA
+     * @param {number} otherOrdIncome - Other ordinary income (RMDs, Pensions, Interest) NOT subject to FICA
+     * @param {number} capGains - Long term capital gains
+     * @param {string} filingStatus - single, married, or hoh
+     * @param {string} state - state code (e.g., 'CA', 'FL')
+     * @returns {Object} Tax breakdown
+     */
+    static calculateTaxBreakdown(wages, otherOrdIncome, capGains, filingStatus, state) {
+        const totalOrdIncome = (wages || 0) + (otherOrdIncome || 0);
         const deduction = this.standardDeduction[filingStatus] || 14600;
-        
+
         // 1. Ordinary Income Tax
-        const taxableOrd = Math.max(0, ordIncome - deduction);
+        const taxableOrd = Math.max(0, totalOrdIncome - deduction);
         const ordBrackets = this.brackets[filingStatus] || this.brackets.single;
         const fedOrd = this.calculateProgressive(taxableOrd, ordBrackets);
 
@@ -93,7 +103,7 @@ export class TaxCalculator {
         // CG sits on top of ordinary income for bracket determination
         const totalTaxable = taxableOrd + (capGains || 0);
         const cgBrackets = this.ltcgBrackets[filingStatus] || this.ltcgBrackets.single;
-        
+
         const totalCGTax = this.calculateProgressive(totalTaxable, cgBrackets);
         const ordCGTax = this.calculateProgressive(taxableOrd, cgBrackets);
         const fedCG = Math.max(0, totalCGTax - ordCGTax);
@@ -101,10 +111,10 @@ export class TaxCalculator {
         // 3. FICA (Simplified)
         const ficaRate = 0.0765;
         const ficaCap = 176100;
-        const fica = isEarned ? Math.min(ordIncome, ficaCap) * ficaRate : 0;
+        const fica = Math.min(wages || 0, ficaCap) * ficaRate;
 
-        // 4. State Tax (Mock)
-        const stateRates = { 'CA': 0.093, 'NY': 0.065, 'FL': 0, 'TX': 0, 'IL': 0.0495 };
+        // 4. State Tax (Simplified)
+        const stateRates = { 'CA': 0.093, 'NY': 0.065, 'FL': 0, 'TX': 0, 'IL': 0.0495, 'MA': 0.05 };
         const st = (taxableOrd + (capGains || 0)) * (stateRates[state] || 0);
 
         return {
@@ -116,7 +126,8 @@ export class TaxCalculator {
         };
     }
 
-    static getTaxes(income, filingStatus, state, isEarned = true) {
-        return this.calculateTaxBreakdown(income, 0, filingStatus, state, isEarned);
+    static getTaxes(totalIncome, filingStatus, state) {
+        // Default assume all is ordinary other, not wages for safety in getTaxes
+        return this.calculateTaxBreakdown(0, totalIncome, 0, filingStatus, state);
     }
 }

@@ -83,7 +83,12 @@ describe('E2E: RetireFire Application', () => {
     });
 
     describe('Chart Rendering', () => {
-        // ...
+        const chartIds = [
+            'chartNetWorth', 'chartAllocation', 'chartIncome',
+            'chartExpenses', 'chartSurplusGap', 'chartMoneyFlow',
+            'gaugeSuccess', 'chartMonteCarlo'
+        ];
+
         chartIds.forEach(chartId => {
             it(`should render ${chartId} with non-zero dimensions`, async function () {
                 if (shouldSkip) this.skip();
@@ -131,7 +136,18 @@ describe('E2E: RetireFire Application', () => {
     });
 
     describe('Section Descriptions', () => {
-        // ... sectionsWithDescriptions def
+        const sectionsWithDescriptions = [
+            { id: 'section-explorers', name: 'Year Explorer' },
+            { id: 'section-networth', name: 'Net Worth' },
+            { id: 'section-income', name: 'Income' },
+            { id: 'section-expenses', name: 'Expenses' },
+            { id: 'section-taxes', name: 'Taxes' },
+            { id: 'section-withdrawals', name: 'Withdrawals' },
+            { id: 'section-socialsecurity', name: 'Social Security' },
+            { id: 'section-roth', name: 'Roth' },
+            { id: 'section-montecarlo', name: 'Monte Carlo' }
+        ];
+
         sectionsWithDescriptions.forEach(section => {
             it(`should have description for ${section.name} section`, async function () {
                 if (shouldSkip) this.skip();

@@ -1,6 +1,7 @@
 import './style.css';
 import './dashboard-layout.css';
 import Chart from 'chart.js/auto';
+window.Chart = Chart;
 
 // Configuration and Data
 import { config } from './data/Config.js';
@@ -30,6 +31,7 @@ import * as AccountCharts from './charts/AccountCharts.js';
 import * as ExplorerCharts from './charts/ExplorerCharts.js';
 
 // Utilities
+import { deepMerge } from './utils/DeepMerge.js';
 import { calculateNetWorth, getNetWorthSeries, getTotalIncome, getTotalExpenses, getTotalTaxes } from './state/DataUtils.js';
 import { formatCurrency } from './utils/Formatters.js';
 
@@ -96,14 +98,8 @@ const App = {
             const savedConfig = localStorage.getItem('retirementPlannerConfig');
             if (savedConfig) {
                 const parsed = JSON.parse(savedConfig);
-                // Deep merge to preserve structure
-                Object.keys(parsed).forEach(key => {
-                    if (typeof parsed[key] === 'object' && parsed[key] !== null && !Array.isArray(parsed[key])) {
-                        config[key] = { ...config[key], ...parsed[key] };
-                    } else {
-                        config[key] = parsed[key];
-                    }
-                });
+                // Recursive deep merge to preserve nested settings (US-033/034)
+                deepMerge(config, parsed);
             }
         } catch (e) {
             console.warn('Could not load from localStorage:', e);
@@ -181,6 +177,31 @@ window.resetToDefaults = () => SettingsHandler.reset();
 window.importSettings = () => SettingsHandler.importSettings();
 window.exportSettings = () => SettingsHandler.exportSettings();
 window.toggleTheme = () => App.toggleTheme();
+
+// Chart Type Switching
+window.setChartType = (section, type, button) => {
+    // Update active tab styling
+    if (button) {
+        const tabs = button.parentElement.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        button.classList.add('active');
+    }
+
+    // Destroy and recreate the appropriate chart
+    if (section === 'taxes') {
+        if (charts.taxes) charts.taxes.destroy();
+        if (charts.effectiveTax) charts.effectiveTax.destroy();
+        if (charts.taxBracket) charts.taxBracket.destroy();
+
+        if (type === 'total') {
+            TaxCharts.initTaxesChart();
+        } else if (type === 'effective') {
+            TaxCharts.initEffectiveTaxChart();
+        } else if (type === 'bracket') {
+            TaxCharts.initTaxBracketChart();
+        }
+    }
+};
 
 window.exportPDF = () => ExportHandler.exportPDF();
 window.exportCSV = () => ExportHandler.exportCSV();
