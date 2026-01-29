@@ -59,7 +59,7 @@ RetireFire is a high-fidelity financial planning application designed to provide
 - **45-Year Projections** - Comprehensive long-term planning
 - **Interactive Charts** - 25+ visualizations powered by Chart.js
 - **Tax Optimization** - Roth conversion strategies and tax-efficient withdrawals
-- **Monte Carlo Simulation** - Probability-based success analysis
+- **Monte Carlo Simulation** - Probability-based success analysis with Historical Stress Tests (1970s, Dot-com, 1929)
 - **Comprehensive Settings** - Full control over all financial variables
 
 ---
