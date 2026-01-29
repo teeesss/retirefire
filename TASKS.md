@@ -19,6 +19,7 @@
 - ✅ **RESTORATION**: Restored all 30+ dashboard and analysis charts to 100% parity.
 - ✅ **ENGINE**: Re-integrated full Tax, Social Security, Roth, and Crypto sync engines.
 - ✅ **UI**: Hardened all global hooks and resolved all `ReferenceError` issues.
+- ✅ **FIX**: Restored "What You Need" Gap Calculator functionality with 100% test coverage.
 
 ### Story B: Housing Downsize & Retirement Logic ✅ COMPLETE
 - ✅ **LOGIC**: Implemented equity swap logic for home sale + future purchase in `SimulationEngine`.

@@ -81,6 +81,7 @@
 
 | Issue | Description | Impact |
 |-------|-------------|--------|
+| **ISSUE-070** | "What You Need" Gap Calculator non-functional ($0 projected) | ✅ FIXED | Re-implemented `GapCalculator.js` module, restored `initGapCalculator` and integrated into `main.js`. Added unit tests. |
 | **ISSUE-018** | "Compare" button at top doesn't work / seems useless | Remove or implement comparison feature |
 | **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | Update calculator to use current age |
 

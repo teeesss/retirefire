@@ -76,6 +76,11 @@
 - **Fix**: Implemented IRS Uniform Lifetime Table (age 73+)
 - **Result**: RMDs now calculated correctly and taxed as ordinary income
 
+**ISSUE-070: Gap Calculator Restoration**
+- **Problem**: "What You Need" calculator showing $0 (missing logic after refactor)
+- **Fix**: Re-implemented `GapCalculator.js` module and integrated with main dashboard feed.
+- **Result**: Calculator now correctly projects retirement income and calculates surplus/shortfall.
+
 ---
 
 

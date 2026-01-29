@@ -72,6 +72,14 @@ async function killDevServers() {
                 // No Vite processes running
             }
 
+            // Kill any lingering Python processes
+            try {
+                await execAsync('taskkill /F /IM python.exe 2>nul');
+                log('✅ Killed Python processes', colors.green);
+            } catch (e) {
+                // No Python processes running
+            }
+
         } else {
             // Unix-like systems
             try {

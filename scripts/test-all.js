@@ -149,13 +149,13 @@ function stopDevServer() {
             setTimeout(() => {
                 const killAll = spawn('powershell', [
                     '-Command',
-                    'Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force; exit 0'
+                    'Get-Process -Name node, python -ErrorAction SilentlyContinue | Stop-Process -Force; exit 0'
                 ], {
                     stdio: 'ignore'
                 });
 
                 killAll.on('close', () => {
-                    log('✅ All Node processes terminated\n', colors.green);
+                    log('✅ All Node and Python processes terminated\n', colors.green);
                     resolve();
                 });
 
