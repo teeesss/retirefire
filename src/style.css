@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* UI-001: Force black text on white background for readability */
+input,
+select,
+textarea {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+
+/* Ensure placeholder visibility if needed */
+input::placeholder {
+    color: #666666;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -658,14 +671,18 @@ select option {
 }
 
 .input-group input,
-.input-group select {
+.input-group select,
+input[type="number"],
+input[type="text"],
+select {
     padding: 0.625rem 0.875rem;
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
-    background: var(--bg-input);
-    color: var(--text-primary);
+    background: #ffffff !important;
+    color: #000000 !important;
     font-size: 0.875rem;
     transition: border-color 0.2s ease;
+    font-weight: 500;
 }
 
 .input-group input:focus,
@@ -2517,20 +2534,25 @@ footer {
     border-radius: 0.5rem;
     border-left: 3px solid var(--primary);
 }
+
 /* Mobile Responsive Adjustments (US-029) */
 @media (max-width: 768px) {
     .dashboard-grid {
         grid-template-columns: 1fr !important;
     }
-    
-    .span-1, .span-2, .span-3, .span-4, .span-6 {
+
+    .span-1,
+    .span-2,
+    .span-3,
+    .span-4,
+    .span-6 {
         grid-column: span 1 !important;
     }
-    
+
     .main-layout {
         flex-direction: column;
     }
-    
+
     .main-sidebar {
         width: 100% !important;
         height: auto !important;
@@ -2540,17 +2562,17 @@ footer {
         flex-direction: row !important;
         padding: 0.5rem;
     }
-    
+
     .sidebar-section {
         display: flex;
         flex-direction: row;
         gap: 0.5rem;
     }
-    
+
     .sidebar-section-title {
         display: none;
     }
-    
+
     .sidebar-nav-item {
         white-space: nowrap;
         padding: 0.5rem 1rem;
@@ -2580,8 +2602,29 @@ footer {
     .chart-container {
         height: 250px !important;
     }
-    
+
     .chart-container.xlarge {
         height: 350px !important;
     }
+}
+
+/* UI-001: Global Input Styling Override */
+input,
+select,
+textarea,
+.modern-input,
+input[type='number'],
+input[type='text'],
+.roth-inputs input,
+.roth-inputs select {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
+    caret-color: #000000 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #666666 !important;
+    -webkit-text-fill-color: #666666 !important;
 }

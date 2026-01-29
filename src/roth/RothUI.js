@@ -5,6 +5,9 @@
 
 import RothConfig, { getStrategyDescription } from './RothConfig.js';
 import RothCalculator from './RothCalculator.js';
+import { rawData, updateRawData } from '../data/Store.js';
+import { config } from '../data/Config.js';
+import { recalculate } from '../main.js'; // Or ensure window.recalculate is used
 
 export class RothUI {
     /**
@@ -109,20 +112,20 @@ export class RothUI {
             RothConfig.mode = mode;
             this.updateStrategyVisibility();
             this.updateStrategyDescription();
-            window.updateRawData?.();
-            window.updateDashboard?.();
-            window.refreshAllCharts?.();
-            window.saveToLocalStorage?.();
+            updateRawData();
+            if (window.updateDashboard) window.updateDashboard();
+            if (window.refreshAllCharts) window.refreshAllCharts();
+            if (window.saveToLocalStorage) window.saveToLocalStorage();
         };
 
         // Bracket change
         window.updateRothTargetBracket = (bracket) => {
             RothConfig.targetBracket = parseInt(bracket);
             this.updateStrategyDescription();
-            window.updateRawData?.();
-            window.updateDashboard?.();
-            window.refreshAllCharts?.();
-            window.saveToLocalStorage?.();
+            updateRawData();
+            if (window.updateDashboard) window.updateDashboard();
+            if (window.refreshAllCharts) window.refreshAllCharts();
+            if (window.saveToLocalStorage) window.saveToLocalStorage();
         };
 
         // Manual amount change
@@ -147,10 +150,10 @@ export class RothUI {
         window.updateRothMaxCap = (value) => {
             RothConfig.maxAnnualCap = parseInt(value) || null;
             this.updateStrategyDescription();
-            window.updateRawData?.();
-            window.updateDashboard?.();
-            window.refreshAllCharts?.();
-            window.saveToLocalStorage?.();
+            updateRawData();
+            if (window.updateDashboard) window.updateDashboard();
+            if (window.refreshAllCharts) window.refreshAllCharts();
+            if (window.saveToLocalStorage) window.saveToLocalStorage();
         };
 
         // Period change
@@ -161,10 +164,10 @@ export class RothUI {
             if (start) RothConfig.startYear = start;
             if (end) RothConfig.endYear = end;
 
-            window.updateRawData?.();
-            window.updateDashboard?.();
-            window.refreshAllCharts?.();
-            window.saveToLocalStorage?.();
+            updateRawData();
+            if (window.updateDashboard) window.updateDashboard();
+            if (window.refreshAllCharts) window.refreshAllCharts();
+            if (window.saveToLocalStorage) window.saveToLocalStorage();
         };
 
         // Toggle enabled
@@ -172,10 +175,10 @@ export class RothUI {
             const enabled = document.getElementById('rothConversionEnabled')?.checked;
             RothConfig.enabled = enabled;
 
-            window.updateRawData?.();
-            window.updateDashboard?.();
-            window.refreshAllCharts?.();
-            window.saveToLocalStorage?.();
+            updateRawData();
+            if (window.updateDashboard) window.updateDashboard();
+            if (window.refreshAllCharts) window.refreshAllCharts();
+            if (window.saveToLocalStorage) window.saveToLocalStorage();
         };
 
         // Optimize
@@ -183,7 +186,6 @@ export class RothUI {
             console.log('🔍 Optimizing Roth conversion strategy...');
 
             // Get simulation data
-            const rawData = window.rawData;
             if (!rawData || !rawData.years) {
                 console.error('No simulation data available');
                 return;
@@ -194,9 +196,11 @@ export class RothUI {
                 // Prepare optimization parameters
                 const params = {
                     years: rawData.years,
-                    ordinaryIncome: rawData.ordinaryIncome || rawData.years.map(() => 80000),
-                    traditionalBalance: rawData.traditionalBalance || rawData.years.map(() => 500000),
-                    filingStatus: window.config?.filingStatus || 'joint',
+                    ordinaryIncome: rawData.average.income.Work.map((v, i) =>
+                        v + (rawData.average.income.SocialSecurity?.[i] || 0) + (rawData.average.income.RMD?.[i] || 0)
+                    ),
+                    traditionalBalance: rawData.average.accounts.RetirementSavings,
+                    filingStatus: config.settings.taxSettings.filingStatus || 'joint',
                     targetBracket: RothConfig.targetBracket,
                     constraints: {
                         maxAnnual: RothConfig.maxAnnualCap
@@ -274,10 +278,10 @@ Would you like to apply this optimized strategy?
         this.syncUIWithConfig();
 
         // Trigger recalculation
-        window.updateRawData?.();
-        window.updateDashboard?.();
-        window.refreshAllCharts?.();
-        window.saveToLocalStorage?.();
+        updateRawData();
+        if (window.updateDashboard) window.updateDashboard();
+        if (window.refreshAllCharts) window.refreshAllCharts();
+        if (window.saveToLocalStorage) window.saveToLocalStorage();
 
         console.log('✅ Optimized strategy applied!');
     }

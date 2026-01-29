@@ -4,6 +4,7 @@ import { rawData } from '../data/Store.js';
 import { charts } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
+import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { getTotalIncome, getTotalExpenses } from '../state/DataUtils.js';
 import { incomeColors, expenseColors, incomeNames, expenseNames } from '../data/Constants.js';
 
@@ -29,6 +30,8 @@ export function initIncomeChart() {
             scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.income.options);
+    charts.income.update();
 }
 
 export function initExpensesChart() {
@@ -50,9 +53,16 @@ export function initExpensesChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
             scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.expenses.options);
+    charts.expenses.options.interaction = { mode: 'index', intersect: false };
+    charts.expenses.update();
 }
 
 export function initHealthcareChart() {
@@ -76,6 +86,8 @@ export function initHealthcareChart() {
             scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.healthcare.options);
+    charts.healthcare.update();
 }
 
 export function initSSComparisonChart() {
@@ -98,6 +110,8 @@ export function initSSComparisonChart() {
             scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.ssComparison.options);
+    charts.ssComparison.update();
 }
 
 export function initIncomeReplacementChart() {
@@ -123,33 +137,58 @@ export function initIncomeReplacementChart() {
             scales: { y: { ticks: { callback: (v) => v + '%' }, max: 150 }, x: { ticks: { maxTicksLimit: 10 } } }
         }
     });
+    applyTooltipConfig(charts.incomeReplacement.options, true);
+    charts.incomeReplacement.update();
 }
 
 export function initSurplusGapChart() {
     const ctx = getSafeCtx('chartSurplusGap');
     if (!ctx) return;
 
-    const totalIncomeData = rawData.years.map((_, i) => getTotalIncome(config.currentScenario, i));
-    const totalExpensesData = rawData.years.map((_, i) => getTotalExpenses(config.currentScenario, i));
-    const surplusData = totalIncomeData.map((inc, i) => inc - totalExpensesData[i]);
+    // Use FALSE for includeDrawdown to show the actual gap/surplus relative to fixed income
+    const scenario = config.currentScenario;
+    const data = rawData[scenario];
+    const totalIncomeNoDrawdown = rawData.years.map((_, i) => getTotalIncome(scenario, i, false));
+    const totalExpensesData = rawData.years.map((_, i) => getTotalExpenses(scenario, i));
+
+    // Net Flow without drawdown
+    const netFlowData = totalIncomeNoDrawdown.map((inc, i) => inc - totalExpensesData[i]);
+
+    // Identify broken/insolvent years
+    const portfolioHistory = data.netWorth || [];
 
     charts.surplusGap = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: rawData.years,
             datasets: [{
-                label: 'Surplus/Gap',
-                data: surplusData,
-                backgroundColor: surplusData.map(val => val >= 0 ? '#10b981' : '#ef4444'),
-                borderColor: surplusData.map(val => val >= 0 ? '#047857' : '#b91c1c'),
+                label: 'Net Cash Flow',
+                data: netFlowData,
+                backgroundColor: netFlowData.map((val, i) => {
+                    const isBroke = portfolioHistory[i] <= 0;
+                    if (val >= 0) return '#10b981'; // Surplus (Green)
+                    if (isBroke) return '#ef4444';  // Unfunded Gap (Red)
+                    return '#3b82f6';                // Funded Gap (Blue/Assets covering)
+                }),
+                borderColor: netFlowData.map((val, i) => {
+                    const isBroke = portfolioHistory[i] <= 0;
+                    if (val >= 0) return '#047857';
+                    if (isBroke) return '#b91c1c';
+                    return '#2563eb';
+                }),
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: (ctx) => `Surplus: ${formatCurrency(ctx.raw)}` } }
+                legend: { display: true, labels: { boxWidth: 10, font: { size: 9 } } },
+                title: {
+                    display: true,
+                    text: 'Plan Solvency (Green=Surplus, Blue=Funded by Assets, Red=Gap)',
+                    font: { size: 10 }
+                }
             },
             scales: {
                 y: { ticks: { callback: (v) => formatCurrency(v) } },
@@ -157,6 +196,9 @@ export function initSurplusGapChart() {
             }
         }
     });
+
+    applyTooltipConfig(charts.surplusGap.options);
+    charts.surplusGap.update();
 }
 
 export function initExpensePieChart() {
@@ -168,11 +210,12 @@ export function initExpensePieChart() {
         options: {
             responsive: true, maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 10, padding: 6, font: { size: 10 } } },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw, false)}` } }
+                legend: { position: 'bottom', labels: { boxWidth: 10, padding: 6, font: { size: 10 } } }
             }
         }
     });
+    applyTooltipConfig(charts.expensePie.options);
+    updateExpensePieChart();
     updateExpensePieChart();
 }
 

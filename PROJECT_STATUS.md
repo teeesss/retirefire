@@ -4,11 +4,11 @@
 > **Current Status**: 🟢 STABLE - DEPLOYED TO PRODUCTION
 > **Last Updated**: 2026-01-29
 > **Build**: ✅ Passing (Vite Build Success) | 🟢 Production Ready
-> **Codebase**: ~3,700 Lines (96% Logic Restored) - Zero Console Errors
+> **Codebase**: ~4,200 Lines (98% Logic Restored) - Zero Console Errors
 > **Tests**: ✅ 281/281 Tests Passing (100% Pass Rate)
-> **Test Suite**: Automated with `npm run test:full` (starts dev server, runs all tests, cleans up)
+> **Test Suite**: Automated with `npm run test:full`
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-> **Deploy Command**: `npm run deploy` (auto-builds, kills dev servers, deploys)
+> **Recent Fixes**: 📊 UI Readability, 📈 Chart Tooltips, 🎲 Monte Carlo, 🔍 What-If Explorer, 💰 Roth Optimizer.
 
 ### 🎯 Today's Major Refactor: HTML Modularization ✅ COMPLETE
 
@@ -19,9 +19,11 @@
 **Results**:
 - ✅ `index.html` reduced from 3000 lines → 52 lines (shell only)
 - ✅ Content split into 7 semantic partials in `src/partials/`
-- ✅ Build verified (184 kB output confirms injection works)
-- ✅ Deployed successfully
-- ✅ `.cursorrules` updated with new structure + testing requirements
+- ✅ **UI-001**: Fixed input text color (Black on White) for all fields.
+- ✅ **CHART-FIXES**: Asset Allocation, Expenses, and Net Cash Flow tooltips fixed.
+- ✅ **EXPLORERS**: Monte Carlo and What-If analysis logic fully restored and functional.
+- ✅ **SS-UX**: Social Security Explorer layout compacting and stat auto-updates.
+- ✅ **ROTH**: Fixed optimizer data mapping (removed "0 converted" bug).
 
 **Partials Structure**:
 - `header.html` - Top navigation

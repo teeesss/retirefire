@@ -202,13 +202,13 @@ export class RothOptimizer {
      */
     static getBracketLimit(bracket, filingStatus) {
         const limits = {
-            10: { single: 11600, joint: 23200 },
-            12: { single: 47150, joint: 94300 },
-            22: { single: 100525, joint: 201050 },
-            24: { single: 191950, joint: 383900 },
-            32: { single: 243725, joint: 487450 },
-            35: { single: 609350, joint: 731200 },
-            37: { single: Infinity, joint: Infinity }
+            10: { single: 11600, joint: 23200, hoh: 16550 },
+            12: { single: 47150, joint: 94300, hoh: 63100 },
+            22: { single: 100525, joint: 201050, hoh: 100500 },
+            24: { single: 191950, joint: 383900, hoh: 191950 },
+            32: { single: 243725, joint: 487450, hoh: 243725 },
+            35: { single: 609350, joint: 731200, hoh: 609350 },
+            37: { single: Infinity, joint: Infinity, hoh: Infinity }
         };
 
         return limits[bracket]?.[filingStatus] || 0;
@@ -235,6 +235,15 @@ export class RothOptimizer {
                 { limit: 383900, rate: 0.24 },
                 { limit: 487450, rate: 0.32 },
                 { limit: 731200, rate: 0.35 },
+                { limit: Infinity, rate: 0.37 }
+            ],
+            hoh: [
+                { limit: 16550, rate: 0.10 },
+                { limit: 63100, rate: 0.12 },
+                { limit: 100500, rate: 0.22 },
+                { limit: 191950, rate: 0.24 },
+                { limit: 243700, rate: 0.32 },
+                { limit: 609350, rate: 0.35 },
                 { limit: Infinity, rate: 0.37 }
             ]
         };

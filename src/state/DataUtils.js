@@ -22,11 +22,12 @@ export function getNetWorthSeries(scenario) {
     return rawData.years.map((_, i) => calculateNetWorth(scenario, i));
 }
 
-export function getTotalIncome(scenario, yearIndex) {
+export function getTotalIncome(scenario, yearIndex, includeDrawdown = true) {
     const income = rawData[scenario]?.income;
     if (!income) return 0;
     let total = 0;
     for (let key in income) {
+        if (!includeDrawdown && key === 'Drawdown') continue;
         if (income[key]?.[yearIndex]) total += income[key][yearIndex];
     }
     return total;

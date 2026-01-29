@@ -2,6 +2,20 @@ import { config } from '../data/Config.js';
 import { TaxCalculator } from './TaxCalculator.js';
 
 export class SimulationEngine {
+    static run() {
+        const optimistic = this.project(config, 'optimistic');
+        const average = this.project(config, 'average');
+        const pessimistic = this.project(config, 'pessimistic');
+
+        return {
+            years: average.years,
+            ages: average.ages,
+            optimistic,
+            average,
+            pessimistic
+        };
+    }
+
     static project(config, scenario) {
         const years = config.endYear - config.startYear + 1;
         const results = {
@@ -42,7 +56,8 @@ export class SimulationEngine {
                 RetirementSavings: [],
                 RothIRA: []
             },
-            netWorth: []
+            netWorth: [],
+            yearsCount: years
         };
 
         // Initialize starting values
@@ -341,16 +356,6 @@ export class SimulationEngine {
         return results;
     }
 
-    static run() {
-        // Return a global rawData object with all scenarios
-        return {
-            years: Array.from({ length: config.endYear - config.startYear + 1 }, (_, i) => config.startYear + i),
-            ages: Array.from({ length: config.endYear - config.startYear + 1 }, (_, i) => config.startAge + i),
-            optimistic: this.project(config, 'optimistic'),
-            average: this.project(config, 'average'),
-            pessimistic: this.project(config, 'pessimistic')
-        };
-    }
 
     static projectPath(config, volatility = 0.15, spendMultiplier = 1.0) {
         const years = config.endYear - config.startYear + 1;

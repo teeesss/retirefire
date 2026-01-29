@@ -4,6 +4,7 @@ import { rawData } from '../data/Store.js';
 import { charts } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
+import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { scenarioColors } from '../data/Constants.js';
 import { getNetWorthSeries, calculateNetWorth, getTotalIncome, getTotalExpenses } from '../state/DataUtils.js';
 
@@ -30,6 +31,8 @@ export function initMonteCarloChart() {
             scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.monteCarlo.options);
+    charts.monteCarlo.update();
 }
 
 export function initLegacyChart() {
@@ -53,6 +56,8 @@ export function initLegacyChart() {
             scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.legacy.options);
+    charts.legacy.update();
 }
 
 export function initSequenceRiskChart() {
@@ -83,6 +88,8 @@ export function initSequenceRiskChart() {
             scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
         }
     });
+    applyTooltipConfig(charts.sequenceRisk.options, true);
+    charts.sequenceRisk.update();
 }
 
 export function initLifetimeCashFlowChart() {
@@ -115,8 +122,7 @@ export function initLifetimeCashFlowChart() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: (ctx) => `Cumulative: ${formatCurrency(ctx.raw)}` } }
+                legend: { display: false }
             },
             scales: {
                 y: { ticks: { callback: (v) => formatCurrency(v) } },
@@ -124,6 +130,8 @@ export function initLifetimeCashFlowChart() {
             }
         }
     });
+    applyTooltipConfig(charts.lifetimeCashFlow.options);
+    charts.lifetimeCashFlow.update();
 }
 
 export function initScenarioComparisonChart() {
@@ -150,4 +158,6 @@ export function initScenarioComparisonChart() {
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.scenarioComparison.options);
+    charts.scenarioComparison.update();
 }

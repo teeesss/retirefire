@@ -4,6 +4,7 @@ import { rawData } from '../data/Store.js';
 import { charts } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
+import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { getNetWorthSeries, calculateNetWorth } from '../state/DataUtils.js';
 import { colors, scenarioColors, accountNames } from '../data/Constants.js';
 
@@ -58,8 +59,7 @@ export function initNetWorthChart() {
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } },
-                tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatCurrency(c.raw, false)}` } }
+                legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } }
             },
             scales: {
                 y: { ticks: { callback: (v) => formatCurrency(v) } },
@@ -67,6 +67,8 @@ export function initNetWorthChart() {
             }
         }
     });
+    applyTooltipConfig(charts.netWorth.options);
+    charts.netWorth.update();
 }
 
 export function initSuccessGauge() {
@@ -99,7 +101,7 @@ export function initAllocationChart() {
     const ctx = getSafeCtx('chartAllocation');
     if (!ctx) return;
 
-    const alloc = config.settings.assets.allocation;
+    const alloc = config.settings.glidePath;
     const data = [alloc.stocks, alloc.bonds, alloc.cash, alloc.crypto];
     const labels = ['Stocks', 'Bonds', 'Cash', 'Crypto'];
     const bgColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
@@ -118,10 +120,31 @@ export function initAllocationChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } },
+            interaction: {
+                mode: 'nearest',
+                intersect: true
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } },
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return ` ${label}: ${percentage}%`;
+                        }
+                    }
+                }
+            },
             cutout: '65%'
         }
     });
+    charts.allocation.update();
 }
 
 export function initMoneyFlowChart() {
@@ -129,17 +152,21 @@ export function initMoneyFlowChart() {
     if (!ctx) return;
 
     const data = rawData[config.currentScenario];
-    const yearCount = data.yearsCount || 46;
-    const years = rawData.years;
+    if (!data || !data.income) return; // Safeguard if data not yet available
+
+    const yearCount = data.yearsCount || (rawData.years ? rawData.years.length : 0);
+    const years = rawData.years || [];
 
     const taxes = [];
     const expenses = [];
     const savings = [];
 
     for (let i = 0; i < yearCount; i++) {
-        const inc = (data.income.Work?.[i] || 0) + (data.income.SocialSecurity?.[i] || 0) + (data.income.Drawdown?.[i] || 0) + (data.income.RMD?.[i] || 0);
-        const tax = (data.taxes?.Federal?.[i] || 0) + (data.taxes?.FICA?.[i] || 0) + (data.taxes?.CapGains?.[i] || 0);
+        const inc = (data.income?.Work?.[i] || 0) + (data.income?.SocialSecurity?.[i] || 0) + (data.income?.Drawdown?.[i] || 0) + (data.income?.RMD?.[i] || 0);
+        const tax = (data.taxes?.Federal?.[i] || 0) + (data.taxes?.FICA?.[i] || 0) + (data.taxes?.CapGains?.[i] || 0) + (data.taxes?.State?.[i] || 0);
         const exp = (data.expenses?.General?.[i] || 0) + (data.expenses?.Housing?.[i] || 0) + (data.expenses?.Medical?.[i] || 0) + (data.expenses?.LTC?.[i] || 0);
+
+        // Savings is surplus income.
         const surplus = inc - tax - exp;
 
         taxes.push(tax);
@@ -163,6 +190,8 @@ export function initMoneyFlowChart() {
             scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.moneyFlow.options);
+    charts.moneyFlow.update();
 }
 
 export function initRealNominalChart() {
@@ -184,10 +213,9 @@ export function initRealNominalChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: { intersect: false, mode: 'index' },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatCurrency(ctx.raw, false)}` } }
+                legend: { display: false }
             },
             scales: {
                 y: { ticks: { callback: (v) => formatCurrency(v) } },
@@ -195,6 +223,8 @@ export function initRealNominalChart() {
             }
         }
     });
+    applyTooltipConfig(charts.realNominal.options);
+    charts.realNominal.update();
 }
 
 export function initStackedPortfolioChart() {
@@ -218,7 +248,7 @@ export function initStackedPortfolioChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: { intersect: false, mode: 'index' },
+            interaction: { mode: 'index', intersect: false },
             plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } } },
             scales: {
                 y: { stacked: true, ticks: { callback: (v) => formatCurrency(v) } },
@@ -226,4 +256,6 @@ export function initStackedPortfolioChart() {
             }
         }
     });
+    applyTooltipConfig(charts.stackedPortfolio.options);
+    charts.stackedPortfolio.update();
 }

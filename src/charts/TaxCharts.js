@@ -4,6 +4,7 @@ import { rawData } from '../data/Store.js';
 import { charts } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
+import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { getTotalIncome, getTotalExpenses, getTotalTaxes, calculateNetWorth } from '../state/DataUtils.js';
 
 export function initTaxesChart() {
@@ -25,29 +26,14 @@ export function initTaxesChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { boxWidth: 12, padding: 8, font: { size: 11 } }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: (context) => {
-                            return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
-                        },
-                        footer: (tooltipItems) => {
-                            const total = tooltipItems.reduce((sum, item) => sum + item.parsed.y, 0);
-                            return `Total: ${formatCurrency(total)}`;
-                        }
-                    }
-                }
-            },
             scales: {
                 x: { stacked: true, ticks: { maxTicksLimit: 10 } },
                 y: { stacked: true, ticks: { callback: v => formatCurrency(v) } }
             }
         }
     });
+    applyTooltipConfig(charts.taxes.options);
+    charts.taxes.update();
 }
 
 export function initEffectiveTaxChart() {
@@ -79,20 +65,14 @@ export function initEffectiveTaxChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: (context) => `Effective Rate: ${context.parsed.y.toFixed(2)}%`
-                    }
-                }
-            },
             scales: {
                 y: { ticks: { callback: v => v.toFixed(1) + '%' } },
                 x: { ticks: { maxTicksLimit: 10 } }
             }
         }
     });
+    applyTooltipConfig(charts.effectiveTax.options, true);
+    charts.effectiveTax.update();
 }
 
 export function initRothConversionChart() {
@@ -119,6 +99,8 @@ export function initRothConversionChart() {
             scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.rothConversion.options);
+    charts.rothConversion.update();
 }
 
 export function initCumulativeTaxChart() {
@@ -140,10 +122,11 @@ export function initCumulativeTaxChart() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { ticks: { maxTicksLimit: 8 } } }
         }
     });
+    applyTooltipConfig(charts.cumulativeTax.options);
+    charts.cumulativeTax.update();
 }
 
 export function initTaxBracketChart() {
@@ -169,10 +152,11 @@ export function initTaxBracketChart() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
             scales: { y: { ticks: { callback: (v) => v + '%' }, max: 40 }, x: { ticks: { maxTicksLimit: 10 } } }
         }
     });
+    applyTooltipConfig(charts.taxBracket.options, true);
+    charts.taxBracket.update();
 }
 
 export function initWithdrawalChart() {
@@ -192,10 +176,11 @@ export function initWithdrawalChart() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } } },
             scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: (v) => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.withdrawal.options);
+    charts.withdrawal.update();
 }
 
 export function initSWRChart() {
@@ -220,10 +205,11 @@ export function initSWRChart() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
             scales: { y: { ticks: { callback: (v) => v.toFixed(1) + '%' }, max: 10, min: 0 }, x: { ticks: { maxTicksLimit: 10 } } }
         }
     });
+    applyTooltipConfig(charts.swr.options, true);
+    charts.swr.update();
 }
 
 export function initRMDChart() {
@@ -243,4 +229,6 @@ export function initRMDChart() {
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { ticks: { maxTicksLimit: 10 } } }
         }
     });
+    applyTooltipConfig(charts.rmd.options);
+    charts.rmd.update();
 }

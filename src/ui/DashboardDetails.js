@@ -9,9 +9,12 @@ export class DashboardDetails {
         const goalsList = document.getElementById('goalsList');
         if (!goalsList) return;
 
+        const retireYearIdx = Math.max(0, config.settings.personal.retireAge - config.settings.personal.age);
+        const age70Idx = Math.max(0, 70 - config.settings.personal.age);
+
         const goals = [
-            { name: 'Retirement Net Worth', target: config.settings.goals.retirementNW, current: calculateNetWorth(config.currentScenario, 15) },
-            { name: 'Age 70 Legacy', target: config.settings.goals.age70NW, current: calculateNetWorth(config.currentScenario, 20) }
+            { name: 'Retirement Net Worth', target: config.settings.goals.retirementNW, current: calculateNetWorth(config.currentScenario, retireYearIdx) },
+            { name: 'Age 70 Legacy', target: config.settings.goals.age70NW, current: calculateNetWorth(config.currentScenario, age70Idx) }
         ];
 
         goalsList.innerHTML = goals.map(goal => {
@@ -38,16 +41,42 @@ export class DashboardDetails {
         const milestones = document.getElementById('milestoneList');
         if (!milestones) return;
 
-        milestones.innerHTML = `
+        // Dynamic Milestone Detection
+        const h = config.settings.housing || {};
+        const p = config.settings.personal || {};
+        const mortgagePayoffAge = p.age + (h.mortgageYears || 0);
+        const mortgagePayoffYear = config.startYear + (h.mortgageYears || 0);
+
+        let html = '';
+
+        // Mortgage
+        if (h.mortgageBalance > 0) {
+            html += `
+                <div class="milestone-item">
+                    <span class="milestone-icon">🏠</span>
+                    <span>Mortgage Paid Off: Age ${mortgagePayoffAge} (${mortgagePayoffYear})</span>
+                </div>
+            `;
+        }
+
+        // Retirement
+        html += `
             <div class="milestone-item">
-                <span class="milestone-icon">∩╜ù∩╕Å</span>
-                <span>Mortgage Paid Off: Age 58 (2034)</span>
-            </div>
-            <div class="milestone-item">
-                <span class="milestone-icon">ΓÿÇ∩╕Å</span>
-                <span>Retirement Eligibility: Age 55 (2031)</span>
+                <span class="milestone-icon">☀️</span>
+                <span>Retirement Eligibility: Age ${p.retireAge} (${config.startYear + (p.retireAge - p.age)})</span>
             </div>
         `;
+
+        // Social Security
+        const ssAge = config.settings.socialSecurity.claimAge || 67;
+        html += `
+            <div class="milestone-item">
+                <span class="milestone-icon">🏦</span>
+                <span>Social Security Starts: Age ${ssAge} (${config.startYear + (ssAge - p.age)})</span>
+            </div>
+        `;
+
+        milestones.innerHTML = html;
     }
 
     static showDataTable(type, btn) {

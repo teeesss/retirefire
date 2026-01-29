@@ -22,19 +22,11 @@ export function initSSExplorerChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { position: 'top' },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: (context) => `${context.dataset.label}: ${formatCurrency(context.parsed.y, false)}/yr`
-                    }
-                }
-            },
             scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.ssExplorer.options);
+    charts.ssExplorer.update();
 }
 
 export function initRothExplorerChart() {
@@ -57,6 +49,8 @@ export function initRothExplorerChart() {
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } } }
         }
     });
+    applyTooltipConfig(charts.rothExplorer.options);
+    charts.rothExplorer.update();
 }
 
 export function initWhatIfChart() {
@@ -75,14 +69,14 @@ export function initWhatIfChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } },
-                tooltip: { mode: 'index', intersect: false }
+                legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } }
             },
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { ticks: { maxTicksLimit: 10 } } }
         }
     });
+    applyTooltipConfig(charts.whatIf.options);
+    charts.whatIf.update();
 }
 
 export function initMarketRiskChart() {
@@ -99,11 +93,12 @@ export function initMarketRiskChart() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
             plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 8 } } },
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { ticks: { maxTicksLimit: 10 } } }
         }
     });
+    applyTooltipConfig(charts.marketRisk.options);
+    charts.marketRisk.update();
 }
 
 export function initDebtPayoffChart() {
@@ -117,11 +112,12 @@ export function initDebtPayoffChart() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
             plugins: { legend: { display: false } },
             scales: { y: { ticks: { callback: (v) => formatCurrency(v) } }, x: { display: false } }
         }
     });
+    applyTooltipConfig(charts.debtPayoff.options);
+    charts.debtPayoff.update();
 }
 
 export function initSparklines() {

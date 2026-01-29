@@ -143,6 +143,44 @@ const App = {
         if (themeToggle) themeToggle.textContent = config.theme === 'dark' ? '🌙' : '☀️';
         this.saveSettings();
         this.initAllCharts(); // Refresh chart colors
+    },
+
+    runMonteCarloSimulation() {
+        const volatility = parseFloat(document.getElementById('mcVolatility')?.value || 0.15);
+        const spendMult = parseFloat(document.getElementById('mcSpendScenario')?.value || 1.0);
+        const iters = parseInt(document.getElementById('mcIterations')?.value || 1000);
+
+        console.log(`🎲 Starting Monte Carlo: ${iters} iterations, ${volatility} volatility...`);
+        showNotification('Running Monte Carlo...', 'info');
+
+        // Allow UI to update before heavy calculation
+        setTimeout(() => {
+            console.time('MonteCarlo');
+            const results = SimulationEngine.runMonteCarlo(iters, volatility, spendMult);
+            console.timeEnd('MonteCarlo');
+            console.log('📊 MC Results:', results);
+            rawData.monteCarlo = results; // Store for other components
+
+            if (charts.monteCarlo) {
+                charts.monteCarlo.data.datasets[0].data = results.p90;
+                charts.monteCarlo.data.datasets[1].data = results.p75;
+                charts.monteCarlo.data.datasets[2].data = results.p50;
+                charts.monteCarlo.data.datasets[3].data = results.p25;
+                charts.monteCarlo.data.datasets[4].data = results.p10;
+                charts.monteCarlo.update();
+            }
+
+            const safeUpdate = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            safeUpdate('mcSuccessRate', results.successRate.toFixed(1) + '%');
+            safeUpdate('mcLegacyRate', results.legacyRate.toFixed(1) + '%');
+            safeUpdate('mc90', formatCurrency(results.p90[results.p90.length - 1]));
+            safeUpdate('mc75', formatCurrency(results.p75[results.p75.length - 1]));
+            safeUpdate('mc50', formatCurrency(results.p50[results.p50.length - 1]));
+            safeUpdate('mc25', formatCurrency(results.p25[results.p25.length - 1]));
+            safeUpdate('mc10', formatCurrency(results.p10[results.p10.length - 1]));
+
+            showNotification('Monte Carlo analysis complete!');
+        }, 10);
     }
 };
 
@@ -169,6 +207,7 @@ window.updateSpendingSlider = (val) => ExplorerHandler.updateSpending(val);
 window.setScenario = (sc) => { config.currentScenario = sc; window.recalculate(); };
 window.runMarketRisk = (sc, btn) => ExplorerHandler.runMarketRisk(sc, btn);
 window.runWhatIf = (sc, btn) => ExplorerHandler.runWhatIf(sc, btn);
+window.runMonteCarloSimulation = () => App.runMonteCarloSimulation();
 window.setSSClaimAge = (age, btn) => ExplorerHandler.setSSClaimAge?.(age, btn);
 window.updateSSExplorer = () => ExplorerHandler.updateSSExplorer();
 window.updateDebtCalculations = () => ExplorerHandler.updateDebtCalculations?.();
