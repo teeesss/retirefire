@@ -8,6 +8,7 @@
 > **Tests**: ✅ 281/281 Tests Passing (100% Pass Rate)
 > **Test Suite**: Automated with `npm run test:full` (starts dev server, runs all tests, cleans up)
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
+> **Deploy Command**: `npm run deploy` (auto-builds, kills dev servers, deploys)
 
 ### 🎯 Today's Major Refactor: HTML Modularization ✅ COMPLETE
 

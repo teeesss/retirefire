@@ -111,6 +111,7 @@ RetireFire is a high-fidelity financial planning application designed to provide
 - **Test Command**: `npm run test:full` (fully automated)
 - **Build Status**: Stable
 - **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
+- **Deploy Command**: `npm run deploy` (auto-builds, kills dev servers, deploys)
 - **Documentation**: Comprehensive and current
 
 See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed status.
