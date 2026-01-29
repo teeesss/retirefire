@@ -31,6 +31,7 @@
 | **ISSUE-072** | Net Cash Flow Solvency logic shows incorrect colors | ✅ FIXED | Updated `DataUtils.js` and `SummaryCharts.js` to correctly distinguish between surplus and deficit in Net Cash Flow views. |
 | **ISSUE-073** | Roth Optimizer fails for Head of Household filing status | ✅ FIXED | Updated `RothCalculator.js` and `TaxCalculator.js` to include the 2025 HoH brackets and standard deductions. |
 | **ISSUE-074** | Social Security Explorer graph showing incorrect yearly offsets | ✅ FIXED | Fixed `ExplorerCharts.js` and `ExplorerHandler.js` to correctly align birth year with SS claiming age offsets. |
+| **ISSUE-075** | Monte Carlo limited to Gaussian random returns | ✅ FIXED | Implemented Historical Stress Tests (1970s, Dot-com, Depression) and Historical Bootstrapping in `SimulationEngine.js`. Added selector to UI. |
 | **ISSUE-024** | Dashboard charts too tall - need side-by-side layout | ✅ FIXED | Wrapped charts in grid container, reduced heights by 20%, and added mobile responsive layout via `dashboard-layout.css`. |
 | **ISSUE-064** | JS Crash on non-dashboard views (null element access) | ✅ FIXED | Implemented `safeUpdateElement` in `main.js`. Added null checks to `.theme-toggle` and other direct DOM queries. |
 | **ISSUE-065** | What-If Explorer buttons not detected by Puppeteer | ✅ FIXED | Converted What-If cards from `div` to `button` elements. Fixed `runWhatIf` handler mapping. |

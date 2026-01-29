@@ -46,4 +46,13 @@ describe('Monte Carlo Logic', () => {
 
         expect(medianLow).toBeGreaterThan(medianHigh);
     });
+
+    it('should support historical scenarios', () => {
+        const results70s = SimulationEngine.runMonteCarlo(1, 0.15, 1.0, '1970s');
+        const resultsNormal = SimulationEngine.runMonteCarlo(1, 0.15, 1.0, 'monte-carlo');
+
+        expect(results70s.p50).toBeDefined();
+        expect(results70s.p50.length).toBeGreaterThan(0);
+        // Note: Individual runs will differ, but we verify it completes without error
+    });
 });

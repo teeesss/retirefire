@@ -150,8 +150,9 @@ const App = {
         const volatility = parseFloat(document.getElementById('mcVolatility')?.value || 0.15);
         const spendMult = parseFloat(document.getElementById('mcSpendScenario')?.value || 1.0);
         const iters = parseInt(document.getElementById('mcIterations')?.value || 1000);
+        const scenario = document.getElementById('mcScenario')?.value || 'monte-carlo';
 
-        console.log(`🎲 Starting Monte Carlo: ${iters} iterations, ${volatility} volatility...`);
+        console.log(`🎲 Starting Monte Carlo: ${iters} iterations, ${volatility} volatility, scenario: ${scenario}...`);
         showNotification('Running Monte Carlo...', 'info');
 
         // Allow UI to update before heavy calculation
@@ -159,7 +160,7 @@ const App = {
             console.time('MonteCarlo');
             let results;
             try {
-                results = SimulationEngine.runMonteCarlo(iters, volatility, spendMult);
+                results = SimulationEngine.runMonteCarlo(iters, volatility, spendMult, scenario);
             } catch (e) {
                 console.error('❌ Monte Carlo Simulation Failed:', e);
                 showNotification('Simulation failed: ' + e.message, 'error');

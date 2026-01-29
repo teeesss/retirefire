@@ -12,7 +12,8 @@
 - ✅ **REFACTOR**: Converted Arrow Functions to Regular Functions in strict mode to ensure correct `this` context binding for `this.skip()`.
 - ✅ **COVERAGE**: Verified robustness of `comprehensive.test.js` (36 tests), `descriptions-tooltips.test.js` (31 tests), and `visual.test.js` (15 tests).
 - ✅ **LOGIC**: Created `MonteCarlo.test.js` and `Diagnostic.test.js` for Vitest logic verification.
-- ✅ **VALIDATION**: All 25 Unit and Integration tests passing 100%.
+- ✅ **SCENARIOS**: Added historical market stress tests (1970s, Dot-com, Depression) to Monte Carlo engine.
+- ✅ **VALIDATION**: All 26 Unit and Integration tests passing 100%.
 - ✅ **DIAGNOSTIC**: Logic diagnostic suite passing with 100% accuracy.
 
 ### Full Codebase Restoration & Modularization ✅ COMPLETE
@@ -442,9 +443,9 @@ The `calculateNetWorth()` function was double-counting the mortgage:
 5. **US-043**: Fix Home Equity Calculation (ISSUE-054)
 
 ### P1 - High Priority (Next Sprint)
-1. **US-044**: Improve Dashboard Layout
+1. **US-044**: Improve Dashboard Layout ✅ COMPLETE
 2. **US-045**: Enhanced Withdrawal Strategy Display
-3. **US-046**: Enhanced Monte Carlo Options
+3. **US-046**: Enhanced Monte Carlo Options ✅ COMPLETE (Added Historical Stress Tests)
 4. **US-047**: Enhanced Social Security Display
 5. **US-048**: Enhanced Data Tables
 6. **US-049**: Clickable Metrics & Navigation

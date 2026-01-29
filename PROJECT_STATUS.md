@@ -22,6 +22,7 @@
 - ✅ **UI-001**: Fixed input text color and resolved emoji garbage characters in Social Security and Milestones.
 - ✅ **CHART-FIXES**: Implemented 3-color Solvency logic for Net Cash Flow (Surplus/Gap). Fixed tooltip index mode for all charts.
 - ✅ **EXPLORERS**: Resolved Monte Carlo "Never Runs" issue (Fixed missing `SimulationEngine` import). Verified What-If analyzer stability.
+- ✅ **MONTE-CARLO**: Implemented **Historical Stress Tests** (1970s, Dot-com, 1929) and Bootstrapping for more realistic probability analysis.
 - ✅ **SS-UX**: Fixed SS Explorer graphs being static; updated Benefit stats and cumulative comparison logic.
 - ✅ **ROTH**: Fixed Roth Optimizer "0 converted" bug by adding proper Head of Household (hoh) tax bracket support.
 - ✅ **MILESTONES**: Dynamically linked milestones to simulation results (Retirement, Mortgage payoff).

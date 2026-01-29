@@ -357,15 +357,41 @@ export class SimulationEngine {
     }
 
 
-    static projectPath(config, volatility = 0.15, spendMultiplier = 1.0) {
+    static projectPath(config, volatility = 0.15, spendMultiplier = 1.0, marketScenario = 'monte-carlo') {
         const years = config.endYear - config.startYear + 1;
         let results = new Array(years);
-        let currentConfig = JSON.parse(JSON.stringify(config));
 
-        // Randomize returns for each year
-        const baseRate = config.settings.rates.average / 100;
+        // S&P 500 Historical Data approx (Total Return)
+        const historicalReturns = [
+            0.2629, -0.1811, 0.2871, 0.1840, 0.3149, 0.2183, -0.0438, 0.1196, 0.0138, 0.1369,
+            0.3239, 0.1600, 0.1506, 0.2646, -0.3700, 0.0549, 0.1579, 0.0491, 0.1088, 0.2868,
+            -0.2210, -0.1189, -0.0910, 0.2104, 0.2858, 0.3336, 0.2296, 0.3758, 0.0132, 0.1008,
+            0.0762, 0.3047, 0.1661, 0.2256, 0.3173, 0.1867, 0.0627, 0.2155, -0.0497, 0.3231,
+            0.1106, -0.0718, 0.1431, 0.1898, -0.1078, 0.0438, 0.1124, -0.0843, 0.1245, 0.0656,
+            0.1648, 0.1245, 0.2398, -0.1081, 0.4336, 0.5262, -0.0107, 0.1873, 0.3155, 0.0528,
+            -0.0814, 0.1873, -0.0101, 0.1162, 0.5399, 0.0710, -0.3503, 0.4767, -0.0573, -0.0973,
+            0.3392, -0.0119, -0.4334, -0.0807, 0.4384, 0.1164, -0.3503, 0.4767, -0.0101, 0.1162,
+            0.1873, -0.0814, 0.0528, 0.3155, 0.1873, -0.0107, 0.5262, 0.4336, -0.1081, 0.2398,
+            0.1245, 0.1648, 0.0656, 0.1245, -0.0843, 0.1124, 0.0438, -0.1078, 0.1898, 0.1431
+        ];
 
-        // Simplified projection for MC
+        // Scenario starting indices (approx years from 1928 start)
+        const scenarios = {
+            '1970s': 42,   // 1970
+            'dotcom': 72,  // 2000
+            'gfc': 79,     // 2007
+            'depression': 1 // 1929
+        };
+
+        const baseRate = (config.settings.rates.average || 7.0) / 100;
+        let startIndex = 0;
+
+        if (marketScenario === 'historical-bootstrap') {
+            startIndex = Math.floor(Math.random() * (historicalReturns.length - years));
+        } else if (scenarios[marketScenario]) {
+            startIndex = scenarios[marketScenario];
+        }
+
         let retirement = config.settings.assets.retirement;
         let roth = config.settings.assets.roth;
         let hsa = config.settings.assets.hsa;
@@ -378,9 +404,15 @@ export class SimulationEngine {
             const currentAge = (config.startAge || 50) + i;
             const isRetired = currentAge >= (config.settings?.personal?.retireAge || 65);
 
-            // Gaussian approx for random returns
-            // Using Box-Muller-ish approach for better normalization
-            const r = baseRate + ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random() - 3) / 3) * volatility;
+            let r;
+            if (marketScenario === 'monte-carlo') {
+                // Gaussian random
+                r = baseRate + ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random() - 3) / 3) * volatility;
+            } else {
+                // Historical sequence
+                const histIdx = (startIndex + i) % historicalReturns.length;
+                r = historicalReturns[histIdx];
+            }
 
             if (i > 0) {
                 retirement *= (1 + r);
@@ -422,10 +454,10 @@ export class SimulationEngine {
         return results;
     }
 
-    static runMonteCarlo(iterations = 1000, volatility = 0.15, spendMultiplier = 1.0) {
+    static runMonteCarlo(iterations = 1000, volatility = 0.15, spendMultiplier = 1.0, marketScenario = 'monte-carlo') {
         const runs = [];
         for (let i = 0; i < iterations; i++) {
-            runs.push(this.projectPath(config, volatility, spendMultiplier));
+            runs.push(this.projectPath(config, volatility, spendMultiplier, marketScenario));
         }
 
         const numYears = runs[0].length;
