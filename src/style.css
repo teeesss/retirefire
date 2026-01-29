@@ -674,6 +674,15 @@ select option {
     border-color: var(--primary);
 }
 
+.modern-input {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    font-weight: 600;
+}
+
 .input-group input[type="range"] {
     padding: 0;
     height: 6px;
