@@ -20,7 +20,7 @@ To achieve "Premium" status, we must move beyond *displaying* data to *optimizin
 | | **Healthcare** | Pre-Medicare vs Medicare, explicit Out-of-Pocket, detailed inflation. | Basic Pre/Post values. Good parity achieved in Round 2. | 🟢 Low |
 | | **Detailed Income** | Pensions (COLA/No-COLA), Annuities, Passive Streams. | Basic "Side Income" & "Pension" fields. | 🟡 Medium |
 | **Logic** | **Tax Optimization** | Comparison of withdrawal strategies (Pro-Rata vs Standard vs Optimal). | Standard bucket drawdown only. No comparison logic. | 🔴 Critical |
-| | **Roth Conversions** | **Optimizer Tool**: Finds the *ideal* conversion amount to fill brackets. | **Manual Input**: User guesses an amount. We show the result. | 🔴 Critical |
+| | **Roth Conversions** | **Optimizer Tool**: Finds the *ideal* conversion amount to fill brackets. | ✅ **COMPLETE**: Auto-optimizer with bracket-fill algorithm, multi-year analysis, tax impact calculations. | � **COMPLETE** |
 | | **Withdrawal Order** | Optimized (Taxable -> Deferred -> Tax-Free) vs User Defined. | Hardcoded/Simple logic. | 🔴 Critical |
 | **Visuals** | **Wellness Score** | Aggregate 0-100 "Financial Wellness" score based on multiple metrics. | Success Rate % (Monte Carlo) only. | 🟡 Medium |
 | | **Tax Breakdown** | Area charts showing Ordinary Income vs Cap Gains vs State tax over time. | Hidden in calculations. No visual tax breakdown. | 🔴 High |
