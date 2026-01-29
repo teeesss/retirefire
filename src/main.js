@@ -30,6 +30,7 @@ import * as TaxCharts from './charts/TaxCharts.js';
 import * as AnalysisCharts from './charts/AnalysisCharts.js';
 import * as AccountCharts from './charts/AccountCharts.js';
 import * as ExplorerCharts from './charts/ExplorerCharts.js';
+import { SimulationEngine } from './engine/SimulationEngine.js';
 
 // Utilities
 import { deepMerge } from './utils/DeepMerge.js';
@@ -156,7 +157,14 @@ const App = {
         // Allow UI to update before heavy calculation
         setTimeout(() => {
             console.time('MonteCarlo');
-            const results = SimulationEngine.runMonteCarlo(iters, volatility, spendMult);
+            let results;
+            try {
+                results = SimulationEngine.runMonteCarlo(iters, volatility, spendMult);
+            } catch (e) {
+                console.error('❌ Monte Carlo Simulation Failed:', e);
+                showNotification('Simulation failed: ' + e.message, 'error');
+                return;
+            }
             console.timeEnd('MonteCarlo');
             console.log('📊 MC Results:', results);
             rawData.monteCarlo = results; // Store for other components
@@ -168,6 +176,16 @@ const App = {
                 charts.monteCarlo.data.datasets[3].data = results.p25;
                 charts.monteCarlo.data.datasets[4].data = results.p10;
                 charts.monteCarlo.update();
+            }
+
+            if (charts.successGauge) {
+                const rate = results.successRate;
+                charts.successGauge.data.datasets[0].data = [rate, 100 - rate];
+                charts.successGauge.data.datasets[0].backgroundColor = [
+                    rate > 80 ? '#10b981' : rate > 60 ? '#f59e0b' : '#ef4444',
+                    config.theme === 'dark' ? 'rgba(255,255,255,0.1)' : '#e5e7eb'
+                ];
+                charts.successGauge.update();
             }
 
             const safeUpdate = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };

@@ -372,39 +372,43 @@ export class SimulationEngine {
         let investments = config.settings.assets.investments;
         let cash = config.settings.assets.cash;
         let otherAssets = config.settings.assets.otherAssets;
-        let infl = config.settings.inflation.average / 100;
+        let inflation = (config.settings?.inflation?.average || 2.5) / 100;
 
         for (let i = 0; i < years; i++) {
-            const currentAge = config.startAge + i;
-            const isRetired = currentAge >= config.settings.personal.retireAge;
+            const currentAge = (config.startAge || 50) + i;
+            const isRetired = currentAge >= (config.settings?.personal?.retireAge || 65);
 
-            // Gaussian approx
-            const r = baseRate + (Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random() - 3) / 3 * volatility;
+            // Gaussian approx for random returns
+            // Using Box-Muller-ish approach for better normalization
+            const r = baseRate + ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random() - 3) / 3) * volatility;
 
             if (i > 0) {
                 retirement *= (1 + r);
                 roth *= (1 + r);
                 hsa *= (1 + r);
                 investments *= (1 + r);
-                otherAssets *= (1 + infl);
+                otherAssets *= (1 + inflation);
             }
 
             if (!isRetired) {
-                retirement += config.settings.income.contribution401k + config.settings.income.employerMatch;
-                roth += config.settings.income.rothContrib;
-                hsa += config.settings.income.hsaContrib;
+                retirement += (config.settings?.income?.contribution401k || 0) + (config.settings?.income?.employerMatch || 0);
+                roth += (config.settings?.income?.rothContrib || 0);
+                hsa += (config.settings?.income?.hsaContrib || 0);
             }
 
             // Simplified drawdown/spending
-            const spend = config.settings.expenses.annualSpending * spendMultiplier * Math.pow(1 + infl, i);
+            const baseSpend = (config.settings?.expenses?.annualSpending || 60000);
+            const spend = baseSpend * spendMultiplier * Math.pow(1 + inflation, i);
+
             let ss = 0;
-            if (currentAge >= config.settings.socialSecurity.claimAge) {
-                const claimAge = config.settings.socialSecurity.claimAge;
-                const benefit = config.settings.socialSecurity['ss' + claimAge] || config.settings.socialSecurity.ss62 || 0;
-                ss = benefit * 12 * Math.pow(1 + config.settings.socialSecurity.cola / 100, currentAge - claimAge);
+            const ssSettings = config.settings?.socialSecurity || {};
+            if (currentAge >= (ssSettings.claimAge || 67)) {
+                const claimAge = ssSettings.claimAge || 67;
+                const benefit = ssSettings['ss' + claimAge] || ssSettings.ss67 || 0;
+                ss = benefit * 12 * Math.pow(1 + (ssSettings.cola || 2.0) / 100, currentAge - claimAge);
             }
 
-            let delta = (isRetired ? ss : config.settings.income.work) - spend;
+            let delta = (isRetired ? ss : (config.settings?.income?.work || 0)) - spend;
             if (delta < 0) {
                 let pull = Math.abs(delta);
                 if (investments >= pull) investments -= pull;

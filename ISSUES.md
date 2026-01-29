@@ -27,6 +27,10 @@
 | **ISSUE-047** | Roth Strategy not optimizing correctly | ✅ FIXED | Added `optimizeRothConversion()` which fills tax bracket (heuristic). |
 | **ISSUE-017** | Dashboard metrics showing incorrect values (Net Worth $0, Peak -$InfinityB, Age undefined) | ✅ FIXED | Fixed `calculateNetWorth()` in `main.js` to skip Debt account since mortgage is already accounted for in Housing equity. Prevents double-counting of mortgage. |
 | **ISSUE-054** | Home Equity shows $0 when house not sold | ✅ FIXED | Fixed `SimulationEngine.js` to store home equity (homeValue - mortgage) instead of just homeValue. Updated net worth calculation to avoid double-counting. |
+| **ISSUE-071** | Monte Carlo simulation never runs / script errors | ✅ FIXED | Fixed missing `SimulationEngine` import in `main.js`. Added defensive checks for NaN values in `SimulationEngine.runMonteCarlo` and added a Vitest logic diagnostic. |
+| **ISSUE-072** | Net Cash Flow Solvency logic shows incorrect colors | ✅ FIXED | Updated `DataUtils.js` and `SummaryCharts.js` to correctly distinguish between surplus and deficit in Net Cash Flow views. |
+| **ISSUE-073** | Roth Optimizer fails for Head of Household filing status | ✅ FIXED | Updated `RothCalculator.js` and `TaxCalculator.js` to include the 2025 HoH brackets and standard deductions. |
+| **ISSUE-074** | Social Security Explorer graph showing incorrect yearly offsets | ✅ FIXED | Fixed `ExplorerCharts.js` and `ExplorerHandler.js` to correctly align birth year with SS claiming age offsets. |
 | **ISSUE-024** | Dashboard charts too tall - need side-by-side layout | ✅ FIXED | Wrapped charts in grid container, reduced heights by 20%, and added mobile responsive layout via `dashboard-layout.css`. |
 | **ISSUE-064** | JS Crash on non-dashboard views (null element access) | ✅ FIXED | Implemented `safeUpdateElement` in `main.js`. Added null checks to `.theme-toggle` and other direct DOM queries. |
 | **ISSUE-065** | What-If Explorer buttons not detected by Puppeteer | ✅ FIXED | Converted What-If cards from `div` to `button` elements. Fixed `runWhatIf` handler mapping. |
@@ -199,3 +203,6 @@
 3. **Test settings panel** - Open and navigate through all sections after changes
 4. **Run tests** - Execute full test suite before marking tasks complete
 5. **Update documentation** - Keep all MD files current with changes
+6. **Always check imports** - When modularizing, ensure all used classes (like `SimulationEngine`) are imported in the main entry point to avoid silent failures in the browser.
+7. **Defensive Math** - Use `(val || 0)` or `(config.settings?.path || fallback)` in simulation logic to prevent `NaN` or `undefined` crashes when user settings are incomplete.
+8. **Browser Debugging** - If a feature works in unit tests but fails in the UI, check the Browser Console first for `ReferenceError` or missing module exports.

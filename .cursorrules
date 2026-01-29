@@ -423,10 +423,29 @@ ls *.md
 - ✅ Validate input ranges
 - ✅ Provide clear labels
 - ✅ Show impact of changes
+ 
+### Lessons Learned (Persistence Rules)
+- ✅ **Import Verification**: When modularizing or adding logic, always verify that the main entry point (`main.js`) imports all necessary modules (e.g., `SimulationEngine`). Missing imports lead to silent browser failures even if unit tests pass.
+- ✅ **Defensive Calculation**: Always use fallback patterns like `(config.settings?.personal?.retireAge || 65)` to prevent `NaN` or `undefined` issues when user configuration is incomplete or corrupted.
+- ✅ **Chart State**: Always destroy existing chart instances using `destroyAllCharts()` or `destroyChart(id)` before recreating them to prevent Chart.js "Canvas is already in use" errors.
+- ✅ **Logic Testing**: Maintain binary logic verification via `Diagnostic.test.js` to catch breaking changes in financial calculations without needing a full browser environment.
+ 
+---
+ 
+## 📂 Documentation Maintenance
+
+### Root Directory Cleanup (The 5-File Rule)
+- ✅ **MANDATORY**: Only 5 MD files allowed in root:
+  1. `README.md`
+  2. `TASKS.md`
+  3. `ISSUES.md`
+  4. `PROJECT_STATUS.md`
+  5. `QUICKSTART.md`
+- ✅ Move all other MD files to `/docs/` subdirectories.
 
 ---
 
-## Summary
+## 📂 Summary
 
 **Keep it simple:**
 - 5 files in root (max)

@@ -17,10 +17,10 @@ export function initMonteCarloChart() {
         data: {
             labels: rawData.years,
             datasets: [
-                { label: '90th %ile', data: [], borderColor: '#10b981', fill: '+1', tension: 0.4, pointRadius: 0 },
-                { label: '75th %ile', data: [], borderColor: '#22c55e', fill: '+1', tension: 0.4, pointRadius: 0 },
+                { label: '90th %ile', data: [], borderColor: '#10b981', fill: 1, tension: 0.4, pointRadius: 0 },
+                { label: '75th %ile', data: [], borderColor: '#22c55e', fill: 2, tension: 0.4, pointRadius: 0 },
                 { label: 'Median', data: [], borderColor: '#3b82f6', tension: 0.4, pointRadius: 0, borderWidth: 3 },
-                { label: '25th %ile', data: [], borderColor: '#f59e0b', fill: '+1', tension: 0.4, pointRadius: 0 },
+                { label: '25th %ile', data: [], borderColor: '#f59e0b', fill: 2, tension: 0.4, pointRadius: 0 },
                 { label: '10th %ile', data: [], borderColor: '#ef4444', tension: 0.4, pointRadius: 0 }
             ]
         },
@@ -47,7 +47,7 @@ export function initLegacyChart() {
                 { label: 'Optimistic', data: getNetWorthSeries('optimistic'), borderColor: scenarioColors.optimistic, tension: 0.4, pointRadius: 0 },
                 { label: 'Average', data: getNetWorthSeries('average'), borderColor: scenarioColors.average, tension: 0.4, pointRadius: 0 },
                 { label: 'Pessimistic', data: getNetWorthSeries('pessimistic'), borderColor: scenarioColors.pessimistic, tension: 0.4, pointRadius: 0 },
-                { label: 'Legacy Goal', data: Array(46).fill(config.goals[2]?.target || 5000000), borderColor: '#8b5cf6', borderDash: [5, 5], pointRadius: 0 }
+                { label: 'Legacy Goal', data: Array(rawData.years?.length || 46).fill(config.goals[2]?.target || 5000000), borderColor: '#8b5cf6', borderDash: [5, 5], pointRadius: 0 }
             ]
         },
         options: {

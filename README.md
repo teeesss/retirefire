@@ -167,28 +167,33 @@ See [docs/testing/TEST_GUIDE.md](docs/testing/TEST_GUIDE.md) for details.
 ---
 
 ## 🎯 Current Sprint
-
-### Priority 0: Critical Dashboard Fixes
-
-1. Fix dashboard metrics (Net Worth, Peak, Age)
-2. Fix spending slider integration
-3. Implement interactive Roth conversion
-4. Auto-calculate Social Security
-5. Fix home equity calculation
-
+ 
+### ✅ Priority 0: Critical Dashboard Fixes - COMPLETE
+ 
+1. Fix dashboard metrics (Net Worth, Peak, Age) ✅
+2. Fix spending slider integration ✅
+3. Implement interactive Roth conversion ✅
+4. Auto-calculate Social Security ✅
+5. Fix home equity calculation ✅
+6. Fix Monte Carlo script stability ✅
+ 
+### 🎯 Priority 1: Optimization & Enhancements
+ 
+1. Enhanced Withdrawal Strategy breakdown
+2. Monte Carlo market condition scenarios
+3. Mobile responsiveness stress tests
+ 
 See [TASKS.md](TASKS.md) for full task list.
 
 ---
 
 ## 🐛 Known Issues
-
-### Critical (P0)
-- Dashboard metrics showing incorrect values
-- Spending slider not updating projections
-- Roth conversion needs interactive controls
-- Social Security should auto-calculate
-- Home equity calculation bug
-
+ 
+### High Priority (P1)
+- Withdrawal strategy needs account breakdown
+- Social Security cumulative view missing
+- Monte Carlo limited to historical projections only
+ 
 See [ISSUES.md](ISSUES.md) for complete list and status.
 
 ---

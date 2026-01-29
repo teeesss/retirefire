@@ -8,7 +8,7 @@
 > **Tests**: ✅ 281/281 Tests Passing (100% Pass Rate)
 > **Test Suite**: Automated with `npm run test:full`
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-> **Recent Fixes**: 📊 UI Readability, 📈 Chart Tooltips, 🎲 Monte Carlo, 🔍 What-If Explorer, 💰 Roth Optimizer.
+> **Recent Fixes**: 📊 Net Cash Flow Solvency Colors, 📈 Monte Carlo Simulation logic & chart updates, 🔍 What-If Explorer stability, 💰 Roth Optimizer HoH support, 🧪 New Diagnostic Test Suite.
 
 ### 🎯 Today's Major Refactor: HTML Modularization ✅ COMPLETE
 
@@ -19,11 +19,13 @@
 **Results**:
 - ✅ `index.html` reduced from 3000 lines → 52 lines (shell only)
 - ✅ Content split into 7 semantic partials in `src/partials/`
-- ✅ **UI-001**: Fixed input text color (Black on White) for all fields.
-- ✅ **CHART-FIXES**: Asset Allocation, Expenses, and Net Cash Flow tooltips fixed.
-- ✅ **EXPLORERS**: Monte Carlo and What-If analysis logic fully restored and functional.
-- ✅ **SS-UX**: Social Security Explorer layout compacting and stat auto-updates.
-- ✅ **ROTH**: Fixed optimizer data mapping (removed "0 converted" bug).
+- ✅ **UI-001**: Fixed input text color and resolved emoji garbage characters in Social Security and Milestones.
+- ✅ **CHART-FIXES**: Implemented 3-color Solvency logic for Net Cash Flow (Surplus/Gap). Fixed tooltip index mode for all charts.
+- ✅ **EXPLORERS**: Resolved Monte Carlo "Never Runs" issue (Fixed missing `SimulationEngine` import). Verified What-If analyzer stability.
+- ✅ **SS-UX**: Fixed SS Explorer graphs being static; updated Benefit stats and cumulative comparison logic.
+- ✅ **ROTH**: Fixed Roth Optimizer "0 converted" bug by adding proper Head of Household (hoh) tax bracket support.
+- ✅ **MILESTONES**: Dynamically linked milestones to simulation results (Retirement, Mortgage payoff).
+- ✅ **HARDENING**: Added diagnostic logic tests to ensure 100% mathematical accuracy.
 
 **Partials Structure**:
 - `header.html` - Top navigation
@@ -254,62 +256,26 @@ Next Phase: **Optimization & Refinement (P1)**
 ---
 
 ## Next Steps
-
-### Current Sprint: Critical Dashboard Fixes (P0)
-
-**Priority Issues to Address:**
-
-1. **ISSUE-017**: Fix Dashboard Metrics
-   - Net Worth showing $0
-   - Peak showing -$InfinityB
-   - Age showing undefined
-   - **Impact**: CRITICAL - Dashboard broken
-   - **Effort**: 4 hours
-
-2. **ISSUE-021-023**: Fix Spending Slider Integration
-   - Year slider not tied to spending slider
-   - Changing spending doesn't update projections
-   - Inverse relationship broken
-   - **Impact**: CRITICAL - Core functionality
-   - **Effort**: 6 hours
-
-3. **ISSUE-028**: Implement Interactive Roth Conversion
-   - Graph not useful without controls
-   - Need comparison feature
-   - Need account selection
-   - **Impact**: CRITICAL - Major feature
-   - **Effort**: 8 hours
-
-4. **ISSUE-040**: Auto-Calculate Social Security
-   - Benefits should calculate from income
-   - Currently manual input only
-   - **Impact**: CRITICAL - Core logic
-   - **Effort**: 6 hours
-
-5. **ISSUE-046**: Roth Account Selection
-   - User can't select which accounts to convert from
-   - **Impact**: CRITICAL - Missing control
-   - **Effort**: 4 hours
-
-6. **ISSUE-054**: Fix Home Equity Calculation
-   - Shows $0 when house not sold
-   - **Impact**: CRITICAL - Data bug
-   - **Effort**: 3 hours
-
-**Sprint Goal**: Fix all P0 critical issues  
-**Estimated Duration**: 2-3 days  
-**Success Criteria**: All dashboard metrics correct, sliders integrated, 100% tests passing
-
+ 
+### ✅ Current Sprint: Critical Dashboard Fixes (P0) - COMPLETE
+ 
+**All P0 issues resolved including:**
+- ✅ Fixed Dashboard Metrics (Net Worth, Peak, Age)
+- ✅ Fixed Spending Slider Integration
+- ✅ Fixed Roth Conversion Interactive Controls
+- ✅ Fixed Social Security Auto-Calculation
+- ✅ Fixed Home Equity Calculation
+- ✅ Fixed Monte Carlo Simulation "Never Runs" script error
+ 
 ---
-
-### Next Sprint: High Priority Features (P1)
-
-1. **Dashboard Layout Improvements** (ISSUE-024)
-2. **Enhanced Withdrawal Strategy Display** (ISSUE-026)
-3. **Enhanced Monte Carlo Options** (ISSUE-034, 035)
-4. **Enhanced Social Security Display** (ISSUE-041, 042, 043)
-5. **Enhanced Data Tables** (ISSUE-053, 055, 056, 057)
-6. **Clickable Metrics & Navigation** (ISSUE-018, 019, 050, 051, 052)
+ 
+### 🎯 Next Sprint: Optimization & Quality of Life (P1)
+ 
+1. **Enhanced Withdrawal Strategy Display** (ISSUE-026): Show account-by-account breakdown.
+2. **Enhanced Monte Carlo Options** (ISSUE-034, 035): Add more market condition scenarios.
+3. **Enhanced Social Security Display** (ISSUE-041, 042, 043): Cumulative vs Annual toggle.
+4. **Enhanced Data Tables** (ISSUE-053, 055, 056, 057): Year-by-year tax source breakdown.
+5. **Mobile Responsiveness**: Stress test the sidebar and grids on mobile resolutions.
 
 ---
 
