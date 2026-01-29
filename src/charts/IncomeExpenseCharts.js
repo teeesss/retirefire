@@ -141,6 +141,23 @@ export function updateSSComparisonChart() {
             pia * f70 * 12 * (95 - 70)
         ];
         label = 'Lifetime Total (to 95)';
+
+        // Update stat boxes to show cumulative values
+        const el62 = document.getElementById('ss62');
+        const el67 = document.getElementById('ss67');
+        const el70 = document.getElementById('ss70');
+        if (el62) el62.textContent = formatCurrency(data[0]);
+        if (el67) el67.textContent = formatCurrency(data[1]);
+        if (el70) el70.textContent = formatCurrency(data[2]);
+
+        // Hide the "Life:" labels since we're showing lifetime already
+        const life62 = document.getElementById('ss62Lifetime');
+        const life67 = document.getElementById('ss67Lifetime');
+        const life70 = document.getElementById('ss70Lifetime');
+        if (life62) life62.style.display = 'none';
+        if (life67) life67.style.display = 'none';
+        if (life70) life70.style.display = 'none';
+
     } else {
         // Annual benefit
         data = [
@@ -149,6 +166,31 @@ export function updateSSComparisonChart() {
             pia * f70 * 12
         ];
         label = 'Annual Benefit';
+
+        // Update stat boxes to show monthly values
+        const el62 = document.getElementById('ss62');
+        const el67 = document.getElementById('ss67');
+        const el70 = document.getElementById('ss70');
+        if (el62) el62.textContent = formatCurrency(pia * f62) + '/mo';
+        if (el67) el67.textContent = formatCurrency(pia * f67) + '/mo';
+        if (el70) el70.textContent = formatCurrency(pia * f70) + '/mo';
+
+        // Show and update the "Life:" labels
+        const life62 = document.getElementById('ss62Lifetime');
+        const life67 = document.getElementById('ss67Lifetime');
+        const life70 = document.getElementById('ss70Lifetime');
+        if (life62) {
+            life62.style.display = 'block';
+            life62.textContent = 'Life: ' + formatCurrency(pia * f62 * 12 * (95 - 62));
+        }
+        if (life67) {
+            life67.style.display = 'block';
+            life67.textContent = 'Life: ' + formatCurrency(pia * f67 * 12 * (95 - 67));
+        }
+        if (life70) {
+            life70.style.display = 'block';
+            life70.textContent = 'Life: ' + formatCurrency(pia * f70 * 12 * (95 - 70));
+        }
     }
 
     charts.ssComparison.data.datasets[0].data = data;
