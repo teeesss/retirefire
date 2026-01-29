@@ -180,10 +180,106 @@ export class RothUI {
 
         // Optimize
         window.optimizeRothConversion = () => {
-            // This will be implemented to call RothCalculator.optimizeStrategy
-            console.log('Optimizing Roth conversion strategy...');
-            // TODO: Implement optimization logic
+            console.log('🔍 Optimizing Roth conversion strategy...');
+
+            // Get simulation data
+            const rawData = window.rawData;
+            if (!rawData || !rawData.years) {
+                console.error('No simulation data available');
+                return;
+            }
+
+            // Import optimizer dynamically
+            import('./RothOptimizer.js').then(({ default: RothOptimizer }) => {
+                // Prepare optimization parameters
+                const params = {
+                    years: rawData.years,
+                    ordinaryIncome: rawData.ordinaryIncome || rawData.years.map(() => 80000),
+                    traditionalBalance: rawData.traditionalBalance || rawData.years.map(() => 500000),
+                    filingStatus: window.config?.filingStatus || 'joint',
+                    targetBracket: RothConfig.targetBracket,
+                    constraints: {
+                        maxAnnual: RothConfig.maxAnnualCap
+                    }
+                };
+
+                // Run optimization
+                const optimized = RothOptimizer.optimize(params);
+
+                // Generate report
+                const report = RothOptimizer.generateReport(optimized);
+
+                // Display results
+                this.displayOptimizationResults(report, optimized);
+
+                // Ask user if they want to apply
+                this.showOptimizationDialog(optimized);
+            }).catch(error => {
+                console.error('Failed to load optimizer:', error);
+            });
         };
+    }
+
+    /**
+     * Display optimization results
+     */
+    static displayOptimizationResults(report, optimizedResults) {
+        console.log('\n📊 OPTIMIZATION RESULTS\n');
+        console.log(report.headline);
+        console.log('\n💰 Metrics:');
+        console.log(`  Total Converted: $${report.metrics.totalConverted.toLocaleString()}`);
+        console.log(`  Total Tax Paid: $${report.metrics.totalTaxPaid.toLocaleString()}`);
+        console.log(`  Effective Tax Rate: ${report.metrics.effectiveTaxRate}%`);
+        console.log(`  Average Annual: $${Math.round(report.metrics.averageAnnual).toLocaleString()}`);
+        console.log(`  Years Active: ${report.metrics.yearsActive}`);
+
+        if (report.yearByYear.length > 0) {
+            console.log('\n📅 Year-by-Year Breakdown:');
+            report.yearByYear.slice(0, 5).forEach(r => {
+                console.log(`  ${r.year}: $${r.conversionAmount.toLocaleString()} (${r.marginalRate}% bracket)`);
+            });
+            if (report.yearByYear.length > 5) {
+                console.log(`  ... and ${report.yearByYear.length - 5} more years`);
+            }
+        }
+    }
+
+    /**
+     * Show optimization dialog
+     */
+    static showOptimizationDialog(optimizedResults) {
+        const message = `
+Optimization Complete!
+
+Total Conversions: $${(optimizedResults.summary.totalConverted / 1000).toFixed(0)}K
+Over ${optimizedResults.summary.yearsWithConversions} years
+Effective Tax Rate: ${optimizedResults.summary.effectiveTaxRate.toFixed(1)}%
+
+Would you like to apply this optimized strategy?
+        `.trim();
+
+        if (confirm(message)) {
+            this.applyOptimizedStrategy(optimizedResults);
+        }
+    }
+
+    /**
+     * Apply optimized strategy
+     */
+    static applyOptimizedStrategy(optimizedResults) {
+        // Switch to bracket mode with the target bracket
+        RothConfig.mode = 'bracket';
+
+        // Update UI
+        this.syncUIWithConfig();
+
+        // Trigger recalculation
+        window.updateRawData?.();
+        window.updateDashboard?.();
+        window.refreshAllCharts?.();
+        window.saveToLocalStorage?.();
+
+        console.log('✅ Optimized strategy applied!');
     }
 }
 
