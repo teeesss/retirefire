@@ -8,7 +8,8 @@
     "preview": "vite preview",
     "deploy": "node scripts/deploy.js",
     "test": "vitest run",
-    "test:unit": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:full": "node scripts/test-all.js",
     "test:watch": "vitest",
     "test:all": "node tests/run_all_comprehensive.js",
     "test:e2e": "node tests/e2e_tests.js",
@@ -17,8 +18,8 @@
     "test:e2e:visual": "vitest run tests/e2e/visual.test.js",
     "test:legacy": "node tests/run_tests.js",
     "test:data": "node tests/run_tests.js --data",
-    "preupdate": "npm test",
-    "validate": "npm test && echo '✅ All tests passed - safe to update'"
+    "preupdate": "npm run test:full",
+    "validate": "npm run test:full && echo '✅ All tests passed - safe to update'"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.23",
