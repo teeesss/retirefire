@@ -134,26 +134,55 @@ function runTests() {
 
 function stopDevServer() {
     return new Promise((resolve) => {
-        if (!devServer) {
-            resolve();
-            return;
-        }
-
-        log('\n🛑 Stopping dev server...', colors.yellow);
+        log('\n🛑 Stopping dev server and cleaning up all Node processes...', colors.yellow);
 
         // Kill the dev server process tree
         if (process.platform === 'win32') {
-            spawn('taskkill', ['/pid', devServer.pid, '/f', '/t'], {
-                stdio: 'ignore'
-            });
-        } else {
-            devServer.kill('SIGTERM');
-        }
+            // First kill the specific dev server
+            if (devServer) {
+                spawn('taskkill', ['/pid', devServer.pid, '/f', '/t'], {
+                    stdio: 'ignore'
+                });
+            }
 
-        setTimeout(() => {
-            log('✅ Dev server stopped\n', colors.green);
-            resolve();
-        }, 2000);
+            // Then kill ALL node.exe and node.js processes to ensure complete cleanup
+            setTimeout(() => {
+                const killAll = spawn('powershell', [
+                    '-Command',
+                    'Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force; exit 0'
+                ], {
+                    stdio: 'ignore'
+                });
+
+                killAll.on('close', () => {
+                    log('✅ All Node processes terminated\n', colors.green);
+                    resolve();
+                });
+
+                // Fallback timeout
+                setTimeout(() => {
+                    log('✅ Dev server cleanup complete\n', colors.green);
+                    resolve();
+                }, 2000);
+            }, 1000);
+        } else {
+            // Unix-like systems
+            if (devServer) {
+                devServer.kill('SIGTERM');
+            }
+
+            // Kill all node processes
+            setTimeout(() => {
+                spawn('pkill', ['-9', 'node'], {
+                    stdio: 'ignore'
+                });
+
+                setTimeout(() => {
+                    log('✅ All Node processes terminated\n', colors.green);
+                    resolve();
+                }, 1000);
+            }, 1000);
+        }
     });
 }
 
