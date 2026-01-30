@@ -4,11 +4,11 @@
 > **Current Status**: 🟢 STABLE - DEPLOYED TO PRODUCTION
 > **Last Updated**: 2026-01-30
 > **Build**: ✅ Passing (Vite Build Success) | 🟢 Production Ready
-> **Codebase**: ~4,200 Lines (98% Logic Restored) - Zero Console Errors
-> **Tests**: ✅ 231/231 Unit Tests Passing (100% Pass Rate)
-> **Test Suite**: `npx vitest run tests/unit`
+> **Codebase**: ~4,400 Lines (99% Logic Restored) - Zero Console Errors
+> **Tests**: ✅ 230/230 Unit Tests Passing (100% Pass Rate)
+> **Test Suite**: `npm run test:unit`
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-> **Recent Fixes**: 🔧 Build ESM/CJS conflict fix, 📝 Rules enforcement, 📊 Documentation cleanup
+> **Recent Fixes**: 📊 Roth Optimizer (Cumulative Tax + Baseline), 🥧 Pie Chart Hover, 🛠️ ESM/CJS Script Refactor
 
 ### 🎯 Today's Session (2026-01-30): Comprehensive Codebase Audit & UI Polishing ✅ COMPLETE
 |
@@ -18,9 +18,11 @@
 - ✅ **CRIT-001**: Build failure (ESM/CJS conflict) - Fixed by renaming config files to `.cjs`
 - ✅ **CRIT-002**: Documentation duplicates in ISSUES.md - Cleaned up High Priority section
 - ✅ **CRIT-003**: Rules not enforced - Added "NEVER BYPASS CHECKLIST" to `.cursorrules`
-- ✅ **UI-049**: Implemented clickable metrics and interactive coach insights for better navigation.
-- ✅ **UI-048**: Enhanced data tables with yearly granularity and detailed breakdowns.
-- ⚠️ **CRIT-004**: Pinecone MCP connectivity issues - Under investigation (Note: Local functionally is high)
+- ✅ **UI-049**: Implemented clickable metrics and interactive coach insights.
+- ✅ **UI-048**: Enhanced data tables with yearly granularity.
+- ✅ **UI-050**: Fixed Expense Pie Chart hover functionality.
+- ✅ **ROTH-061**: Enhanced Roth Optimizer with Cumulative Tax Impact and Baseline comparison.
+- ⚠️ **CRIT-004**: Pinecone MCP connectivity issues - Under investigation.
 
 **Files Modified**:
 - `.cursorrules` - Added enforcement checklist at top
