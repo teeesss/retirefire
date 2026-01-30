@@ -101,7 +101,9 @@ export function initSSComparisonChart() {
             datasets: [{
                 label: 'Monthly Benefit',
                 data: [0, 0, 0],
-                backgroundColor: ['#ef4444', '#3b82f6', '#10b981']
+                backgroundColor: ['#ef4444', '#3b82f6', '#10b981'],
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
             }]
         },
         options: {

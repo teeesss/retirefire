@@ -114,8 +114,8 @@
     - Breakeven analysis (taxes paid now vs saved later).
     - Source account selection (Traditional IRA vs 401k vs Taxable).
 - [ ] **UI**: "Deep Dive" button in main Roth card opens this view.
-- [ ] **BUG-FIX**: Roth Optimizer returns identical results for different brackets (Investigate "15%" input issue & effective rate logic).
-- [ ] **BUG-FIX**: Social Security Comparison - Add "Active/Selected" highlight to the Age 62/67/70 boxes to prevent user confusion.
+- [x] **BUG-FIX**: Roth Optimizer returns identical results for different brackets (Fixed validation in RothConfig.js to snap invalid inputs) [BUG-005].
+- [x] **BUG-FIX**: Social Security Comparison - Fixed static values, chart styling (bar width), and missing data interaction [BUG-006].
 
 ---
 

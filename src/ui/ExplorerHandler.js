@@ -5,6 +5,7 @@ import { formatCurrency } from '../utils/Formatters.js';
 import { SimulationEngine } from '../engine/SimulationEngine.js';
 import { getNetWorthSeries } from '../state/DataUtils.js';
 import { updateSSExplorerChart, updateStressTestChart } from '../charts/ExplorerCharts.js';
+import { updateSSComparisonChart } from '../charts/IncomeExpenseCharts.js';
 
 export class ExplorerHandler {
     static updateSpending(value) {
@@ -216,6 +217,7 @@ export class ExplorerHandler {
     static updateSSExplorer() {
         // Delegate to the Chart module which uses the robust Calculator
         updateSSExplorerChart();
+        updateSSComparisonChart();
     }
 
     static safeUpdate(id, content) {

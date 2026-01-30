@@ -27,6 +27,8 @@
 - ✅ **ROTH-061**: Synchronized Net Worth Comparison logic.
 - ✅ **UI-052**: Overhauled ALL chart layouts to be side-by-side (2-3 per line).
 - ✅ **RULES**: Added mandatory Layout, Hover, and WSL rules to `.cursorrules`.
+- ✅ **BUG-005**: Roth Optimizer now validates/corrects invalid inputs (e.g. 15% -> 12%).
+- ✅ **BUG-006**: Social Security Comparison now actively highlights selected age plan.
 
 - ✅ **CRIT-001**: Build failure (ESM/CJS conflict) - Fixed by renaming config files to `.cjs`
 - ✅ **CRIT-002**: Documentation duplicates in ISSUES.md - Cleaned up High Priority section

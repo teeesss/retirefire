@@ -43,10 +43,31 @@ export const RothConfig = {
 };
 
 /**
+ * Validate and snap bracket to nearest valid key
+ */
+function validateBracket(bracket) {
+    const validBrackets = [12, 22, 24, 32, 35, 37]; // 10 is technically possible but usually 12 is minimum for meaningful strategy
+    // Or better, use keys from object
+    const keys = Object.keys(RothConfig.brackets).map(Number);
+
+    let b = Number(bracket);
+    // Handle percentage inputs (e.g. 0.22 -> 22)
+    if (b < 1 && b > 0) b = Math.round(b * 100);
+
+    if (keys.includes(b)) return b;
+
+    // Find nearest
+    return keys.reduce((prev, curr) => {
+        return (Math.abs(curr - b) < Math.abs(prev - b) ? curr : prev);
+    });
+}
+
+/**
  * Calculate target conversion amount based on bracket
  */
 export function calculateBracketAmount(bracket, filingStatus, currentIncome) {
-    const limit = RothConfig.brackets[bracket]?.[filingStatus] || 0;
+    const validBracket = validateBracket(bracket);
+    const limit = RothConfig.brackets[validBracket]?.[filingStatus] || 0;
     const availableRoom = Math.max(0, limit - currentIncome);
 
     // Apply cap if in hybrid mode

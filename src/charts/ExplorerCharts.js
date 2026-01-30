@@ -39,7 +39,11 @@ export function updateSSExplorerChart() {
     const profile = config.profile?.careerProfile || 'high'; // low, medium, high, max
 
     // Calculate PIA
-    const pia = SocialSecurityCalculator.calculatePIA(currentIncome, profile);
+    // Check if manual input exists and use it, otherwise calculate from profile
+    const manualPiaInput = document.getElementById('ssPiaInput');
+    const pia = manualPiaInput ? parseFloat(manualPiaInput.value) : SocialSecurityCalculator.calculatePIA(currentIncome, profile);
+
+    // Recalculate benefits with the current PIA
     const benefits = SocialSecurityCalculator.calculateBenefits(pia);
 
     // Generate years array for projection

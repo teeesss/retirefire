@@ -89,6 +89,8 @@
 | ISSUE-011 | Success Gauge broken calculation | Fixed - Now uses SimulationEngine.runMonteCarlo() directly |
 | ISSUE-012 | Missing sidebar navigation | Added persistent left sidebar with section links |
 | ISSUE-016 | Duplicate Social Security div broke settings panel | Fixed - Removed duplicate div |
+| BUG-005 | Roth Optimizer inputs invalid/ignored | Fixed - Added validation & logic fix |
+| BUG-006 | Social Security comparison view lacks active state | Fixed - Added proper highlighting |
 
 ---
 
@@ -96,8 +98,7 @@
 
 | Issue | Description | Impact | Next Steps |
 |-------|-------------|--------|------------|
-| **BUG-005** | Roth Optimizer inputs invalid/ignored | Impact | Validate inputs and fix `RothOptimizer.js` logic. |
-| **BUG-006** | Social Security comparison view lacks active state | Confusion | Add highlighting to active strategy box. |
+
 
 
 ---
