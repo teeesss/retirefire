@@ -353,7 +353,7 @@ export class SimulationEngine {
             results.drawdown.RetirementSavings.push(Math.round(yearlyDrawdownDetail.RetirementSavings));
             results.drawdown.RothIRA.push(Math.round(yearlyDrawdownDetail.RothIRA));
 
-            // Roth Conversion Ladder (processed after initial tax est, but amount was included in breakdown)
+            // Roth Conversion Ladder (processed after initial tax est)
             let actualConversion = 0;
             let conversionTax = 0;
 
@@ -363,27 +363,22 @@ export class SimulationEngine {
                     roth += rothConvToProcess;
                     actualConversion = rothConvToProcess;
 
-                    // Calculate marginal tax on conversion
-                    // This is the incremental tax from adding conversion to ordinary income
-                    const baseIncome = workIncome + otherOrdIncome;
-                    const totalIncome = baseIncome + rothConvToProcess;
+                    // Calculate marginal tax on conversion for reporting
+                    // Calculate tax on base income (without conversion)
+                    const baseTaxBreakdown = TaxCalculator.calculateTaxBreakdown(
+                        workIncome,
+                        otherOrdIncome,
+                        estimatedCapGains,
+                        config.settings.taxSettings.filingStatus,
+                        config.settings.taxSettings.state
+                    );
 
-                    // Estimate marginal tax rate (simplified)
-                    // The conversion is taxed at marginal rates
-                    const marginalRate = rothConvToProcess > 0 ?
-                        (taxBreakdown.federalOrd / (totalIncome || 1)) : 0;
+                    // The difference is the tax attributable to the conversion
+                    conversionTax = Math.max(0, taxBreakdown.total - baseTaxBreakdown.total);
 
-                    conversionTax = Math.round(rothConvToProcess * marginalRate);
-
-                    // Pay conversion tax from investments (brokerage account)
-                    if (investments >= conversionTax) {
-                        investments -= conversionTax;
-                    } else {
-                        // If not enough in investments, reduce conversion or handle differently
-                        if (conversionTax > 10000) { // Only warn for significant amounts
-                            console.warn(`Year ${currentYear}: Insufficient funds to pay conversion tax ($${conversionTax.toLocaleString()})`);
-                        }
-                    }
+                    // Note: We do NOT deduct conversionTax from investments here because 
+                    // it was already included in the total estimatedTax subtracted from netFlow 
+                    // and processed in the drawdown logic above. 
                 }
             }
 
