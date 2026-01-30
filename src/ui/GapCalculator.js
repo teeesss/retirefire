@@ -29,6 +29,11 @@ export class GapCalculator {
         // Update UI
         this.safeUpdate('calcProjectedIncome', formatCurrency(projectedMonthly, false));
 
+        const subtitle = document.getElementById('calcSubtitle');
+        if (subtitle && rawData.years) {
+            subtitle.textContent = `At Retirement: Age ${retireAge} (${rawData.years[safeIndex]})`;
+        }
+
         const gap = projectedMonthly - targetMonthly;
         const resultValue = document.getElementById('calcResultValue');
         const resultLabel = document.getElementById('calcResultLabel');

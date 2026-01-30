@@ -12,16 +12,21 @@ export class MetricsHandler {
         const peakIndex = netWorths.indexOf(peakNW);
 
         this.safeUpdate('metricCurrentNW', formatCurrency(currentNW));
+        this.safeUpdate('currentNWSubtitle', `Age ${rawData.ages[0]} (${rawData.years[0]})`);
+
         this.safeUpdate('metricPeakNW', formatCurrency(peakNW));
         this.safeUpdate('metricPeakYear', `Age ${rawData.ages[peakIndex]} (${rawData.years[peakIndex]})`);
         this.safeUpdate('metricPeakGrowth', `+${((peakNW - currentNW) / currentNW * 100).toFixed(0)}%`);
 
-        const successRate = 97;
-        this.safeUpdate('metricSuccess', successRate + '%');
+        const mc = rawData.monteCarlo || { successRate: 97 };
+        const successRate = mc.successRate;
+        this.safeUpdate('metricSuccess', successRate.toFixed(0) + '%');
         this.safeUpdate('metricRetireAge', config.settings.personal.retireAge);
+        this.safeUpdate('metricRetireYear', `Year ${rawData.years[0] + (config.settings.personal.retireAge - rawData.ages[0])}`);
 
         const ssBenefit = config.settings.socialSecurity.ss67;
         this.safeUpdate('metricSS', formatCurrency(ssBenefit, false) + '/mo');
+        this.safeUpdate('metricSSAge', `Starting Age ${config.settings.socialSecurity.claimAge || 62}`);
 
         // Extended Metrics
         const outOfMoney = netWorths.findIndex(nw => nw <= 0);
@@ -47,26 +52,50 @@ export class MetricsHandler {
 
         // 1. Success Rate Insight
         if (mc.successRate > 95) {
-            insights.push({ type: 'success', title: '🎉 High Confidence', text: 'Plan is extremely robust. Consider early gifting.' });
+            insights.push({
+                type: 'success',
+                title: '🎉 High Confidence',
+                text: 'Plan is extremely robust. Consider early gifting.',
+                section: 'section-networth'
+            });
         } else if (mc.successRate < 70) {
-            insights.push({ type: 'warning', title: '⚠️ Risk Alert', text: 'Low success probability. Consider delaying retirement.' });
+            insights.push({
+                type: 'warning',
+                title: '⚠️ Risk Alert',
+                text: 'Low success probability. Consider delaying retirement.',
+                section: 'section-montecarlo'
+            });
         }
 
         // 2. Liquidity Check (Age 60)
         const taxableGapIdx = sc.accounts.Investments.findIndex((v, i) => v <= 0 && rawData.ages[i] < 60);
         if (taxableGapIdx !== -1) {
-            insights.push({ type: 'warning', title: '⚠️ Liquidity Gap', text: 'Potential shortfall before age 60 penalties expire.' });
+            insights.push({
+                type: 'warning',
+                title: '⚠️ Liquidity Gap',
+                text: 'Potential shortfall before age 60 penalties expire.',
+                section: 'section-withdrawals'
+            });
         }
 
         // 3. Tax Optimization
         if (!config.settings.taxes.rothConversionEnabled) {
-            insights.push({ type: 'info', title: '🏦 Tax Strategy', text: 'High potential for Roth Conversion savings.' });
+            insights.push({
+                type: 'info',
+                title: '🏦 Tax Strategy',
+                text: 'High potential for Roth Conversion savings.',
+                section: 'section-roth'
+            });
         }
 
         const list = document.getElementById('coachMessageList');
         if (list) {
             list.innerHTML = insights.map(ins => `
-                <div style="border-left: 4px solid ${ins.type === 'warning' ? '#ef4444' : (ins.type === 'success' ? '#10b981' : '#3b82f6')}; padding: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.02);">
+                <div onclick="scrollToSection('${ins.section}')" 
+                     style="border-left: 4px solid ${ins.type === 'warning' ? '#ef4444' : (ins.type === 'success' ? '#10b981' : '#3b82f6')}; 
+                            padding: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.02); cursor: pointer; transition: background 0.2s;"
+                     onmouseover="this.style.background='rgba(59, 130, 246, 0.05)'"
+                     onmouseout="this.style.background='rgba(0,0,0,0.02)'">
                     <strong>${ins.title}</strong>
                     <div style="font-size: 0.85rem; opacity: 0.8;">${ins.text}</div>
                 </div>

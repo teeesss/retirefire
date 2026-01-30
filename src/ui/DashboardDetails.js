@@ -87,24 +87,26 @@ export class DashboardDetails {
         let html = '<table class="data-table"><thead><tr><th>Year (Age)</th>';
 
         if (type === 'summary') {
-            html += '<th>Net Worth</th><th>Income</th><th>Expenses</th><th>Taxes</th></tr></thead><tbody>';
-            for (let i = 0; i < rawData.years.length; i += 2) {
+            html += '<th>Net Worth</th><th>Income</th><th>Expenses</th><th>Taxes</th><th>Net Flow</th></tr></thead><tbody>';
+            for (let i = 0; i < rawData.years.length; i++) {
                 const nw = calculateNetWorth(scenario, i);
                 const inc = getTotalIncome(scenario, i);
                 const exp = getTotalExpenses(scenario, i);
                 const tax = getTotalTaxes(scenario, i);
+                const flow = inc - exp - tax;
                 html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
                          <td>${formatCurrency(nw)}</td>
                          <td class="positive">${formatCurrency(inc)}</td>
                          <td class="negative">${formatCurrency(exp)}</td>
-                         <td class="negative">${formatCurrency(tax)}</td></tr>`;
+                         <td class="negative">${formatCurrency(tax)}</td>
+                         <td class="${flow >= 0 ? 'positive' : 'negative'}"><strong>${formatCurrency(flow)}</strong></td></tr>`;
             }
         } else if (type === 'accounts') {
             const accounts = rawData[scenario].accounts;
             const keys = Object.keys(accounts).filter(k => k !== 'Debt');
             keys.forEach(k => html += `<th>${accountNames[k] || k}</th>`);
             html += '</tr></thead><tbody>';
-            for (let i = 0; i < rawData.years.length; i += 2) {
+            for (let i = 0; i < rawData.years.length; i++) {
                 html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>`;
                 keys.forEach(k => html += `<td>${formatCurrency(accounts[k][i])}</td>`);
                 html += '</tr>';
@@ -114,7 +116,7 @@ export class DashboardDetails {
             const keys = Object.keys(income).filter(k => income[k].some(v => v > 0));
             keys.forEach(k => html += `<th>${incomeNames[k] || k}</th>`);
             html += '</tr></thead><tbody>';
-            for (let i = 0; i < rawData.years.length; i += 2) {
+            for (let i = 0; i < rawData.years.length; i++) {
                 html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>`;
                 keys.forEach(k => html += `<td class="positive">${formatCurrency(income[k][i])}</td>`);
                 html += '</tr>';
@@ -122,7 +124,7 @@ export class DashboardDetails {
         } else if (type === 'taxes') {
             const taxes = rawData[scenario].taxes;
             html += '<th>Federal Ord</th><th>Cap Gains</th><th>FICA</th><th>State</th><th>Total</th></tr></thead><tbody>';
-            for (let i = 0; i < rawData.years.length; i += 2) {
+            for (let i = 0; i < rawData.years.length; i++) {
                 const total = (taxes.Federal[i] || 0) + (taxes.CapGains[i] || 0) + (taxes.FICA[i] || 0) + (taxes.State[i] || 0);
                 html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
                          <td class="negative">${formatCurrency(taxes.Federal[i])}</td>
@@ -136,7 +138,7 @@ export class DashboardDetails {
             const keys = Object.keys(exp).filter(k => k !== 'Taxes');
             keys.forEach(k => html += `<th>${expenseNames[k] || k}</th>`);
             html += '<th>Taxes</th><th>Total</th></tr></thead><tbody>';
-            for (let i = 0; i < rawData.years.length; i += 2) {
+            for (let i = 0; i < rawData.years.length; i++) {
                 html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>`;
                 let total = 0;
                 keys.forEach(k => {
@@ -147,6 +149,29 @@ export class DashboardDetails {
                 const tax = getTotalTaxes(scenario, i);
                 html += `<td class="negative">${formatCurrency(tax)}</td>`;
                 html += `<td class="negative"><strong>${formatCurrency(total + tax)}</strong></td></tr>`;
+            }
+        } else if (type === 'roth') {
+            const roth = rawData[scenario].roth;
+            html += '<th>Converted</th><th>Tax Cost</th><th>Basis</th><th>Balance</th></tr></thead><tbody>';
+            const bal = rawData[scenario].accounts.Roth;
+            for (let i = 0; i < rawData.years.length; i++) {
+                html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
+                         <td class="positive">${formatCurrency(roth.Converted[i])}</td>
+                         <td class="negative">${formatCurrency(roth.TaxPaid[i])}</td>
+                         <td>${formatCurrency(bal[i])}</td></tr>`;
+            }
+        } else if (type === 'cashflow') {
+            html += '<th>Gross Income</th><th>Expenses</th><th>Tax</th><th>Net Flow</th></tr></thead><tbody>';
+            for (let i = 0; i < rawData.years.length; i++) {
+                const inc = getTotalIncome(scenario, i);
+                const exp = getTotalExpenses(scenario, i);
+                const tax = getTotalTaxes(scenario, i);
+                const flow = inc - exp - tax;
+                html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
+                         <td class="positive">${formatCurrency(inc)}</td>
+                         <td class="negative">${formatCurrency(exp)}</td>
+                         <td class="negative">${formatCurrency(tax)}</td>
+                         <td class="${flow >= 0 ? 'positive' : 'negative'}"><strong>${formatCurrency(flow)}</strong></td></tr>`;
             }
         }
 

@@ -11,19 +11,20 @@
 
 <!-- Key Metrics Dashboard -->
 <div class="dashboard-grid">
-    <div class="card span-1">
+    <div class="card span-1 clickable" onclick="scrollToSection('section-networth')">
         <div class="card-header">
             <div>
                 <div class="card-title">Current Net Worth</div>
                 <div class="card-value" id="metricCurrentNW">$4.24M</div>
-                <div class="card-subtitle">Age 50 (2026)</div>
+                <div class="card-subtitle" id="currentNWSubtitle">Age 50 (2026)</div>
             </div>
-            <button class="btn btn-sm btn-outline" onclick="openSettings('assets')">✏️ Edit</button>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openSettings('assets')">✏️
+                Edit</button>
         </div>
         <div class="mini-chart"><canvas id="sparkNW"></canvas></div>
     </div>
 
-    <div class="card span-1">
+    <div class="card span-1 clickable" onclick="scrollToSection('section-networth')">
         <div class="card-header">
             <div>
                 <div class="card-title">Peak Net Worth</div>
@@ -35,7 +36,7 @@
         <div class="mini-chart"><canvas id="sparkGrowth"></canvas></div>
     </div>
 
-    <div class="card span-1">
+    <div class="card span-1 clickable" onclick="scrollToSection('section-montecarlo')">
         <div class="card-header">
             <div>
                 <div class="card-title">Success Rate</div>
@@ -61,7 +62,7 @@
         </div>
     </div>
 
-    <div class="card span-1">
+    <div class="card span-1 clickable" onclick="scrollToSection('section-income')">
         <div class="card-header">
             <div>
                 <div class="card-title">Retirement Age</div>
@@ -72,7 +73,7 @@
         </div>
     </div>
 
-    <div class="card span-1">
+    <div class="card span-1 clickable" onclick="scrollToSection('section-ss')">
         <div class="card-header">
             <div>
                 <div class="card-title">Social Security</div>
@@ -82,7 +83,7 @@
         </div>
     </div>
 
-    <div class="card span-1">
+    <div class="card span-1 clickable" onclick="scrollToSection('section-taxes')">
         <div class="card-header">
             <div>
                 <div class="card-title">Lifetime Taxes</div>
@@ -121,6 +122,9 @@
                 <span class="metric-label">Projected Monthly Income</span>
                 <span class="metric-value" id="calcProjectedIncome">$0</span>
             </div>
+            <div id="calcSubtitle"
+                style="font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: -10px;">At
+                Retirement: Age 53 (2029)</div>
             <hr style="border-color: var(--border-color);">
             <div class="metric-row">
                 <span class="metric-label" id="calcResultLabel">Status</span>

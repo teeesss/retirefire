@@ -21,11 +21,26 @@
 - ✅ **Position**: Placed at very top of file (before safety rules)
 - ✅ **Content**: Pre/post code change checklists, documentation requirements
 
-#### Documentation Cleanup ✅ IN PROGRESS
+#### Documentation Cleanup ✅ COMPLETE
 - ✅ **ISSUES.md**: Removed duplicate entries from High Priority section
 - ✅ **ISSUES.md**: Added note about previously fixed issues
 - ✅ **TASKS.md**: Updated test count (231 not 7)
-- [ ] **PROJECT_STATUS.md**: Needs update with audit findings
+- ✅ **PROJECT_STATUS.md**: Updated with audit findings and new features
+- ✅ **US-049**: Clickable Metrics & Coach Insights functional
+
+#### US-049: UI Interactivity & Polish ✅ COMPLETE
+- ✅ **Interactive Metrics**: Dashboard cards now navigate to relevant sections on click.
+- ✅ **Dynamic Labels**: Metric subtitles now show current Age/Year for context.
+- ✅ **Clickable Insights**: Plan Coach alerts/warnings now double as navigation links to fix issues.
+- ✅ **Calculator Polish**: "What You Need" calculator now explicitly shows the retirement age/year it's using.
+- ✅ **Cleanup**: Removed unused and non-functional "Compare" modal/logic.
+
+#### US-048: Enhanced Data Tables ✅ COMPLETE
+- ✅ **Yearly Granularity**: All data tables now show 1-year increments (improved from 2-year).
+- ✅ **New Table**: Added "Roth" conversion breakdown table.
+- ✅ **New Table**: Added "Cash Flow" summary table.
+- ✅ **Detailed Taxes**: Tax table now shows source breakdown (Federal, CapGains, FICA, State).
+- ✅ **Detailed Expenses**: Expense table now separates categories and includes tax detail.
 
 ---
 

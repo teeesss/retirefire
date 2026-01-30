@@ -84,8 +84,9 @@ You are working on **RetireFire**, a high-fidelity financial planning applicatio
 2. **Check existing documentation** (README.md, TASKS.md, ISSUES.md, PROJECT_STATUS.md)
 3. **Review .cursorrules** (this file) for project-specific rules
 
-### When User Makes Design Decisions
-- **Automatically save to Pinecone** using upsert/save tool
+### When User Makes Design Decisions & Lessons Learned
+- **Always update Pinecone** as needed (lessons learned, design decisions, architectural changes) so context can be gathered quicker and more accurately for future tasks.
+- **Automatically save to Pinecone** using upsert/save tool for major decisions.
 - **Update relevant documentation** (TASKS.md, ISSUES.md, PROJECT_STATUS.md)
 - **Document in code comments** if applicable
 

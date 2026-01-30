@@ -12,6 +12,9 @@
 | **TEST-005** | E2E tests failing with `this.skip()` TypeError | ✅ FIXED (2026-01-29) | Replaced unsupported `this.skip()` calls with resilient `if (shouldSkip) return;` pattern in `visual.test.js` and `comprehensive.test.js`. Tests now fail gracefully when browser/server unavailable. |
 | **ISSUE-074** | Social Security Explorer comparison chart not synchronized | ✅ FIXED (2026-01-29) | Created `updateSSComparisonChart()` function that updates both chart and stat boxes. Added Annual/Lifetime toggle dropdown. Fixed bug where stat boxes weren't updating on dropdown change. Now fully synchronized with PIA input and claiming age selector. |
 
+| **UI-049** | Dashboard metrics and coach insights are not interactive | ✅ FIXED (2026-01-30) | Added click handlers to dashboard cards and coach insights to enable direct navigation to relevant sections. |
+| **UI-048** | Data tables lack detail and have low granularity (1-year) | ✅ FIXED (2026-01-30) | Updated `DashboardDetails.js` to show yearly data across all tables. Added Roth conversion and Cash Flow tables. Enhanced Tax table with source breakdown. |
+
 ---
 
 ## ✅ Recently Fixed Issues (2026-01-24)
