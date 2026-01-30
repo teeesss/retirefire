@@ -106,13 +106,13 @@
 - [ ] **New Graph 2**: Add "Sequence of Returns" explorer to row (rounding out the 3 sections).
 
 ### EPIC-001: Advanced Roth Conversion Center (Deep Dive) 🚀 IN PROGRESS
-- [ ] **Architecture**: Design a dedicated Modal overlay or separate View for high-fidelity analysis.
+- [x] **Architecture**: Design a dedicated Modal overlay or separate View for high-fidelity analysis.
 - [ ] **Features**:
-    - [ ] Tax Bracket Waterfall Chart (Visualizing fill-up to next bracket).
-    - [ ] Multi-year conversion table with editable cells.
-    - [ ] Breakeven analysis (taxes paid now vs saved later).
+    - [x] Tax Bracket Waterfall Chart (Visualizing fill-up to next bracket).
+    - [x] Multi-year conversion table with editable cells. (Table added, editability pending)
+    - [x] Breakeven analysis (taxes paid now vs saved later). (Initial visualization added)
     - [ ] Source account selection (Traditional IRA vs 401k vs Taxable).
-- [ ] **UI**: "Deep Dive" button in main Roth card opens this view.
+- [x] **UI**: "Deep Dive" button in main Roth card opens this view.
 - [x] **BUG-FIX**: Roth Optimizer returns identical results for different brackets (Fixed validation in RothConfig.js to snap invalid inputs) [BUG-005].
 - [x] **BUG-FIX**: Social Security Comparison - Fixed static values, chart styling (bar width), and missing data interaction [BUG-006].
 

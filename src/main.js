@@ -18,6 +18,7 @@ import { DashboardDetails } from './ui/DashboardDetails.js';
 import { ExplorerHandler } from './ui/ExplorerHandler.js';
 import { CryptoHandler } from './ui/CryptoHandler.js';
 import { RothUI } from './roth/RothUI.js';
+import { RothDeepDive } from './roth/RothDeepDive.js';
 import { initializeDescriptionsAndTooltips } from './utils/comprehensiveDescriptions.js';
 import { initializeExplorerSections } from './utils/explorerSections.js';
 import { GapCalculator } from './ui/GapCalculator.js';
@@ -54,6 +55,7 @@ const App = {
         // Initialize UI components
         NavigationHandler.init();
         RothUI.init();
+        RothDeepDive.init();
         GapCalculator.init();
         CryptoHandler.syncPrices();
         this.renderDashboard();
