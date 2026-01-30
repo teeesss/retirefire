@@ -3,7 +3,7 @@
  * Manages all UI interactions for Roth conversion controls
  */
 
-import RothConfig, { getStrategyDescription } from './RothConfig.js';
+import RothConfig, { getStrategyDescription, syncWithGlobalConfig } from './RothConfig.js';
 import RothCalculator from './RothCalculator.js';
 import { rawData, updateRawData } from '../data/Store.js';
 import { config } from '../data/Config.js';
@@ -14,6 +14,9 @@ export class RothUI {
      * Initialize Roth UI controls
      */
     static init() {
+        // Sync RothConfig with global config first
+        syncWithGlobalConfig(config);
+
         this.syncUIWithConfig();
         this.attachEventListeners();
     }
@@ -107,24 +110,35 @@ export class RothUI {
      * Refresh metrics from simulation data
      */
     static refreshMetrics() {
+        console.log('🔄 RothUI.refreshMetrics() called');
+        console.log('📊 rawData keys:', rawData ? Object.keys(rawData) : 'null');
+        console.log('📊 config.currentScenario:', config.currentScenario);
+
         // Import metrics calculator
         import('./RothMetricsCalculator.js').then(({ RothMetricsCalculator }) => {
             const scenario = config.currentScenario || 'average';
             const rothData = rawData[scenario];
             const baselineData = rawData.baseline;
 
+            console.log('📊 Scenario:', scenario);
+            console.log('📊 rothData exists:', !!rothData);
+            console.log('📊 baselineData exists:', !!baselineData);
+
             if (!rothData) {
-                console.warn('RothUI: No Roth data available for metrics');
+                console.warn('❌ RothUI: No Roth data available for metrics');
                 this.updateMetrics(0, 0, 0, 0);
                 return;
             }
 
+            console.log('📊 rothConversions:', rothData.rothConversions);
+
             if (!baselineData) {
-                console.warn('RothUI: No baseline data available for comparison');
+                console.warn('⚠️ RothUI: No baseline data available for comparison');
                 // Show conversion data but no comparison metrics
                 const conversions = rothData.rothConversions || { amounts: [], taxPaid: [] };
                 const totalConverted = conversions.amounts.reduce((sum, amt) => sum + amt, 0);
                 const years = conversions.amounts.filter(amt => amt > 0).length;
+                console.log('📊 Basic metrics (no baseline):', { totalConverted, years });
                 this.updateMetrics(totalConverted, years, 0, 0);
                 return;
             }

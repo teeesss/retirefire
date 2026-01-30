@@ -65,6 +65,12 @@ const App = {
         setTimeout(() => {
             initializeDescriptionsAndTooltips(charts);
             // initializeExplorerSections(); // Disabled to prevent partial duplication (using explicit HTML partials now)
+
+            // Refresh Roth metrics after everything is loaded
+            if (RothUI && RothUI.refreshMetrics) {
+                console.log('🔄 Initializing Roth metrics...');
+                RothUI.refreshMetrics();
+            }
         }, 1000);
 
         // Auto-save every 30 seconds
