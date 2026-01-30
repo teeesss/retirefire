@@ -1,0 +1,43 @@
+<!-- Sequence of Returns Risk Explorer -->
+<div class="card span-2" id="section-sequencerisk">
+    <div class="card-header">
+        <div class="card-title">
+            <span>⚡ Sequence of Returns Risk</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
+    </div>
+
+    <div class="monte-carlo-info"
+        style="padding: 12px; background: rgba(239, 68, 68, 0.05); border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(239, 68, 68, 0.1);">
+        <p style="font-size: 0.75rem; margin: 0; color: var(--text-primary);">
+            The <strong>"Red Zone"</strong> is the 5 years before and after retirement. Poor returns here have the
+            greatest impact on long-term sustainability.
+        </p>
+    </div>
+
+    <div class="control-row" style="margin-bottom: 15px;">
+        <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Simulate Crash
+            At:</label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <button class="btn-sm explore-btn active" onclick="runSequenceRisk('baseline', this)">Baseline</button>
+            <button class="btn-sm explore-btn" onclick="runSequenceRisk('pre', this)">Pre-Retire</button>
+            <button class="btn-sm explore-btn" onclick="runSequenceRisk('post', this)">Early-Retire</button>
+        </div>
+    </div>
+
+    <div class="chart-container large">
+        <canvas id="chartSequenceRisk"></canvas>
+    </div>
+
+    <div class="stats-row"
+        style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.65rem;">Final Assets</div>
+            <div class="value" id="seqRiskNW" style="font-size: 0.9rem; font-weight: 700;">$0</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.65rem;">Success Rate</div>
+            <div class="value" id="seqRiskSuccess" style="font-size: 0.9rem; font-weight: 700;">--</div>
+        </div>
+    </div>
+</div>

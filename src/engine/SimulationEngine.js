@@ -88,12 +88,10 @@ export class SimulationEngine {
         let homeValue = config.settings.housing?.homeValue || 0;
         let otherAssets = config.settings.assets.otherAssets || 0;
 
-        const rates = {
-            optimistic: { return: 0.08, inflation: 0.02 },
-            average: { return: 0.06, inflation: 0.03 },
-            pessimistic: { return: 0.04, inflation: 0.04 }
+        const currentRates = {
+            return: (config.settings.rates[scenario] || 7.0) / 100,
+            inflation: (config.settings.inflation[scenario] || 2.5) / 100
         };
-        const currentRates = rates[scenario] || rates.average;
 
         for (let i = 0; i < years; i++) {
             const currentYear = config.startYear + i;

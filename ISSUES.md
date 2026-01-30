@@ -4,18 +4,16 @@
 
 ---
 
-## ✅ Recently Fixed Issues (2026-01-29)
+## ✅ Recently Fixed Issues (2026-01-31)
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
-| **ISSUE-025** | Withdrawal Strategy needs account breakdown | ✅ FIXED (2026-01-29) | Enhanced `initWithdrawalChart()` in `TaxCharts.js` to show granular breakdown by account type (Taxable, Tax-Deferred, Roth IRA, Social Security). Added color-coded legend. Chart now displays stacked bars showing exactly which accounts are being drawn from each year. |
-| **TEST-005** | E2E tests failing with `this.skip()` TypeError | ✅ FIXED (2026-01-29) | Replaced unsupported `this.skip()` calls with resilient `if (shouldSkip) return;` pattern in `visual.test.js` and `comprehensive.test.js`. Tests now fail gracefully when browser/server unavailable. |
-| **ISSUE-074** | Social Security Explorer comparison chart not synchronized | ✅ FIXED (2026-01-29) | Created `updateSSComparisonChart()` function that updates both chart and stat boxes. Added Annual/Lifetime toggle dropdown. Fixed bug where stat boxes weren't updating on dropdown change. Now fully synchronized with PIA input and claiming age selector. |
+| **ISSUE-023** | Net Worth projection zeroing out prematurely | ✅ FIXED | Corrected `SimulationEngine.js` to use user-defined rates from `config.settings.rates` instead of hardcoded 8%. This ensures optimistic scenarios reflect the higher returns expected. |
+| **ISSUE-018** | "Compare" button at top ineffective | ✅ FIXED | Replaced "Custom" button with "Compare" which sets `config.currentScenario` to 'all'. Key charts now show all three series simultaneously. |
+| **ISSUE-050** | Missing scenario feedback on dashboard | ✅ FIXED | Added `scenario-badge` to the Net Worth metric card. The badge updates color and text to match the active scenario (Optimistic, Average, Pessimistic, Compare). |
+| **LOGIC-082** | UI Crash on 'all' scenario selection | ✅ FIXED | Added fallback logic to `MetricsHandler`, `DashboardDetails`, and `SummaryCharts` to use 'average' data for components that do not yet support multi-series display. |
 
-| **UI-052** | Roth Optimizer shows values but simulation shows $0 for HoH | ✅ FIXED (2026-01-30) | Root cause: `RothConfig.js` and `RothCalculator.js` were missing 'hoh' bracket limits. Manual amounts worked, but bracket-based strategies defaulted to 0. Added full HoH support to both files. |
-| **CHART-004**| "Canvas is already in use" error on dashboard refresh | ✅ FIXED (2026-01-30) | Implemented `destroyChart()` calls in all `init*` functions across `ExplorerCharts.js`, `AnalysisCharts.js`, and `SummaryCharts.js`. Prevents Chart.js collisions during rapid re-initialization. |
-| **LOGIC-081** | Roth conversion tax double-counting and "Insufficient Funds" warnings | ✅ FIXED (2026-01-30) | Fixed bug where tax was deducted both in the annual tax bill AND manually from investments. Removed manual deduction as it's already in the annual flow. Improved reporting to use marginal tax difference for accuracy. |
-| **BUILD-002**| ESM/CJS conflict in build scripts | ✅ FIXED (2026-01-30) | Renamed scripts to `.cjs` to ensure compatibility with Node environment. |
+## ✅ Recently Fixed Issues (2026-01-30)
 
 ---
 

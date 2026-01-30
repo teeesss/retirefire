@@ -3,6 +3,7 @@
  */
 export class NavigationHandler {
     static init() {
+        window.toggleSidebar = this.toggleSidebar.bind(this);
         const navItems = document.querySelectorAll('.sidebar-nav-item');
         const sections = [];
 
@@ -27,6 +28,11 @@ export class NavigationHandler {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     navItems.forEach(n => n.classList.remove('active'));
                     item.classList.add('active');
+
+                    // If on mobile, close the sidebar after clicking
+                    if (window.innerWidth <= 1200) {
+                        this.toggleSidebar();
+                    }
                 }
             });
         });
@@ -66,6 +72,13 @@ export class NavigationHandler {
                     item.classList.add('active');
                 }
             });
+        }
+    }
+
+    static toggleSidebar() {
+        const sidebar = document.getElementById('mainSidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('active');
         }
     }
 }

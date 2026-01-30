@@ -1,8 +1,12 @@
 <header>
     <div class="header-top">
-        <div class="header-title">
-            <h1>&#128202; Retirement Financial Planner Pro</h1>
-            <p>Comprehensive 45-year projection • Interactive Dashboard • Multi-Scenario Analysis</p>
+        <div class="header-title" style="display: flex; align-items: center; gap: 1rem;">
+            <button class="menu-toggle" onclick="window.toggleSidebar()" title="Toggle Menu"
+                style="display: none; background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px; width: 36px; height: 36px; align-items: center; justify-content: center; font-size: 1.25rem;">☰</button>
+            <div>
+                <h1>&#128202; Retirement Financial Planner Pro</h1>
+                <p>Comprehensive 45-year projection • Interactive Dashboard • Multi-Scenario Analysis</p>
+            </div>
         </div>
         <div class="header-actions">
             <div class="sync-indicator">
@@ -21,13 +25,11 @@
         <span style="font-size: 0.8rem; color: var(--text-muted); margin-right: 0.5rem;">&#128202; View
             Scenario:</span>
         <div class="scenario-toggle" id="scenarioButtons">
-            <button class="scenario-btn optimistic active" onclick="setScenario('optimistic')">✨
-                Optimistic</button>
-            <button class="scenario-btn average" onclick="setScenario('average')">&#128200; Average</button>
-            <button class="scenario-btn pessimistic" onclick="setScenario('pessimistic')">&#9889;
-                Pessimistic</button>
-            <button class="scenario-btn custom" onclick="setScenario('custom')" id="customScenarioBtn"
-                style="display:none;">&#127919; Custom</button>
+            <button class="scenario-btn optimistic" onclick="setScenario('optimistic', this)">✨ Optimistic</button>
+            <button class="scenario-btn average active" onclick="setScenario('average', this)">📊 Average</button>
+            <button class="scenario-btn pessimistic" onclick="setScenario('pessimistic', this)">⚡ Pessimistic</button>
+            <button class="scenario-btn custom" onclick="setScenario('all', this)" title="Compare All Scenarios">🏁
+                Compare</button>
         </div>
     </div>
 </header>

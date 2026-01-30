@@ -67,31 +67,45 @@ export function initSequenceRiskChart() {
     const ctx = getSafeCtx('chartSequenceRisk');
     if (!ctx) return;
 
-    const riskData = rawData.ages.map(age => {
-        if (age < 53) return 20;
-        if (age < 58) return 90;
-        if (age < 65) return 70;
-        if (age < 75) return 40;
-        return 20;
-    });
+    const baseline = getNetWorthSeries('average');
 
     charts.sequenceRisk = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: rawData.years,
-            datasets: [{
-                label: 'Risk Level',
-                data: riskData,
-                backgroundColor: riskData.map(r => r > 70 ? '#ef4444' : r > 40 ? '#f59e0b' : '#10b981')
-            }]
+            datasets: [
+                {
+                    label: 'Baseline',
+                    data: baseline,
+                    borderColor: '#6b7280',
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Stressed Path',
+                    data: [...baseline],
+                    borderColor: '#ef4444',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { ticks: { callback: v => formatCurrency(v) } },
+                x: { ticks: { maxTicksLimit: 10 } }
+            }
         }
     });
-    applyTooltipConfig(charts.sequenceRisk.options, true);
+    applyTooltipConfig(charts.sequenceRisk.options);
     charts.sequenceRisk.update();
 }
 

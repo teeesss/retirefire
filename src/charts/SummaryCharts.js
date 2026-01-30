@@ -123,30 +123,13 @@ export function initAllocationChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                mode: 'nearest',
-                intersect: true
-            },
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } },
-                tooltip: {
-                    enabled: true,
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function (context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                            return ` ${label}: ${percentage}%`;
-                        }
-                    }
-                }
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } }
             },
             cutout: '65%'
         }
     });
+    applyTooltipConfig(charts.allocation.options, true, true);
     charts.allocation.update();
 }
 
@@ -155,7 +138,9 @@ export function initMoneyFlowChart() {
     const ctx = getSafeCtx('chartMoneyFlow');
     if (!ctx) return;
 
-    const data = rawData[config.currentScenario];
+    let scenario = config.currentScenario;
+    if (scenario === 'all') scenario = 'average';
+    const data = rawData[scenario];
     if (!data || !data.income) return; // Safeguard if data not yet available
 
     const yearCount = data.yearsCount || (rawData.years ? rawData.years.length : 0);
@@ -210,8 +195,10 @@ export function initRealNominalChart() {
     destroyChart('realNominal');
     const ctx = getSafeCtx('chartRealNominal');
     if (!ctx) return;
-    const nominal = getNetWorthSeries(config.currentScenario);
-    const inflationRate = (config.settings.inflation?.[config.currentScenario] || 2.5) / 100;
+    let scenario = config.currentScenario;
+    if (scenario === 'all') scenario = 'average';
+    const nominal = getNetWorthSeries(scenario);
+    const inflationRate = (config.settings.inflation?.[scenario] || 2.5) / 100;
     const real = nominal.map((v, i) => v / Math.pow(1 + inflationRate, i));
 
     charts.realNominal = new Chart(ctx, {
@@ -244,7 +231,9 @@ export function initStackedPortfolioChart() {
     destroyChart('stackedPortfolio');
     const ctx = getSafeCtx('chartStackedPortfolio');
     if (!ctx) return;
-    const accounts = rawData[config.currentScenario].accounts;
+    let scenario = config.currentScenario;
+    if (scenario === 'all') scenario = 'average';
+    const accounts = rawData[scenario].accounts;
 
     charts.stackedPortfolio = new Chart(ctx, {
         type: 'line',

@@ -9,12 +9,15 @@ export class DashboardDetails {
         const goalsList = document.getElementById('goalsList');
         if (!goalsList) return;
 
+        let scenario = config.currentScenario;
+        if (scenario === 'all') scenario = 'average';
+
         const retireYearIdx = Math.max(0, config.settings.personal.retireAge - config.settings.personal.age);
         const age70Idx = Math.max(0, 70 - config.settings.personal.age);
 
         const goals = [
-            { name: 'Retirement Net Worth', target: config.settings.goals.retirementNW, current: calculateNetWorth(config.currentScenario, retireYearIdx) },
-            { name: 'Age 70 Legacy', target: config.settings.goals.age70NW, current: calculateNetWorth(config.currentScenario, age70Idx) }
+            { name: 'Retirement Net Worth', target: config.settings.goals.retirementNW, current: calculateNetWorth(scenario, retireYearIdx) },
+            { name: 'Age 70 Legacy', target: config.settings.goals.age70NW, current: calculateNetWorth(scenario, age70Idx) }
         ];
 
         goalsList.innerHTML = goals.map(goal => {
@@ -83,7 +86,8 @@ export class DashboardDetails {
         const container = document.getElementById('dataTableContainer');
         if (!container) return;
 
-        const scenario = config.currentScenario;
+        let scenario = config.currentScenario;
+        if (scenario === 'all') scenario = 'average';
         let html = '<table class="data-table"><thead><tr><th>Year (Age)</th>';
 
         if (type === 'summary') {

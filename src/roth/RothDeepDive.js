@@ -169,6 +169,11 @@ export class RothDeepDive {
         const targetBracket = RothConfig.targetBracket;
         const bracketLimit = RothConfig.brackets[targetBracket]?.[filingStatus] || 0;
 
+        if (this.chartWaterfall) {
+            this.chartWaterfall.destroy();
+            this.chartWaterfall = null;
+        }
+
         this.chartWaterfall = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -255,6 +260,11 @@ export class RothDeepDive {
             }
             return cumSavingsValue;
         });
+
+        if (this.chartBreakeven) {
+            this.chartBreakeven.destroy();
+            this.chartBreakeven = null;
+        }
 
         this.chartBreakeven = new Chart(ctx, {
             type: 'line',

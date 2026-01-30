@@ -5,11 +5,16 @@ import { getNetWorthSeries, calculateNetWorth, getTotalIncome, getTotalExpenses,
 
 export class MetricsHandler {
     static updateMetrics() {
-        const scenario = config.currentScenario;
+        let scenario = config.currentScenario;
+        if (scenario === 'all') scenario = 'average';
+
         const netWorths = getNetWorthSeries(scenario);
         const currentNW = netWorths[0];
         const peakNW = Math.max(...netWorths);
         const peakIndex = netWorths.indexOf(peakNW);
+
+        const scenarioLabel = config.currentScenario.charAt(0).toUpperCase() + config.currentScenario.slice(1);
+        this.safeUpdate('metricScenarioLabel', scenarioLabel);
 
         this.safeUpdate('metricCurrentNW', formatCurrency(currentNW));
         this.safeUpdate('currentNWSubtitle', `Age ${rawData.ages[0]} (${rawData.years[0]})`);
@@ -46,7 +51,9 @@ export class MetricsHandler {
     }
 
     static updateCoach() {
-        const sc = rawData[config.currentScenario];
+        let scenario = config.currentScenario;
+        if (scenario === 'all') scenario = 'average';
+        const sc = rawData[scenario];
         const mc = rawData.monteCarlo || { successRate: 95 };
         const insights = [];
 

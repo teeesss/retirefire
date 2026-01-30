@@ -60,16 +60,16 @@
                     <!-- Swapped Financial Goals here -->
                     <load src="src/partials/charts/goals.html" />
 
-                    <!-- Row 7: Roth Optimization (2+2+2) -->
+                    <!-- Row 7: Roth Optimization & Monte Carlo (2+2+2) -->
                     <!-- roth.html contains Roth Plan (span-2) + Roth Delta (span-2) = 4 cols -->
                     <load src="src/partials/charts/roth.html" />
-                    <!-- Placeholder for 3rd Roth chart (2 cols needed) -->
-
-                    <!-- Row 8: Goals & Scenarios (2+2+2) -->
-                    <!-- Swapped Monte Carlo here -->
+                    <!-- Moved Monte Carlo here to balance the row -->
                     <load src="src/partials/charts/montecarlo-analysis.html" />
+
+                    <!-- Row 8: Explorers & Scenarios (2+2+2) -->
                     <load src="src/partials/charts/explorers.html" />
                     <load src="src/partials/charts/stress-test.html" />
+                    <load src="src/partials/charts/sequence-risk.html" />
 
                     <!-- Row 9: Detailed Reporting (6) -->
                     <load src="src/partials/charts/data-tables.html" />
@@ -87,7 +87,6 @@
                         <canvas id="chartMortgage"></canvas>
                         <canvas id="chartAccountTrends"></canvas>
                         <canvas id="chartScenarioComparison"></canvas>
-                        <canvas id="chartSequenceRisk"></canvas>
                         <canvas id="chartLegacy"></canvas>
                         <canvas id="chartDebtPayoff"></canvas>
                         <canvas id="chartMarketRisk"></canvas>

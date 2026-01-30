@@ -7,42 +7,36 @@ export const tooltipConfig = {
     enabled: true,
     mode: 'index',
     intersect: false,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(17, 24, 39, 0.95)',
     titleColor: '#fff',
     bodyColor: '#fff',
-    borderColor: 'rgba(59, 130, 246, 0.5)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     borderWidth: 1,
     padding: 12,
+    cornerRadius: 8,
     displayColors: true,
+    usePointStyle: true,
     callbacks: {
         title: function (context) {
-            if (context[0].label) {
-                return context[0].label;
-            }
-            return '';
+            return context[0].label || '';
         },
         label: function (context) {
-            // For Pie/Doughnut charts, label is handled differently
             const isPie = context.chart.config.type === 'pie' || context.chart.config.type === 'doughnut';
-            let label = isPie ? context.label : (context.dataset.label || '');
-
-            if (label) {
-                label += ': ';
-            }
-
-            // Get value based on chart type
+            const label = isPie ? context.label : (context.dataset.label || '');
             const value = isPie ? context.raw : context.parsed.y;
+
+            let labelText = label ? `${label}: ` : '';
 
             if (value !== null && value !== undefined) {
                 if (Math.abs(value) >= 1000000) {
-                    label += '$' + (value / 1000000).toFixed(2) + 'M';
+                    labelText += '$' + (value / 1000000).toFixed(2) + 'M';
                 } else if (Math.abs(value) >= 1000) {
-                    label += '$' + (value / 1000).toFixed(1) + 'K';
+                    labelText += '$' + (value / 1000).toFixed(1) + 'K';
                 } else {
-                    label += '$' + parseInt(value).toLocaleString();
+                    labelText += '$' + parseInt(value).toLocaleString();
                 }
             }
-            return label;
+            return labelText;
         }
     }
 };
@@ -52,14 +46,15 @@ export const percentTooltipConfig = {
     callbacks: {
         ...tooltipConfig.callbacks,
         label: function (context) {
-            let label = context.dataset.label || '';
-            if (label) {
-                label += ': ';
+            const isPie = context.chart.config.type === 'pie' || context.chart.config.type === 'doughnut';
+            const label = isPie ? context.label : (context.dataset.label || '');
+            const value = isPie ? context.raw : context.parsed.y;
+
+            let labelText = label ? `${label}: ` : '';
+            if (value !== null) {
+                labelText += value.toFixed(1) + '%';
             }
-            if (context.parsed.y !== null) {
-                label += context.parsed.y.toFixed(1) + '%';
-            }
-            return label;
+            return labelText;
         }
     }
 };

@@ -101,6 +101,7 @@ const App = {
         DashboardDetails.showDataTable('summary');
         this.updateYearDisplay();
         this.updateSSDisplay();
+        ExplorerHandler.updateYear(document.getElementById('yearSlider')?.value || 0);
 
         // Refresh Roth metrics after dashboard renders
         if (RothUI && RothUI.refreshMetrics) {
@@ -257,11 +258,20 @@ window.refreshAllCharts = () => App.initAllCharts();
 window.recalculate = recalculate;
 
 // Global Handlers (Forward to modular handlers)
+window.updateYearSlider = (val) => ExplorerHandler.updateYear(val);
 window.updateSpendingSlider = (val) => ExplorerHandler.updateSpending(val);
-window.setScenario = (sc) => { config.currentScenario = sc; window.recalculate(); };
+window.setScenario = (sc, btn) => {
+    config.currentScenario = sc;
+    if (btn) {
+        document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    window.recalculate();
+};
 window.runMarketRisk = (sc, btn) => ExplorerHandler.runMarketRisk(sc, btn);
 window.runWhatIf = (sc, btn) => ExplorerHandler.runWhatIf(sc, btn);
 window.runStressTest = () => ExplorerHandler.runStressTest();
+window.runSequenceRisk = (sc, btn) => ExplorerHandler.runSequenceRisk(sc, btn);
 window.runMonteCarloSimulation = () => App.runMonteCarloSimulation();
 window.setSSClaimAge = (age, btn) => ExplorerHandler.setSSClaimAge?.(age, btn);
 window.updateSSExplorer = () => ExplorerHandler.updateSSExplorer();

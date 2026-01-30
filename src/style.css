@@ -179,8 +179,25 @@ body {
 }
 
 @media (max-width: 1200px) {
+    .menu-toggle {
+        display: flex !important;
+    }
+
     .main-sidebar {
-        display: none;
+        position: fixed;
+        left: -240px;
+        top: 0;
+        height: 100vh;
+        width: 220px;
+        display: block !important;
+        transition: left 0.3s ease;
+        box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .main-sidebar.active {
+        left: 1rem;
+        top: 1rem;
+        height: calc(100vh - 2rem);
     }
 }
 
@@ -308,6 +325,19 @@ header {
 
 .scenario-btn:hover {
     transform: scale(1.05);
+}
+
+.scenario-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+    background: var(--primary);
+    color: white;
 }
 
 /* Buttons */

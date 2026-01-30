@@ -3,7 +3,8 @@ import { rawData } from '../data/Store.js';
 import { charts } from '../state/ChartStore.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { SimulationEngine } from '../engine/SimulationEngine.js';
-import { getNetWorthSeries } from '../state/DataUtils.js';
+import { accountNames } from '../data/Constants.js';
+import { getNetWorthSeries, calculateNetWorth, getTotalIncome, getTotalExpenses, getTotalTaxes } from '../state/DataUtils.js';
 import { updateSSExplorerChart, updateStressTestChart } from '../charts/ExplorerCharts.js';
 import { updateSSComparisonChart } from '../charts/IncomeExpenseCharts.js';
 
@@ -24,6 +25,48 @@ export class ExplorerHandler {
         this.safeUpdate('spendingImpact', diff === 0 ? 'Baseline' : impactText);
 
         window.recalculate();
+    }
+
+    static updateYear(value) {
+        const idx = parseInt(value);
+        if (!rawData.years || !rawData.years[idx]) return;
+
+        const scenario = config.currentScenario;
+        const year = rawData.years[idx];
+        const age = rawData.ages[idx];
+
+        // Update Labels
+        this.safeUpdate('selectedYearLabel', year);
+        this.safeUpdate('selectedAgeLabel', `Age ${age}`);
+        this.safeUpdate('selectedScenarioLabel', scenario.charAt(0).toUpperCase() + scenario.slice(1));
+
+        // Update Stat Cards
+        const spend = getTotalExpenses(scenario, idx);
+        const nw = calculateNetWorth(scenario, idx);
+        const income = getTotalIncome(scenario, idx);
+
+        this.safeUpdate('explorerSpend', formatCurrency(spend));
+        this.safeUpdate('explorerNW', formatCurrency(nw));
+        this.safeUpdate('explorerImpact', formatCurrency(income - spend - getTotalTaxes(scenario, idx)));
+
+        // Update Account Breakdown
+        const breakdownEl = document.getElementById('explorerBreakdown');
+        if (breakdownEl) {
+            const accounts = rawData[scenario].accounts;
+            let html = '';
+            for (const key in accounts) {
+                const val = accounts[key][idx] || 0;
+                if (val !== 0 || key === 'Cash') {
+                    html += `
+                        <div class="breakdown-item">
+                            <span>${accountNames[key] || key}</span>
+                            <span class="breakdown-value">${formatCurrency(val)}</span>
+                        </div>
+                    `;
+                }
+            }
+            breakdownEl.innerHTML = html;
+        }
     }
 
     static runMarketRisk(scenario, btn) {
@@ -208,10 +251,70 @@ export class ExplorerHandler {
         const idx90 = results.ages.indexOf(90);
         const nw90 = idx90 !== -1 ? stressedPath[idx90] : stressedPath[stressedPath.length - 1];
 
-        // Adjust for inflation to show "Real" purchasing power? 
-        // Or just nominal? User usually understands nominal, but "Purchasing Power" implies real.
-        // Let's show Nominal for now to match other charts, maybe label it "Assets @ 90"
         this.safeUpdate('stressPurchasingPower', formatCurrency(nw90));
+    }
+
+    static runSequenceRisk(scenario, btn) {
+        document.body.style.cursor = 'wait';
+        setTimeout(() => {
+            this._runSequenceRiskInternal(scenario, btn);
+            document.body.style.cursor = 'default';
+        }, 50);
+    }
+
+    static _runSequenceRiskInternal(scenario, btn) {
+        const testConfig = JSON.parse(JSON.stringify(config));
+        let results = SimulationEngine.project(testConfig, 'average');
+        const retireIdx = Math.max(0, testConfig.settings.personal.retireAge - testConfig.settings.personal.age);
+
+        // Base case path
+        const baselinePath = rawData.average?.netWorth || [];
+        let modifiedPath = [...baselinePath];
+
+        if (scenario === 'pre' || scenario === 'post') {
+            const crashYearIdx = scenario === 'pre' ? Math.max(0, retireIdx - 2) : Math.min(results.yearsCount - 1, retireIdx + 2);
+
+            // Re-run projection with a one-time massive hit
+            // For visualization we can just apply a 30% hit and propagate.
+            for (let i = crashYearIdx; i < results.yearsCount; i++) {
+                // Apply a 30% hit in that specific year, but since these are cumulative, 
+                // we hit it once and carry it forward.
+                const factor = 0.7; // 30% crash
+                modifiedPath[i] *= factor;
+            }
+        }
+
+        if (charts.sequenceRisk) {
+            // Check if we need to change chart type from Bar to Line for the explorer
+            if (charts.sequenceRisk.config.type === 'bar') {
+                // Better to use a line chart for NW comparison in the explorer
+            }
+
+            // For now, let's update datasets. Note: initSequenceRiskChart created a Bar chart.
+            // We might want to fix initSequenceRiskChart too.
+            // But let's just use the baseline and modified paths.
+            charts.sequenceRisk.data.datasets[0].data = baselinePath;
+            if (charts.sequenceRisk.data.datasets.length < 2) {
+                charts.sequenceRisk.data.datasets.push({
+                    label: 'Stressed Path',
+                    data: modifiedPath,
+                    borderColor: '#ef4444',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    type: 'line'
+                });
+            } else {
+                charts.sequenceRisk.data.datasets[1].data = modifiedPath;
+            }
+            charts.sequenceRisk.update();
+        }
+
+        const finalNW = modifiedPath[modifiedPath.length - 1];
+        this.safeUpdate('seqRiskNW', formatCurrency(finalNW));
+        this.safeUpdate('seqRiskSuccess', finalNW > 0 ? "Pass" : "Fail");
+
+        document.querySelectorAll('.explore-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
     }
 
     static updateSSExplorer() {
