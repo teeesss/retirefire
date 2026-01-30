@@ -215,21 +215,33 @@ export class SimulationEngine {
             // Include Roth conversion amount in other ordinary income if enabled
             // Use RothCalculator to determine amount based on strategy mode
             let rothConvToProcess = 0;
-            if (RothConfig.enabled && currentYear >= RothConfig.startYear && currentYear <= RothConfig.endYear) {
+            const rothSettings = config.settings?.taxes || {};
+
+            if (rothSettings.rothConversionEnabled && currentYear >= rothSettings.rothConvStart && currentYear <= rothSettings.rothConvEnd) {
                 // Calculate ordinary income for the year (before conversion)
                 const ordinaryIncome = workIncome + otherOrdIncome;
 
-                // Use RothCalculator to determine optimal conversion amount based on strategy
+                // Use RothCalculator with a local override object to ensure baseline uses its own 'enabled' state
                 rothConvToProcess = RothCalculator.calculateYearlyConversion(
                     currentYear,
-                    retirement,  // Current retirement balance
-                    ordinaryIncome,  // Ordinary income for the year
-                    config.settings.taxSettings?.filingStatus || 'joint'
+                    retirement,
+                    ordinaryIncome,
+                    config.settings.taxSettings?.filingStatus || 'joint',
+                    {
+                        enabled: rothSettings.rothConversionEnabled,
+                        startYear: rothSettings.rothConvStart,
+                        endYear: rothSettings.rothConvEnd,
+                        mode: RothConfig.mode,
+                        targetBracket: RothConfig.targetBracket,
+                        manualAmount: RothConfig.manualAmount,
+                        manualOverrides: RothConfig.manualOverrides,
+                        maxAnnualCap: RothConfig.maxAnnualCap
+                    }
                 );
 
                 // Validate conversion amount
                 if (rothConvToProcess > retirement) {
-                    rothConvToProcess = retirement; // Can't convert more than we have
+                    rothConvToProcess = retirement;
                 }
                 if (rothConvToProcess < 0) {
                     rothConvToProcess = 0;

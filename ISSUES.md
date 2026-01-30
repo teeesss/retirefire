@@ -12,12 +12,8 @@
 | **TEST-005** | E2E tests failing with `this.skip()` TypeError | ✅ FIXED (2026-01-29) | Replaced unsupported `this.skip()` calls with resilient `if (shouldSkip) return;` pattern in `visual.test.js` and `comprehensive.test.js`. Tests now fail gracefully when browser/server unavailable. |
 | **ISSUE-074** | Social Security Explorer comparison chart not synchronized | ✅ FIXED (2026-01-29) | Created `updateSSComparisonChart()` function that updates both chart and stat boxes. Added Annual/Lifetime toggle dropdown. Fixed bug where stat boxes weren't updating on dropdown change. Now fully synchronized with PIA input and claiming age selector. |
 
-| **UI-049** | Dashboard metrics and coach insights are not interactive | ✅ FIXED (2026-01-30) | Added click handlers to dashboard cards and coach insights to enable direct navigation to relevant sections. |
-| **UI-048** | Data tables lack detail and have low granularity (1-year) | ✅ FIXED (2026-01-30) | Updated `DashboardDetails.js` to show yearly data across all tables. Added Roth conversion and Cash Flow tables. Enhanced Tax table with source breakdown. |
-| **CHART-002**| Expense Pie Chart tooltip missing | ✅ FIXED (2026-01-30) | Corrected `interaction` mode and formatting logic in `tooltipConfig.js`. |
-| **CHART-003**| Money Flow Chart appearing empty/missing | ✅ FIXED (2026-01-30) | Root cause: Duplicate `chartMoneyFlow` canvas ID in `dashboard-metrics.html` was hijacking the context from the main grid. Removed duplicate and enabled `validateData()` logging. |
-| **UI-050** | Dashboard layout unbalanced / "horrible" | ✅ FIXED (2026-01-30) | Full overhaul of grid system. Every row now sums to 6 columns using 3-across (span-2) or 2-across (span-3) cards. Balanced all charts including new Gap Calculator. |
-| **UI-051** | Dashboard density too low / charts too spread out | ✅ FIXED (2026-01-30) | Implemented strict 3-across layout with 7-column metrics row. All charts now properly grouped with consistent "Top" buttons and fixed year label alignment. |
+| **UI-052** | Roth Optimizer shows values but simulation shows $0 for HoH | ✅ FIXED (2026-01-30) | Root cause: `RothConfig.js` and `RothCalculator.js` were missing 'hoh' bracket limits. Manual amounts worked, but bracket-based strategies defaulted to 0. Added full HoH support to both files. |
+| **CHART-004**| "Canvas is already in use" error on dashboard refresh | ✅ FIXED (2026-01-30) | Implemented `destroyChart()` calls in all `init*` functions across `ExplorerCharts.js`, `AnalysisCharts.js`, and `SummaryCharts.js`. Prevents Chart.js collisions during rapid re-initialization. |
 | **BUILD-002**| ESM/CJS conflict in build scripts | ✅ FIXED (2026-01-30) | Renamed scripts to `.cjs` to ensure compatibility with Node environment. |
 
 ---

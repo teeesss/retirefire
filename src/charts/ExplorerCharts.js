@@ -1,13 +1,14 @@
 import Chart from 'chart.js/auto';
 import { config } from '../data/Config.js';
 import { rawData } from '../data/Store.js';
-import { charts } from '../state/ChartStore.js';
+import { charts, destroyChart } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { SocialSecurityCalculator } from '../utils/SocialSecurityCalculator.js';
 
 export function initSSExplorerChart() {
+    destroyChart('ssExplorer');
     const ctx = getSafeCtx('chartSSExplorer');
     if (!ctx) return;
 
@@ -141,6 +142,7 @@ export function updateSSExplorerChart() {
 }
 
 export function initRothExplorerChart() {
+    destroyChart('rothExplorer');
     const ctx = getSafeCtx('chartRothExplorer');
     if (!ctx) return;
 
@@ -165,6 +167,7 @@ export function initRothExplorerChart() {
 }
 
 export function initRothTaxImpactChart() {
+    destroyChart('rothTaxImpact');
     const ctx = getSafeCtx('chartRothTaxImpact');
     if (!ctx) return;
 
@@ -241,6 +244,7 @@ export function updateRothExplorerChart() {
 }
 
 export function initWhatIfChart() {
+    destroyChart('whatIf');
     const ctx = getSafeCtx('chartWhatIf');
     if (!ctx) return;
 
@@ -267,6 +271,7 @@ export function initWhatIfChart() {
 }
 
 export function initMarketRiskChart() {
+    destroyChart('marketRisk');
     const ctx = getSafeCtx('chartMarketRisk');
     if (!ctx) return;
     charts.marketRisk = new Chart(ctx, {
@@ -289,6 +294,7 @@ export function initMarketRiskChart() {
 }
 
 export function initDebtPayoffChart() {
+    destroyChart('debtPayoff');
     const ctx = getSafeCtx('chartDebtPayoff');
     if (!ctx) return;
     charts.debtPayoff = new Chart(ctx, {
@@ -308,6 +314,7 @@ export function initDebtPayoffChart() {
 }
 
 export function initSparklines() {
+    destroyChart('sparkNW');
     const sparkNWCtx = getSafeCtx('sparkNW');
     if (sparkNWCtx) {
         charts.sparkNW = new Chart(sparkNWCtx, {
@@ -320,6 +327,7 @@ export function initSparklines() {
         });
     }
 
+    destroyChart('sparkGrowth');
     const sparkGrowthCtx = getSafeCtx('sparkGrowth');
     if (sparkGrowthCtx) {
         charts.sparkGrowth = new Chart(sparkGrowthCtx, {
@@ -334,6 +342,7 @@ export function initSparklines() {
 }
 
 export function initStressTestChart() {
+    destroyChart('stressTest');
     const ctx = getSafeCtx('chartStressTest');
     if (!ctx) return;
 

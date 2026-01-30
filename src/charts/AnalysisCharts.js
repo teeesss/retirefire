@@ -1,7 +1,7 @@
 import Chart from 'chart.js/auto';
 import { config } from '../data/Config.js';
 import { rawData } from '../data/Store.js';
-import { charts } from '../state/ChartStore.js';
+import { charts, destroyChart } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
@@ -9,6 +9,7 @@ import { scenarioColors } from '../data/Constants.js';
 import { getNetWorthSeries, calculateNetWorth, getTotalIncome, getTotalExpenses } from '../state/DataUtils.js';
 
 export function initMonteCarloChart() {
+    destroyChart('monteCarlo');
     const ctx = getSafeCtx('chartMonteCarlo');
     if (!ctx) return;
 
@@ -36,6 +37,7 @@ export function initMonteCarloChart() {
 }
 
 export function initLegacyChart() {
+    destroyChart('legacy');
     const ctx = getSafeCtx('chartLegacy');
     if (!ctx) return;
 
@@ -61,6 +63,7 @@ export function initLegacyChart() {
 }
 
 export function initSequenceRiskChart() {
+    destroyChart('sequenceRisk');
     const ctx = getSafeCtx('chartSequenceRisk');
     if (!ctx) return;
 
@@ -93,6 +96,7 @@ export function initSequenceRiskChart() {
 }
 
 export function initLifetimeCashFlowChart() {
+    destroyChart('lifetimeCashFlow');
     const ctx = getSafeCtx('chartLifetimeCashFlow');
     if (!ctx) return;
 
@@ -135,6 +139,7 @@ export function initLifetimeCashFlowChart() {
 }
 
 export function initScenarioComparisonChart() {
+    destroyChart('scenarioComparison');
     const ctx = getSafeCtx('chartScenarioComparison');
     if (!ctx) return;
 

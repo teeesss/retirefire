@@ -5,15 +5,15 @@ export let rawData = SimulationEngine.run();
 
 export function updateRawData() {
     console.log('🔄 updateRawData() called');
-    console.log('  - Before:', rawData.average ? 'exists' : 'null');
-    const oldId = rawData.average?.netWorth?.[0] || 0;
+    const oldNW = rawData.average?.netWorth?.[rawData.average.netWorth.length - 1] || 0;
 
     rawData = SimulationEngine.run();
 
-    const newId = rawData.average?.netWorth?.[0] || 0;
-    console.log('  - After:', rawData.average ? 'exists' : 'null');
-    console.log('  - Data changed:', oldId !== newId);
+    const newNW = rawData.average?.netWorth?.[rawData.average.netWorth.length - 1] || 0;
+    console.log('  - Before Final NW:', oldNW.toLocaleString());
+    console.log('  - After Final NW:', newNW.toLocaleString());
+    console.log('  - Data Changed:', oldNW !== newNW);
     console.log('  - Baseline:', rawData.baseline ? 'exists' : 'null');
     console.log('  - rothConversions:', rawData.average?.rothConversions ?
-        `${rawData.average.rothConversions.amounts?.length || 0} years` : 'missing');
+        `${rawData.average.rothConversions.amounts?.filter(a => a > 0).length} active years` : 'missing');
 }

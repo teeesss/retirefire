@@ -1,7 +1,7 @@
 import Chart from 'chart.js/auto';
 import { config } from '../data/Config.js';
 import { rawData } from '../data/Store.js';
-import { charts } from '../state/ChartStore.js';
+import { charts, destroyChart } from '../state/ChartStore.js';
 import { getSafeCtx, validateData } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
@@ -9,6 +9,7 @@ import { getNetWorthSeries, calculateNetWorth } from '../state/DataUtils.js';
 import { colors, scenarioColors, accountNames } from '../data/Constants.js';
 
 export function initNetWorthChart() {
+    destroyChart('netWorth');
     const ctx = getSafeCtx('chartNetWorth');
     if (!ctx) return;
 
@@ -72,6 +73,7 @@ export function initNetWorthChart() {
 }
 
 export function initSuccessGauge() {
+    destroyChart('successGauge');
     const ctx = getSafeCtx('gaugeSuccess');
     if (!ctx) return;
 
@@ -98,6 +100,7 @@ export function initSuccessGauge() {
 }
 
 export function initAllocationChart() {
+    destroyChart('allocation');
     const ctx = getSafeCtx('chartAllocation');
     if (!ctx) return;
 
@@ -148,6 +151,7 @@ export function initAllocationChart() {
 }
 
 export function initMoneyFlowChart() {
+    destroyChart('moneyFlow');
     const ctx = getSafeCtx('chartMoneyFlow');
     if (!ctx) return;
 
@@ -203,6 +207,7 @@ export function initMoneyFlowChart() {
 }
 
 export function initRealNominalChart() {
+    destroyChart('realNominal');
     const ctx = getSafeCtx('chartRealNominal');
     if (!ctx) return;
     const nominal = getNetWorthSeries(config.currentScenario);
@@ -236,6 +241,7 @@ export function initRealNominalChart() {
 }
 
 export function initStackedPortfolioChart() {
+    destroyChart('stackedPortfolio');
     const ctx = getSafeCtx('chartStackedPortfolio');
     if (!ctx) return;
     const accounts = rawData[config.currentScenario].accounts;

@@ -8,27 +8,40 @@ import RothConfig, { calculateBracketAmount, validateConversionAmount } from './
 export class RothCalculator {
     /**
      * Calculate optimal conversion amount for a given year
+     * @param {number} year - Current simulation year
+     * @param {number} retirementBalance - Balance of tax-deferred accounts
+     * @param {number} ordinaryIncome - Ordinary income before conversion
+     * @param {string} filingStatus - 'single', 'joint', or 'hoh'
+     * @param {Object} overrideConfig - Optional configuration to override global RothConfig
      */
-    static calculateYearlyConversion(year, retirementBalance, ordinaryIncome, filingStatus = 'joint') {
-        if (!RothConfig.enabled) return 0;
-        if (year < RothConfig.startYear || year > RothConfig.endYear) return 0;
+    static calculateYearlyConversion(year, retirementBalance, ordinaryIncome, filingStatus = 'joint', overrideConfig = null) {
+        // Use provided config or fallback to global singleton
+        const activeConfig = overrideConfig || RothConfig;
+
+        if (!activeConfig.enabled) return 0;
+        if (year < activeConfig.startYear || year > activeConfig.endYear) return 0;
         if (retirementBalance <= 0) return 0;
 
         let amount = 0;
 
-        switch (RothConfig.mode) {
+        switch (activeConfig.mode) {
             case 'bracket':
-                amount = calculateBracketAmount(RothConfig.targetBracket, filingStatus, ordinaryIncome);
+                amount = calculateBracketAmount(activeConfig.targetBracket, filingStatus, ordinaryIncome);
                 break;
 
             case 'hybrid':
-                const bracketAmount = calculateBracketAmount(RothConfig.targetBracket, filingStatus, ordinaryIncome);
-                amount = Math.min(bracketAmount, RothConfig.maxAnnualCap || Infinity);
+                const bracketAmount = calculateBracketAmount(activeConfig.targetBracket, filingStatus, ordinaryIncome);
+                amount = Math.min(bracketAmount, activeConfig.maxAnnualCap || Infinity);
                 break;
 
             case 'manual':
             default:
-                amount = RothConfig.manualAmount;
+                // Support both direct amount and manualOverrides map
+                if (activeConfig.manualOverrides && activeConfig.manualOverrides[year] !== undefined) {
+                    amount = activeConfig.manualOverrides[year];
+                } else {
+                    amount = activeConfig.manualAmount || 0;
+                }
                 break;
         }
 
@@ -60,14 +73,14 @@ export class RothCalculator {
         // Simplified marginal tax calculation
         const totalIncome = ordinaryIncome + conversionAmount;
 
-        // 2025 tax brackets (simplified)
+        // 2025 tax brackets (marginal)
         const brackets = [
-            { limit: filingStatus === 'joint' ? 23200 : 11600, rate: 0.10 },
-            { limit: filingStatus === 'joint' ? 94300 : 47150, rate: 0.12 },
-            { limit: filingStatus === 'joint' ? 201050 : 100525, rate: 0.22 },
-            { limit: filingStatus === 'joint' ? 383900 : 191950, rate: 0.24 },
-            { limit: filingStatus === 'joint' ? 487450 : 243725, rate: 0.32 },
-            { limit: filingStatus === 'joint' ? 731200 : 609350, rate: 0.35 },
+            { limit: filingStatus === 'joint' ? 23200 : (filingStatus === 'hoh' ? 16550 : 11600), rate: 0.10 },
+            { limit: filingStatus === 'joint' ? 94300 : (filingStatus === 'hoh' ? 63100 : 47150), rate: 0.12 },
+            { limit: filingStatus === 'joint' ? 201050 : (filingStatus === 'hoh' ? 100500 : 100525), rate: 0.22 },
+            { limit: filingStatus === 'joint' ? 383900 : (filingStatus === 'hoh' ? 191950 : 191950), rate: 0.24 },
+            { limit: filingStatus === 'joint' ? 487450 : (filingStatus === 'hoh' ? 243700 : 243725), rate: 0.32 },
+            { limit: filingStatus === 'joint' ? 731200 : (filingStatus === 'hoh' ? 609350 : 609350), rate: 0.35 },
             { limit: Infinity, rate: 0.37 }
         ];
 

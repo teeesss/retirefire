@@ -22,14 +22,15 @@ export const RothConfig = {
     payTaxesFrom: 'brokerage', // 'brokerage' (outside) or 'traditional' (withheld)
     sourceAccount: 'traditional_ira', // 'traditional_ira' or '401k'
 
-    // Tax Brackets (2025 - Married Filing Jointly)
+    // Tax Brackets (2025 - Simplified)
     brackets: {
-        12: { single: 47025, joint: 94050 },
-        22: { single: 100525, joint: 201050 },
-        24: { single: 191950, joint: 383900 },
-        32: { single: 243725, joint: 487450 },
-        35: { single: 609350, joint: 731200 },
-        37: { single: Infinity, joint: Infinity }
+        10: { single: 11600, joint: 23200, hoh: 16550 },
+        12: { single: 47150, joint: 94300, hoh: 63100 },
+        22: { single: 100525, joint: 201050, hoh: 100500 },
+        24: { single: 191950, joint: 383900, hoh: 191950 },
+        32: { single: 243725, joint: 487450, hoh: 243725 },
+        35: { single: 609350, joint: 731200, hoh: 609350 },
+        37: { single: Infinity, joint: Infinity, hoh: Infinity }
     },
 
     // Optimization Settings
