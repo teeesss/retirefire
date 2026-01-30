@@ -205,11 +205,23 @@ export function updateRothTaxImpactChart() {
 }
 
 export function updateRothExplorerChart() {
+    console.log('📊 updateRothExplorerChart() called');
     const scenario = config.currentScenario || 'average';
-    if (!charts.rothExplorer || !rawData[scenario]) return;
+    console.log('  - Scenario:', scenario);
+    console.log('  - Chart exists:', !!charts.rothExplorer);
+    console.log('  - Data exists:', !!rawData[scenario]);
+
+    if (!charts.rothExplorer || !rawData[scenario]) {
+        console.warn('  - Missing chart or data');
+        return;
+    }
 
     const baselineData = rawData.baseline ? rawData.baseline.netWorth : rawData[scenario].netWorth;
     const rothData = rawData[scenario].netWorth;
+
+    console.log('  - Baseline final NW:', baselineData[baselineData.length - 1]);
+    console.log('  - Roth final NW:', rothData[rothData.length - 1]);
+    console.log('  - Delta:', rothData[rothData.length - 1] - baselineData[baselineData.length - 1]);
 
     // If roth is disabled, baseline and roth are the same
     charts.rothExplorer.data.datasets[0].data = baselineData;
@@ -225,6 +237,7 @@ export function updateRothExplorerChart() {
     }
 
     charts.rothExplorer.update();
+    console.log('  ✅ Chart updated');
 }
 
 export function initWhatIfChart() {

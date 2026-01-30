@@ -19,6 +19,22 @@ export class RothUI {
 
         this.syncUIWithConfig();
         this.attachEventListeners();
+        this.enableTestMode();
+    }
+
+    /**
+     * Enable test mode for manual verification
+     */
+    static enableTestMode() {
+        window.testRothMetrics = () => {
+            console.log('🧪 Manual test triggered');
+            console.log('rawData:', rawData);
+            console.log('baseline:', rawData.baseline);
+            console.log('rothConversions:', rawData.average?.rothConversions);
+            console.log('Calling refreshMetrics()...');
+            this.refreshMetrics();
+        };
+        console.log('✅ Test mode enabled. Call window.testRothMetrics() to test');
     }
 
     /**
@@ -178,22 +194,36 @@ export class RothUI {
     static attachEventListeners() {
         // Strategy mode change
         window.updateRothStrategy = (mode) => {
+            console.log('⚙️  updateRothStrategy() called:', mode);
             RothConfig.mode = mode;
             this.updateStrategyVisibility();
             this.updateStrategyDescription();
+
+            console.log('  - Calling updateRawData()...');
             updateRawData();
+
+            console.log('  - Calling updateDashboard()...');
             if (window.updateDashboard) window.updateDashboard();
+
+            console.log('  - Calling refreshAllCharts()...');
             if (window.refreshAllCharts) window.refreshAllCharts();
+
             if (window.saveToLocalStorage) window.saveToLocalStorage();
 
             // Refresh metrics after recalculation
-            setTimeout(() => this.refreshMetrics(), 200);
+            console.log('  - Scheduling refreshMetrics()...');
+            setTimeout(() => {
+                console.log('  - Calling refreshMetrics() now');
+                this.refreshMetrics();
+            }, 200);
         };
 
         // Bracket change
         window.updateRothTargetBracket = (bracket) => {
+            console.log('⚙️  updateRothTargetBracket() called:', bracket);
             RothConfig.targetBracket = parseInt(bracket);
             this.updateStrategyDescription();
+            console.log('  - Calling updateRawData()...');
             updateRawData();
             if (window.updateDashboard) window.updateDashboard();
             if (window.refreshAllCharts) window.refreshAllCharts();

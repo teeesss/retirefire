@@ -63,13 +63,25 @@ const App = {
 
         // Initialize descriptions and explorers
         setTimeout(() => {
+            console.log('⏰ Init timeout executing');
+            console.log('  - RothUI defined:', typeof RothUI);
+            console.log('  - refreshMetrics defined:', typeof RothUI?.refreshMetrics);
+
             initializeDescriptionsAndTooltips(charts);
             // initializeExplorerSections(); // Disabled to prevent partial duplication (using explicit HTML partials now)
 
             // Refresh Roth metrics after everything is loaded
             if (RothUI && RothUI.refreshMetrics) {
-                console.log('🔄 Initializing Roth metrics...');
-                RothUI.refreshMetrics();
+                try {
+                    console.log('🔄 Calling RothUI.refreshMetrics()...');
+                    RothUI.refreshMetrics();
+                } catch (error) {
+                    console.error('❌ refreshMetrics() error:', error);
+                }
+            } else {
+                console.error('❌ RothUI.refreshMetrics not available');
+                console.error('  - RothUI:', RothUI);
+                console.error('  - RothUI.refreshMetrics:', RothUI?.refreshMetrics);
             }
         }, 1000);
 
@@ -88,6 +100,12 @@ const App = {
         DashboardDetails.showDataTable('summary');
         this.updateYearDisplay();
         this.updateSSDisplay();
+
+        // Refresh Roth metrics after dashboard renders
+        if (RothUI && RothUI.refreshMetrics) {
+            console.log('🔄 Refreshing Roth metrics from renderDashboard()');
+            setTimeout(() => RothUI.refreshMetrics(), 100);
+        }
     },
 
     initAllCharts() {
@@ -252,6 +270,32 @@ window.updateDebtCalculations = () => ExplorerHandler.updateDebtCalculations?.()
 // Roth chart updates
 window.updateRothExplorerChart = () => ExplorerCharts.updateRothExplorerChart?.();
 window.updateRothTaxImpactChart = () => ExplorerCharts.updateRothTaxImpactChart?.();
+
+// Debug function for Roth state
+window.debugRothState = () => {
+    console.log('🔍 Roth Debug State:');
+    console.log('  Config:');
+    console.log('    - Enabled:', config.settings.taxes.rothConversionEnabled);
+    console.log('    - Mode:', RothConfig?.mode);
+    console.log('    - Start:', config.settings.taxes.rothConvStart);
+    console.log('    - End:', config.settings.taxes.rothConvEnd);
+    console.log('  Data:');
+    console.log('    - rawData exists:', !!rawData);
+    console.log('    - baseline exists:', !!rawData.baseline);
+    console.log('    - rothConversions:', rawData.average?.rothConversions);
+    console.log('  UI:');
+    console.log('    - RothUI:', typeof RothUI);
+    console.log('    - refreshMetrics:', typeof RothUI?.refreshMetrics);
+    console.log('  Metrics:');
+    const converted = document.getElementById('rothTotalConverted')?.textContent;
+    const taxPaid = document.getElementById('rothTaxSavings')?.textContent;
+    const nwBoost = document.getElementById('rothLegacyBoost')?.textContent;
+    console.log('    - Converted:', converted);
+    console.log('    - Tax Paid:', taxPaid);
+    console.log('    - NW Boost:', nwBoost);
+};
+console.log('✅ Debug function available: window.debugRothState()');
+
 
 window.openSettings = (section) => SettingsHandler.populateUI();
 window.applySettings = () => SettingsHandler.apply();
