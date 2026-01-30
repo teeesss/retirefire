@@ -12,10 +12,15 @@ export const RothConfig = {
     // Amount Settings
     mode: 'manual', // 'manual', 'bracket', 'hybrid'
     manualAmount: 240808,
+    manualOverrides: {}, // { 2030: 50000, 2031: 75000 }
 
     // Bracket Settings (for bracket mode)
     targetBracket: 22, // 12, 22, 24, 32
     maxAnnualCap: null, // null = no cap, or number for hybrid mode
+
+    // Advanced Strategy Settings
+    payTaxesFrom: 'brokerage', // 'brokerage' (outside) or 'traditional' (withheld)
+    sourceAccount: 'traditional_ira', // 'traditional_ira' or '401k'
 
     // Tax Brackets (2025 - Married Filing Jointly)
     brackets: {

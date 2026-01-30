@@ -10,14 +10,13 @@
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
 > **Recent Fixes**: 📊 Roth Optimizer (Cumulative Tax + Baseline), 🥧 Pie Chart Hover, 🛠️ ESM/CJS Script Refactor
 
-### 🎯 Today's Session (2026-01-30): EPIC-001 Roth Deep Dive 🚀
-|
-**Focus**: Implementation of Advanced Roth Conversion Center (Deep Dive Mode).
-
-**Current Activities**:
-- 🚀 **EPIC-001**: Implementing "Deep Dive" Modal for Roth Strategy.
-- 📊 **Visualization**: Building Tax Bracket Waterfall and Breakeven Charts.
-- 🐛 **Maintenance**: Verifying recent Roth/SS bug fixes.
+### Today's Session:
+- [x] **EPIC-001: Advanced Roth Conversion Center**
+    - [x] Implemented High-Fidelity Modal.
+    - [x] Added Waterfall & Breakeven Charts.
+    - [x] Implemented Editable Multi-Year Table with overrides.
+    - [x] Added Advanced controls for Tax Payment Source & IRA type.
+- [ ] **EPIC-002: Advanced Cash Flow Explorer** (Next Up)
 
 **Recent Fixes**:
 - ✅ **Layout Swap**: Monte Carlo Analysis <-> Financial Goals moved (Row 6 vs Row 8) [US-068].

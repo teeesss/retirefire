@@ -112,7 +112,12 @@ export class RothOptimizer {
         }
 
         // Don't exceed available balance
-        const conversionAmount = Math.min(roomInBracket, balance);
+        let conversionAmount = Math.min(roomInBracket, balance);
+
+        // Apply Manual Overrides if present
+        if (RothConfig.manualOverrides && RothConfig.manualOverrides[year] !== undefined) {
+            conversionAmount = Math.min(RothConfig.manualOverrides[year], balance);
+        }
 
         // Calculate tax impact
         const totalIncome = income + conversionAmount;
@@ -120,9 +125,14 @@ export class RothOptimizer {
         const marginalRate = this.getMarginalRate(totalIncome, filingStatus);
         const effectiveRate = this.getEffectiveRate(totalIncome, filingStatus);
 
+        // Advanced metrics: Net amount reaching the Roth bucket
+        const payTaxesFrom = constraints.payTaxesFrom || 'brokerage';
+        const netToRoth = payTaxesFrom === 'traditional' ? conversionAmount - taxOnConversion : conversionAmount;
+
         return {
             year,
             conversionAmount: Math.round(conversionAmount),
+            netToRoth: Math.round(netToRoth),
             income,
             totalIncome,
             currentBracket,
@@ -131,7 +141,8 @@ export class RothOptimizer {
             effectiveRate,
             taxOnConversion: Math.round(taxOnConversion),
             remainingBalance: balance - conversionAmount,
-            bracketUtilization: (conversionAmount / roomInBracket) * 100
+            bracketUtilization: (conversionAmount / roomInBracket) * 100,
+            taxPaymentSource: payTaxesFrom
         };
     }
 

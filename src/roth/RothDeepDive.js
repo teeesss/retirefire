@@ -20,6 +20,8 @@ export class RothDeepDive {
         // Expose globally
         window.openRothDeepDive = this.open.bind(this);
         window.closeRothDeepDive = this.close.bind(this);
+        window.updateDeepDiveParams = this.updateParams.bind(this);
+        window.handleConversionEdit = this.handleConversionEdit.bind(this);
 
         // Inject modal if missing
         if (!document.getElementById('rothDeepDiveModal')) {
@@ -55,6 +57,39 @@ export class RothDeepDive {
         }
 
         modal.style.display = 'flex';
+        this.syncUItoConfig();
+        this.renderAnalysis();
+    }
+
+    static syncUItoConfig() {
+        // Sync the dropdowns with current RothConfig
+        const bracketSelect = document.getElementById('deepDiveTargetBracket');
+        const taxSourceSelect = document.getElementById('deepDiveTaxSource');
+        const iraSourceSelect = document.getElementById('deepDiveIRASource');
+
+        if (bracketSelect) bracketSelect.value = RothConfig.targetBracket;
+        if (taxSourceSelect) taxSourceSelect.value = RothConfig.payTaxesFrom;
+        if (iraSourceSelect) iraSourceSelect.value = RothConfig.sourceAccount;
+    }
+
+    static updateParams() {
+        const bracketSelect = document.getElementById('deepDiveTargetBracket');
+        const taxSourceSelect = document.getElementById('deepDiveTaxSource');
+        const iraSourceSelect = document.getElementById('deepDiveIRASource');
+
+        if (bracketSelect) RothConfig.targetBracket = Number(bracketSelect.value);
+        if (taxSourceSelect) RothConfig.payTaxesFrom = taxSourceSelect.value;
+        if (iraSourceSelect) RothConfig.sourceAccount = iraSourceSelect.value;
+
+        // Re-render
+        this.renderAnalysis();
+    }
+
+    static handleConversionEdit(year, value) {
+        const amt = Number(value.replace(/[^0-9.-]+/g, ""));
+        if (isNaN(amt)) return;
+
+        RothConfig.manualOverrides[year] = amt;
         this.renderAnalysis();
     }
 
@@ -83,7 +118,10 @@ export class RothDeepDive {
             traditionalBalance: rawData.average.accounts.RetirementSavings,
             filingStatus: config.settings.taxSettings.filingStatus || 'joint',
             targetBracket: RothConfig.targetBracket,
-            constraints: { maxAnnual: RothConfig.maxAnnualCap }
+            constraints: {
+                maxAnnual: RothConfig.maxAnnualCap,
+                payTaxesFrom: RothConfig.payTaxesFrom
+            }
         };
 
         const optimization = RothOptimizer.optimize(params);
@@ -103,6 +141,19 @@ export class RothDeepDive {
 
         // 3. Render Table
         this.renderTable(completeResults);
+
+        // 4. Update Header Metrics
+        this.updateHeaderMetrics(optimization.summary);
+    }
+
+    static updateHeaderMetrics(summary) {
+        const elTotal = document.getElementById('ddMetricTotalConverted');
+        const elTax = document.getElementById('ddMetricTotalTax');
+        const elRate = document.getElementById('ddMetricAvgRate');
+
+        if (elTotal) elTotal.textContent = formatCurrency(summary.totalConverted);
+        if (elTax) elTax.textContent = formatCurrency(summary.totalTaxPaid);
+        if (elRate) elRate.textContent = summary.effectiveTaxRate.toFixed(1) + '%';
     }
 
     static renderWaterfall(yearData, filingStatus) {
@@ -130,16 +181,23 @@ export class RothDeepDive {
                         order: 2
                     },
                     {
-                        label: 'Roth Calculation',
-                        data: timeframe.map(d => d.conversionAmount),
+                        label: 'Amt to Roth',
+                        data: timeframe.map(d => d.netToRoth),
                         backgroundColor: '#10b981',
                         order: 1
+                    },
+                    {
+                        label: 'Tax (Withheld)',
+                        data: timeframe.map(d => d.conversionAmount - d.netToRoth),
+                        backgroundColor: '#ef4444',
+                        order: 1,
+                        hidden: RothConfig.payTaxesFrom === 'brokerage'
                     },
                     {
                         label: 'Bracket Limit',
                         data: timeframe.map(() => bracketLimit),
                         type: 'line',
-                        borderColor: '#ef4444',
+                        borderColor: '#94a3b8',
                         borderDash: [5, 5],
                         pointRadius: 0,
                         fill: false,
@@ -183,19 +241,19 @@ export class RothDeepDive {
 
         let cumTax = 0;
         const taxCurve = yearData.map(d => {
-            cumTax += d.taxCost;
+            cumTax += d.taxOnConversion || 0;
             return cumTax;
         });
 
-        // Heuristic: Estimated Future Savings (assuming significant growth + higher tax later)
-        // Assume money doubles every 10 years (7%)
-        let cumSavings = 0;
+        // Heuristic: Estimated Future Savings (Tax-Free Growth Benefit)
+        // This is a rough visualization of potential future tax avoidance.
+        let cumSavingsValue = 0;
         const savingsCurve = yearData.map((d, i) => {
-            // Rough heuristic: The converted amount would have grown and been taxed at RMD rates.
-            // Let's assume a slightly higher future tax rate (loss aversion) or same rate.
-            // Savings = (Conversion * Growth * FutureRate) - (TaxPaidNow) ? 
-            // Simpler: Just show the raw Cumulative Tax Cost for now, users asked for "Cost Analysis"
-            return d.taxCost; // Placeholder for now, needs real math
+            if (d.conversionAmount > 0) {
+                // Heuristic: Each dollar converted saves ~25 cents in future RMD taxes/growth drag
+                cumSavingsValue += d.conversionAmount * 0.25;
+            }
+            return cumSavingsValue;
         });
 
         this.chartBreakeven = new Chart(ctx, {
@@ -208,6 +266,14 @@ export class RothDeepDive {
                         data: taxCurve,
                         borderColor: '#ef4444',
                         backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Estimated Future Savings (Avoided Tax)',
+                        data: savingsCurve,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         fill: true,
                         tension: 0.4
                     }
@@ -239,17 +305,26 @@ export class RothDeepDive {
 
         tbody.innerHTML = yearData.map(d => {
             const room = Math.max(0, bracketLimit - d.income);
-            const conversionClass = d.conversionAmount > 0 ? 'text-success font-bold' : 'text-muted';
+            const conversionClass = d.conversionAmount > 0 ? 'text-success' : 'text-muted';
+            const displayAmount = d.taxPaymentSource === 'traditional' ? d.netToRoth : d.conversionAmount;
+            const isOverridden = RothConfig.manualOverrides[d.year] !== undefined;
 
             return `
-            <tr>
+            <tr style="${isOverridden ? 'background: rgba(59, 130, 246, 0.05)' : ''}">
                 <td style="text-align: left; color: var(--text-primary); font-weight: 600;">${d.year}</td>
                 <td>${d.age}</td>
-                <td>${formatCurrency(d.income)}</td>
-                <td style="color: var(--text-muted);">${formatCurrency(room)}</td>
-                <td class="${conversionClass}" style="color: ${d.conversionAmount > 0 ? 'var(--success)' : ''}">${formatCurrency(d.conversionAmount)}</td>
-                <td style="color: var(--danger);">${formatCurrency(d.taxCost)}</td>
-                <td>${d.marginalRate}%</td>
+                <td style="color: var(--text-muted); font-size: 0.8rem;">${formatCurrency(d.income)}</td>
+                <td style="color: var(--text-muted); font-size: 0.75rem;">${formatCurrency(room)}</td>
+                <td class="${conversionClass}">
+                    <input type="text" 
+                           value="${isOverridden ? d.conversionAmount : formatCurrency(displayAmount)}" 
+                           onblur="window.handleConversionEdit(${d.year}, this.value)"
+                           onfocus="if(!this.dataset.touched){ this.value = '${d.conversionAmount}'; this.dataset.touched=true; }"
+                           style="width: 100px; text-align: right; background: ${isOverridden ? 'var(--bg-tertiary)' : 'var(--bg-input)'}; color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 5px; font-weight: 700;">
+                    ${d.taxPaymentSource === 'traditional' && d.conversionAmount > 0 ? `<div style="font-size: 0.6rem; color: var(--danger)">+ ${formatCurrency(d.taxOnConversion)} tax</div>` : ''}
+                </td>
+                <td style="color: var(--danger);">${formatCurrency(d.taxOnConversion)}</td>
+                <td style="font-size: 0.8rem;">${d.marginalRate}%</td>
             </tr>
         `}).join('');
     }

@@ -8,6 +8,61 @@
         </div>
 
         <!-- Scrollable Content -->
+        <!-- Controls Bar -->
+        <div
+            style="background: var(--bg-secondary); padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
+            <div class="input-group" style="flex: 0 0 auto;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 4px;">TARGET
+                    BRACKET</label>
+                <select id="deepDiveTargetBracket" onchange="window.updateDeepDiveParams()"
+                    style="background: #fff; color: #000; padding: 5px 10px; border-radius: 4px;">
+                    <option value="12">12%</option>
+                    <option value="22">22%</option>
+                    <option value="24" selected>24%</option>
+                    <option value="32">32%</option>
+                </select>
+            </div>
+            <div class="input-group" style="flex: 0 0 auto;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 4px;">PAY
+                    TAXES FROM</label>
+                <select id="deepDiveTaxSource" onchange="window.updateDeepDiveParams()"
+                    style="background: #fff; color: #000; padding: 5px 10px; border-radius: 4px;">
+                    <option value="brokerage">Brokage/Taxable (Optimal)</option>
+                    <option value="traditional">Withhold from IRAs</option>
+                </select>
+            </div>
+            <div class="input-group" style="flex: 0 0 auto;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 4px;">IRA
+                    SOURCE</label>
+                <select id="deepDiveIRASource" onchange="window.updateDeepDiveParams()"
+                    style="background: #fff; color: #000; padding: 5px 10px; border-radius: 4px;">
+                    <option value="traditional">Traditional IRA</option>
+                    <option value="401k">Active 401k</option>
+                </select>
+            </div>
+
+            <div class="dd-metrics" style="margin-left: auto; display: flex; gap: 40px; align-items: center;">
+                <div class="dd-metric">
+                    <span style="display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 700;">TOTAL
+                        CONVERTED</span>
+                    <span id="ddMetricTotalConverted"
+                        style="font-size: 1.2rem; font-weight: 800; color: var(--success);">$0</span>
+                </div>
+                <div class="dd-metric">
+                    <span style="display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 700;">TOTAL
+                        TAX COST</span>
+                    <span id="ddMetricTotalTax"
+                        style="font-size: 1.2rem; font-weight: 800; color: var(--danger);">$0</span>
+                </div>
+                <div class="dd-metric">
+                    <span style="display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 700;">AVG
+                        RATE</span>
+                    <span id="ddMetricAvgRate"
+                        style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">0%</span>
+                </div>
+            </div>
+        </div>
+
         <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%;">
 
