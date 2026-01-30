@@ -65,7 +65,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
 
         sectionsToTest.forEach(section => {
             it(`should have description for ${section.name}`, async function () {
-                if (shouldSkip) this.skip();
+                if (shouldSkip) return;
                 const sectionExists = await page.$(`#${section.id}`);
                 // ...
 
@@ -96,7 +96,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
         });
 
         it('should have descriptions with proper styling', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const descriptionStyles = await page.evaluate(() => {
                 const descriptions = document.querySelectorAll('.section-description');
                 if (descriptions.length === 0) return null;
@@ -138,7 +138,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
 
         chartsToTest.forEach(chart => {
             it(`should have working hover tooltip on ${chart.name}`, async function () {
-                if (shouldSkip) this.skip();
+                if (shouldSkip) return;
                 const chartCanvas = await page.$(`#${chart.id}`);
 
                 if (!chartCanvas) {
@@ -181,7 +181,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
         });
 
         it('should have tooltip configuration on all Chart.js instances', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const tooltipStatus = await page.evaluate(() => {
                 const chartIds = [
                     'chartNetWorth', 'chartAllocation', 'chartIncome',
@@ -225,7 +225,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
 
     describe('Descriptions and Tooltips Integration', () => {
         it('should initialize descriptions and tooltips on page load', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const initStatus = await page.evaluate(() => {
                 const descriptions = document.querySelectorAll('.section-description');
                 // ...
@@ -261,7 +261,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
         });
 
         it('should have console confirmation messages', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             // Check console for initialization messages
             const consoleLogs = [];
             page.on('console', msg => {
@@ -293,7 +293,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
 
     describe('Accessibility', () => {
         it('should have readable description text', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const readability = await page.evaluate(() => {
                 const descriptions = document.querySelectorAll('.section-description');
                 if (descriptions.length === 0) return null;
@@ -324,7 +324,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
         });
 
         it('should have chart tooltips with proper contrast', async function () {
-            if (shouldSkip) this.skip();
+            if (shouldSkip) return;
             const tooltipColors = await page.evaluate(() => {
                 const chartIds = ['chartNetWorth', 'chartIncome', 'chartExpenses'];
                 const colors = [];

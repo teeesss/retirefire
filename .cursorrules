@@ -2,6 +2,41 @@
 
 ---
 
+## 🚫 NEVER BYPASS CHECKLIST (READ FIRST, EVERY TIME)
+
+> [!CAUTION]
+> **These rules are MANDATORY. Failure to follow them has caused bugs, broken builds, and wasted user time.**
+
+### BEFORE ANY Code Change:
+- [ ] ✅ Check `TASKS.md` - Is this work already done?
+- [ ] ✅ Check `ISSUES.md` - Is this bug already tracked/fixed?
+- [ ] ✅ Run `npm test` - Baseline must pass (231+ tests)
+- [ ] ✅ Run `npm run build` - Build must succeed
+
+### AFTER ANY Code Change:
+- [ ] ✅ Run `npm test` again - No regressions allowed
+- [ ] ✅ Run `npm run build` - Build must still work
+- [ ] ✅ Update `ISSUES.md` if fixing a bug
+- [ ] ✅ Update `TASKS.md` if completing a task
+- [ ] ✅ Commit with descriptive message
+
+### BEFORE Saying "DONE" or "FIXED":
+- [ ] ✅ Provide EVIDENCE (test output, build log, or screenshot)
+- [ ] ✅ Update ALL relevant documentation
+- [ ] ✅ Verify the fix actually works (never assume)
+
+### Documentation Must Be Updated:
+| When you... | Update these files |
+|------------|-------------------|
+| Fix a bug | `ISSUES.md` (mark fixed), `TASKS.md` |
+| Complete a task | `TASKS.md` (mark done) |
+| Add a feature | `TASKS.md`, `README.md` if user-facing |
+| Find a new issue | `ISSUES.md` (add with priority) |
+
+**NEVER claim "fixed" or "complete" without updating documentation.**
+
+---
+
 ## 🚨 CRITICAL SAFETY RULES
 
 ### NEVER RUN These Commands

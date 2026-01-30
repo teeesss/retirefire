@@ -92,36 +92,34 @@
 
 ---
 
-## 🟡 High Priority Issues (Priority 1)
+## 🟡 High Priority Issues (Priority 1) - OUTSTANDING
+
+> [!NOTE]
+> Issues marked ✅ FIXED have been moved to "Recently Fixed" sections above.
 
 | Issue | Description | Impact |
 |-------|-------------|--------|
-| **ISSUE-070** | "What You Need" Gap Calculator non-functional ($0 projected) | ✅ FIXED | Re-implemented `GapCalculator.js` module, restored `initGapCalculator` and integrated into `main.js`. Added unit tests. |
 | **ISSUE-018** | "Compare" button at top doesn't work / seems useless | Remove or implement comparison feature |
 | **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | Update calculator to use current age |
-
-| **ISSUE-026** | Withdrawal Strategy needs account breakdown | Show which accounts withdrawals come from |
 | **ISSUE-029** | Roth Conversion uses same amount per year - unclear where configured | Add clear configuration UI |
 | **ISSUE-030** | Roth Conversion doesn't show which account money comes from | Add account source transparency |
 | **ISSUE-031** | Roth Conversion needs break-even analysis | Implement break-even calculator |
 | **ISSUE-034** | Monte Carlo needs more scenario options | Add spend rate %, market conditions |
 | **ISSUE-035** | Monte Carlo missing historical range options | Add last 10/20/30 years options |
-| **ISSUE-041** | Social Security: Graph shows annual not cumulative | Show cumulative lifetime amounts |
-| **ISSUE-042** | Social Security: Hover should show cumulative lifetime total | Add tooltip with cumulative data |
 | **ISSUE-045** | Roth Conversion: Needs comparison feature | Add comparison (e.g., 100k vs 50k/year) |
-| **ISSUE-047** | Roth Conversion: Software should recommend optimal accounts | Implement smart optimization |
 | **ISSUE-049** | Key Milestones: Should auto-update when changes made | Add reactivity to milestones |
 | **ISSUE-052** | Browse All Metrics: All metrics should be clickable | Make metrics navigate to sections |
 | **ISSUE-053** | Detailed Data Tables: Add Roth Conversion table | Add yearly Roth conversion breakdown |
 | **ISSUE-055** | Detailed Data Tables: Show data for every year | Change from every 2 years to every year |
 | **ISSUE-056** | Detailed Data Tables: Expenses needs tax breakdown | Add Roth conv, 401k withdrawal taxes |
 | **ISSUE-057** | Detailed Data Tables: Taxes needs separate columns | Separate by source (Fed, State, FICA, etc.) |
-| **ISSUE-058** | Mortgage graph stuck at $250k / not paying off | Fix SimulationEngine mortgage logic |
-| **ISSUE-059** | Roth Conversion slider skips numbers / hard to set specific amount | Add number input for precision |
-| **ISSUE-060** | RMDs broken (No graph or data) | Fix RMD calculation and chart |
-| **ISSUE-061** | Roth controls disconnected from Tax/Income views | Wire updates to refresh all charts |
-| **ISSUE-062** | Roth Strategy: Need Combined Bracket + Max Amount caps | Implement logic to respecting both limits |
+| **ISSUE-062** | Roth Strategy: Need Combined Bracket + Max Amount caps | Implement logic respecting both limits |
 | **ISSUE-063** | Gap Years logic broken (No income -> withdrawals) | Fix withdrawal logic for gap years |
+
+**Previously Fixed Issues Removed from this section:**
+- ~~ISSUE-025~~, ~~ISSUE-026~~, ~~ISSUE-041~~, ~~ISSUE-042~~ → Fixed in 2026-01-29 (SS Explorer Sync)
+- ~~ISSUE-058~~, ~~ISSUE-059~~, ~~ISSUE-060~~ → Fixed in 2026-01-24 (Mortgage, Roth, RMD)
+- ~~ISSUE-070~~ → Fixed (Gap Calculator restored)
 
 ---
 
