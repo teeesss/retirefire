@@ -1,6 +1,7 @@
 {
   "name": "retirement-planner-tests",
   "version": "1.0.0",
+  "type": "module",
   "description": "Automated testing for Retirement Planner Pro",
   "scripts": {
     "dev": "vite",
