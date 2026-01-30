@@ -509,6 +509,10 @@ ls *.md
 - ✅ **MCP Workspace Governance (Windows)**: For background agents on Windows, always prefer direct `node.exe` execution for MCP servers over `.cmd` wrappers to avoid path/permission issues. Ensure `--autoConnect` and appropriate `--remote-debugging-port` (default 9222) are used for Chrome tools.
 - ✅ **Cache Management**: Always perform a `Ctrl + F5` (Hard Refresh) or clean `dist` build (`rm -rf dist` on bash or `Remove-Item -Recurse -Force dist` on PS) when UI changes do not appear on the live server, as Vite/DreamHost may serve stale assets.
 - ✅ **Historical Market Patterns**: When implementing stress tests, use the sampling logic in `SimulationEngine.projectPath` with high-fidelity historical data (e.g., `src/data/HistoricalData.js`) to ensure statistical realism beyond standard standard deviation.
+- ✅ **Tax Double-Counting Prevention**: When implementing Roth conversion logic in a simulation, ensure taxes are accounted for exactly once (ideally managed by the centralized tax flow) to avoid "Insufficient Funds" warnings and artificially depressed net worth projections.
+- ✅ **Baseline Scenario Consistency**: `SimulationEngine.run()` must ensure that `baseline` and `average` scenarios are calculated using consistent return rates/scenarios, using the currently selected primary scenario as the base for comparison to ensure "Wealth Boost" calculations are mathematically valid.
+- ✅ **Head of Household (HoH) Scaling**: Always verify that tax-related strategies (like Roth conversions) correctly implement HoH brackets, as they sit between Single and Joint limits. 
+- ✅ **Filing Status Unit Testing**: Every tax-sensitive logic module MUST include specific test cases for "Head of Household" (HoH) filing status to avoid $0-value calculation regressions (LOGIC-081 fixed).
  
 ---
  
@@ -553,6 +557,6 @@ ls *.md
 - **CHART GUARD**: Every chart initialization function MUST use `validateData()` (from `ChartHelpers.js`) to ensure input arrays are populated and non-zero before attempting to render.
 - **ERROR REPORTING**: If data is missing, log a clear `console.error` with the chart ID to make debugging immediate.
 
-**Last Updated**: 2026-01-30 (Grid Balance & ID Governance)  
+**Last Updated**: 2026-01-30 (Roth Fixes & baseline consistency)  
 **Review**: Before every commit  
 **Enforcement**: Mandatory

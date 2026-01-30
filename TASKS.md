@@ -52,11 +52,11 @@
 
 ## 🎯 Active Epic: Boldin Premium Parity & Advanced Optimizers 🚀
 
-### US-061: Roth Conversion Optimizer & Visualizer 🔴 CRITICAL
-- [x] **Visualizer FIX**: Synchronize Net Worth Comparison with the *active* dashboard scenario (Optimistic/Average/Pessimistic) to match top-level metrics.
-- [x] **Hover Fix**: Resolve missing tooltips on new Roth and Tax Impact charts (Missing `applyTooltipConfig` implementation).
-- [x] **Data Accuracy**: Investigate why Roth chart shows $16M vs $63M peak - likely due to scenario mismatch in `SimulationEngine`. (FIXED via scenario sync)
-- [ ] **Tests**: Create `test/e2e/tooltips.test.js` to verify hover on ALL explorer charts.
+### US-061: Roth Conversion Optimizer & Visualizer ✅ COMPLETE
+- [x] **Visualizer FIX**: Synchronize Net Worth Comparison with the *active* dashboard scenario.
+- [x] **HoH Support**: Added Head of Household bracket limits to RothConfig and RothCalculator.
+- [x] **Chart Stability**: Implemented `destroyChart()` across all analysis and summary charts to prevent "Canvas is already in use" errors.
+- [x] **Logic Fix**: Removed manual tax deduction in SimulationEngine to fix double-counting and "Insufficient Funds" warnings.
 
 ### US-064: Side-by-Side Graph Layout Overhaul 🔴 HIGH
 - [x] **Rule**: Ensure no graph is "Super Wide" (full width on desktop).

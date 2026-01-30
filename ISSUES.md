@@ -14,6 +14,7 @@
 
 | **UI-052** | Roth Optimizer shows values but simulation shows $0 for HoH | ✅ FIXED (2026-01-30) | Root cause: `RothConfig.js` and `RothCalculator.js` were missing 'hoh' bracket limits. Manual amounts worked, but bracket-based strategies defaulted to 0. Added full HoH support to both files. |
 | **CHART-004**| "Canvas is already in use" error on dashboard refresh | ✅ FIXED (2026-01-30) | Implemented `destroyChart()` calls in all `init*` functions across `ExplorerCharts.js`, `AnalysisCharts.js`, and `SummaryCharts.js`. Prevents Chart.js collisions during rapid re-initialization. |
+| **LOGIC-081** | Roth conversion tax double-counting and "Insufficient Funds" warnings | ✅ FIXED (2026-01-30) | Fixed bug where tax was deducted both in the annual tax bill AND manually from investments. Removed manual deduction as it's already in the annual flow. Improved reporting to use marginal tax difference for accuracy. |
 | **BUILD-002**| ESM/CJS conflict in build scripts | ✅ FIXED (2026-01-30) | Renamed scripts to `.cjs` to ensure compatibility with Node environment. |
 
 ---

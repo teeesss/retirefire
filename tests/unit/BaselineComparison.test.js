@@ -5,13 +5,16 @@ import { config } from '../../src/data/Config.js';
 describe('SimulationEngine Baseline Comparison', () => {
     beforeEach(() => {
         // Reset config to defaults
+        config.currentScenario = 'average';
         config.settings.taxes.rothConversionEnabled = false;
         config.settings.taxes.rothConversion = 0;
     });
 
-    it('should return null baseline when Roth is disabled', () => {
+    it('should return a valid baseline (same as average) when Roth is disabled', () => {
         const results = SimulationEngine.run();
-        expect(results.baseline).toBeNull();
+        expect(results.baseline).not.toBeNull();
+        // When Roth is disabled and scenario is 'average', baseline and average scenario should be mathematically identical
+        expect(results.baseline.netWorth).toEqual(results.average.netWorth);
     });
 
     it('should return a valid baseline projection when Roth is enabled', () => {

@@ -8,13 +8,14 @@
 > **Tests**: ✅ 230/230 Unit Tests Passing (100% Pass Rate)
 > **Test Suite**: `npm run test:unit`
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-> **Recent Fixes**: 📊 Roth Optimizer (Cumulative Tax + Baseline), 🥧 Pie Chart Hover, 🛠️ ESM/CJS Script Refactor
+> **Recent Fixes**: 📊 Roth Optimizer (HoH Bracket Fix, Double-Tax Fix), 🚀 Chart Stability (Canvas Destruction), 🥧 Pie Chart Hover, 🛠️ ESM/CJS Script Refactor
 
 ### Today's Session:
 - [x] **EPIC-001: Advanced Roth Conversion Center**
     - [x] Implemented High-Fidelity Modal.
-    - [x] Added Waterfall & Breakeven Charts.
-    - [x] Implemented Editable Multi-Year Table with overrides.
+    - [x] Fixed Head of Household (HoH) bracket bug ($0 conversions).
+    - [x] Fixed "Canvas in use" chart re-initialization errors.
+    - [x] Fixed tax double-counting in SimulationEngine.
     - [x] Added Advanced controls for Tax Payment Source & IRA type.
 - [ ] **EPIC-002: Advanced Cash Flow Explorer** (Next Up)
 
@@ -62,7 +63,7 @@
 - ✅ **EXPLORERS**: Resolved Monte Carlo "Never Runs" issue (Fixed missing `SimulationEngine` import). Verified What-If analyzer stability.
 - ✅ **MONTE-CARLO**: Implemented **Historical Stress Tests** (1970s, Dot-com, 1929) and Bootstrapping for more realistic probability analysis.
 - ✅ **SS-UX**: Fixed SS Explorer graphs being static; updated Benefit stats and cumulative comparison logic.
-- ✅ **ROTH**: Fixed Roth Optimizer "0 converted" bug by adding proper Head of Household (hoh) tax bracket support.
+- ✅ **ROTH**: Resolved "0 converted" bug for HoH status and fixed "Insufficient Funds" double-tax deduction. Optimized chart stability with safe destruction.
 - ✅ **MILESTONES**: Dynamically linked milestones to simulation results (Retirement, Mortgage payoff).
 - ✅ **HARDENING**: Added diagnostic logic tests to ensure 100% mathematical accuracy.
 

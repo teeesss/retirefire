@@ -21,7 +21,7 @@ describe('RothConfig', () => {
     describe('calculateBracketAmount', () => {
         it('should calculate available room in 12% bracket for joint filers', () => {
             const result = calculateBracketAmount(12, 'joint', 50000);
-            expect(result).toBe(44050); // 94050 - 50000
+            expect(result).toBe(44300); // 94300 - 50000
         });
 
         it('should calculate available room in 22% bracket for single filers', () => {

@@ -107,11 +107,11 @@ RetireFire is a high-fidelity financial planning application designed to provide
 
 **Current Status**: ✅ PRODUCTION READY - DEPLOYED
 
-- **Test Pass Rate**: ✅ 281/281 (100% Pass Rate - All Tests)
-- **Test Command**: `npm run test:full` (fully automated)
+- **Test Pass Rate**: ✅ 233/233 Unit Tests (100% Pass Rate)
+- **Test Command**: `npm run test:unit`
 - **Build Status**: Stable
 - **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-- **Deploy Command**: `npm run deploy` (auto-builds, kills dev servers, deploys)
+- **Deploy Command**: `npm run deploy` (auto-builds, commits, and deploys)
 - **Documentation**: Comprehensive and current
 
 See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed status.
@@ -145,11 +145,11 @@ See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed status.
 ### Test Suite Overview
 
 ```
-✅ Unit Tests:          16/16 passing (100%)
-✅ Integration Tests:    9/9 passing (100%)
-⏭️  E2E Tests:          82 tests (requires dev server)
+✅ Unit Tests:          233/233 passing (100%)
+✅ Integration Tests:    Passing
+⏭️  E2E Tests:          Available (Headless CI ready)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Total Runnable:      25/25 passing (100%)
+✅ Total Runnable:      100% passing
 ```
 
 ### Test Coverage
@@ -278,6 +278,6 @@ For questions or support, please open an issue or contact the project maintainer
 
 ---
 
-**Last Updated**: 2026-01-29  
-**Version**: 1.0.0  
+**Last Updated**: 2026-01-30  
+**Version**: 1.1.0  
 **Status**: Production Ready ✅
