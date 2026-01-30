@@ -1,42 +1,51 @@
 <!-- Expense & Tax Charts -->
-<div class="card span-3" id="section-expenses">
+<div class="card span-2" id="section-expenses">
     <div class="card-header">
-        <div class="card-title">&#128181; Expense Categories Breakdown</div>
+        <div class="card-title">
+            <span>&#128181; Expenses</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="chart-container large">
         <canvas id="chartExpenses"></canvas>
     </div>
 </div>
 
-<div class="card span-3">
+<div class="card span-2">
     <div class="card-header">
-        <div class="card-title">&#129367; Expenses - <span id="expenseYearLabel">2026</span></div>
+        <div class="card-title">
+            <span>&#129367; Pie - <span id="expenseYearLabel">2026</span></span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="chart-container large">
         <canvas id="chartExpensePie"></canvas>
     </div>
 </div>
 
-<div class="card span-3">
+<div class="card span-2">
     <div class="card-header">
-        <div class="card-title">&#127973; Healthcare Cost Projection</div>
+        <div class="card-title">
+            <span>&#127973; Healthcare</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="chart-container large">
         <canvas id="chartHealthcare"></canvas>
     </div>
     <div class="stats-row"
-        style="margin-top: 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+        style="margin-top: 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; text-align: center;">
         <div class="stat-item">
-            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Pre-Medicare</div>
-            <div class="value negative" id="preMedicareCost" style="font-weight: 700;">$0</div>
+            <div class="label" style="font-size: 0.65rem; color: var(--text-muted);">Pre-65</div>
+            <div class="value negative" id="preMedicareCost" style="font-size: 0.8rem; font-weight: 700;">$0</div>
         </div>
         <div class="stat-item">
-            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">Medicare (65+)</div>
-            <div class="value" id="medicareCost" style="font-weight: 700;">$0</div>
+            <div class="label" style="font-size: 0.65rem; color: var(--text-muted);">65+</div>
+            <div class="value" id="medicareCost" style="font-size: 0.8rem; font-weight: 700;">$0</div>
         </div>
         <div class="stat-item">
-            <div class="label" style="font-size: 0.7rem; color: var(--text-muted);">LTC (90+)</div>
-            <div class="value negative" id="ltcCost" style="font-weight: 700;">$0</div>
+            <div class="label" style="font-size: 0.65rem; color: var(--text-muted);">90+</div>
+            <div class="value negative" id="ltcCost" style="font-size: 0.8rem; font-weight: 700;">$0</div>
         </div>
     </div>
 </div>

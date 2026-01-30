@@ -15,8 +15,10 @@
 | **UI-049** | Dashboard metrics and coach insights are not interactive | ✅ FIXED (2026-01-30) | Added click handlers to dashboard cards and coach insights to enable direct navigation to relevant sections. |
 | **UI-048** | Data tables lack detail and have low granularity (1-year) | ✅ FIXED (2026-01-30) | Updated `DashboardDetails.js` to show yearly data across all tables. Added Roth conversion and Cash Flow tables. Enhanced Tax table with source breakdown. |
 | **CHART-002**| Expense Pie Chart tooltip missing | ✅ FIXED (2026-01-30) | Corrected `interaction` mode and formatting logic in `tooltipConfig.js`. |
+| **CHART-003**| Money Flow Chart appearing empty/missing | ✅ FIXED (2026-01-30) | Root cause: Duplicate `chartMoneyFlow` canvas ID in `dashboard-metrics.html` was hijacking the context from the main grid. Removed duplicate and enabled `validateData()` logging. |
+| **UI-050** | Dashboard layout unbalanced / "horrible" | ✅ FIXED (2026-01-30) | Full overhaul of grid system. Every row now sums to 6 columns using 3-across (span-2) or 2-across (span-3) cards. Balanced all charts including new Gap Calculator. |
+| **UI-051** | Dashboard density too low / charts too spread out | ✅ FIXED (2026-01-30) | Implemented strict 3-across layout with 7-column metrics row. All charts now properly grouped with consistent "Top" buttons and fixed year label alignment. |
 | **BUILD-002**| ESM/CJS conflict in build scripts | ✅ FIXED (2026-01-30) | Renamed scripts to `.cjs` to ensure compatibility with Node environment. |
-| **ROTH-002**| Roth Optimizer limited visualization | ✅ FIXED (2026-01-30) | Added **Cumulative Tax Impact** chart and **Baseline Comparison** path to visualize the "Why" behind conversions. |
 
 ---
 
@@ -94,6 +96,8 @@
 
 | Issue | Description | Impact | Next Steps |
 |-------|-------------|--------|------------|
+| **BUG-005** | Roth Optimizer inputs invalid/ignored | Impact | Validate inputs and fix `RothOptimizer.js` logic. |
+| **BUG-006** | Social Security comparison view lacks active state | Confusion | Add highlighting to active strategy box. |
 
 
 ---

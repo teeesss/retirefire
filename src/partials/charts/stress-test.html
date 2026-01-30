@@ -1,0 +1,31 @@
+<!-- Inflation & Stress Test Explorer -->
+<div class="card span-2" id="section-stresstest">
+    <div class="card-header">
+        <div class="card-title">
+            <span>📉 Inflation & Market Stress</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
+    </div>
+
+    <div class="control-row" style="margin-bottom: 15px; display: flex; gap: 10px;">
+        <select id="stressInflation" class="btn-sm" onchange="runStressTest()" style="flex: 1;">
+            <option value="2.5">Inflation: 2.5% (Avg)</option>
+            <option value="4.0">Inflation: 4.0% (High)</option>
+            <option value="6.0">Inflation: 6.0% (Severe)</option>
+        </select>
+        <select id="stressMarket" class="btn-sm" onchange="runStressTest()" style="flex: 1;">
+            <option value="0">Market: Normal</option>
+            <option value="-0.10">Market: -10% Drop</option>
+            <option value="-0.20">Market: -20% Drop</option>
+        </select>
+    </div>
+
+    <div class="chart-container large">
+        <canvas id="chartStressTest"></canvas>
+    </div>
+
+    <div class="stats-row" style="margin-top: 10px; text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Purchasing Power Remaining (Age 90)</div>
+        <div class="value" id="stressPurchasingPower" style="font-size: 1.1rem; font-weight: 700;">$0</div>
+    </div>
+</div>

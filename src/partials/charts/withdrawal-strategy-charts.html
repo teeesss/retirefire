@@ -1,44 +1,44 @@
 <!-- Withdrawal Strategy Charts -->
-<div class="card span-6" id="section-withdrawals">
+<div class="card span-2" id="section-withdrawals">
     <div class="card-header">
-        <div class="card-title">&#128184; Withdrawal Strategy & Drawdown</div>
+        <div class="card-title">
+            <span>&#128184; Withdrawal Strategy</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="chart-container large">
         <canvas id="chartWithdrawal"></canvas>
     </div>
     <div class="legend"
-        style="display: flex; gap: 15px; justify-content: center; margin-top: 10px; font-size: 0.75rem; flex-wrap: wrap;">
+        style="display: flex; gap: 10px; justify-content: center; margin-top: 10px; font-size: 0.65rem; flex-wrap: wrap;">
         <div class="legend-item"><span class="legend-color"
-                style="background: #3b82f6; width: 10px; height: 10px; display: inline-block; border-radius: 2px; margin-right: 4px;"></span>
-            Social Security</div>
+                style="background: #3b82f6; width: 8px; height: 8px; display: inline-block;"></span> SS</div>
         <div class="legend-item"><span class="legend-color"
-                style="background: #f59e0b; width: 10px; height: 10px; display: inline-block; border-radius: 2px; margin-right: 4px;"></span>
-            Taxable</div>
+                style="background: #f59e0b; width: 8px; height: 8px; display: inline-block;"></span> Taxable</div>
         <div class="legend-item"><span class="legend-color"
-                style="background: #8b5cf6; width: 10px; height: 10px; display: inline-block; border-radius: 2px; margin-right: 4px;"></span>
-            Tax-Deferred</div>
+                style="background: #8b5cf6; width: 8px; height: 8px; display: inline-block;"></span> Deferred</div>
         <div class="legend-item"><span class="legend-color"
-                style="background: #10b981; width: 10px; height: 10px; display: inline-block; border-radius: 2px; margin-right: 4px;"></span>
-            Roth IRA</div>
+                style="background: #10b981; width: 8px; height: 8px; display: inline-block;"></span> Roth</div>
     </div>
 </div>
 
-<div class="card span-6">
+<div class="card span-2">
     <div class="card-header">
-        <div class="card-title">&#128201; Safe Withdrawal Rate Analysis</div>
+        <div class="card-title">
+            <span>&#128201; Safe Withdrawal Rate</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="chart-container large">
         <canvas id="chartSWR"></canvas>
     </div>
-    <div class="legend" style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+    <div class="legend"
+        style="display: flex; gap: 10px; justify-content: center; margin-top: 10px; font-size: 0.65rem;">
         <div class="legend-item"><span class="legend-color"
-                style="background: #10b981; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+                style="background: #10b981; width: 8px; height: 8px; display: inline-block; border-radius: 50%;"></span>
             Your Rate</div>
         <div class="legend-item"><span class="legend-color"
-                style="background: #f59e0b; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+                style="background: #64748b; width: 8px; height: 8px; display: inline-block; border-radius: 50%;"></span>
             4% Rule</div>
-        <div class="legend-item"><span class="legend-color"
-                style="background: #ef4444; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
-            Danger Zone</div>
     </div>
 </div>

@@ -3,16 +3,18 @@ import { TaxCalculator } from './TaxCalculator.js';
 
 export class SimulationEngine {
     static run() {
+        const scenario = config.currentScenario || 'average';
         const optimistic = this.project(config, 'optimistic');
         const average = this.project(config, 'average');
         const pessimistic = this.project(config, 'pessimistic');
 
         // Optional baseline for comparison (Baseline = Roth Disabled)
+        // Uses the CURRENTLY selected scenario to ensure consistency with top metrics (US-061 Fix)
         let baseline = null;
         if (config.settings.taxes.rothConversionEnabled) {
             const baselineConfig = JSON.parse(JSON.stringify(config));
             baselineConfig.settings.taxes.rothConversionEnabled = false;
-            baseline = this.project(baselineConfig, 'average');
+            baseline = this.project(baselineConfig, scenario);
         }
 
         return {

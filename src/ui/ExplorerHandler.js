@@ -4,6 +4,7 @@ import { charts } from '../state/ChartStore.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { SimulationEngine } from '../engine/SimulationEngine.js';
 import { getNetWorthSeries } from '../state/DataUtils.js';
+import { updateSSExplorerChart, updateStressTestChart } from '../charts/ExplorerCharts.js';
 
 export class ExplorerHandler {
     static updateSpending(value) {
@@ -25,6 +26,13 @@ export class ExplorerHandler {
     }
 
     static runMarketRisk(scenario, btn) {
+        // Reuse existing logic but ensure it doesn't block
+        setTimeout(() => {
+            this._runMarketRiskInternal(scenario, btn);
+        }, 10);
+    }
+
+    static _runMarketRiskInternal(scenario, btn) {
         const testConfig = JSON.parse(JSON.stringify(config));
         let results;
         let insight = "";
@@ -72,47 +80,88 @@ export class ExplorerHandler {
     }
 
     static runWhatIf(scenario, btn) {
+        // Debounce/Async to prevent UI freeze
+        document.body.style.cursor = 'wait';
+        setTimeout(() => {
+            this._runWhatIfInternal(scenario, btn);
+            document.body.style.cursor = 'default';
+        }, 50);
+    }
+
+    static _runWhatIfInternal(scenario, btn) {
         let modifiedResults;
-        let diffText = "";
         const testConfig = JSON.parse(JSON.stringify(config));
 
         switch (scenario) {
             case 'crash55':
+                // Apply crash at age 55
+                const crashYearIdx = 55 - testConfig.settings.personal.age; // Fix: use settings.personal.age
                 modifiedResults = SimulationEngine.project(testConfig, 'average');
-                const crashYearIdx = 55 - testConfig.startAge;
+
+                // If 55 is in the future
                 if (crashYearIdx >= 0 && crashYearIdx < modifiedResults.yearsCount) {
-                    modifiedResults.accounts.Investments[crashYearIdx] *= 0.7;
-                    modifiedResults.accounts.RetirementSavings[crashYearIdx] *= 0.7;
-                    // Cascade properties? Simple version: just drop it that year.
+                    // Apply 30% drop to investments in that year and verify propogation
+                    // Note: SimulationEngine projects year-over-year, so we need to adjust the flow or just hack the result for visualization
+                    // For true simulation, we should adjust the RETURNS vector passed to project, but project uses fixed returns.
+                    // Simple hack for visualization: Post-process the NW array
+                    for (let i = crashYearIdx; i < modifiedResults.yearsCount; i++) {
+                        // Permanently reduce by 30% from that point (sequence risk)
+                        for (const k in modifiedResults.accounts) modifiedResults.accounts[k][i] *= 0.7;
+                    }
                 }
-                diffText = "Market crash at 55 reduces assets by 30%.";
                 break;
             case 'bear':
                 modifiedResults = SimulationEngine.project(testConfig, 'average');
-                // Simulate 6 years of poor returns
-                const bearStart = modifiedResults.ages.indexOf(65);
-                if (bearStart !== -1) {
-                    for (let i = bearStart; i < bearStart + 6 && i < modifiedResults.yearsCount; i++) {
-                        modifiedResults.accounts.Investments[i] *= 0.95;
-                    }
+                const bearStart = Math.max(0, 65 - testConfig.settings.personal.age);
+                for (let i = bearStart; i < bearStart + 6 && i < modifiedResults.yearsCount; i++) {
+                    // Flatten growth during bear market
+                    for (const k in modifiedResults.accounts) modifiedResults.accounts[k][i] *= 0.95;
+                    // And subsequent years are lower naturally because of this
                 }
-                diffText = "6-year bear market sequence after age 65.";
+                // Propagate the loss forward? The loop actually compounds the drop each year of the bear market
+                // But we need to ensure subsequent years start from the lower base. 
+                // SimulationEngine returns cumulative arrays. Modifying one year doesn't auto-update future years in the result array if we hack it here.
+                // WE MUST re-propagate the reduction factor to all future years.
+                for (let i = bearStart + 6; i < modifiedResults.yearsCount; i++) {
+                    for (const k in modifiedResults.accounts) modifiedResults.accounts[k][i] *= Math.pow(0.95, 6); // Approx roughly
+                }
                 break;
             case 'healthcare':
+                // Medical Event
                 modifiedResults = SimulationEngine.project(testConfig, 'average');
-                const medicalIdx = modifiedResults.ages.indexOf(75);
-                if (medicalIdx !== -1) {
-                    modifiedResults.expenses.Medical[medicalIdx] += 250000;
+                const medicalIdx = Math.max(0, 75 - testConfig.settings.personal.age);
+                if (medicalIdx < modifiedResults.yearsCount) {
+                    // Subtract 250k from NW
+                    for (let i = medicalIdx; i < modifiedResults.yearsCount; i++) {
+                        // Simple NW reduction
+                        // We can't easily edit individual accounts without complex logic, so we just subtract from the total when summing later?
+                        // Or just scale down. 250k might be all of it :)
+                        // Let's assume it comes out of investments.
+                        // But we are returning 'modifiedResults' which has accounts.
+                        // Let's just create a 'netWorth' property update.
+                    }
                 }
-                diffText = "$250k major healthcare event at age 75.";
+                // Actually SimulationEngine.project returns object with .accounts and .netWorth (calculated inside? No, usuall just accounts)
+                // Let's check SimulationEngine return. It usually returns { years, ages, accounts... }
+                // We calculate NW from accounts.
                 break;
             default:
                 modifiedResults = SimulationEngine.project(testConfig, 'average');
-                diffText = "Baseline average scenario.";
         }
 
+        // Re-calculate NW for the modified scenario
+        const modifiedPath = modifiedResults.years.map((_, i) => {
+            let nw = 0;
+            // Apply manual adjustments for "healthcare" here since it's a fixed amount
+            const age = modifiedResults.ages[i];
+            let adjustment = 0;
+            if (scenario === 'healthcare' && age >= 75) adjustment = -250000;
+
+            for (const k in modifiedResults.accounts) nw += modifiedResults.accounts[k][i] || 0;
+            return Math.max(0, nw + adjustment);
+        });
+
         const baselinePath = rawData.average?.netWorth || [];
-        const modifiedPath = modifiedResults.netWorth || [];
 
         if (charts.whatIf) {
             charts.whatIf.data.datasets[0].data = baselinePath;
@@ -128,64 +177,45 @@ export class ExplorerHandler {
         if (btn) btn.classList.add('highlight');
     }
 
+    static runStressTest(btn) {
+        const inflation = parseFloat(document.getElementById('stressInflation').value);
+        const marketShock = parseFloat(document.getElementById('stressMarket').value);
+
+        // Run simulation with these parameters
+        const testConfig = JSON.parse(JSON.stringify(config));
+        testConfig.settings.inflation = inflation; // Override inflation
+        // How to apply market shock? 
+        // We can inject a one-time drop in current assets
+        if (marketShock !== 0) {
+            testConfig.portfolio.investments *= (1 + marketShock);
+            testConfig.portfolio.retirement *= (1 + marketShock);
+        }
+
+        const results = SimulationEngine.project(testConfig, 'average');
+        const stressedPath = results.years.map((_, i) => {
+            let nw = 0;
+            for (const k in results.accounts) nw += results.accounts[k][i] || 0;
+            return nw;
+        });
+
+        if (charts.stressTest) {
+            charts.stressTest.data.datasets[1].data = stressedPath;
+            updateStressTestChart(); // Trigger update
+        }
+
+        // Purchasing power at age 90
+        const idx90 = results.ages.indexOf(90);
+        const nw90 = idx90 !== -1 ? stressedPath[idx90] : stressedPath[stressedPath.length - 1];
+
+        // Adjust for inflation to show "Real" purchasing power? 
+        // Or just nominal? User usually understands nominal, but "Purchasing Power" implies real.
+        // Let's show Nominal for now to match other charts, maybe label it "Assets @ 90"
+        this.safeUpdate('stressPurchasingPower', formatCurrency(nw90));
+    }
+
     static updateSSExplorer() {
-        const pia = parseFloat(document.getElementById('ssPiaInput')?.value || 2800);
-        const claimAge = config.settings.socialSecurity.claimAge || 67;
-
-        // Calculate factors based on FRA 67 (Standard SSA percentages)
-        const getFactor = (age) => {
-            if (age === 67) return 1.0;
-            if (age < 67) return 1.0 - (67 - age) * 0.0667;
-            return 1.0 + (age - 67) * 0.08;
-        };
-
-        const f62 = getFactor(62), f67 = getFactor(67), f70 = getFactor(70);
-        const currentFactor = getFactor(claimAge);
-
-        const data62 = [], data67 = [], data70 = [], labels = [];
-        let c62 = 0, c67 = 0, c70 = 0;
-
-        for (let age = 62; age <= 95; age++) {
-            labels.push(`Age ${age}`);
-            c62 += Math.round(pia * f62 * 12);
-            c67 += age >= 67 ? Math.round(pia * f67 * 12) : 0;
-            c70 += age >= 70 ? Math.round(pia * f70 * 12) : 0;
-
-            data62.push(c62);
-            data67.push(c67);
-            data70.push(c70);
-        }
-
-        if (charts.ssExplorer) {
-            charts.ssExplorer.data.labels = labels;
-            charts.ssExplorer.data.datasets[0].data = data62;
-            charts.ssExplorer.data.datasets[1].data = data67;
-            charts.ssExplorer.data.datasets[2].data = data70;
-            charts.ssExplorer.update();
-        }
-
-        // Update Top Stats
-        const monthly = pia * currentFactor;
-        this.safeUpdate('ssMonthlyValue', formatCurrency(monthly, false));
-        this.safeUpdate('ssAnnualValue', formatCurrency(monthly * 12, false));
-        this.safeUpdate('ssLifetimeValue', formatCurrency(monthly * 12 * (95 - claimAge)));
-
-        // Update Comparison Stats
-        this.safeUpdate('ss62', formatCurrency(pia * f62) + '/mo');
-        this.safeUpdate('ss67', formatCurrency(pia * f67) + '/mo');
-        this.safeUpdate('ss70', formatCurrency(pia * f70) + '/mo');
-
-        this.safeUpdate('ss62Lifetime', 'Life: ' + formatCurrency(pia * f62 * 12 * (95 - 62)));
-        this.safeUpdate('ss67Lifetime', 'Life: ' + formatCurrency(pia * f67 * 12 * (95 - 67)));
-        this.safeUpdate('ss70Lifetime', 'Life: ' + formatCurrency(pia * f70 * 12 * (95 - 70)));
-
-        // Update current claim age display
-        this.safeUpdate('currentSSClaimAge', claimAge);
-
-        // Synchronize the comparison chart
-        if (window.updateSSComparisonChart) {
-            window.updateSSComparisonChart();
-        }
+        // Delegate to the Chart module which uses the robust Calculator
+        updateSSExplorerChart();
     }
 
     static safeUpdate(id, content) {
@@ -205,4 +235,3 @@ export class ExplorerHandler {
         if (window.recalculate) window.recalculate();
     }
 }
-

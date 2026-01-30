@@ -23,3 +23,18 @@ export const chartColors = {
     other: '#6b7280',
     debt: '#ef4444'
 };
+
+/**
+ * Validates data for a chart. Returns true if data is valid.
+ */
+export function validateData(data, label = 'Chart') {
+    if (!data || data.length === 0) {
+        console.warn(`[${label}] No data provided.`);
+        return false;
+    }
+    if (data.every(v => v === 0 || v === null || v === undefined)) {
+        console.warn(`[${label}] All data points are zero or null.`);
+        return false;
+    }
+    return true;
+}

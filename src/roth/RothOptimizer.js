@@ -33,6 +33,9 @@ export class RothOptimizer {
             constraints = {}
         } = params;
 
+        // Validate and normalize target bracket
+        const validatedBracket = this.validateBracket(targetBracket);
+
         const results = [];
         let totalConverted = 0;
         let totalTaxPaid = 0;
@@ -64,7 +67,7 @@ export class RothOptimizer {
                 income,
                 balance,
                 filingStatus,
-                targetBracket,
+                targetBracket: validatedBracket,
                 constraints
             });
 
@@ -249,6 +252,30 @@ export class RothOptimizer {
         };
 
         return brackets[filingStatus] || brackets.joint;
+    }
+
+    /**
+     * Validate and normalize tax bracket input
+     */
+    static validateBracket(inputBracket) {
+        // defined keys in getBracketLimit are integers: 10, 12, 22, 24, 32, 35, 37
+        const validBrackets = [10, 12, 22, 24, 32, 35, 37];
+
+        // Handle percentage inputs (e.g. 0.22 -> 22)
+        let bracket = Number(inputBracket);
+        if (bracket < 1 && bracket > 0) {
+            bracket = Math.round(bracket * 100);
+        }
+
+        // If valid, return it
+        if (validBrackets.includes(bracket)) {
+            return bracket;
+        }
+
+        // Find nearest valid bracket
+        return validBrackets.reduce((prev, curr) => {
+            return (Math.abs(curr - bracket) < Math.abs(prev - bracket) ? curr : prev);
+        });
     }
 
     /**

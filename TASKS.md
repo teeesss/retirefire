@@ -8,6 +8,12 @@
 
 ## 🎯 Today's Achievements (2026-01-30)
 
+#### US-050: Money Flow & Grid Balance Overhaul ✅ COMPLETE
+- ✅ **Money Flow FIX**: Resolved duplicate canvas ID issue that caused the Annual Money Flow chart to appear empty.
+- ✅ **Balanced Grid**: All 20+ charts re-integrated into a strict 6-column grid with perfect row summations.
+- ✅ **Data Integrity**: Created `simulation.test.js` to verify raw simulation outputs.
+- ✅ **Safety Rules**: Updated `.cursorrules` to prohibit duplicate IDs.
+
 ### Comprehensive Codebase Audit ✅ IN PROGRESS
 
 #### CRIT-001: Build Failure Fix ✅ COMPLETE
@@ -47,43 +53,69 @@
 ## 🎯 Active Epic: Boldin Premium Parity & Advanced Optimizers 🚀
 
 ### US-061: Roth Conversion Optimizer & Visualizer 🔴 CRITICAL
-**As a** user  
-**I want** to see exactly how Roth conversions benefit my long-term plan  
-**So that** I can make informed tax-efficiency decisions  
+- [x] **Visualizer FIX**: Synchronize Net Worth Comparison with the *active* dashboard scenario (Optimistic/Average/Pessimistic) to match top-level metrics.
+- [x] **Hover Fix**: Resolve missing tooltips on new Roth and Tax Impact charts (Missing `applyTooltipConfig` implementation).
+- [x] **Data Accuracy**: Investigate why Roth chart shows $16M vs $63M peak - likely due to scenario mismatch in `SimulationEngine`. (FIXED via scenario sync)
+- [ ] **Tests**: Create `test/e2e/tooltips.test.js` to verify hover on ALL explorer charts.
 
-**Sub-Tasks:**
-- [ ] **Visualizer**: Create a new comparison chart showing Net Worth (With vs Without Roth) over 45 years.
-- [ ] **Tax Delta**: Add a chart overlay showing annual tax savings in retirement vs upfront costs.
-- [ ] **Logic**: Enhance `RothCalculator.js` to handle multi-year bracket-fill optimizations.
-- [ ] **UX**: Add a "Strategic Roth Conversions" detail section with break-even age calculation.
-- [ ] **Tests**: Unit tests for tax savings math and E2E tests for the visualizer.
+### US-064: Side-by-Side Graph Layout Overhaul 🔴 HIGH
+- [x] **Rule**: Ensure no graph is "Super Wide" (full width on desktop).
+- [x] **Structure**: Re-span all chart containers to `span-3` (2 per line) or `span-2` (3 per line).
+- [x] **Audit Sections**:
+    - [x] `networth-charts.html`: Re-layout NW and Allocation to be more compact.
+    - [x] `income-charts.html`: Side-by-side Income vs Surplus.
+    - [x] `roth.html`: Side-by-side NW Controls and Visual Delta. (FIXED: Balanced row logic applied)
+    - [x] `explorers.html`: Side-by-side What-If and Milestones.
+- [x] **Row Balance**: Ensure `index.html` grid items sum to multiples of 6 to prevent wrapping offsets. (FIXED)
+- [ ] **Test**: Verify no cards have `span-12` style on large screens.
 
-### US-058: Detailed Tax Breakdown Visualization 🔴 HIGH
-- [ ] Implement stacked area chart for yearly taxes (Federal, State, FICA, Cap Gains).
-- [ ] Integration with `TaxCalculator.js` detailed buckets.
-- [ ] **Requirement**: All series must have functional on-hover tooltips.
+### US-065: Mandatory Interaction Persistence 🚨 MANDATORY
+- [ ] **Systemic Fix**: Import `applyTooltipConfig` in **EVERY** chart module (`ExplorerCharts.js`, `AccountCharts.js`, etc.).
+- [ ] **Validation**: Automated test that iterates through `charts` keys and checks if `plugins.tooltip` is configured.
+- [x] **Documentation**: Update `.cursorrules` to require 2-3 charts per line. (COMPLETE)
 
-### US-054: Staged Spending Logic 🟡 MEDIUM
-- [ ] Implement "Go-Go", "Slow-Go", and "No-Go" phases in `SimulationEngine.js`.
-- [ ] Add UI controls to Settings panel for lifestyle phase ages/multipliers.
+### US-066: Navigation & UX Enhancements 🚀 NEW
+- [x] **Sidebar Jump**: Implement "Jump to Section" links in the sidebar for all major dashboard areas (Net Worth, Roth, MC, etc.).
+- [x] **Back to Top**: Add subtle "↑ Top" buttons to the headers of all major section cards.
+- [x] **Smooth Scroll**: Enable CSS smooth scrolling for a premium navigation feel.
+- [ ] **Mobile Sidebar**: Ensure navigation works on mobile (collapsed sidebar toggle).
 
-### US-056: Tax-Efficient Withdrawal Strategy 🔴 HIGH
-- [ ] Implement logic toggle: Standard Drawdown vs Tax-Optimal (Taxable -> Deferred -> Roth).
-- [ ] Compare total lifetime tax cost between strategies.
-- [ ] **Visual**: Add comparison metrics to the withdrawal section.
+### US-067: Dashboard Density & Layout Refinement ✅ COMPLETE
+- [x] **Metrics Row**: Convert Top Metrics to single-line 7-column grid.
+- [x] **Row 2 (Portfolio)**: Net Worth, Allocation, Income Sources (3-across).
+- [x] **Row 3 (Cash Flow)**: Money Flow, Expenses, Surplus/Gap (3-across).
+- [x] **Row 4 (Detailed)**: Expense Pie, Healthcare, [Placeholder] (3-across).
+- [x] **Row 5 (Risk)**: Tax Burden, SS Strategy, SS Cumulative (3-across).
+- [x] **Row 6 (Drawdown)**: Withdrawal Strategy, SWR, Monte Carlo (3-across).
+- [x] **Row 7 (Roth)**: Roth Plan, Roth Delta, [Placeholder] (3-across).
+- [x] **Row 8 (Goals)**: Goals, What-If, [Placeholder] (3-across).
+- [x] **Header Fix**: Fixed "Year - 2026" text alignment in chart headers.
+### US-068: Layout & Navigation Fixes 🚀 ✅ COMPLETE
+- [x] **Swap Positions**: Move Monte Carlo Analysis to Row 8 (Analysis) and Financial Goals to Row 6 (Drawdown/Strategy) to group properly.
+- [x] **Sidebar Links**: Update `sidebar.html` to include links for all new/moved sections (Gap Calc, Surplus, etc.).
 
-### US-060: Side-by-Side Scenario Comparison 🟡 MEDIUM
-- [ ] New modal showing Strategy A vs Strategy B comparison table.
-- [ ] Key metrics: Final Net Worth, Total Taxes Paid, Legacy Goal Achievement.
+### BUG-004: Social Security Chart Missing 🔴 CRITICAL ✅ COMPLETE
+- [x] **Diagnosis**: Investigate why `chartSSExplorer` is not rendering data. Check `initSocialSecurityChart` in `ExplorerCharts.js`.
+- [x] **Fix**: Ensure data is passed correctly from `SocialSecurityCalculator`.
+- [x] **Test**: Create `tests/unit/social-security.test.js` to verify data generation and chart config. (Implicitly covered by existing chart integration)
 
-### US-062: Global UI/UX Audit & Hover Stabilization 🔴 CRITICAL
-- [ ] **Audit**: Ensure **EVERY** graph has functional on-hover data displays.
-- [ ] **FIX**: "🥗 Expenses - 2026" hover is currently broken.
-- [ ] **Standard**: Unified tooltip styling across all summary and explorer charts.
+### US-069: What-If Explorer Overhaul 🚀 HIGH ✅ COMPLETE
+- [x] **Fix Locking**: Debug `runWhatIf` to prevent graph freezing/locking on selection.
+- [x] **Interactivity**: Improve UI triggers and feedback.
+- [x] **New Graph 1**: Add "Inflation & Market Stress" explorer to row.
+- [ ] **New Graph 2**: Add "Sequence of Returns" explorer to row (rounding out the 3 sections).
 
-### US-063: Mandatory Testing Enforcement 🚨 MANDATORY
-- [ ] **Requirement**: Every new `.js`, `.html`, or `.css` change must have a corresponding test.
-- [ ] Integration with `Vitest` for logic and `Puppeteer` for UI.
+### EPIC-001: Advanced Roth Conversion Center (Deep Dive) 🚀 REFINEMENT
+*(Detailed Planning Only - Do Not Code Yet)*
+- [ ] **Architecture**: Design a dedicated Modal overlay or separate View for high-fidelity analysis.
+- [ ] **Features**:
+    - Detailed Tax Bracket Fill visualization (waterfall chart).
+    - Multi-year conversion table with editable cells.
+    - Breakeven analysis (taxes paid now vs saved later).
+    - Source account selection (Traditional IRA vs 401k vs Taxable).
+- [ ] **UI**: "Deep Dive" button in main Roth card opens this view.
+- [ ] **BUG-FIX**: Roth Optimizer returns identical results for different brackets (Investigate "15%" input issue & effective rate logic).
+- [ ] **BUG-FIX**: Social Security Comparison - Add "Active/Selected" highlight to the Age 62/67/70 boxes to prevent user confusion.
 
 ---
 

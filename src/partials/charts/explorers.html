@@ -1,69 +1,46 @@
-﻿<!-- Explorer Sections -->
-<div class="card span-6" id="section-whatif">
+﻿<!-- What-If Scenario Explorer -->
+<div class="card span-2" id="section-whatif">
     <div class="card-header">
-        <div class="card-title">&#128300; What-If Scenario Explorer</div>
+        <div class="card-title">
+            <span>&#128300; What-If Scenario Explorer</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="explorer-grid"
-        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px;">
+        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px;">
         <button class="explorer-card" onclick="runWhatIf('crash55', this)"
-            style="padding: 15px; background: rgba(0,0,0,0.03); border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid transparent; width: 100%;">
-            <span class="explorer-icon" style="font-size: 1.5rem; display: block;">&#128201;</span>
-            <strong style="display: block; color: var(--text-primary); margin-top: 8px;">Market Crash</strong>
-            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">-30% at Age 55</span>
+            style="padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px; cursor: pointer; border: 1px solid transparent;">
+            <strong style="display: block; font-size: 0.8rem;">Market Crash</strong>
         </button>
         <button class="explorer-card" onclick="runWhatIf('bear', this)"
-            style="padding: 15px; background: rgba(0,0,0,0.03); border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid transparent; width: 100%;">
-            <span class="explorer-icon" style="font-size: 1.5rem; display: block;">&#128330;</span>
-            <strong style="display: block; color: var(--text-primary); margin-top: 8px;">Bear Market</strong>
-            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">6-Year Bear Run</span>
+            style="padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px; cursor: pointer; border: 1px solid transparent;">
+            <strong style="display: block; font-size: 0.8rem;">Bear Market</strong>
         </button>
         <button class="explorer-card" onclick="runWhatIf('healthcare', this)"
-            style="padding: 15px; background: rgba(0,0,0,0.03); border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid transparent; width: 100%;">
-            <span class="explorer-icon" style="font-size: 1.5rem; display: block;">&#127968;</span>
-            <strong style="display: block; color: var(--text-primary); margin-top: 8px;">Medical Event</strong>
-            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">$250k at Age 75</span>
+            style="padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px; cursor: pointer; border: 1px solid transparent;">
+            <strong style="display: block; font-size: 0.8rem;">Medical Event</strong>
         </button>
         <button class="explorer-card highlight" onclick="runWhatIf('baseline', this)"
-            style="padding: 15px; background: var(--bg-hover); border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid var(--primary); width: 100%;">
-            <span class="explorer-icon" style="font-size: 1.5rem; display: block;">&#9989;</span>
-            <strong style="display: block; color: var(--text-primary); margin-top: 8px;">Reset Strategy</strong>
-            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Return to Baseline</span>
+            style="padding: 10px; background: var(--bg-hover); border-radius: 8px; cursor: pointer; border: 1px solid var(--primary);">
+            <strong style="display: block; font-size: 0.8rem;">Reset</strong>
         </button>
     </div>
-    <div class="chart-container large" style="margin-top: 20px;">
+    <div class="chart-container large" style="margin-top: 15px;">
         <canvas id="chartWhatIf"></canvas>
     </div>
     <div class="stats-row"
-        style="margin-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+        style="margin-top: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
         <div class="stat-item">
-            <div class="label" style="font-size: 0.7rem;">Final Net Worth</div>
-            <div class="value" id="whatIfNW95">$0</div>
+            <div class="label" style="font-size: 0.65rem;">Final NW</div>
+            <div class="value" id="whatIfNW95" style="font-size: 0.9rem;">$0</div>
         </div>
         <div class="stat-item">
-            <div class="label" style="font-size: 0.7rem;">Success Chance</div>
-            <div class="value" id="whatIfSuccess">100%</div>
+            <div class="label" style="font-size: 0.65rem;">Success</div>
+            <div class="value" id="whatIfSuccess" style="font-size: 0.9rem;">100%</div>
         </div>
         <div class="stat-item">
-            <div class="label" style="font-size: 0.7rem;">Legacy Goal</div>
-            <div class="value" id="whatIfLegacy">Yes</div>
+            <div class="label" style="font-size: 0.65rem;">Legacy</div>
+            <div class="value" id="whatIfLegacy" style="font-size: 0.9rem;">Yes</div>
         </div>
-    </div>
-</div>
-
-<div class="card span-3" id="section-milestones">
-    <div class="card-header">
-        <div class="card-title">&#127942; Financial Milestones</div>
-    </div>
-    <div class="milestone-timeline" id="milestoneList">
-        <!-- Populated by JS -->
-    </div>
-</div>
-
-<div class="card span-3" id="section-goals">
-    <div class="card-header">
-        <div class="card-title">&#127919; Financial Goals</div>
-    </div>
-    <div class="goals-container" id="goalsList">
-        <!-- Populated by JS -->
     </div>
 </div>

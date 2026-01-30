@@ -1,0 +1,62 @@
+
+> retirement-planner-tests@1.0.0 test:unit
+> vitest run tests/unit tests/unit/RothOptimizer.test.js
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90m/mnt/c/projects/RetirementCalc-BasedOfBoldin[39m
+
+ [31mΓ¥»[39m tests/unit/RothOptimizer.test.js [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 10[2mms[22m[39m
+     [32mΓ£ô[39m should optimize correctly for a valid tax bracket (22%)[32m 2[2mms[22m[39m
+     [32mΓ£ô[39m should optimize correctly for a higher tax bracket (24%)[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m should snap invalid legacy brackets (e.g., 15%) to nearest valid bracket (12%)[39m[32m 5[2mms[22m[39m
+     [32mΓ£ô[39m should handle small brackets input as percentages (e.g. 0.22 vs 22)[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/build-validation.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 170[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/roth.test.js [2m([22m[2m37 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+[90mstdout[2m | tests/unit/MonteCarlo.test.js[2m > [22m[2mMonte Carlo Logic[2m > [22m[2mshould generate valid statistical results
+[22m[39mDEBUG: MC Last Median: [33m124869312.22582728[39m
+
+ [32mΓ£ô[39m tests/unit/Integration.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/MonteCarlo.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/simulation.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstdout[2m | tests/unit/Diagnostic.test.js[2m > [22m[2mApplication Logic Diagnostics[2m > [22m[2mshould have a working SimulationEngine
+[22m[39mDIAG: Final NW (Avg): $13.33M
+
+ [32mΓ£ô[39m tests/unit/Formatters.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+[90mstdout[2m | tests/unit/Diagnostic.test.js[2m > [22m[2mApplication Logic Diagnostics[2m > [22m[2mshould have working Monte Carlo logic
+[22m[39mDIAG: MC Success Rate: 100.0%
+
+ [32mΓ£ô[39m tests/unit/Diagnostic.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/BaselineComparison.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+[90mstdout[2m | tests/unit/text-validation.test.js
+[22m[39mScanning 117 files for corrupted text...
+
+ [32mΓ£ô[39m tests/unit/SurplusGap.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/text-validation.test.js [2m([22m[2m117 tests[22m[2m)[22m[33m 449[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/TaxCalculator.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/SimulationEngine.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/HousingDownsize.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/SettingsHandler.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/GapCalculator.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/EventsHandler.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/ExplorerHandler.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  tests/unit/RothOptimizer.test.js > RothOptimizer > should snap invalid legacy brackets (e.g., 15%) to nearest valid bracket (12%)
+AssertionError: expected 0 to be greater than 0
+ Γ¥» tests/unit/RothOptimizer.test.js:49:49
+     47|         // If validation works, 15 should behave exactly like 12
+     48|         expect(result15.summary.totalConverted).toBe(result12.summary.ΓÇª
+     49|         expect(result15.summary.totalConverted).toBeGreaterThan(0);
+       |                                                 ^
+     50|     });
+     51| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (18)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m223 passed[39m[22m[90m (224)[39m
+[2m   Start at [22m 11:08:49
+[2m   Duration [22m 16.03s[2m (transform 1.39s, setup 0ms, import 5.74s, tests 920ms, environment 51.54s)[22m
+

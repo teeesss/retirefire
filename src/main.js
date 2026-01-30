@@ -62,7 +62,7 @@ const App = {
         // Initialize descriptions and explorers
         setTimeout(() => {
             initializeDescriptionsAndTooltips(charts);
-            initializeExplorerSections();
+            // initializeExplorerSections(); // Disabled to prevent partial duplication (using explicit HTML partials now)
         }, 1000);
 
         // Auto-save every 30 seconds
@@ -226,6 +226,7 @@ window.updateSpendingSlider = (val) => ExplorerHandler.updateSpending(val);
 window.setScenario = (sc) => { config.currentScenario = sc; window.recalculate(); };
 window.runMarketRisk = (sc, btn) => ExplorerHandler.runMarketRisk(sc, btn);
 window.runWhatIf = (sc, btn) => ExplorerHandler.runWhatIf(sc, btn);
+window.runStressTest = () => ExplorerHandler.runStressTest();
 window.runMonteCarloSimulation = () => App.runMonteCarloSimulation();
 window.setSSClaimAge = (age, btn) => ExplorerHandler.setSSClaimAge?.(age, btn);
 window.updateSSExplorer = () => ExplorerHandler.updateSSExplorer();

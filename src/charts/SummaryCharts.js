@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 import { config } from '../data/Config.js';
 import { rawData } from '../data/Store.js';
 import { charts } from '../state/ChartStore.js';
-import { getSafeCtx } from './ChartHelpers.js';
+import { getSafeCtx, validateData } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { getNetWorthSeries, calculateNetWorth } from '../state/DataUtils.js';
@@ -161,6 +161,10 @@ export function initMoneyFlowChart() {
     const expenses = [];
     const savings = [];
 
+    console.log(`📊 Initializing Money Flow Chart [Scenario: ${config.currentScenario}]`);
+    console.log(`   - Data structure: ${data ? 'OK' : 'MISSING'}`);
+    console.log(`   - Income categories: ${Object.keys(data.income || {}).join(', ')}`);
+
     for (let i = 0; i < yearCount; i++) {
         const inc = (data.income?.Work?.[i] || 0) + (data.income?.SocialSecurity?.[i] || 0) + (data.income?.Drawdown?.[i] || 0) + (data.income?.RMD?.[i] || 0);
         const tax = (data.taxes?.Federal?.[i] || 0) + (data.taxes?.FICA?.[i] || 0) + (data.taxes?.CapGains?.[i] || 0) + (data.taxes?.State?.[i] || 0);
@@ -172,6 +176,10 @@ export function initMoneyFlowChart() {
         taxes.push(tax);
         expenses.push(exp);
         savings.push(Math.max(0, surplus));
+    }
+
+    if (!validateData(taxes, 'Money Flow Taxes') && !validateData(expenses, 'Money Flow Expenses')) {
+        console.error('❌ Critical: Money Flow Chart has no renderable data. Rendering will proceed but chart may appear empty.');
     }
 
     charts.moneyFlow = new Chart(ctx, {

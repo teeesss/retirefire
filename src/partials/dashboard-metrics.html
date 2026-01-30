@@ -10,7 +10,7 @@
 </div>
 
 <!-- Key Metrics Dashboard -->
-<div class="dashboard-grid">
+<div class="metrics-grid">
     <div class="card span-1 clickable" onclick="scrollToSection('section-networth')">
         <div class="card-header">
             <div>
@@ -95,44 +95,4 @@
     </div>
 </div>
 
-<!-- NEW FEATURE ROW: Money Flows & Gap Calculator -->
-<div class="dashboard-grid" style="margin-top: 20px;">
-    <!-- Money Flow Visualization -->
-    <div class="card span-4">
-        <div class="card-header">
-            <div class="card-title">&#128184; Annual Money Flow</div>
-        </div>
-        <div class="chart-container large">
-            <canvas id="chartMoneyFlow"></canvas>
-        </div>
-    </div>
-
-    <!-- Savings Gap Calculator -->
-    <div class="card span-2">
-        <div class="card-header">
-            <div class="card-title">&#127919; "What You Need" Calculator</div>
-        </div>
-        <div style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
-            <div class="metric-row">
-                <span class="metric-label">Target Monthly Income</span>
-                <input type="number" id="calcTargetIncome" class="modern-input" value="12000"
-                    onchange="initGapCalculator()">
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Projected Monthly Income</span>
-                <span class="metric-value" id="calcProjectedIncome">$0</span>
-            </div>
-            <div id="calcSubtitle"
-                style="font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: -10px;">At
-                Retirement: Age 53 (2029)</div>
-            <hr style="border-color: var(--border-color);">
-            <div class="metric-row">
-                <span class="metric-label" id="calcResultLabel">Status</span>
-                <span class="metric-value" id="calcResultValue" style="font-weight: 800;">Calculated...</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="calcProgressBar" style="width: 0%"></div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Savings Gap Calculator (Moved to specific location in main grid) -->

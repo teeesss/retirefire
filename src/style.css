@@ -21,6 +21,11 @@ input::placeholder {
     box-sizing: border-box;
 }
 
+html,
+body {
+    scroll-behavior: smooth;
+}
+
 :root {
     --primary: #3b82f6;
     --primary-dark: #1d4ed8;
@@ -399,6 +404,27 @@ header {
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.back-to-top-btn {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.back-to-top-btn:hover {
+    background: var(--bg-hover);
+    color: var(--primary);
 }
 
 .card-value {
@@ -420,6 +446,14 @@ header {
     grid-template-columns: repeat(6, 1fr);
     gap: 1rem;
     margin-bottom: 1rem;
+}
+
+/* Metrics Grid (7-column for top metrics row) */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 .span-1 {

@@ -27,18 +27,51 @@
                 <!-- Comprehensive Metrics Dashboard -->
                 <load src="src/partials/comprehensive-metrics.html" />
 
-                <!-- Charts Grid (Flattened to ensure injection) -->
+                <!-- Charts Grid (Strict 3-Across Layout) -->
                 <div class="dashboard-grid">
+                    <!-- Row 1: Executive Summary & Planning (2+2+2) -->
                     <load src="src/partials/charts/year-explorer.html" />
+                    <load src="src/partials/charts/milestones.html" />
+                    <load src="src/partials/charts/gap-calculator.html" />
+
+                    <!-- Row 2: Portfolio & Income (2+2+2) -->
                     <load src="src/partials/charts/networth-charts.html" />
+                    <!-- networth-charts.html contains Net Worth (span-2) + Allocation (span-2) = 4 cols -->
+                    <!-- income-charts.html contains Income Sources (span-2) -->
+
+                    <!-- Row 3: Cash Flow Analysis (2+2+2) -->
+                    <!-- income-charts.html contains Money Flow (span-2) + Surplus/Gap (span-2) = 4 cols -->
                     <load src="src/partials/charts/income-charts.html" />
+                    <!-- expense-tax-charts.html contains Expenses (span-2) -->
+
+                    <!-- Row 4: Expense Breakdown & Healthcare (2+2+2) -->
+                    <!-- expense-tax-charts.html contains Expense Pie (span-2) + Healthcare (span-2) = 4 cols -->
                     <load src="src/partials/charts/expense-tax-charts.html" />
+                    <!-- Placeholder for 3rd item in Row 4 (2 cols needed) -->
+
+                    <!-- Row 5: Tax & Social Security (2+2+2) -->
                     <load src="src/partials/charts/taxes.html" />
-                    <load src="src/partials/charts/withdrawal-strategy-charts.html" />
+                    <!-- social-security.html contains SS Strategy (span-2) + SS Cumulative (span-2) = 4 cols -->
                     <load src="src/partials/charts/social-security.html" />
+
+                    <!-- Row 6: Drawdown Strategy (2+2+2) -->
+                    <!-- withdrawal-strategy-charts.html contains Withdrawal (span-2) + SWR (span-2) = 4 cols -->
+                    <load src="src/partials/charts/withdrawal-strategy-charts.html" />
+                    <!-- Swapped Financial Goals here -->
+                    <load src="src/partials/charts/goals.html" />
+
+                    <!-- Row 7: Roth Optimization (2+2+2) -->
+                    <!-- roth.html contains Roth Plan (span-2) + Roth Delta (span-2) = 4 cols -->
                     <load src="src/partials/charts/roth.html" />
+                    <!-- Placeholder for 3rd Roth chart (2 cols needed) -->
+
+                    <!-- Row 8: Goals & Scenarios (2+2+2) -->
+                    <!-- Swapped Monte Carlo here -->
                     <load src="src/partials/charts/montecarlo-analysis.html" />
                     <load src="src/partials/charts/explorers.html" />
+                    <load src="src/partials/charts/stress-test.html" />
+
+                    <!-- Row 9: Detailed Reporting (6) -->
                     <load src="src/partials/charts/data-tables.html" />
 
                     <!-- Placeholder containers for missing charts referenced in main.js -->

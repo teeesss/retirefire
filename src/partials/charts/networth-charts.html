@@ -1,24 +1,28 @@
 <!-- Net Worth Projection -->
-<div class="card span-6" id="section-networth">
+<div class="card span-2" id="section-networth">
     <div class="card-header">
-        <div class="card-title">&#128200; Net Worth Projection (Market Scenarios)</div>
+        <div class="card-title">
+            <span>&#128200; Net Worth Comparison</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
         <div class="tab-container">
-            <button class="tab active" onclick="setChartType('networth', 'scenario', this)">By Scenario</button>
-            <button class="tab" onclick="setChartType('networth', 'account', this)">By Account</button>
-            <button class="tab" onclick="setNetWorthScale('linear', this)">Linear</button>
-            <button class="tab" onclick="setNetWorthScale('logarithmic', this)">Log</button>
+            <button class="tab active" onclick="setChartType('networth', 'scenario', this)">Scenarios</button>
+            <button class="tab" onclick="setChartType('networth', 'account', this)">Accounts</button>
         </div>
     </div>
-    <div class="chart-container xlarge">
+    <div class="chart-container large">
         <canvas id="chartNetWorth"></canvas>
     </div>
     <div id="netWorthLegend" class="legend"
-        style="display: flex; gap: 15px; justify-content: center; margin-top: 10px; font-size: 0.8rem;"></div>
+        style="display: flex; gap: 10px; justify-content: center; margin-top: 5px; font-size: 0.7rem;"></div>
 </div>
 
-<div class="card span-3" id="section-allocation">
+<div class="card span-2" id="section-allocation">
     <div class="card-header">
-        <div class="card-title">&#128202; Asset Allocation - <span id="allocationYearLabel">2026</span></div>
+        <div class="card-title">
+            <span>&#128202; Allocation - <span id="allocationYearLabel">2026</span></span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
     </div>
     <div class="chart-container large">
         <canvas id="chartAllocation"></canvas>

@@ -43,6 +43,11 @@
 
 **ABSOLUTELY FORBIDDEN** - These commands can destroy the system:
 
+### 🚨 MANDATORY: WSL Usage
+- **ALWAYS use `wsl -d Ubuntu-22.04 <command>` for git and file system operations.**
+- **Do NOT run raw Windows/PowerShell commands where WSL alternatives exist.**
+- **Reason**: We are developing in a Windows environment but deploying/testing with Linux-based tools and standards.
+
 ```bash
 rm -rf /
 rm -rf ~
@@ -147,7 +152,12 @@ You are working on **RetireFire**, a high-fidelity financial planning applicatio
 - **NO EXCEPTIONS**: If a chart is added or updated, verify hover functionality.
 - **DATA ACCURACY**: Tooltips must show precise formatted values (Currency for money, % for rates).
 - **CSS**: Tooltip styles must be professional and consistent (e.g. dark mode friendly).
-- **DEBUGGING**: If hover is missing, check `init` functions for `interaction` or `plugins.tooltip` configuration.
+- **DEBUGGING**: Always ensure `applyTooltipConfig` is imported and called in the `init` function.
+
+### 🚨 MANDATORY: Chart Layout (SIDE-BY-SIDE RULE)
+- **NO SUPER WIDE GRAPHS**: Avoid `span-12` or `width: 100%` for charts on desktop.
+- **2-3 PER LINE**: Use `span-6` (2 side-by-side) or `span-4` (3 side-by-side) for better information density.
+- **CONSISTENCY**: All chart containers should have uniform padding and header styling.
 
 ### 🚨 MANDATORY: Test Coverage (TEST RULE)
 - **CODE CHANGE = TEST CHANGE**: Every new feature or logic modification MUST have a corresponding test file in `tests/`.
@@ -534,6 +544,14 @@ ls *.md
 
 ---
 
-**Last Updated**: 2026-01-29 (MCP & Monte Carlo Sync)  
+### 🚨 MANDATORY: HTML ID Governance
+- **NO DUPLICATE IDs**: Never use the same `id` on multiple elements across *any* partials. Duplicate IDs (like two canvases named `chartMoneyFlow`) cause silent failures in chart initialization and DOM lookups.
+- **VERIFY PARTIALS**: Before creating a new ID, grep the `src/partials` directory to ensure it is unique.
+
+### 🚨 MANDATORY: Data Validation
+- **CHART GUARD**: Every chart initialization function MUST use `validateData()` (from `ChartHelpers.js`) to ensure input arrays are populated and non-zero before attempting to render.
+- **ERROR REPORTING**: If data is missing, log a clear `console.error` with the chart ID to make debugging immediate.
+
+**Last Updated**: 2026-01-30 (Grid Balance & ID Governance)  
 **Review**: Before every commit  
 **Enforcement**: Mandatory
