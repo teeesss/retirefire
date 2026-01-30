@@ -4,6 +4,16 @@
 
 ---
 
+## ✅ Recently Fixed Issues (2026-01-29)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **ISSUE-025** | Withdrawal Strategy needs account breakdown | ✅ FIXED (2026-01-29) | Enhanced `initWithdrawalChart()` in `TaxCharts.js` to show granular breakdown by account type (Taxable, Tax-Deferred, Roth IRA, Social Security). Added color-coded legend. Chart now displays stacked bars showing exactly which accounts are being drawn from each year. |
+| **TEST-005** | E2E tests failing with `this.skip()` TypeError | ✅ FIXED (2026-01-29) | Replaced unsupported `this.skip()` calls with resilient `if (shouldSkip) return;` pattern in `visual.test.js` and `comprehensive.test.js`. Tests now fail gracefully when browser/server unavailable. |
+| **ISSUE-074** | Social Security Explorer comparison chart not synchronized | ✅ FIXED (2026-01-29) | Created `updateSSComparisonChart()` function that updates both chart and stat boxes. Added Annual/Lifetime toggle dropdown. Fixed bug where stat boxes weren't updating on dropdown change. Now fully synchronized with PIA input and claiming age selector. |
+
+---
+
 ## ✅ Recently Fixed Issues (2026-01-24)
 
 | Issue | Description | Status | Fix Applied |

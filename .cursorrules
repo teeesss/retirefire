@@ -54,11 +54,39 @@ You are working on **RetireFire**, a high-fidelity financial planning applicatio
 - **Update relevant documentation** (TASKS.md, ISSUES.md, PROJECT_STATUS.md)
 - **Document in code comments** if applicable
 
+### 🚨 MANDATORY: Documentation Updates (ALWAYS ENFORCE)
+
+**CRITICAL RULE: After EVERY issue fix or feature implementation, you MUST update documentation:**
+
+1. **When Fixing a Bug/Issue:**
+   - ✅ Update `ISSUES.md`: Move issue from "High Priority" to "Recently Fixed" section
+   - ✅ Add fix date, description, and solution applied
+   - ✅ Update `TASKS.md`: Mark related task as DONE with completion date
+   - ✅ Update `PROJECT_STATUS.md`: Increment completed count, update health metrics
+
+2. **When Implementing a Feature:**
+   - ✅ Update `TASKS.md`: Mark user story as DONE, add completion notes
+   - ✅ Update `README.md`: Add feature to feature list if user-facing
+   - ✅ Update `PROJECT_STATUS.md`: Update sprint progress
+
+3. **When Creating a New Issue:**
+   - ✅ Add to `ISSUES.md` with priority level, description, and impact
+   - ✅ Create corresponding task in `TASKS.md` if actionable
+   - ✅ Update `PROJECT_STATUS.md` blockers if critical
+
+4. **Before Claiming "Fixed" or "Complete":**
+   - ✅ Verify the fix works (run tests, build, or manual verification)
+   - ✅ Update ALL relevant documentation files
+   - ✅ Commit documentation changes with code changes
+
+**NEVER claim something is fixed without updating ISSUES.md and TASKS.md.**
+
 ### Always Follow These Files
 - ✅ `.cursorrules` (this file)
 - ✅ `defaultProfile.json` (update as needed)
 - ✅ `/docs/guides/Coding_Standards.md`
 - ✅ `TASKS.md` (check for completed tasks to avoid redoing work)
+- ✅ `ISSUES.md` (track all bugs and their resolution status)
 
 ### HTML Structure (CRITICAL)
 **The project uses a modular HTML architecture:**
