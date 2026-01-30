@@ -130,28 +130,30 @@ You are working on **RetireFire**, a high-fidelity financial planning applicatio
 - ✅ All content is in `src/partials/*.html` files
 - ✅ Partials are injected via `vite-plugin-html-inject` using `<load src="..." />` tags
 - ✅ **NEVER** edit `index.html` directly for content changes
-- ✅ **ALWAYS** edit the appropriate partial file:
-  - `header.html` - Top header and navigation
-  - `sidebar.html` - Left sidebar navigation
-  - `dashboard-metrics.html` - Coach + Key Metrics + Money Flow
-  - `comprehensive-metrics.html` - Detailed metrics grid
-  - `charts-grid.html` - **Chart orchestrator** (includes sub-partials)
-    - `charts/year-explorer.html` - Year slider & spending controls
-    - `charts/networth-charts.html` - Net worth visualizations
-    - `charts/income-charts.html` - Income sources & SS
-    - `charts/expense-tax-charts.html` - Expenses & tax analysis
-    - `charts/withdrawal-strategy-charts.html` - Roth, RMD, SWR
-    - `charts/montecarlo-analysis.html` - Monte Carlo simulation
-    - `charts/explorers.html` - What-If, Debt, Market Risk, SS, Roth explorers
+- **Navigation**: `sidebar.html` (Main nav)
+- **Header**: `header.html` (Actions: Settings, Recalculate, PDF/CSV)
+- **Dashboard**:
+    - `dashboard-metrics.html` - Top level cards (Net Worth, Success Rate)
+    - `comprehensive-metrics.html` - Detailed financial health stats
+- **Charts & Analysis**:
+    - `charts/explorers.html` - All Interactive Explorers
+    - `charts/montecarlo-analysis.html` - Monte Carlo specific view
+    - `charts/year-explorer.html` - Individual year selection
     - `charts/data-tables.html` - Data table views
-  - `footer.html` - Footer content
-  - `settings-and-modals.html` - Settings panel and all modals
+- `settings-and-modals.html` - Settings panel and all modals
 
-**When adding new sections:**
-1. Determine which partial it belongs in
-2. Edit that partial file (or create new chart partial in `charts/`)
-3. Test with `npm run dev`
-4. Verify build with `npm run build`
+### 🚨 MANDATORY: Chart Interactivity (HOVER RULE)
+- **EVERY SINGLE CHART** must have functional on-hover tooltips enabled.
+- **NO EXCEPTIONS**: If a chart is added or updated, verify hover functionality.
+- **DATA ACCURACY**: Tooltips must show precise formatted values (Currency for money, % for rates).
+- **CSS**: Tooltip styles must be professional and consistent (e.g. dark mode friendly).
+- **DEBUGGING**: If hover is missing, check `init` functions for `interaction` or `plugins.tooltip` configuration.
+
+### 🚨 MANDATORY: Test Coverage (TEST RULE)
+- **CODE CHANGE = TEST CHANGE**: Every new feature or logic modification MUST have a corresponding test file in `tests/`.
+- **JS/ESM Modules**: Use `Vitest` for logic/unit tests.
+- **UI/Partial Updates**: Use E2E tests (`tests/e2e/*.test.js`) to verify DOM and Chart rendering.
+- **MANDATORY**: Run `npm test` before declaring ANY task complete.
 
 ### Roth Conversion Module (CRITICAL)
 **Dedicated, self-contained Roth conversion system:**

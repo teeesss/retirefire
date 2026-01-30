@@ -50,6 +50,67 @@ export function initRothExplorerChart() {
         }
     });
     applyTooltipConfig(charts.rothExplorer.options);
+    updateRothExplorerChart();
+}
+
+export function initRothTaxImpactChart() {
+    const ctx = getSafeCtx('chartRothTaxImpact');
+    if (!ctx) return;
+
+    charts.rothTaxImpact = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: rawData.years,
+            datasets: [
+                { label: 'Baseline Taxes', data: [], borderColor: 'rgba(239, 68, 68, 0.5)', borderDash: [5, 5], fill: false, tension: 0.4, pointRadius: 0 },
+                { label: 'With Roth Strategy', data: [], borderColor: '#10b981', fill: false, tension: 0.4, pointRadius: 0 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } },
+            scales: { y: { ticks: { callback: (v) => formatCurrency(v) } } }
+        }
+    });
+    applyTooltipConfig(charts.rothTaxImpact.options);
+    updateRothTaxImpactChart();
+}
+
+export function updateRothTaxImpactChart() {
+    if (!charts.rothTaxImpact || !rawData.average) return;
+
+    const baseTaxes = rawData.baseline ? rawData.baseline.expenses.Taxes : rawData.average.expenses.Taxes;
+    const rothTaxes = rawData.average.expenses.Taxes;
+
+    let baseCum = 0, rothCum = 0;
+    const baseCumData = baseTaxes.map(v => baseCum += v);
+    const rothCumData = rothTaxes.map(v => rothCum += v);
+
+    charts.rothTaxImpact.data.datasets[0].data = baseCumData;
+    charts.rothTaxImpact.data.datasets[1].data = rothCumData;
+    charts.rothTaxImpact.update();
+}
+
+export function updateRothExplorerChart() {
+    if (!charts.rothExplorer || !rawData.average) return;
+
+    const baselineData = rawData.baseline ? rawData.baseline.netWorth : rawData.average.netWorth;
+    const rothData = rawData.average.netWorth;
+
+    // If roth is disabled, baseline and roth are the same
+    charts.rothExplorer.data.datasets[0].data = baselineData;
+    charts.rothExplorer.data.datasets[1].data = rothData;
+
+    // Update colors/labels if roth is disabled to reflect current state
+    if (!config.settings.taxes.rothConversionEnabled) {
+        charts.rothExplorer.data.datasets[1].label = 'Roth Disabled';
+        charts.rothExplorer.data.datasets[1].borderColor = '#9ca3af';
+    } else {
+        charts.rothExplorer.data.datasets[1].label = 'With Roth Strategy';
+        charts.rothExplorer.data.datasets[1].borderColor = '#8b5cf6';
+    }
+
     charts.rothExplorer.update();
 }
 

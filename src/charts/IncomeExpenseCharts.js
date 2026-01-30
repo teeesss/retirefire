@@ -298,7 +298,7 @@ export function initExpensePieChart() {
             }
         }
     });
-    applyTooltipConfig(charts.expensePie.options);
+    applyTooltipConfig(charts.expensePie.options, false, true);
     updateExpensePieChart();
     updateExpensePieChart();
 }

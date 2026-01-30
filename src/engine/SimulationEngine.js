@@ -7,12 +7,21 @@ export class SimulationEngine {
         const average = this.project(config, 'average');
         const pessimistic = this.project(config, 'pessimistic');
 
+        // Optional baseline for comparison (Baseline = Roth Disabled)
+        let baseline = null;
+        if (config.settings.taxes.rothConversionEnabled) {
+            const baselineConfig = JSON.parse(JSON.stringify(config));
+            baselineConfig.settings.taxes.rothConversionEnabled = false;
+            baseline = this.project(baselineConfig, 'average');
+        }
+
         return {
             years: average.years,
             ages: average.ages,
             optimistic,
             average,
-            pessimistic
+            pessimistic,
+            baseline
         };
     }
 

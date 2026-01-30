@@ -134,9 +134,18 @@
             </div>
         </div>
 
-        <!-- Chart -->
-        <div class="chart-container xlarge">
-            <canvas id="chartRothExplorer"></canvas>
+        <!-- Charts -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+            <div class="chart-container large">
+                <div style="font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 5px;">📈 Net Worth
+                    Comparison</div>
+                <canvas id="chartRothExplorer"></canvas>
+            </div>
+            <div class="chart-container large">
+                <div style="font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 5px;">⚖️ Cumulative
+                    Tax Impact</div>
+                <canvas id="chartRothTaxImpact"></canvas>
+            </div>
         </div>
     </div>
 

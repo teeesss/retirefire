@@ -44,6 +44,50 @@
 
 ---
 
+## 🎯 Active Epic: Boldin Premium Parity & Advanced Optimizers 🚀
+
+### US-061: Roth Conversion Optimizer & Visualizer 🔴 CRITICAL
+**As a** user  
+**I want** to see exactly how Roth conversions benefit my long-term plan  
+**So that** I can make informed tax-efficiency decisions  
+
+**Sub-Tasks:**
+- [ ] **Visualizer**: Create a new comparison chart showing Net Worth (With vs Without Roth) over 45 years.
+- [ ] **Tax Delta**: Add a chart overlay showing annual tax savings in retirement vs upfront costs.
+- [ ] **Logic**: Enhance `RothCalculator.js` to handle multi-year bracket-fill optimizations.
+- [ ] **UX**: Add a "Strategic Roth Conversions" detail section with break-even age calculation.
+- [ ] **Tests**: Unit tests for tax savings math and E2E tests for the visualizer.
+
+### US-058: Detailed Tax Breakdown Visualization 🔴 HIGH
+- [ ] Implement stacked area chart for yearly taxes (Federal, State, FICA, Cap Gains).
+- [ ] Integration with `TaxCalculator.js` detailed buckets.
+- [ ] **Requirement**: All series must have functional on-hover tooltips.
+
+### US-054: Staged Spending Logic 🟡 MEDIUM
+- [ ] Implement "Go-Go", "Slow-Go", and "No-Go" phases in `SimulationEngine.js`.
+- [ ] Add UI controls to Settings panel for lifestyle phase ages/multipliers.
+
+### US-056: Tax-Efficient Withdrawal Strategy 🔴 HIGH
+- [ ] Implement logic toggle: Standard Drawdown vs Tax-Optimal (Taxable -> Deferred -> Roth).
+- [ ] Compare total lifetime tax cost between strategies.
+- [ ] **Visual**: Add comparison metrics to the withdrawal section.
+
+### US-060: Side-by-Side Scenario Comparison 🟡 MEDIUM
+- [ ] New modal showing Strategy A vs Strategy B comparison table.
+- [ ] Key metrics: Final Net Worth, Total Taxes Paid, Legacy Goal Achievement.
+
+### US-062: Global UI/UX Audit & Hover Stabilization 🔴 CRITICAL
+- [ ] **Audit**: Ensure **EVERY** graph has functional on-hover data displays.
+- [ ] **FIX**: "🥗 Expenses - 2026" hover is currently broken.
+- [ ] **Standard**: Unified tooltip styling across all summary and explorer charts.
+
+### US-063: Mandatory Testing Enforcement 🚨 MANDATORY
+- [ ] **Requirement**: Every new `.js`, `.html`, or `.css` change must have a corresponding test.
+- [ ] Integration with `Vitest` for logic and `Puppeteer` for UI.
+
+---
+
+
 ## 🎯 Previous Achievements (2026-01-29)
 
 
