@@ -104,6 +104,61 @@ export class RothUI {
     }
 
     /**
+     * Refresh metrics from simulation data
+     */
+    static refreshMetrics() {
+        // Import metrics calculator
+        import('./RothMetricsCalculator.js').then(({ RothMetricsCalculator }) => {
+            const scenario = config.currentScenario || 'average';
+            const rothData = rawData[scenario];
+            const baselineData = rawData.baseline;
+
+            if (!rothData) {
+                console.warn('RothUI: No Roth data available for metrics');
+                this.updateMetrics(0, 0, 0, 0);
+                return;
+            }
+
+            if (!baselineData) {
+                console.warn('RothUI: No baseline data available for comparison');
+                // Show conversion data but no comparison metrics
+                const conversions = rothData.rothConversions || { amounts: [], taxPaid: [] };
+                const totalConverted = conversions.amounts.reduce((sum, amt) => sum + amt, 0);
+                const years = conversions.amounts.filter(amt => amt > 0).length;
+                this.updateMetrics(totalConverted, years, 0, 0);
+                return;
+            }
+
+            // Calculate comprehensive metrics
+            const metrics = RothMetricsCalculator.calculateMetrics(rothData, baselineData, config);
+
+            if (!RothMetricsCalculator.validateMetrics(metrics)) {
+                console.error('RothUI: Invalid metrics calculated');
+                return;
+            }
+
+            // Update display
+            // Note: "Tax Savings" is actually the tax difference (could be negative during conversion years)
+            // "NW Boost" is the net worth improvement
+            this.updateMetrics(
+                metrics.totalConverted,
+                metrics.conversionYears,
+                metrics.totalConversionTax,  // Show tax PAID on conversions
+                metrics.nwBoost              // Net worth boost
+            );
+
+            console.log('📊 Roth Metrics Updated:', {
+                converted: metrics.totalConverted,
+                years: metrics.conversionYears,
+                taxPaid: metrics.totalConversionTax,
+                nwBoost: metrics.nwBoost
+            });
+        }).catch(error => {
+            console.error('Failed to load RothMetricsCalculator:', error);
+        });
+    }
+
+    /**
      * Attach event listeners
      */
     static attachEventListeners() {
@@ -116,6 +171,9 @@ export class RothUI {
             if (window.updateDashboard) window.updateDashboard();
             if (window.refreshAllCharts) window.refreshAllCharts();
             if (window.saveToLocalStorage) window.saveToLocalStorage();
+
+            // Refresh metrics after recalculation
+            setTimeout(() => this.refreshMetrics(), 200);
         };
 
         // Bracket change
@@ -126,6 +184,13 @@ export class RothUI {
             if (window.updateDashboard) window.updateDashboard();
             if (window.refreshAllCharts) window.refreshAllCharts();
             if (window.saveToLocalStorage) window.saveToLocalStorage();
+
+            // Refresh metrics and charts
+            setTimeout(() => {
+                this.refreshMetrics();
+                if (window.updateRothExplorerChart) window.updateRothExplorerChart();
+                if (window.updateRothTaxImpactChart) window.updateRothTaxImpactChart();
+            }, 200);
         };
 
         // Manual amount change
@@ -179,6 +244,9 @@ export class RothUI {
             if (window.updateDashboard) window.updateDashboard();
             if (window.refreshAllCharts) window.refreshAllCharts();
             if (window.saveToLocalStorage) window.saveToLocalStorage();
+
+            // Refresh metrics
+            setTimeout(() => this.refreshMetrics(), 200);
         };
 
         // Optimize

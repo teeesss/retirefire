@@ -212,6 +212,14 @@ function recalculate() {
     updateRawData();
     App.renderDashboard();
     App.initAllCharts();
+
+    // Refresh Roth metrics after recalculation
+    setTimeout(() => {
+        if (RothUI && RothUI.refreshMetrics) {
+            RothUI.refreshMetrics();
+        }
+    }, 300);
+
     showNotification('Projections recalculated!');
 }
 
@@ -234,6 +242,10 @@ window.setSSClaimAge = (age, btn) => ExplorerHandler.setSSClaimAge?.(age, btn);
 window.updateSSExplorer = () => ExplorerHandler.updateSSExplorer();
 window.updateSSComparisonChart = () => IncomeExpenseCharts.updateSSComparisonChart?.();
 window.updateDebtCalculations = () => ExplorerHandler.updateDebtCalculations?.();
+
+// Roth chart updates
+window.updateRothExplorerChart = () => ExplorerCharts.updateRothExplorerChart?.();
+window.updateRothTaxImpactChart = () => ExplorerCharts.updateRothTaxImpactChart?.();
 
 window.openSettings = (section) => SettingsHandler.populateUI();
 window.applySettings = () => SettingsHandler.apply();

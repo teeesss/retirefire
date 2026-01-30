@@ -1,5 +1,7 @@
 import { config } from '../data/Config.js';
 import { TaxCalculator } from './TaxCalculator.js';
+import { RothCalculator } from '../roth/RothCalculator.js';
+import RothConfig from '../roth/RothConfig.js';
 
 export class SimulationEngine {
     static run() {
@@ -66,6 +68,11 @@ export class SimulationEngine {
                 Investments: [],
                 RetirementSavings: [],
                 RothIRA: []
+            },
+            rothConversions: {
+                amounts: [],           // Yearly conversion amounts
+                taxPaid: [],          // Tax paid on each conversion
+                cumulativeConverted: [] // Running total of conversions
             },
             netWorth: [],
             yearsCount: years
@@ -207,9 +214,27 @@ export class SimulationEngine {
             }
 
             // Include Roth conversion amount in other ordinary income if enabled
+            // Use RothCalculator to determine amount based on strategy mode
             let rothConvToProcess = 0;
-            if (config.settings.taxes.rothConversionEnabled && currentYear >= config.settings.taxes.rothConvStart && currentYear <= config.settings.taxes.rothConvEnd) {
-                rothConvToProcess = config.settings.taxes.rothConversion || 0;
+            if (RothConfig.enabled && currentYear >= RothConfig.startYear && currentYear <= RothConfig.endYear) {
+                // Calculate ordinary income for the year (before conversion)
+                const ordinaryIncome = workIncome + otherOrdIncome;
+
+                // Use RothCalculator to determine optimal conversion amount based on strategy
+                rothConvToProcess = RothCalculator.calculateYearlyConversion(
+                    currentYear,
+                    retirement,  // Current retirement balance
+                    ordinaryIncome,  // Ordinary income for the year
+                    config.settings.taxSettings?.filingStatus || 'joint'
+                );
+
+                // Validate conversion amount
+                if (rothConvToProcess > retirement) {
+                    rothConvToProcess = retirement; // Can't convert more than we have
+                }
+                if (rothConvToProcess < 0) {
+                    rothConvToProcess = 0;
+                }
             }
 
             const taxBreakdown = TaxCalculator.calculateTaxBreakdown(
@@ -318,18 +343,46 @@ export class SimulationEngine {
             results.drawdown.RothIRA.push(Math.round(yearlyDrawdownDetail.RothIRA));
 
             // Roth Conversion Ladder (processed after initial tax est, but amount was included in breakdown)
+            let actualConversion = 0;
+            let conversionTax = 0;
+
             if (rothConvToProcess > 0) {
                 if (retirement >= rothConvToProcess) {
                     retirement -= rothConvToProcess;
                     roth += rothConvToProcess;
+                    actualConversion = rothConvToProcess;
 
-                    // Note: Taxes for this were already calculated in taxBreakdown above
-                    // We just need to pay them from liquid assets
-                    const convTax = taxBreakdown.federalOrd * (rothConvToProcess / (workIncome + otherOrdIncome + rothConvToProcess || 1));
-                    // Actually, let's keep it simple: the total estimatedTax already includes it.
-                    // If we pull tax for conversion specifically, we subtract it here.
+                    // Calculate marginal tax on conversion
+                    // This is the incremental tax from adding conversion to ordinary income
+                    const baseIncome = workIncome + otherOrdIncome;
+                    const totalIncome = baseIncome + rothConvToProcess;
+
+                    // Estimate marginal tax rate (simplified)
+                    // The conversion is taxed at marginal rates
+                    const marginalRate = rothConvToProcess > 0 ?
+                        (taxBreakdown.federalOrd / (totalIncome || 1)) : 0;
+
+                    conversionTax = Math.round(rothConvToProcess * marginalRate);
+
+                    // Pay conversion tax from investments (brokerage account)
+                    if (investments >= conversionTax) {
+                        investments -= conversionTax;
+                    } else {
+                        // If not enough in investments, reduce conversion or handle differently
+                        if (conversionTax > 10000) { // Only warn for significant amounts
+                            console.warn(`Year ${currentYear}: Insufficient funds to pay conversion tax ($${conversionTax.toLocaleString()})`);
+                        }
+                    }
                 }
             }
+
+            // Track conversion details
+            results.rothConversions.amounts.push(actualConversion);
+            results.rothConversions.taxPaid.push(conversionTax);
+
+            // Calculate cumulative converted
+            const prevCumulative = i > 0 ? results.rothConversions.cumulativeConverted[i - 1] : 0;
+            results.rothConversions.cumulativeConverted.push(prevCumulative + actualConversion);
 
             // Store results
             results.accounts.RetirementSavings.push(Math.round(retirement));

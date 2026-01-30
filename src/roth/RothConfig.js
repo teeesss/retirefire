@@ -73,6 +73,12 @@ function validateBracket(bracket) {
 export function calculateBracketAmount(bracket, filingStatus, currentIncome) {
     const validBracket = validateBracket(bracket);
     const limit = RothConfig.brackets[validBracket]?.[filingStatus] || 0;
+
+    // If limit is Infinity (37% bracket), return 0 as we don't want to convert unlimited amounts
+    if (!isFinite(limit) || limit === 0) {
+        return 0;
+    }
+
     const availableRoom = Math.max(0, limit - currentIncome);
 
     // Apply cap if in hybrid mode
@@ -105,6 +111,50 @@ export function getStrategyDescription() {
         default:
             return `Fixed $${RothConfig.manualAmount.toLocaleString()}/year`;
     }
+}
+
+/**
+ * Sync RothConfig with global config settings
+ * @param {Object} globalConfig - The global config object
+ */
+export function syncWithGlobalConfig(globalConfig) {
+    if (!globalConfig?.settings?.taxes) return;
+
+    const taxes = globalConfig.settings.taxes;
+
+    RothConfig.enabled = taxes.rothConversionEnabled ?? RothConfig.enabled;
+    RothConfig.startYear = taxes.rothConvStart ?? RothConfig.startYear;
+    RothConfig.endYear = taxes.rothConvEnd ?? RothConfig.endYear;
+    RothConfig.manualAmount = taxes.rothConversion ?? RothConfig.manualAmount;
+    RothConfig.targetBracket = taxes.rothConvBracket ?? RothConfig.targetBracket;
+
+    // Sync mode if available
+    if (taxes.rothConvMode) {
+        RothConfig.mode = taxes.rothConvMode;
+    }
+
+    // Sync cap if available
+    if (taxes.rothConvCap !== undefined) {
+        RothConfig.maxAnnualCap = taxes.rothConvCap;
+    }
+}
+
+/**
+ * Update global config with RothConfig values
+ * @param {Object} globalConfig - The global config object to update
+ */
+export function updateGlobalConfig(globalConfig) {
+    if (!globalConfig?.settings?.taxes) return;
+
+    const taxes = globalConfig.settings.taxes;
+
+    taxes.rothConversionEnabled = RothConfig.enabled;
+    taxes.rothConvStart = RothConfig.startYear;
+    taxes.rothConvEnd = RothConfig.endYear;
+    taxes.rothConversion = RothConfig.manualAmount;
+    taxes.rothConvBracket = RothConfig.targetBracket;
+    taxes.rothConvMode = RothConfig.mode;
+    taxes.rothConvCap = RothConfig.maxAnnualCap;
 }
 
 export default RothConfig;
