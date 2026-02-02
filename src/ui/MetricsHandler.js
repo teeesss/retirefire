@@ -1,7 +1,7 @@
 import { config } from '../data/Config.js';
 import { rawData } from '../data/Store.js';
 import { formatCurrency } from '../utils/Formatters.js';
-import { getNetWorthSeries, calculateNetWorth, getTotalIncome, getTotalExpenses, getTotalTaxes } from '../state/DataUtils.js';
+import { getNetWorthSeries } from '../state/DataUtils.js';
 
 export class MetricsHandler {
     static updateMetrics() {
@@ -103,6 +103,32 @@ export class MetricsHandler {
                 text: 'High potential for Roth Conversion savings.',
                 section: 'section-roth'
             });
+        }
+
+        // 4. Social Security Optimization
+        const ssAge = config.settings.socialSecurity.claimAge || 62;
+        if (ssAge < 70 && mc.successRate > 90) {
+            insights.push({
+                type: 'info',
+                title: '📈 SS Optimization',
+                text: 'High success rate detected. Delaying SS to 70 could maximize your legacy.',
+                section: 'section-socialsecurity'
+            });
+        }
+
+        // 5. Withdrawal Strategy Check
+        const drawdown = sc.drawdown;
+        if (drawdown && drawdown.InvestmentsTax && drawdown.RetirementSavingsTax) {
+            const totalDrawTax = drawdown.InvestmentsTax.reduce((a, b) => a + b, 0) +
+                drawdown.RetirementSavingsTax.reduce((a, b) => a + b, 0);
+            if (totalDrawTax > 500000) { // Threshold for "High" tax leakage
+                insights.push({
+                    type: 'warning',
+                    title: '💸 Tax Leakage',
+                    text: 'Significant tax leakage from withdrawals. Review "Withdrawal Strategy" section.',
+                    section: 'section-withdrawals'
+                });
+            }
         }
 
         const list = document.getElementById('coachMessageList');

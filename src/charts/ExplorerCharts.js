@@ -30,6 +30,33 @@ export function initSSExplorerChart() {
         }
     });
     applyTooltipConfig(charts.ssExplorer.options);
+
+    // Add custom labels to show Annual Benefit flow even though chart is cumulative
+    charts.ssExplorer.options.plugins.tooltip.callbacks.label = (context) => {
+        const cumulativeValue = context.parsed.y;
+        const datasetLabel = context.dataset.label || '';
+        const age = rawData.ages[context.dataIndex];
+
+        // Find the annual amount (back-calculated or from calculator)
+        // For simplicity, we know the monthly amounts based on label/age
+        let monthly = 0;
+        const pia = parseFloat(document.getElementById('ssPiaInput')?.value || 2800);
+        if (datasetLabel.includes('62')) monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, 62);
+        else if (datasetLabel.includes('67')) monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, 67);
+        else if (datasetLabel.includes('70')) monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, 70);
+
+        const isClaimingYet = (datasetLabel.includes('62') && age >= 62) ||
+            (datasetLabel.includes('67') && age >= 67) ||
+            (datasetLabel.includes('70') && age >= 70);
+
+        const annualFlow = isClaimingYet ? monthly * 12 : 0;
+
+        return [
+            `${datasetLabel}: ${formatCurrency(cumulativeValue)} (Cumulative)`,
+            `   Annual Flow: ${formatCurrency(annualFlow)}/yr`
+        ];
+    };
+
     updateSSExplorerChart();
 }
 
@@ -55,20 +82,6 @@ export function updateSSExplorerChart() {
     // Create data series for each claiming age (62, 67, 70)
     // We want to show the cumulative or annual benefit over time for each strategy
     // For "Strategy Strategy", normally we show the break-even lines (Cumulative)
-
-    // Strategy 1: Claim at 62
-    const data62 = years.map((y, i) => {
-        const age = ages[i];
-        if (age < 62) return 0;
-        // Annual benefit (monthly * 12) + COLA (assume 2.5% inflation in model)
-        // For simplicity here, we just show the base annual amount adjusted for inflation implicitly by the model elsewhere, 
-        // but here let's just show the nominal benefit flow or cumulative.
-        // User asked for "Strategy Graph", usually comparison of cumulative benefits.
-
-        // Let's do Cumulative for the "Strategy" view as it's best for break-even.
-        // But the labels in the chart init were "Claim @ 62", etc.
-        return (age >= 62) ? ((age - 62) * benefits.ss62 * 12) + (benefits.ss62 * 12) : 0; // Simple cumulative approximation
-    });
 
     // Let's refine: The chart is likely "Cumulative Benefits over Time" to show break-even.
     // Calculate cumulative sum

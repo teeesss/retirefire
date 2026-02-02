@@ -139,16 +139,23 @@ export class DashboardDetails {
             }
         } else if (type === 'taxes') {
             const taxes = rawData[scenario].taxes;
-            html += '<th>Federal Ord</th><th>Cap Gains</th><th>FICA</th><th>State</th><th>Total</th></tr></thead><tbody>';
+            const drawTax = rawData[scenario].drawdown;
+            html += '<th>Federal Ord</th><th>Cap Gains</th><th>FICA</th><th>State</th><th>Inv Tax*</th><th>Ret Tax*</th><th>Total</th></tr></thead><tbody>';
             for (let i = 0; i < rawData.years.length; i++) {
+                const invTax = drawTax.InvestmentsTax[i] || 0;
+                const retTax = drawTax.RetirementSavingsTax[i] || 0;
                 const total = (taxes.Federal[i] || 0) + (taxes.CapGains[i] || 0) + (taxes.FICA[i] || 0) + (taxes.State[i] || 0);
+
                 html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
                          <td class="negative">${formatCurrency(taxes.Federal[i])}</td>
                          <td class="negative">${formatCurrency(taxes.CapGains[i])}</td>
                          <td class="negative">${formatCurrency(taxes.FICA[i])}</td>
                          <td class="negative">${formatCurrency(taxes.State[i])}</td>
+                         <td class="negative" title="Tax cost of Investment withdrawals">${formatCurrency(invTax)}</td>
+                         <td class="negative" title="Tax cost of 401k/IRA withdrawals">${formatCurrency(retTax)}</td>
                          <td class="negative"><strong>${formatCurrency(total)}</strong></td></tr>`;
             }
+            html += '<tr><td colspan="8" style="font-size: 0.75rem; opacity: 0.7; padding: 10px;">* "Inv Tax" and "Ret Tax" are the marginal tax costs triggered by drawdowns from those specific accounts, already included in the Total.</td></tr>';
         } else if (type === 'expenses') {
             const exp = rawData[scenario].expenses;
             const keys = Object.keys(exp).filter(k => k !== 'Taxes');

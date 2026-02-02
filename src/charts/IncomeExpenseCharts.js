@@ -97,11 +97,11 @@ export function initSSComparisonChart() {
     charts.ssComparison = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Claim @ 62', 'Claim @ 67 (FRA)', 'Claim @ 70'],
+            labels: ['Claim @ 62', 'Claim @ 67 (FRA)', 'Claim @ 70', 'Current Choice'],
             datasets: [{
-                label: 'Monthly Benefit',
-                data: [0, 0, 0],
-                backgroundColor: ['#ef4444', '#3b82f6', '#10b981'],
+                label: 'Benefit Amount',
+                data: [0, 0, 0, 0],
+                backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#a855f7'], // Purple for active choice
                 barPercentage: 0.6,
                 categoryPercentage: 0.8
             }]
@@ -130,21 +130,23 @@ export function updateSSComparisonChart() {
         return 1.0 + (age - 67) * 0.08;
     };
 
+    const choiceAge = config.settings.socialSecurity.claimAge || 62;
     const f62 = getFactor(62);
     const f67 = getFactor(67);
     const f70 = getFactor(70);
+    const fChoice = getFactor(choiceAge);
 
     let data, label;
     if (viewMode === 'cumulative') {
-        // Lifetime cumulative to age 95
         data = [
             pia * f62 * 12 * (95 - 62),
             pia * f67 * 12 * (95 - 67),
-            pia * f70 * 12 * (95 - 70)
+            pia * f70 * 12 * (95 - 70),
+            pia * fChoice * 12 * (95 - choiceAge)
         ];
         label = 'Lifetime Total (to 95)';
 
-        // Update stat boxes to show cumulative values
+        // Update stat boxes
         const el62 = document.getElementById('ss62');
         const el67 = document.getElementById('ss67');
         const el70 = document.getElementById('ss70');
@@ -152,20 +154,19 @@ export function updateSSComparisonChart() {
         if (el67) el67.textContent = formatCurrency(data[1]);
         if (el70) el70.textContent = formatCurrency(data[2]);
 
-        // Hide the "Life:" labels since we're showing lifetime already
-        const life62 = document.getElementById('ss62Lifetime');
-        const life67 = document.getElementById('ss67Lifetime');
-        const life70 = document.getElementById('ss70Lifetime');
-        if (life62) life62.style.display = 'none';
-        if (life67) life67.style.display = 'none';
-        if (life70) life70.style.display = 'none';
+        // Hide "Life:" labels
+        ['ss62Lifetime', 'ss67Lifetime', 'ss70Lifetime'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
 
+        charts.ssComparison.data.labels[3] = `Choice (${choiceAge})`;
     } else {
-        // Annual benefit
         data = [
             pia * f62 * 12,
             pia * f67 * 12,
-            pia * f70 * 12
+            pia * f70 * 12,
+            pia * fChoice * 12
         ];
         label = 'Annual Benefit';
 
@@ -177,7 +178,7 @@ export function updateSSComparisonChart() {
         if (el67) el67.textContent = formatCurrency(pia * f67) + '/mo';
         if (el70) el70.textContent = formatCurrency(pia * f70) + '/mo';
 
-        // Show and update the "Life:" labels
+        // Show and update "Life:" labels
         const life62 = document.getElementById('ss62Lifetime');
         const life67 = document.getElementById('ss67Lifetime');
         const life70 = document.getElementById('ss70Lifetime');
@@ -193,6 +194,8 @@ export function updateSSComparisonChart() {
             life70.style.display = 'block';
             life70.textContent = 'Life: ' + formatCurrency(pia * f70 * 12 * (95 - 70));
         }
+
+        charts.ssComparison.data.labels[3] = `Choice (${choiceAge})`;
     }
 
     charts.ssComparison.data.datasets[0].data = data;
