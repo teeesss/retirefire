@@ -63,12 +63,17 @@ export class RothComparison {
 
             const isOptimal = strategy.amount === comparison.optimal.amount;
 
+            // NEW: Analyze limiting factors across all years
+            const limitingFactors = this.analyzeLimitingFactors(strategy.results || []);
+            const limitingBadge = this.getLimitingFactorBadge(limitingFactors);
+
             return `
                 <tr style="${isOptimal ? 'background: rgba(34, 197, 94, 0.1); border-left: 3px solid var(--success);' : ''}"
                     onclick="window.selectStrategy(${index})">
                     <td style="font-weight: 700; color: var(--text-primary);">
                         ${formatCurrency(strategy.amount)}/year
                         ${isOptimal ? ' ⭐' : ''}
+                        <div style="font-size: 0.65rem; margin-top: 3px;">${limitingBadge}</div>
                     </td>
                     <td style="color: ${indicators.isHighestNW ? 'var(--success)' : 'var(--text-primary)'}; font-weight: ${indicators.isHighestNW ? '700' : '400'};">
                         ${formatCurrency(strategy.finalNetWorth || 0)}
@@ -95,6 +100,48 @@ export class RothComparison {
                 </tr>
             `;
         }).join('');
+    }
+
+    /**
+     * Analyze which constraints were limiting across all years
+     */
+    static analyzeLimitingFactors(results) {
+        const counts = { bracket: 0, maxAnnual: 0, balance: 0, none: 0 };
+
+        results.forEach(year => {
+            const factor = year.constraints?.limitingFactor || 'none';
+            if (counts.hasOwnProperty(factor)) {
+                counts[factor]++;
+            }
+        });
+
+        return counts;
+    }
+
+    /**
+     * Get badge HTML for limiting factor
+     */
+    static getLimitingFactorBadge(counts) {
+        const total = Object.values(counts).reduce((sum, c) => sum + c, 0);
+        if (total === 0) return '';
+
+        // Find most common limiting factor
+        const dominant = Object.entries(counts)
+            .filter(([key]) => key !== 'none')
+            .reduce((max, [key, val]) => val > max[1] ? [key, val] : max, ['none', 0]);
+
+        const [factor, count] = dominant;
+        const percentage = Math.round((count / total) * 100);
+
+        if (factor === 'none' || percentage < 10) return '';
+
+        const badges = {
+            bracket: `<span style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem;">📊 Bracket ${percentage}%</span>`,
+            maxAnnual: `<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem;">💰 Cap ${percentage}%</span>`,
+            balance: `<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem;">⚠️ Balance ${percentage}%</span>`
+        };
+
+        return badges[factor] || '';
     }
 
     /**
