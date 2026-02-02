@@ -35,6 +35,7 @@ import * as ExplorerCharts from './charts/ExplorerCharts.js';
 import { SimulationEngine } from './engine/SimulationEngine.js';
 
 // Utilities
+import { Logger } from './utils/Logger.js';
 import { deepMerge } from './utils/DeepMerge.js';
 import { calculateNetWorth, getNetWorthSeries, getTotalIncome, getTotalExpenses, getTotalTaxes } from './state/DataUtils.js';
 import { formatCurrency } from './utils/Formatters.js';
@@ -44,7 +45,7 @@ import { formatCurrency } from './utils/Formatters.js';
  */
 const App = {
     async init() {
-        console.log('🚀 RetireFire Initializing...');
+        Logger.debug('🚀 RetireFire Initializing...');
         this.loadSettings();
         updateRawData();
 
@@ -64,9 +65,9 @@ const App = {
 
         // Initialize descriptions and explorers
         setTimeout(() => {
-            console.log('⏰ Init timeout executing');
-            console.log('  - RothUI defined:', typeof RothUI);
-            console.log('  - refreshMetrics defined:', typeof RothUI?.refreshMetrics);
+            Logger.debug('⏰ Init timeout executing');
+            Logger.debug('  - RothUI defined:', typeof RothUI);
+            Logger.debug('  - refreshMetrics defined:', typeof RothUI?.refreshMetrics);
 
             initializeDescriptionsAndTooltips(charts);
             // initializeExplorerSections(); // Disabled to prevent partial duplication (using explicit HTML partials now)
@@ -74,22 +75,22 @@ const App = {
             // Refresh Roth metrics after everything is loaded
             if (RothUI && RothUI.refreshMetrics) {
                 try {
-                    console.log('🔄 Calling RothUI.refreshMetrics()...');
+                    Logger.debug('🔄 Calling RothUI.refreshMetrics()...');
                     RothUI.refreshMetrics();
                 } catch (error) {
-                    console.error('❌ refreshMetrics() error:', error);
+                    Logger.error('❌ refreshMetrics() error:', error);
                 }
             } else {
-                console.error('❌ RothUI.refreshMetrics not available');
-                console.error('  - RothUI:', RothUI);
-                console.error('  - RothUI.refreshMetrics:', RothUI?.refreshMetrics);
+                Logger.error('❌ RothUI.refreshMetrics not available');
+                Logger.error('  - RothUI:', RothUI);
+                Logger.error('  - RothUI.refreshMetrics:', RothUI?.refreshMetrics);
             }
         }, 1000);
 
         // Auto-save every 30 seconds
         setInterval(() => this.saveSettings(), 30000);
 
-        console.log('✅ RetireFire Ready');
+        Logger.debug('✅ RetireFire Ready');
     },
 
     renderDashboard() {
@@ -101,7 +102,7 @@ const App = {
         DashboardDetails.showDataTable('summary');
         this.updateYearDisplay();
         this.updateSSDisplay();
-        ExplorerHandler.updateYear(document.getElementById('yearSlider')?.value || 0);
+        ExplorerHandler.initYearSlider(); // Initialize year slider with correct max value
 
         // Refresh Roth metrics after dashboard renders
         if (RothUI && RothUI.refreshMetrics) {
@@ -120,7 +121,7 @@ const App = {
         const modules = [SummaryCharts, IncomeExpenseCharts, TaxCharts, AnalysisCharts, AccountCharts, ExplorerCharts];
         modules.forEach(mod => {
             Object.values(mod).forEach(fn => {
-                try { if (typeof fn === 'function') fn(); } catch (e) { console.warn('Chart init failed:', e.message); }
+                try { if (typeof fn === 'function') fn(); } catch (e) { Logger.warn('Chart init failed:', e.message); }
             });
         });
     },
@@ -134,7 +135,7 @@ const App = {
                 deepMerge(config, parsed);
             }
         } catch (e) {
-            console.warn('Could not load from localStorage:', e);
+            Logger.warn('Could not load from localStorage:', e);
         }
     },
 
@@ -142,7 +143,7 @@ const App = {
         try {
             localStorage.setItem('retirementPlannerConfig', JSON.stringify(config));
         } catch (e) {
-            console.warn('Could not save to localStorage:', e);
+            Logger.warn('Could not save to localStorage:', e);
         }
     },
 
@@ -180,22 +181,22 @@ const App = {
         const iters = parseInt(document.getElementById('mcIterations')?.value || 1000);
         const scenario = document.getElementById('mcScenario')?.value || 'monte-carlo';
 
-        console.log(`🎲 Starting Monte Carlo: ${iters} iterations, ${volatility} volatility, scenario: ${scenario}...`);
+        Logger.debug(`🎲 Starting Monte Carlo: ${iters} iterations, ${volatility} volatility, scenario: ${scenario}...`);
         showNotification('Running Monte Carlo...', 'info');
 
         // Allow UI to update before heavy calculation
         setTimeout(() => {
-            console.time('MonteCarlo');
+            Logger.time('MonteCarlo');
             let results;
             try {
                 results = SimulationEngine.runMonteCarlo(iters, volatility, spendMult, scenario);
             } catch (e) {
-                console.error('❌ Monte Carlo Simulation Failed:', e);
+                Logger.error('❌ Monte Carlo Simulation Failed:', e);
                 showNotification('Simulation failed: ' + e.message, 'error');
                 return;
             }
-            console.timeEnd('MonteCarlo');
-            console.log('📊 MC Results:', results);
+            Logger.timeEnd('MonteCarlo');
+            Logger.debug('📊 MC Results:', results);
             rawData.monteCarlo = results; // Store for other components
 
             if (charts.monteCarlo) {
@@ -284,28 +285,28 @@ window.updateRothTaxImpactChart = () => ExplorerCharts.updateRothTaxImpactChart?
 
 // Debug function for Roth state
 window.debugRothState = () => {
-    console.log('🔍 Roth Debug State:');
-    console.log('  Config:');
-    console.log('    - Enabled:', config.settings.taxes.rothConversionEnabled);
-    console.log('    - Mode:', RothConfig?.mode);
-    console.log('    - Start:', config.settings.taxes.rothConvStart);
-    console.log('    - End:', config.settings.taxes.rothConvEnd);
-    console.log('  Data:');
-    console.log('    - rawData exists:', !!rawData);
-    console.log('    - baseline exists:', !!rawData.baseline);
-    console.log('    - rothConversions:', rawData.average?.rothConversions);
-    console.log('  UI:');
-    console.log('    - RothUI:', typeof RothUI);
-    console.log('    - refreshMetrics:', typeof RothUI?.refreshMetrics);
-    console.log('  Metrics:');
+    Logger.debug('🔍 Roth Debug State:');
+    Logger.debug('  Config:');
+    Logger.debug('    - Enabled:', config.settings.taxes.rothConversionEnabled);
+    Logger.debug('    - Mode:', RothConfig?.mode);
+    Logger.debug('    - Start:', config.settings.taxes.rothConvStart);
+    Logger.debug('    - End:', config.settings.taxes.rothConvEnd);
+    Logger.debug('  Data:');
+    Logger.debug('    - rawData exists:', !!rawData);
+    Logger.debug('    - baseline exists:', !!rawData.baseline);
+    Logger.debug('    - rothConversions:', rawData.average?.rothConversions);
+    Logger.debug('  UI:');
+    Logger.debug('    - RothUI:', typeof RothUI);
+    Logger.debug('    - refreshMetrics:', typeof RothUI?.refreshMetrics);
+    Logger.debug('  Metrics:');
     const converted = document.getElementById('rothTotalConverted')?.textContent;
     const taxPaid = document.getElementById('rothTaxSavings')?.textContent;
     const nwBoost = document.getElementById('rothLegacyBoost')?.textContent;
-    console.log('    - Converted:', converted);
-    console.log('    - Tax Paid:', taxPaid);
-    console.log('    - NW Boost:', nwBoost);
+    Logger.debug('    - Converted:', converted);
+    Logger.debug('    - Tax Paid:', taxPaid);
+    Logger.debug('    - NW Boost:', nwBoost);
 };
-console.log('✅ Debug function available: window.debugRothState()');
+Logger.debug('✅ Debug function available: window.debugRothState()');
 
 
 window.openSettings = (section) => SettingsHandler.populateUI();
@@ -377,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => App.init());
 // Vite HMR cleanup
 if (import.meta.hot) {
     import.meta.hot.dispose(() => {
-        console.log('Vite HMR: Cleaning up charts...');
+        Logger.debug('Vite HMR: Cleaning up charts...');
         destroyAllCharts();
     });
 }

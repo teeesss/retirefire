@@ -3,6 +3,7 @@
  * Manages all UI interactions for Roth conversion controls
  */
 
+import { Logger } from '../utils/Logger.js';
 import RothConfig, { getStrategyDescription, syncWithGlobalConfig } from './RothConfig.js';
 import RothCalculator from './RothCalculator.js';
 import { rawData, updateRawData } from '../data/Store.js';
@@ -27,14 +28,14 @@ export class RothUI {
      */
     static enableTestMode() {
         window.testRothMetrics = () => {
-            console.log('🧪 Manual test triggered');
-            console.log('rawData:', rawData);
-            console.log('baseline:', rawData.baseline);
-            console.log('rothConversions:', rawData.average?.rothConversions);
-            console.log('Calling refreshMetrics()...');
+            Logger.debug('🧪 Manual test triggered');
+            Logger.debug('rawData:', rawData);
+            Logger.debug('baseline:', rawData.baseline);
+            Logger.debug('rothConversions:', rawData.average?.rothConversions);
+            Logger.debug('Calling refreshMetrics()...');
             this.refreshMetrics();
         };
-        console.log('✅ Test mode enabled. Call window.testRothMetrics() to test');
+        Logger.debug('✅ Test mode enabled. Call window.testRothMetrics() to test');
     }
 
     /**

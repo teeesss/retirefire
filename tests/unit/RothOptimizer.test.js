@@ -1,11 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import RothOptimizer from '../../src/roth/RothOptimizer.js';
+import RothConfig from '../../src/roth/RothConfig.js';
 
 describe('RothOptimizer', () => {
     // Mock data
     const years = [2026, 2027, 2028, 2029, 2030];
     const ordinaryIncome = [100000, 103000, 106090, 109272, 112550]; // 3% growth
     const traditionalBalance = [500000, 525000, 550000, 575000, 600000];
+
+    beforeEach(() => {
+        // Initialize RothConfig to ensure year range covers our test data
+        RothConfig.startYear = 2026;
+        RothConfig.endYear = 2030;
+        RothConfig.mode = 'bracket';
+        RothConfig.manualOverrides = {};
+    });
 
     const params = {
         years,

@@ -35,6 +35,12 @@ npm test
 # Run tests in watch mode
 npm run test:watch
 
+# Run linting checks
+npm run lint
+
+# Auto-fix linting issues
+npm run lint:fix
+
 # Run full suite with E2E tests
 npm run test:all
 ```

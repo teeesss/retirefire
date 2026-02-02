@@ -22,10 +22,19 @@
     "test:legacy": "node tests/run_tests.js",
     "test:data": "node tests/run_tests.js --data",
     "preupdate": "npm run test:full",
-    "validate": "npm run test:full && echo '✅ All tests passed - safe to update'"
+    "validate": "npm run test:full && echo '✅ All tests passed - safe to update'",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.18",
     "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "postcss": "^8.5.6",
     "puppeteer": "^21.0.0",

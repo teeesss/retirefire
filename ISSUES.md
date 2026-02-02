@@ -4,6 +4,12 @@
 
 ---
 
+## ✅ Recently Fixed Issues (2026-02-01)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **ISSUE-077** | Explore Year slider does not change year or projections | ✅ FIXED | Added `initYearSlider()` method to `ExplorerHandler.js` to dynamically set slider max value based on simulation data. Enhanced `updateYear()` with better error handling and logging. Updated `main.js` to call `initYearSlider()` during dashboard initialization. |
+
 ## ✅ Recently Fixed Issues (2026-01-31)
 
 | Issue | Description | Status | Fix Applied |
@@ -93,6 +99,7 @@
 
 | Issue | Description | Impact | Next Steps |
 |-------|-------------|--------|------------|
+| *No critical issues at this time* | | | |
 
 
 

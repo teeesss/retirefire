@@ -9,6 +9,24 @@ import { updateSSExplorerChart, updateStressTestChart } from '../charts/Explorer
 import { updateSSComparisonChart } from '../charts/IncomeExpenseCharts.js';
 
 export class ExplorerHandler {
+    /**
+     * Initialize the year slider with correct max value based on simulation data
+     */
+    static initYearSlider() {
+        const slider = document.getElementById('yearSlider');
+        if (!slider || !rawData.years) {
+            console.warn('⚠️ Year slider or rawData.years not available');
+            return;
+        }
+
+        const maxYears = rawData.years.length - 1;
+        slider.max = maxYears;
+        console.log(`✅ Year slider initialized: 0 to ${maxYears} (${rawData.years.length} years)`);
+
+        // Initialize with current value
+        this.updateYear(slider.value || 0);
+    }
+
     static updateSpending(value) {
         const spending = parseInt(value);
         config.settings.expenses.annualSpending = spending;
@@ -29,43 +47,82 @@ export class ExplorerHandler {
 
     static updateYear(value) {
         const idx = parseInt(value);
-        if (!rawData.years || !rawData.years[idx]) return;
+
+        // Enhanced error checking
+        if (!rawData || !rawData.years) {
+            console.error('❌ updateYear: rawData or rawData.years is undefined');
+            return;
+        }
+
+        if (!rawData.years[idx]) {
+            console.error(`❌ updateYear: No data for index ${idx} (max: ${rawData.years.length - 1})`);
+            return;
+        }
+
+        console.log(`📅 updateYear called: index=${idx}, year=${rawData.years[idx]}, age=${rawData.ages[idx]}`);
 
         const scenario = config.currentScenario;
         const year = rawData.years[idx];
         const age = rawData.ages[idx];
 
         // Update Labels
-        this.safeUpdate('selectedYearLabel', year);
-        this.safeUpdate('selectedAgeLabel', `Age ${age}`);
+        this.safeUpdate('selectedYear', year);
+        this.safeUpdate('selectedAge', age);
         this.safeUpdate('selectedScenarioLabel', scenario.charAt(0).toUpperCase() + scenario.slice(1));
 
         // Update Stat Cards
         const spend = getTotalExpenses(scenario, idx);
         const nw = calculateNetWorth(scenario, idx);
         const income = getTotalIncome(scenario, idx);
+        const taxes = getTotalTaxes(scenario, idx);
 
         this.safeUpdate('explorerSpend', formatCurrency(spend));
         this.safeUpdate('explorerNW', formatCurrency(nw));
-        this.safeUpdate('explorerImpact', formatCurrency(income - spend - getTotalTaxes(scenario, idx)));
+        this.safeUpdate('explorerImpact', formatCurrency(income - spend - taxes));
 
         // Update Account Breakdown
-        const breakdownEl = document.getElementById('explorerBreakdown');
+        const breakdownEl = document.getElementById('accountBreakdown');
         if (breakdownEl) {
             const accounts = rawData[scenario].accounts;
-            let html = '';
+            let html = '<div class="breakdown-grid">';
             for (const key in accounts) {
                 const val = accounts[key][idx] || 0;
                 if (val !== 0 || key === 'Cash') {
                     html += `
                         <div class="breakdown-item">
-                            <span>${accountNames[key] || key}</span>
-                            <span class="breakdown-value">${formatCurrency(val)}</span>
+                            <span class="label">${accountNames[key] || key}</span>
+                            <span class="value">${formatCurrency(val)}</span>
                         </div>
                     `;
                 }
             }
+            html += '</div>';
             breakdownEl.innerHTML = html;
+        }
+
+        // Update Cash Flow Details
+        const cashFlowEl = document.getElementById('cashFlowDetails');
+        if (cashFlowEl) {
+            const data = rawData[scenario];
+            const incWork = (data.income?.Work?.[idx] || 0);
+            const incSS = (data.income?.SocialSecurity?.[idx] || 0);
+            const incOther = (data.income?.Drawdown?.[idx] || 0) + (data.income?.RMD?.[idx] || 0);
+
+            const taxesFed = (data.taxes?.Federal?.[idx] || 0);
+            const taxesState = (data.taxes?.State?.[idx] || 0);
+            const taxesFica = (data.taxes?.FICA?.[idx] || 0);
+
+            cashFlowEl.innerHTML = `
+                <div class="breakdown-grid">
+                    <div class="breakdown-item"><span class="label">Work Income</span><span class="value positive">${formatCurrency(incWork)}</span></div>
+                    <div class="breakdown-item"><span class="label">Social Security</span><span class="value positive">${formatCurrency(incSS)}</span></div>
+                    <div class="breakdown-item"><span class="label">Other Income</span><span class="value positive">${formatCurrency(incOther)}</span></div>
+                    <div class="breakdown-item"><span class="label">Federal Tax</span><span class="value negative">${formatCurrency(taxesFed)}</span></div>
+                    <div class="breakdown-item"><span class="label">State Tax</span><span class="value negative">${formatCurrency(taxesState)}</span></div>
+                    <div class="breakdown-item"><span class="label">FICA Tax</span><span class="value negative">${formatCurrency(taxesFica)}</span></div>
+                    <div class="breakdown-item highlight"><span class="label">Net Cash Flow</span><span class="value ${income - spend - taxes >= 0 ? 'positive' : 'negative'}">${formatCurrency(income - spend - taxes)}</span></div>
+                </div>
+            `;
         }
     }
 
