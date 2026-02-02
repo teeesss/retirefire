@@ -120,7 +120,8 @@ describe('SimulationEngine', () => {
 
     it('should respect withdrawal strategies', () => {
         const configDeficit = JSON.parse(JSON.stringify(mockConfig));
-        configDeficit.settings.personal.retireAge = 50; // Retire immediately
+        configDeficit.startAge = 60; // Use age >= 59.5 to avoid Gap Year penalty-avoidance logic
+        configDeficit.settings.personal.retireAge = 60;
         configDeficit.settings.expenses.annualSpending = 200000; // Big spending to cause deficit
         configDeficit.settings.income.work = 0;
 
@@ -170,7 +171,8 @@ describe('SimulationEngine', () => {
     });
     it('should track tax costs for drawdowns', () => {
         const configTax = JSON.parse(JSON.stringify(mockConfig));
-        configTax.settings.personal.retireAge = 50;
+        configTax.startAge = 60; // Use age >= 59.5 to avoid Gap Year penalty-avoidance logic
+        configTax.settings.personal.retireAge = 60;
         configTax.settings.expenses.annualSpending = 150000;
         configTax.settings.income.work = 0;
         configTax.settings.taxes.withdrawalStrategy = 'minimize_rmds'; // Retirement Savings (401k) first

@@ -60,67 +60,161 @@
                     <span id="ddMetricAvgRate"
                         style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">0%</span>
                 </div>
+                <div class="dd-metric">
+                    <span
+                        style="display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 700;">BREAK-EVEN
+                        AGE</span>
+                    <span id="ddMetricBreakEven" style="font-size: 1.2rem; font-weight: 800;">—</span>
+                </div>
             </div>
         </div>
 
-        <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%;">
+        <!-- Tab Navigation -->
+        <div style="display: flex; gap: 10px; padding: 0 20px; border-bottom: 2px solid var(--border-color);">
+            <button id="tabDetailedAnalysis" class="roth-tab active" onclick="window.switchRothTab('detailed')">
+                📊 Detailed Analysis
+            </button>
+            <button id="tabComparison" class="roth-tab" onclick="window.switchRothTab('comparison')">
+                🔬 Compare Strategies
+            </button>
+        </div>
 
-                <!-- Left: Visual Analysis -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <!-- Visual 1: Bracket Waterfall -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">🌊 Tax Bracket Waterfall (Next 10 Years)</div>
+        <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px;">
+            <!-- Detailed Analysis View (Default) -->
+            <div id="viewDetailedAnalysis" class="roth-view active">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%;">
+
+                    <!-- Left: Visual Analysis -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Visual 1: Bracket Waterfall -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">🌊 Tax Bracket Waterfall (Next 10 Years)</div>
+                            </div>
+                            <div class="chart-container large" style="height: 300px;">
+                                <canvas id="chartRothWaterfall"></canvas>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">
+                                Shows how much "room" is left in your target bracket vs. current income.
+                            </div>
                         </div>
-                        <div class="chart-container large" style="height: 300px;">
-                            <canvas id="chartRothWaterfall"></canvas>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">
-                            Shows how much "room" is left in your target bracket vs. current income.
+
+                        <!-- Visual 2: Breakeven -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">⚖️ Tax Arbitrage (Breakeven)</div>
+                            </div>
+                            <div class="chart-container large" style="height: 300px;">
+                                <canvas id="chartRothBreakeven"></canvas>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">
+                                Compares Cumulative Tax Paid Now (Green) vs. Projected RMD Tax Saved (Red).
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Visual 2: Breakeven -->
-                    <div class="card">
+                    <!-- Right: Detailed Data -->
+                    <div class="card" style="height: 100%; display: flex; flex-direction: column;">
                         <div class="card-header">
-                            <div class="card-title">⚖️ Tax Arbitrage (Breakeven)</div>
+                            <div class="card-title">📅 Annual Conversion Schedule</div>
                         </div>
-                        <div class="chart-container large" style="height: 300px;">
-                            <canvas id="chartRothBreakeven"></canvas>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">
-                            Compares Cumulative Tax Paid Now (Green) vs. Projected RMD Tax Saved (Red).
+                        <div style="flex: 1; overflow: auto;">
+                            <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="position: sticky; top: 0; background: var(--card-bg); z-index: 10;">
+                                        <th>Year</th>
+                                        <th>Age</th>
+                                        <th>Ordinary Income</th>
+                                        <th>Bracket Room</th>
+                                        <th>Conversion</th>
+                                        <th>Source Accounts</th>
+                                        <th>Est. Tax</th>
+                                        <th>Effective Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rothDeepDiveTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <!-- End Detailed Analysis View -->
 
-                <!-- Right: Detailed Data -->
-                <div class="card" style="height: 100%; display: flex; flex-direction: column;">
+        <!-- Comparison View -->
+        <div id="viewComparison" class="roth-view" style="display: none;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+
+                <!-- Comparison Chart -->
+                <div class="card">
                     <div class="card-header">
-                        <div class="card-title">📅 Annual Conversion Schedule</div>
+                        <div class="card-title">📈 Strategy Comparison: Net Worth by Conversion Amount</div>
                     </div>
-                    <div style="flex: 1; overflow: auto;">
-                        <table class="data-table" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="position: sticky; top: 0; background: var(--card-bg); z-index: 10;">
-                                    <th>Year</th>
-                                    <th>Age</th>
-                                    <th>Ordinary Income</th>
-                                    <th>Bracket Room</th>
-                                    <th>Conversion</th>
-                                    <th>Est. Tax</th>
-                                    <th>Effective Rate</th>
+                    <div class="chart-container large" style="height: 350px;">
+                        <canvas id="chartStrategyComparison"></canvas>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">
+                        Shows how final net worth changes with different annual conversion amounts. The peak indicates
+                        the optimal strategy.
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🔬 Detailed Strategy Comparison</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">
+                            Comparing <span id="comparisonCount">0</span> strategies • Click any row to view
+                            year-by-year details
+                        </div>
+                    </div>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        <table class="data-table" style="width: 100%;">
+                            <thead style="position: sticky; top: 0; background: var(--card-bg); z-index: 10;">
+                                <tr>
+                                    <th style="cursor: pointer;" onclick="window.sortComparisonTable('amount')">
+                                        Annual Amount ▼
+                                    </th>
+                                    <th style="cursor: pointer;" onclick="window.sortComparisonTable('netWorth')">
+                                        Final Net Worth
+                                    </th>
+                                    <th style="cursor: pointer;" onclick="window.sortComparisonTable('tax')">
+                                        Total Tax
+                                    </th>
+                                    <th style="cursor: pointer;" onclick="window.sortComparisonTable('breakEven')">
+                                        Break-Even Age
+                                    </th>
+                                    <th style="cursor: pointer;" onclick="window.sortComparisonTable('roth')">
+                                        Roth Balance
+                                    </th>
+                                    <th style="cursor: pointer;" onclick="window.sortComparisonTable('score')">
+                                        Score
+                                    </th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="rothDeepDiveTableBody">
+                            <tbody id="comparisonTableBody">
                                 <!-- Populated via JS -->
                             </tbody>
                         </table>
                     </div>
+                    <div
+                        style="padding: 15px; background: var(--bg-tertiary); border-top: 1px solid var(--border-color);">
+                        <div style="font-weight: 700; color: var(--success); margin-bottom: 5px;">
+                            💡 Recommendation: <span id="recommendationText">—</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);" id="recommendationReason">
+                            Select a strategy to see detailed analysis
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
+        <!-- End Comparison View -->
+
     </div>
 </div>
 
@@ -167,5 +261,36 @@
     .data-table td:first-child,
     .data-table th:first-child {
         text-align: left;
+    }
+
+    /* Tab Styles */
+    .roth-tab {
+        background: none;
+        border: none;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .roth-tab:hover {
+        color: var(--text-primary);
+        background: var(--bg-hover);
+    }
+
+    .roth-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    .roth-view {
+        display: none;
+    }
+
+    .roth-view.active {
+        display: block;
     }
 </style>

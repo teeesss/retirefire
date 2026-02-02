@@ -137,7 +137,7 @@ describe('E2E: RetireFire Application', () => {
 
     describe('Section Descriptions', () => {
         const sectionsWithDescriptions = [
-            { id: 'section-explorers', name: 'Year Explorer' },
+            { id: 'section-whatif', name: 'What-If Explorer' },
             { id: 'section-networth', name: 'Net Worth' },
             { id: 'section-income', name: 'Income' },
             { id: 'section-expenses', name: 'Expenses' },

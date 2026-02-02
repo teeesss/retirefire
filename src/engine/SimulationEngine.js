@@ -107,7 +107,8 @@ export class SimulationEngine {
                 Federal: [],
                 FICA: [],
                 CapGains: [],
-                State: []
+                State: [],
+                Penalty: []
             },
             drawdown: {
                 Investments: [],
@@ -183,7 +184,11 @@ export class SimulationEngine {
 
         // Taxes
         Object.keys(results.taxes).forEach(key => {
-            results.taxes[key].push(yearResults.taxes[key]);
+            if (key === 'Penalty') {
+                results.taxes[key].push(yearResults.taxes.Penalty || 0);
+            } else {
+                results.taxes[key].push(yearResults.taxes[key]);
+            }
         });
 
         // Drawdown
@@ -309,8 +314,6 @@ export class SimulationEngine {
         }
 
         let totalExpBeforeTax = generalExp + housingExp + medicalExp + ltcExp;
-
-        // Temporal / One-time Events
         if (config.events && Array.isArray(config.events)) {
             const yearEvents = config.events.filter(e => e.year === currentYear);
             for (const evt of yearEvents) {
@@ -410,7 +413,7 @@ export class SimulationEngine {
             let deficit = Math.abs(netFlow);
             const strategy = config.settings?.taxes?.withdrawalStrategy || 'grow_tax_deferred';
 
-            if (strategy === 'proportional') {
+            if (strategy === 'proportional' && currentAge >= 59.5) {
                 const totalLiquid = investments + retirement + roth;
                 if (totalLiquid > 0) {
                     const invPct = investments / totalLiquid;
@@ -434,9 +437,18 @@ export class SimulationEngine {
             }
 
             if (deficit > 0) {
-                let order = strategy === 'minimize_rmds'
-                    ? ['CashSavings', 'RetirementSavings', 'Investments', 'HSA', 'RothIRA']
-                    : ['CashSavings', 'Investments', 'RetirementSavings', 'HSA', 'RothIRA'];
+                // Determine drawdown loop order based on strategy and age
+                // If under 59.5, prioritize avoiding the 10% penalty on RetirementSavings (Traditional)
+                let order = [];
+                if (currentAge < 59.5) {
+                    order = ['CashSavings', 'Investments', 'RothIRA', 'HSA', 'RetirementSavings'];
+                } else {
+                    order = strategy === 'minimize_rmds'
+                        ? ['CashSavings', 'RetirementSavings', 'Investments', 'HSA', 'RothIRA']
+                        : ['CashSavings', 'Investments', 'RetirementSavings', 'HSA', 'RothIRA'];
+                }
+
+                // console.log(`[DEBUG] Year ${currentYear} Age ${currentAge} Deficit ${deficit} Order:`, order);
 
                 for (let accountName of order) {
                     if (deficit <= 0) break;
@@ -475,12 +487,19 @@ export class SimulationEngine {
             const finalTaxableOrd = otherOrdIncome + rothConvToProcess + yearlyDrawdownDetail.RetirementSavings;
             const finalTaxableCG = estimatedCapGains + (yearlyDrawdownDetail.Investments * 0.5);
 
+            // Calculate 10% Early Withdrawal Penalty
+            let penaltyAmount = 0;
+            if (currentAge < 59.5 && yearlyDrawdownDetail.RetirementSavings > 0) {
+                penaltyAmount = yearlyDrawdownDetail.RetirementSavings * 0.10;
+            }
+
             const finalBreakdown = TaxCalculator.calculateTaxBreakdown(
                 workIncome,
                 finalTaxableOrd,
                 finalTaxableCG,
                 config.settings?.taxSettings?.filingStatus || 'joint',
-                config.settings?.taxSettings?.state || 'none'
+                config.settings?.taxSettings?.state || 'none',
+                penaltyAmount // Pass the penalty
             );
 
             estimatedTax = finalBreakdown.total;
@@ -540,7 +559,8 @@ export class SimulationEngine {
                 Federal: taxBreakdown.federalOrd,
                 FICA: taxBreakdown.fica,
                 CapGains: taxBreakdown.federalCG,
-                State: taxBreakdown.state
+                State: taxBreakdown.state,
+                Penalty: taxBreakdown.penalty || 0
             },
             drawdown: {
                 Investments: Math.round(yearlyDrawdownDetail.Investments),
@@ -653,6 +673,9 @@ export class SimulationEngine {
 
         if (marketScenario === 'historical-bootstrap') {
             startIndex = Math.floor(rng.next() * (historicalReturns.length - years));
+        } else if (marketScenario.startsWith('last-')) {
+            const lookback = parseInt(marketScenario.split('-')[1]);
+            startIndex = Math.max(0, historicalReturns.length - lookback);
         } else if (scenarios[marketScenario]) {
             startIndex = scenarios[marketScenario];
         }

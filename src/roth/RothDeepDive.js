@@ -4,7 +4,7 @@
  */
 
 import Chart from 'chart.js/auto';
-import { formatCurrency } from '../utils/Formatters.js';
+import { formatCurrency } from '../utils/formatters.js';
 import { rawData } from '../data/Store.js';
 import { config } from '../data/Config.js';
 import RothOptimizer from './RothOptimizer.js';
@@ -150,10 +150,40 @@ export class RothDeepDive {
         const elTotal = document.getElementById('ddMetricTotalConverted');
         const elTax = document.getElementById('ddMetricTotalTax');
         const elRate = document.getElementById('ddMetricAvgRate');
+        const elBreakEven = document.getElementById('ddMetricBreakEven');
 
         if (elTotal) elTotal.textContent = formatCurrency(summary.totalConverted);
         if (elTax) elTax.textContent = formatCurrency(summary.totalTaxPaid);
         if (elRate) elRate.textContent = summary.effectiveTaxRate.toFixed(1) + '%';
+
+        // Calculate break-even using heuristic
+        // Assumption: Tax-free growth saves ~25% of converted amount over time
+        // Break-even when savings >= tax paid
+        if (elBreakEven && summary.totalConverted > 0) {
+            const taxPaid = summary.totalTaxPaid;
+            const estimatedAnnualReturn = 0.06; // 6% growth
+            const effectiveTaxRate = summary.effectiveTaxRate / 100;
+
+            // Heuristic: Years to break even ≈ tax rate / annual return
+            // This is a simplified model; real calculation needs baseline comparison
+            const yearsToBreakEven = Math.ceil(effectiveTaxRate / estimatedAnnualReturn);
+            const currentAge = config.startAge || 53;
+            const breakEvenAge = currentAge + summary.yearsWithConversions + yearsToBreakEven;
+
+            // Color coding
+            let color = 'var(--success)'; // Green
+            if (yearsToBreakEven > 30 || breakEvenAge > 90) {
+                color = 'var(--danger)'; // Red
+            } else if (yearsToBreakEven > 20) {
+                color = 'var(--warning)'; // Yellow
+            }
+
+            elBreakEven.textContent = `${breakEvenAge} (${yearsToBreakEven}y)`;
+            elBreakEven.style.color = color;
+        } else if (elBreakEven) {
+            elBreakEven.textContent = '—';
+            elBreakEven.style.color = 'var(--text-muted)';
+        }
     }
 
     static renderWaterfall(yearData, filingStatus) {
@@ -319,6 +349,16 @@ export class RothDeepDive {
             const displayAmount = d.taxPaymentSource === 'traditional' ? d.netToRoth : d.conversionAmount;
             const isOverridden = RothConfig.manualOverrides[d.year] !== undefined;
 
+            // NEW: Format source accounts display
+            const sources = d.sources || { retirement: 0, investments: 0 };
+            const sourceDisplay = d.conversionAmount > 0
+                ? `<div style="font-size: 0.75rem; line-height: 1.3;">
+                     ${sources.retirement > 0 ? `<div>401k: ${formatCurrency(sources.retirement)}</div>` : ''}
+                     ${sources.investments > 0 ? `<div>Taxable: ${formatCurrency(sources.investments)}</div>` : ''}
+                     ${sources.retirement === 0 && sources.investments === 0 ? '<div style="color: var(--text-muted);">—</div>' : ''}
+                   </div>`
+                : '<div style="color: var(--text-muted); font-size: 0.75rem;">—</div>';
+
             return `
             <tr style="${isOverridden ? 'background: rgba(59, 130, 246, 0.05)' : ''}">
                 <td style="text-align: left; color: var(--text-primary); font-weight: 600;">${d.year}</td>
@@ -333,9 +373,66 @@ export class RothDeepDive {
                            style="width: 100px; text-align: right; background: ${isOverridden ? 'var(--bg-tertiary)' : 'var(--bg-input)'}; color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 5px; font-weight: 700;">
                     ${d.taxPaymentSource === 'traditional' && d.conversionAmount > 0 ? `<div style="font-size: 0.6rem; color: var(--danger)">+ ${formatCurrency(d.taxOnConversion)} tax</div>` : ''}
                 </td>
+                <td>${sourceDisplay}</td>
                 <td style="color: var(--danger);">${formatCurrency(d.taxOnConversion)}</td>
                 <td style="font-size: 0.8rem;">${d.marginalRate}%</td>
             </tr>
         `}).join('');
     }
+
+    /**
+     * Switch between detailed and comparison tabs
+     */
+    static switchTab(tabName) {
+        // Update tab buttons
+        const tabs = document.querySelectorAll('.roth-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        const activeTab = document.getElementById(`tab${tabName === 'detailed' ? 'DetailedAnalysis' : 'Comparison'}`);
+        if (activeTab) activeTab.classList.add('active');
+
+        // Update views
+        const views = document.querySelectorAll('.roth-view');
+        views.forEach(view => view.classList.remove('active'));
+
+        const activeView = document.getElementById(`view${tabName === 'detailed' ? 'DetailedAnalysis' : 'Comparison'}`);
+        if (activeView) activeView.classList.add('active');
+
+        // If switching to comparison and not yet loaded, run comparison
+        if (tabName === 'comparison' && !this.comparisonLoaded) {
+            this.loadComparison();
+        }
+    }
+
+    /**
+     * Load and render comparison view
+     */
+    static async loadComparison() {
+        // Import comparison module dynamically
+        const { RothComparison } = await import('./RothComparison.js');
+
+        // Prepare parameters (same as renderAnalysis)
+        const params = {
+            years: rawData.years,
+            ordinaryIncome: rawData.average.income.Work.map((v, i) =>
+                v + (rawData.average.income.SocialSecurity?.[i] || 0) + (rawData.average.income.RMD?.[i] || 0)
+            ),
+            traditionalBalance: rawData.average.accounts.RetirementSavings,
+            filingStatus: config.settings.taxSettings.filingStatus || 'joint',
+            targetBracket: RothConfig.targetBracket,
+            constraints: {
+                maxAnnual: RothConfig.maxAnnualCap,
+                payTaxesFrom: RothConfig.payTaxesFrom
+            }
+        };
+
+        // Run comparison
+        await RothComparison.runComparison(params);
+        this.comparisonLoaded = true;
+    }
 }
+
+// Global function for tab switching
+window.switchRothTab = (tabName) => {
+    RothDeepDive.switchTab(tabName);
+};

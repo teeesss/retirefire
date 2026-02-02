@@ -90,7 +90,7 @@ export class TaxCalculator {
      * @param {string} state - state code (e.g., 'CA', 'FL')
      * @returns {Object} Tax breakdown
      */
-    static calculateTaxBreakdown(wages, otherOrdIncome, capGains, filingStatus, state) {
+    static calculateTaxBreakdown(wages, otherOrdIncome, capGains, filingStatus, state, earlyWithdrawalPenalty = 0) {
         const totalOrdIncome = (wages || 0) + (otherOrdIncome || 0);
         const deduction = this.standardDeduction[filingStatus] || 14600;
 
@@ -122,7 +122,8 @@ export class TaxCalculator {
             federalCG: Math.round(fedCG),
             fica: Math.round(fica),
             state: Math.round(st),
-            total: Math.round(fedOrd + fedCG + fica + st)
+            penalty: Math.round(earlyWithdrawalPenalty || 0),
+            total: Math.round(fedOrd + fedCG + fica + st + (earlyWithdrawalPenalty || 0))
         };
     }
 

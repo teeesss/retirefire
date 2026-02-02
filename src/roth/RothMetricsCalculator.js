@@ -112,6 +112,84 @@ export class RothMetricsCalculator {
     }
 
     /**
+     * Calculate break-even analysis for Roth conversions
+     * Determines when cumulative tax savings offset cumulative conversion costs
+     * 
+     * @param {Object} rothData - Simulation results WITH Roth conversions
+     * @param {Object} baselineData - Simulation results WITHOUT Roth conversions
+     * @param {Object} config - Configuration object with startAge
+     * @returns {Object} Break-even analysis { breakEvenYear, breakEvenAge, yearsToBreakEven, neverBreaksEven }
+     */
+    static calculateBreakEven(rothData, baselineData, config) {
+        if (!rothData || !baselineData || !config) {
+            console.warn('RothMetricsCalculator: Missing data for break-even calculation');
+            return {
+                breakEvenYear: null,
+                breakEvenAge: null,
+                yearsToBreakEven: null,
+                neverBreaksEven: true,
+                cumulativeTaxPaid: [],
+                cumulativeTaxSaved: []
+            };
+        }
+
+        const startAge = config.startAge || 53;
+        const years = rothData.years || [];
+
+        // Get tax data
+        const rothTaxes = rothData.expenses?.Taxes || [];
+        const baselineTaxes = baselineData.expenses?.Taxes || [];
+        const conversionTaxes = rothData.rothConversions?.taxPaid || [];
+
+        // Calculate cumulative arrays
+        let cumulativeConversionTax = 0;
+        let cumulativeTaxSavings = 0;
+        const cumulativeTaxPaid = [];
+        const cumulativeTaxSaved = [];
+
+        let breakEvenYear = null;
+        let breakEvenAge = null;
+
+        for (let i = 0; i < years.length; i++) {
+            // Cumulative tax paid for conversions
+            cumulativeConversionTax += (conversionTaxes[i] || 0);
+            cumulativeTaxPaid.push(cumulativeConversionTax);
+
+            // Cumulative tax savings (baseline tax - roth tax, excluding conversion tax)
+            // This represents the tax we WOULD have paid on RMDs/withdrawals but didn't
+            const baselineTax = baselineTaxes[i] || 0;
+            const rothTax = rothTaxes[i] || 0;
+            const conversionTax = conversionTaxes[i] || 0;
+
+            // Tax saved this year = baseline tax - (roth tax - conversion tax)
+            // Simplified: baseline tax - roth tax + conversion tax
+            const yearlyTaxSavings = baselineTax - rothTax + conversionTax;
+            cumulativeTaxSavings += yearlyTaxSavings;
+            cumulativeTaxSaved.push(cumulativeTaxSavings);
+
+            // Check if we've broken even
+            if (breakEvenYear === null && cumulativeTaxSavings >= cumulativeConversionTax && cumulativeConversionTax > 0) {
+                breakEvenYear = i;
+                breakEvenAge = startAge + i;
+            }
+        }
+
+        const neverBreaksEven = breakEvenYear === null && cumulativeConversionTax > 0;
+        const yearsToBreakEven = breakEvenYear !== null ? breakEvenYear : null;
+
+        return {
+            breakEvenYear,
+            breakEvenAge,
+            yearsToBreakEven,
+            neverBreaksEven,
+            cumulativeTaxPaid,
+            cumulativeTaxSaved,
+            finalTaxPaid: cumulativeConversionTax,
+            finalTaxSaved: cumulativeTaxSavings
+        };
+    }
+
+    /**
      * Validate metrics calculation
      * @param {Object} metrics - Metrics to validate
      * @returns {boolean} True if valid

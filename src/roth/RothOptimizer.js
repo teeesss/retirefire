@@ -92,6 +92,7 @@ export class RothOptimizer {
 
     /**
      * Find optimal conversion amount for a single year
+     * Now includes account source tracking
      */
     static findOptimalConversion(params) {
         const { year, income, balance, filingStatus, targetBracket, constraints } = params;
@@ -119,6 +120,29 @@ export class RothOptimizer {
             conversionAmount = Math.min(RothConfig.manualOverrides[year], balance);
         }
 
+        // NEW: Determine account sources for conversion
+        // Priority: Traditional IRA/401k first (tax-deferred → tax-free is optimal)
+        // If insufficient, pull from taxable investments
+        const availableRetirement = params.retirementBalance || balance; // Traditional 401k/IRA
+        const availableInvestments = params.investmentsBalance || 0;     // Taxable brokerage
+
+        let fromRetirement = 0;
+        let fromInvestments = 0;
+
+        if (conversionAmount > 0) {
+            // Try to fund entirely from retirement accounts first
+            fromRetirement = Math.min(conversionAmount, availableRetirement);
+
+            // If retirement accounts insufficient, pull remainder from taxable
+            const remaining = conversionAmount - fromRetirement;
+            if (remaining > 0) {
+                fromInvestments = Math.min(remaining, availableInvestments);
+            }
+
+            // Adjust conversion amount if insufficient funds
+            conversionAmount = fromRetirement + fromInvestments;
+        }
+
         // Calculate tax impact
         const totalIncome = income + conversionAmount;
         const taxOnConversion = this.calculateTaxOnConversion(income, conversionAmount, filingStatus);
@@ -133,6 +157,11 @@ export class RothOptimizer {
             year,
             conversionAmount: Math.round(conversionAmount),
             netToRoth: Math.round(netToRoth),
+            // NEW: Account source breakdown
+            sources: {
+                retirement: Math.round(fromRetirement),
+                investments: Math.round(fromInvestments)
+            },
             income,
             totalIncome,
             currentBracket,
@@ -141,7 +170,7 @@ export class RothOptimizer {
             effectiveRate,
             taxOnConversion: Math.round(taxOnConversion),
             remainingBalance: balance - conversionAmount,
-            bracketUtilization: (conversionAmount / roomInBracket) * 100,
+            bracketUtilization: roomInBracket > 0 ? (conversionAmount / roomInBracket) * 100 : 0,
             taxPaymentSource: payTaxesFrom
         };
     }
@@ -212,16 +241,16 @@ export class RothOptimizer {
     }
 
     /**
-     * Get upper limit of target bracket
+     * Get upper limit of target bracket (2025 tax brackets)
      */
     static getBracketLimit(bracket, filingStatus) {
         const limits = {
-            10: { single: 11600, joint: 23200, hoh: 16550 },
-            12: { single: 47150, joint: 94300, hoh: 63100 },
-            22: { single: 100525, joint: 201050, hoh: 100500 },
-            24: { single: 191950, joint: 383900, hoh: 191950 },
-            32: { single: 243725, joint: 487450, hoh: 243725 },
-            35: { single: 609350, joint: 731200, hoh: 609350 },
+            10: { single: 11925, joint: 23850, hoh: 17000 },
+            12: { single: 48475, joint: 96950, hoh: 64850 },
+            22: { single: 103350, joint: 206700, hoh: 103350 },
+            24: { single: 197300, joint: 394600, hoh: 197300 },
+            32: { single: 250525, joint: 501050, hoh: 250525 },
+            35: { single: 626350, joint: 751600, hoh: 626350 },
             37: { single: Infinity, joint: Infinity, hoh: Infinity }
         };
 
@@ -367,6 +396,158 @@ export class RothOptimizer {
             yearByYear: optimizedResults.results.filter(r => r.conversionAmount > 0)
         };
     }
+
+    /**
+     * Compare multiple conversion strategies with different annual amounts
+     * Uses dynamic range detection and $10k increments
+     * 
+     * @param {Object} params - Base parameters (same as optimize)
+     * @param {Object} options - Comparison options
+     * @param {number} options.minAmount - Minimum conversion amount (default: auto-detect)
+     * @param {number} options.maxAmount - Maximum conversion amount (default: auto-detect)
+     * @param {number} options.increment - Increment between amounts (default: 10000)
+     * @returns {Object} Comparison results with scores and recommendations
+     */
+    static compareStrategies(params, options = {}) {
+        const {
+            years,
+            ordinaryIncome,
+            traditionalBalance,
+            filingStatus = 'joint',
+            targetBracket = 24,
+            constraints = {}
+        } = params;
+
+        // Dynamic range detection (Option C)
+        const avgIncome = ordinaryIncome.reduce((sum, inc) => sum + inc, 0) / ordinaryIncome.length;
+        const avgBalance = traditionalBalance.reduce((sum, bal) => sum + bal, 0) / traditionalBalance.length;
+
+        // Calculate bracket room for typical year
+        const bracketLimit = this.getBracketLimit(targetBracket, filingStatus);
+        const typicalRoom = Math.max(0, bracketLimit - avgIncome);
+
+        // Auto-detect range if not provided
+        const increment = options.increment || 10000;
+        const minAmount = options.minAmount || Math.max(10000, Math.floor(typicalRoom * 0.1 / increment) * increment);
+        const maxAmount = options.maxAmount || Math.min(
+            Math.ceil(typicalRoom * 1.5 / increment) * increment,
+            Math.ceil(avgBalance * 0.15 / increment) * increment, // Don't exceed 15% of balance per year
+            250000 // Absolute cap
+        );
+
+        // Generate amounts array with $10k increments
+        const amounts = [];
+        for (let amt = minAmount; amt <= maxAmount; amt += increment) {
+            amounts.push(amt);
+        }
+
+        console.log(`🔬 Comparing ${amounts.length} strategies from ${this.formatCurrency(minAmount)} to ${this.formatCurrency(maxAmount)}`);
+
+        // Run optimization for each amount
+        const strategies = amounts.map(amount => {
+            // Create modified constraints with fixed annual amount
+            const modifiedConstraints = {
+                ...constraints,
+                maxAnnual: amount
+            };
+
+            // Run optimization
+            const result = this.optimize({
+                years,
+                ordinaryIncome,
+                traditionalBalance,
+                filingStatus,
+                targetBracket,
+                constraints: modifiedConstraints
+            });
+
+            return {
+                amount,
+                ...result.summary,
+                results: result.results // Keep year-by-year for drill-down
+            };
+        });
+
+        // Calculate scores for each strategy
+        const scoredStrategies = this.scoreStrategies(strategies);
+
+        // Find optimal strategy
+        const optimal = scoredStrategies.reduce((best, curr) =>
+            curr.score > best.score ? curr : best
+        );
+
+        return {
+            strategies: scoredStrategies,
+            optimal,
+            range: { min: minAmount, max: maxAmount, increment },
+            metadata: {
+                avgIncome,
+                avgBalance,
+                bracketRoom: typicalRoom,
+                strategiesCompared: amounts.length
+            }
+        };
+    }
+
+    /**
+     * Score strategies based on multiple factors
+     * Higher score = better strategy
+     */
+    static scoreStrategies(strategies) {
+        // Find min/max for normalization
+        const netWorths = strategies.map(s => s.finalNetWorth || 0);
+        const taxes = strategies.map(s => s.totalTaxPaid || 0);
+        const breakEvens = strategies.map(s => s.breakEvenAge || 999);
+        const rothBalances = strategies.map(s => s.finalRothBalance || 0);
+
+        const maxNW = Math.max(...netWorths);
+        const minNW = Math.min(...netWorths);
+        const maxTax = Math.max(...taxes);
+        const minTax = Math.min(...taxes);
+        const maxBreakEven = Math.max(...breakEvens.filter(b => b < 999));
+        const minBreakEven = Math.min(...breakEvens.filter(b => b < 999));
+        const maxRoth = Math.max(...rothBalances);
+        const minRoth = Math.min(...rothBalances);
+
+        return strategies.map(strategy => {
+            const nw = strategy.finalNetWorth || 0;
+            const tax = strategy.totalTaxPaid || 0;
+            const breakEven = strategy.breakEvenAge || 999;
+            const roth = strategy.finalRothBalance || 0;
+
+            // Normalize to 0-1 scale
+            const normalizedNW = maxNW > minNW ? (nw - minNW) / (maxNW - minNW) : 0.5;
+            const normalizedTax = maxTax > minTax ? 1 - ((tax - minTax) / (maxTax - minTax)) : 0.5; // Lower tax is better
+            const normalizedBreakEven = maxBreakEven > minBreakEven && breakEven < 999
+                ? 1 - ((breakEven - minBreakEven) / (maxBreakEven - minBreakEven))
+                : 0.5; // Earlier break-even is better
+            const normalizedRoth = maxRoth > minRoth ? (roth - minRoth) / (maxRoth - minRoth) : 0.5;
+
+            // Weighted score (out of 100)
+            const score = Math.round(
+                (0.40 * normalizedNW +       // 40% weight: Final wealth
+                    0.30 * normalizedTax +      // 30% weight: Tax efficiency
+                    0.20 * normalizedBreakEven + // 20% weight: Break-even speed
+                    0.10 * normalizedRoth)      // 10% weight: Tax-free legacy
+                * 100
+            );
+
+            return {
+                ...strategy,
+                score,
+                indicators: {
+                    isHighestNW: nw === maxNW,
+                    isLowestTax: tax === minTax,
+                    isFastestBreakEven: breakEven === minBreakEven && breakEven < 999,
+                    breakEvenColor: breakEven < 999
+                        ? (breakEven - (strategy.startAge || 53) < 20 ? 'green' :
+                            breakEven - (strategy.startAge || 53) < 30 ? 'yellow' : 'red')
+                        : 'red'
+                }
+            };
+        }).sort((a, b) => b.score - a.score); // Sort by score descending
+    }
+
 }
 
 export default RothOptimizer;
