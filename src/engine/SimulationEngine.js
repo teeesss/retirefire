@@ -399,8 +399,7 @@ export class SimulationEngine {
             }
         }
 
-        // 6. Drawdown Logic
-        let netFlow = workIncome + ssIncome + rmdIncome - totalExpBeforeTax - estimatedTax;
+        // 6. Drawdown Logic (Iterative to handle tax gross-ups)
         let yearlyDrawdownDetail = {
             Investments: 0, InvestmentsTax: 0,
             RetirementSavings: 0, RetirementSavingsTax: 0,
@@ -409,110 +408,118 @@ export class SimulationEngine {
             CashSavings: 0, CashSavingsTax: 0
         };
 
-        if (netFlow < 0) {
-            let deficit = Math.abs(netFlow);
-            const strategy = config.settings?.taxes?.withdrawalStrategy || 'grow_tax_deferred';
+        const strategy = config.settings?.taxes?.withdrawalStrategy || 'grow_tax_deferred';
+        let currentDeficit = Math.max(0, totalExpBeforeTax + estimatedTax - (workIncome + ssIncome + rmdIncome));
 
-            if (strategy === 'proportional' && currentAge >= 59.5) {
+        // Iterative loop to handle "tax on tax" from traditional retirement withdrawals
+        let iterations = 0;
+
+        while (currentDeficit > 0.1 && iterations < 20) {
+            iterations++;
+            let amountToFund = currentDeficit;
+
+            // Determine drawdown loop order
+            let order = [];
+            if (currentAge < 59.5) {
+                order = ['CashSavings', 'Investments', 'RothIRA', 'HSA', 'RetirementSavings'];
+            } else {
+                order = strategy === 'minimize_rmds'
+                    ? ['CashSavings', 'RetirementSavings', 'Investments', 'HSA', 'RothIRA']
+                    : ['CashSavings', 'Investments', 'RetirementSavings', 'HSA', 'RothIRA'];
+            }
+
+            // Proportional handling (Only for first iteration)
+            if (iterations === 1 && strategy === 'proportional' && currentAge >= 59.5) {
                 const totalLiquid = investments + retirement + roth;
                 if (totalLiquid > 0) {
-                    const invPct = investments / totalLiquid;
-                    const retPct = retirement / totalLiquid;
-                    const rothPct = roth / totalLiquid;
-
-                    const invAmt = Math.min(investments, deficit * invPct);
+                    const invAmt = Math.min(investments, amountToFund * (investments / totalLiquid));
                     investments -= invAmt;
-                    yearlyDrawdownDetail.Investments = invAmt;
+                    yearlyDrawdownDetail.Investments += invAmt;
+                    amountToFund -= invAmt;
 
-                    const retAmt = Math.min(retirement, deficit * retPct);
+                    const retAmt = Math.min(retirement, amountToFund * (retirement / totalLiquid));
                     retirement -= retAmt;
-                    yearlyDrawdownDetail.RetirementSavings = retAmt;
+                    yearlyDrawdownDetail.RetirementSavings += retAmt;
+                    amountToFund -= retAmt;
 
-                    const rothAmt = Math.min(roth, deficit * rothPct);
+                    const rothAmt = Math.min(roth, amountToFund * (roth / totalLiquid));
                     roth -= rothAmt;
-                    yearlyDrawdownDetail.RothIRA = rothAmt;
-
-                    deficit -= (invAmt + retAmt + rothAmt);
+                    yearlyDrawdownDetail.RothIRA += rothAmt;
+                    amountToFund -= rothAmt;
                 }
             }
 
-            if (deficit > 0) {
-                // Determine drawdown loop order based on strategy and age
-                // If under 59.5, prioritize avoiding the 10% penalty on RetirementSavings (Traditional)
-                let order = [];
-                if (currentAge < 59.5) {
-                    order = ['CashSavings', 'Investments', 'RothIRA', 'HSA', 'RetirementSavings'];
-                } else {
-                    order = strategy === 'minimize_rmds'
-                        ? ['CashSavings', 'RetirementSavings', 'Investments', 'HSA', 'RothIRA']
-                        : ['CashSavings', 'Investments', 'RetirementSavings', 'HSA', 'RothIRA'];
-                }
+            // Waterfall Drawdown
+            for (let accountName of order) {
+                if (amountToFund <= 0) break;
 
-                // console.log(`[DEBUG] Year ${currentYear} Age ${currentAge} Deficit ${deficit} Order:`, order);
-
-                for (let accountName of order) {
-                    if (deficit <= 0) break;
-
-                    if (accountName === 'Investments') {
-                        const amount = Math.min(investments, deficit);
-                        investments -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.Investments += amount;
-                    } else if (accountName === 'RetirementSavings') {
-                        const amount = Math.min(retirement, deficit);
-                        retirement -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.RetirementSavings += amount;
-                    } else if (accountName === 'RothIRA') {
-                        const amount = Math.min(roth, deficit);
-                        roth -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.RothIRA += amount;
-                    } else if (accountName === 'HSA') {
-                        const amount = Math.min(hsa, deficit);
-                        hsa -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.HSA += amount;
-                    } else if (accountName === 'CashSavings') {
-                        const amount = Math.min(cash, deficit);
-                        cash -= amount;
-                        deficit -= amount;
-                        yearlyDrawdownDetail.CashSavings += amount;
-                    }
+                if (accountName === 'Investments') {
+                    const amount = Math.min(investments, amountToFund);
+                    investments -= amount;
+                    amountToFund -= amount;
+                    yearlyDrawdownDetail.Investments += amount;
+                } else if (accountName === 'RetirementSavings') {
+                    const amount = Math.min(retirement, amountToFund);
+                    retirement -= amount;
+                    amountToFund -= amount;
+                    yearlyDrawdownDetail.RetirementSavings += amount;
+                } else if (accountName === 'RothIRA') {
+                    const amount = Math.min(roth, amountToFund);
+                    roth -= amount;
+                    amountToFund -= amount;
+                    yearlyDrawdownDetail.RothIRA += amount;
+                } else if (accountName === 'HSA') {
+                    const amount = Math.min(hsa, amountToFund);
+                    hsa -= amount;
+                    amountToFund -= amount;
+                    yearlyDrawdownDetail.HSA += amount;
+                } else if (accountName === 'CashSavings') {
+                    const amount = Math.min(cash, amountToFund);
+                    cash -= amount;
+                    amountToFund -= amount;
+                    yearlyDrawdownDetail.CashSavings += amount;
                 }
             }
 
-            // HOLISTIC TAX RE-CALCULATION
-            // Track the final taxable amounts including all sources
-            const finalTaxableOrd = otherOrdIncome + rothConvToProcess + yearlyDrawdownDetail.RetirementSavings;
-            const finalTaxableCG = estimatedCapGains + (yearlyDrawdownDetail.Investments * 0.5);
+            // RE-CALCULATE TAXES based on new withdrawals
+            const currentTaxableOrd = otherOrdIncome + rothConvToProcess + yearlyDrawdownDetail.RetirementSavings;
+            const currentTaxableCG = estimatedCapGains + (yearlyDrawdownDetail.Investments * 0.5);
+            let currentPenalty = (currentAge < 59.5 && yearlyDrawdownDetail.RetirementSavings > 0)
+                ? yearlyDrawdownDetail.RetirementSavings * 0.10 : 0;
 
-            // Calculate 10% Early Withdrawal Penalty
-            let penaltyAmount = 0;
-            if (currentAge < 59.5 && yearlyDrawdownDetail.RetirementSavings > 0) {
-                penaltyAmount = yearlyDrawdownDetail.RetirementSavings * 0.10;
-            }
-
-            const finalBreakdown = TaxCalculator.calculateTaxBreakdown(
+            const newTaxBreakdown = TaxCalculator.calculateTaxBreakdown(
                 workIncome,
-                finalTaxableOrd,
-                finalTaxableCG,
+                currentTaxableOrd,
+                currentTaxableCG,
                 config.settings?.taxSettings?.filingStatus || 'joint',
                 config.settings?.taxSettings?.state || 'none',
-                penaltyAmount // Pass the penalty
+                currentPenalty
             );
 
-            estimatedTax = finalBreakdown.total;
-            Object.assign(taxBreakdown, finalBreakdown);
+            estimatedTax = newTaxBreakdown.total;
+            Object.assign(taxBreakdown, newTaxBreakdown);
 
-            // Assign marginal taxes for detail display (Simple approximation: total - base)
-            // Note: These are for visual breakdown only; the total tax is already comprehensive.
-            yearlyDrawdownDetail.RetirementSavingsTax = Math.round(yearlyDrawdownDetail.RetirementSavings * 0.22); // Rough est for detail display
-            yearlyDrawdownDetail.InvestmentsTax = Math.round(yearlyDrawdownDetail.Investments * 0.15); // Rough est for detail display
+            // Re-calculate current deficit: (Requirements) - (Inflows + Drawdowns so far)
+            const totalDrawdownSoFar = yearlyDrawdownDetail.Investments + yearlyDrawdownDetail.RetirementSavings +
+                yearlyDrawdownDetail.RothIRA + yearlyDrawdownDetail.HSA + yearlyDrawdownDetail.CashSavings;
+            const totalInflowSoFar = workIncome + ssIncome + rmdIncome + totalDrawdownSoFar;
+            const totalRequirements = totalExpBeforeTax + estimatedTax;
 
-        } else {
+            currentDeficit = Math.max(0, totalRequirements - totalInflowSoFar);
+        }
+
+        // Final surplus logic if netFlow was positive
+        let netFlow = workIncome + ssIncome + rmdIncome - totalExpBeforeTax - estimatedTax;
+        if (currentYear === 2026) {
+            // console.log(`[DEBUG] Year ${currentYear}: Work=${workIncome}, SS=${ssIncome}, RMD=${rmdIncome}, Exp=${totalExpBeforeTax}, Tax=${estimatedTax}, netFlow=${netFlow}`);
+        }
+        if (netFlow > 0) {
             investments += netFlow;
         }
+
+        // Assign marginal taxes for detail display
+        yearlyDrawdownDetail.RetirementSavingsTax = Math.round(yearlyDrawdownDetail.RetirementSavings * 0.22);
+        yearlyDrawdownDetail.InvestmentsTax = Math.round(yearlyDrawdownDetail.Investments * 0.15);
 
         // Process Roth Conversion (already factored into taxes above via rothConvToProcess)
         let actualConversion = 0;

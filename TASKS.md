@@ -22,22 +22,14 @@ All critical security and logic issues have been resolved:
 
 **Focus**: Complete Roth Conversion Deep-Dive (TASK-006) and enhance core financial tools
 
-### **[TASK-006]** Roth Conversion Deep-Dive - **Phase 5** 🚧
+### **[TASK-006]** Roth Conversion Deep-Dive ✅
 - **Description**: Complete the final phase of Roth conversion analysis
-- **Status**: 80% complete (Phases 1-4 done)
+- **Status**: **COMPLETE** (2026-02-02)
 - **Files**: 
-  - `src/roth/RothComparison.js` (lines 301, 307)
+  - `src/roth/RothComparison.js`
   - `src/partials/modals/roth-deep-dive.html`
-- **Features Remaining**:
-  - [ ] **Phase 5a**: Load specific strategy's year-by-year data into detailed view (ISSUE-053)
-    - File: `src/roth/RothComparison.js` line 301
-    - Code TODO: "Load the specific strategy's year-by-year data into the detailed view"
-  - [ ] **Phase 5b**: Implement table sorting for conversion breakdown
-    - File: `src/roth/RothComparison.js` line 307
-    - Code TODO: "Implement table sorting"
 - **Related Issues**: ISSUE-029, ISSUE-053
-- **Estimated Effort**: 2-3 hours
-- **Priority**: **HIGH** (User-requested feature, 80% complete)
+- **Priority**: **HIGH**
 
 ### **[TASK-007]** Advanced Cash Flow Explorer ✅
 - **Description**: Modernize "What You Need" calculator with interactive controls
@@ -222,29 +214,34 @@ All critical security and logic issues have been resolved:
    - **Next Step**: Add "Last 30 years" historical range option
    - **Files**: `src/engine/SimulationEngine.js`, `src/charts/MonteCarloCharts.js`
 
-### 2. **[TASK-014] Gap Years Withdrawal Logic Fix**
+### 1. **[TASK-014]** Gap Years Withdrawal Logic Fix
    - **Why**: Fix withdrawal logic when there's no income (gap years before retirement)
    - **Effort**: 3-4 hours
-   - **Blockers**: None
    - **Impact**: Critical for early retirees with gap years
    - **Next Step**: Implement smart withdrawal order for gap years
    - **Files**: `src/engine/SimulationEngine.js`
 
-### 3. **[TASK-017] Roth Account Source Transparency**
+### 2. **[TASK-017]** Roth Account Source Transparency
    - **Why**: Users need to know which accounts fund Roth conversions
    - **Effort**: 2-3 hours
-   - **Blockers**: None
    - **Impact**: Improves transparency and planning
    - **Next Step**: Display account source breakdown
    - **Files**: `src/roth/RothOptimizer.js`, `src/roth/RothDeepDive.js`
+
+### 3. **[TASK-015]** Compare Button Implementation
+   - **Why**: Fix or remove the "Compare" button at top of dashboard
+   - **Effort**: 2-3 hours
+   - **Impact**: Better multi-scenario comparison view
+   - **Next Step**: Implement multi-scenario comparison engine
+   - **Files**: `src/main.js`, `src/ui/DashboardMetrics.js`
 
 ---
 
 ## 🎯 Current Sprint Status
 
 **Sprint**: Financial Depth & UX Enhancements
-**Progress**: 95% Complete
-**Next Milestone**: Modernize Cash Flow Explorer (TASK-007)
+**Progress**: 100% Complete ✅
+**Next Milestone**: Fix Early Retirement Gap Year Logic (TASK-014)
 
 ---
 

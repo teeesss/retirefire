@@ -516,6 +516,7 @@ ls *.md
 - ✅ **MetricsHandler Property Protection**: When adding insights to `MetricsHandler.js` (Plan Coach), always use defensive property checks (e.g., `(drawdown && drawdown.InvestmentsTax)`) to prevent crashes during simulation transitions or with incomplete data.
 - ✅ **Interactive Metric IDs**: Ensure IDs used in `scrollToSection` (e.g., `section-socialsecurity`) match exactly with those defined in the destination partials to avoid "Silent Scroll Failures".
 - ✅ **SS Comparison Layering**: When adding layers to `IncomeExpenseCharts.js` (like the 4th "Choice" bar), handle data extraction and destruction logic separately to prevent memory leaks and chart pollution.
+- ✅ **Browser Verification Fallback (Windows)**: If `browser_subagent` fails with `$HOME` environment errors on Windows, always use the `chrome-devtools` MCP server directly to verify live deployments or take screenshots.
  
 ---
  
