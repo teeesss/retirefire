@@ -15,6 +15,9 @@
 | **PERF-002** | LocalStorage quota exhaustion risk | ✅ FIXED | Implemented quota monitoring in `SecureStorage.js`. Warns at 4MB, auto-compresses on quota exceeded, graceful error handling. |
 | **SECURITY-001** | No global error boundary - unhandled errors crash app | ✅ FIXED | Created `ErrorBoundary.js` (189 lines) to catch unhandled errors and promise rejections. Displays user-friendly error UI. |
 | **SECURITY-002** | Missing input validation - extreme values accepted | ✅ FIXED | Created `InputValidator.js` (133 lines) with comprehensive validation for age, salary, rates, Monte Carlo iterations. Includes XSS sanitization. |
+| **UI-049** | Key Metrics should be clickable for sectional navigation | ✅ FIXED | Added `scrollToSection` handlers to all metric cards in `dashboard-metrics.html`. |
+| **CHART-055** | Data Tables need yearly granularity and tax breakdown | ✅ FIXED | Modified `DashboardDetails.js` to render every year. Added marginal tax leakage columns for Investments and Retirement Savings. |
+| **SS-UX-01** | SS Comparison needs dynamic 4th bar for selected age | ✅ FIXED | Updated `IncomeExpenseCharts.js` to include a real-time "Choice" bar. |
 
 ## ✅ Recently Fixed Issues (2026-02-01)
 
@@ -134,12 +137,7 @@
 | **ISSUE-034** | Monte Carlo needs more scenario options | Add spend rate %, market conditions |
 | **ISSUE-035** | Monte Carlo missing historical range options | Add last 10/20/30 years options |
 | **ISSUE-045** | Roth Conversion: Needs comparison feature | Add comparison (e.g., 100k vs 50k/year) |
-| **ISSUE-049** | Key Milestones: Should auto-update when changes made | Add reactivity to milestones |
-| **ISSUE-052** | Browse All Metrics: All metrics should be clickable | Make metrics navigate to sections |
 | **ISSUE-053** | Detailed Data Tables: Add Roth Conversion table | Add yearly Roth conversion breakdown |
-| **ISSUE-055** | Detailed Data Tables: Show data for every year | Change from every 2 years to every year |
-| **ISSUE-056** | Detailed Data Tables: Expenses needs tax breakdown | Add Roth conv, 401k withdrawal taxes |
-| **ISSUE-057** | Detailed Data Tables: Taxes needs separate columns | Separate by source (Fed, State, FICA, etc.) |
 | **ISSUE-062** | Roth Strategy: Need Combined Bracket + Max Amount caps | Implement logic respecting both limits |
 | **ISSUE-063** | Gap Years logic broken (No income -> withdrawals) | Fix withdrawal logic for gap years |
 

@@ -513,6 +513,9 @@ ls *.md
 - ✅ **Baseline Scenario Consistency**: `SimulationEngine.run()` must ensure that `baseline` and `average` scenarios are calculated using consistent return rates/scenarios, using the currently selected primary scenario as the base for comparison to ensure "Wealth Boost" calculations are mathematically valid.
 - ✅ **Head of Household (HoH) Scaling**: Always verify that tax-related strategies (like Roth conversions) correctly implement HoH brackets, as they sit between Single and Joint limits. 
 - ✅ **Filing Status Unit Testing**: Every tax-sensitive logic module MUST include specific test cases for "Head of Household" (HoH) filing status to avoid $0-value calculation regressions (LOGIC-081 fixed).
+- ✅ **MetricsHandler Property Protection**: When adding insights to `MetricsHandler.js` (Plan Coach), always use defensive property checks (e.g., `(drawdown && drawdown.InvestmentsTax)`) to prevent crashes during simulation transitions or with incomplete data.
+- ✅ **Interactive Metric IDs**: Ensure IDs used in `scrollToSection` (e.g., `section-socialsecurity`) match exactly with those defined in the destination partials to avoid "Silent Scroll Failures".
+- ✅ **SS Comparison Layering**: When adding layers to `IncomeExpenseCharts.js` (like the 4th "Choice" bar), handle data extraction and destruction logic separately to prevent memory leaks and chart pollution.
  
 ---
  
@@ -557,6 +560,6 @@ ls *.md
 - **CHART GUARD**: Every chart initialization function MUST use `validateData()` (from `ChartHelpers.js`) to ensure input arrays are populated and non-zero before attempting to render.
 - **ERROR REPORTING**: If data is missing, log a clear `console.error` with the chart ID to make debugging immediate.
 
-**Last Updated**: 2026-01-30 (Roth Fixes & baseline consistency)  
+**Last Updated**: 2026-02-02 (P1 Enhancements & Metrics Protection)
 **Review**: Before every commit  
 **Enforcement**: Mandatory

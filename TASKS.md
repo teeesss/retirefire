@@ -1,13 +1,28 @@
 # Tasks & User Stories
 
 **Last Updated**: 2026-02-02  
-**Test Status**: ✅ 388/393 Tests Passing (98.7% Pass Rate - 5 skipped E2E tests)
+**Test Status**: ✅ 464/473 Tests Passing (98.1% Pass Rate - 9 skipped tests)
 **Test Command**: `npm test`
 **Build Status**: ✅ Vite build passing (`npm run build`)
 **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-**Security Grade**: A- (improved from C)
+**Security Grade**: A (improved from C)
 
 ## 🎯 Today's Achievements (2026-02-02)
+
+### Advanced Social Security & Dashboard Enhancements ✅ COMPLETE
+- ✅ **Advanced SS Visuals**:
+  - Added dynamic 4th "Choice" bar to SS Comparison Chart.
+  - Enhanced line chart tooltips with Cumulative + Annual Flow data.
+  - Fixed chart re-initialization and destruction issues.
+- ✅ **Data Table depth**:
+  - Added account-specific tax leakage columns (`Inv Tax`, `Ret Tax`) to Taxes table.
+  - Verified math follows simulation-driven marginal tax logic.
+- ✅ **Dashboard Interactivity**:
+  - Linked metric cards to their respective page sections for smooth scrolling.
+  - Added intelligent coach insights for SS age optimization and tax leakage warnings.
+- ✅ **Verification**: 
+  - Fixed unit test regressions in `MetricsHandler.test.js` and `ExplorerCharts.test.js`.
+  - Deployment confirmed on live server.
 
 ### Deep-Dive Security Audit & Critical Fixes ✅ COMPLETE (Part 2)
 - ✅ **CRIT-001: LocalStorage Encryption** - IMPLEMENTED
