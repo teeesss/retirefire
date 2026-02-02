@@ -56,6 +56,24 @@ export class RothDeepDive {
             return;
         }
 
+        // Inject constraint explanation div if it doesn't exist
+        if (!document.getElementById('constraintExplanation')) {
+            const controlsBar = modal.querySelector('[style*="background: var(--bg-secondary)"]');
+            if (controlsBar) {
+                const explanationHTML = `
+                    <div id="constraintExplanation" style="background: rgba(59, 130, 246, 0.1); padding: 10px 20px; border-bottom: 1px solid var(--border-color); display: none;">
+                        <div style="font-size: 0.75rem; color: var(--text-primary);">
+                            <strong>Strategy:</strong> <span id="effectiveLimitDisplay">Loading...</span>
+                        </div>
+                        <div id="constraintDetails" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">
+                            <!-- Dynamically updated based on inputs -->
+                        </div>
+                    </div>
+                `;
+                controlsBar.insertAdjacentHTML('afterend', explanationHTML);
+            }
+        }
+
         modal.style.display = 'flex';
         this.syncUItoConfig();
         this.renderAnalysis();
@@ -66,20 +84,34 @@ export class RothDeepDive {
         const bracketSelect = document.getElementById('deepDiveTargetBracket');
         const taxSourceSelect = document.getElementById('deepDiveTaxSource');
         const iraSourceSelect = document.getElementById('deepDiveIRASource');
+        const maxAnnualInput = document.getElementById('deepDiveMaxAnnual');
 
         if (bracketSelect) bracketSelect.value = RothConfig.targetBracket;
         if (taxSourceSelect) taxSourceSelect.value = RothConfig.payTaxesFrom;
         if (iraSourceSelect) iraSourceSelect.value = RothConfig.sourceAccount;
+        if (maxAnnualInput) maxAnnualInput.value = RothConfig.maxAnnualCap || '';
+
+        this.updateConstraintExplanation();
     }
 
     static updateParams() {
         const bracketSelect = document.getElementById('deepDiveTargetBracket');
         const taxSourceSelect = document.getElementById('deepDiveTaxSource');
         const iraSourceSelect = document.getElementById('deepDiveIRASource');
+        const maxAnnualInput = document.getElementById('deepDiveMaxAnnual');
 
         if (bracketSelect) RothConfig.targetBracket = Number(bracketSelect.value);
         if (taxSourceSelect) RothConfig.payTaxesFrom = taxSourceSelect.value;
         if (iraSourceSelect) RothConfig.sourceAccount = iraSourceSelect.value;
+
+        // NEW: Read max annual cap
+        if (maxAnnualInput) {
+            const value = Number(maxAnnualInput.value);
+            RothConfig.maxAnnualCap = value > 0 ? value : null;
+        }
+
+        // Update constraint explanation
+        this.updateConstraintExplanation();
 
         // Re-render
         this.renderAnalysis();
@@ -92,6 +124,48 @@ export class RothDeepDive {
         RothConfig.manualOverrides[year] = amt;
         this.renderAnalysis();
     }
+
+    /**
+     * Update the constraint explanation display
+     * Shows the combined strategy in plain English
+     */
+    static updateConstraintExplanation() {
+        const explanationDiv = document.getElementById('constraintExplanation');
+        const limitDisplay = document.getElementById('effectiveLimitDisplay');
+        const detailsDiv = document.getElementById('constraintDetails');
+
+        if (!explanationDiv || !limitDisplay || !detailsDiv) return;
+
+        const maxAnnual = RothConfig.maxAnnualCap;
+        const targetBracket = RothConfig.targetBracket;
+
+        if (!maxAnnual) {
+            // No max annual cap - bracket only
+            explanationDiv.style.display = 'none';
+            return;
+        }
+
+        // Show explanation
+        explanationDiv.style.display = 'block';
+
+        // Build explanation text
+        limitDisplay.textContent = `Fill ${targetBracket}% bracket OR $${formatCurrency(maxAnnual, 0)} per year (whichever is less)`;
+
+        detailsDiv.innerHTML = `
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div>
+                    <strong>📊 Bracket Limit:</strong> Fill up to ${targetBracket}% bracket each year
+                </div>
+                <div>
+                    <strong>💰 Annual Cap:</strong> Maximum $${formatCurrency(maxAnnual, 0)}/year
+                </div>
+                <div style="color: var(--success);">
+                    <strong>✓ Combined:</strong> Uses the lesser of the two
+                </div>
+            </div>
+        `;
+    }
+
 
     static close() {
         const modal = document.getElementById('rothDeepDiveModal');
