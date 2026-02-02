@@ -11,21 +11,15 @@ const STORAGE_KEY = 'retirementPlannerConfig';
 const MAX_SIZE_KB = 4096; // 4MB warning threshold (localStorage limit is ~5-10MB)
 
 /**
- * Generate encryption key based on browser fingerprint
- * This provides basic encryption without requiring user passwords
- * Note: For production, consider using a user-provided password
+ * Generate encryption key
+ * Using a static key for consistency across sessions
+ * Note: In production with user auth, derive from user credentials
+ * Static key prevents "Malformed UTF-8" errors from fingerprint changes
  */
 function generateEncryptionKey() {
-    // Handle both browser and Node.js environments
-    const fingerprint = [
-        typeof navigator !== 'undefined' ? navigator.userAgent : 'test-agent',
-        typeof navigator !== 'undefined' ? navigator.language : 'en-US',
-        typeof screen !== 'undefined' ? screen.width : 1920,
-        typeof screen !== 'undefined' ? screen.height : 1080,
-        new Date().getTimezoneOffset()
-    ].join('|');
-
-    return CryptoJS.SHA256(fingerprint).toString();
+    // Use a static key to ensure consistency across sessions
+    const staticSeed = 'retirefire-v1-encryption-key-2026';
+    return CryptoJS.SHA256(staticSeed).toString();
 }
 
 const ENCRYPTION_KEY = generateEncryptionKey();
@@ -82,7 +76,8 @@ export const SecureStorage = {
             const decryptedStr = decrypted.toString(CryptoJS.enc.Utf8);
 
             if (!decryptedStr) {
-                Logger.error('❌ Decryption failed - invalid key or corrupted data');
+                Logger.warn('⚠️ Decryption failed - clearing corrupted data');
+                this.clear(); // Clear corrupted data
                 return null;
             }
 
@@ -91,7 +86,9 @@ export const SecureStorage = {
             return data;
         } catch (e) {
             Logger.error('❌ SecureStorage load failed:', e);
-            // Don't throw - return null to allow app to use defaults
+            // Clear corrupted data to prevent repeated errors
+            Logger.warn('⚠️ Clearing corrupted encrypted data');
+            this.clear();
             return null;
         }
     },
