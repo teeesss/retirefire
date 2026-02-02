@@ -2692,3 +2692,44 @@ textarea::placeholder {
     color: #666666 !important;
     -webkit-text-fill-color: #666666 !important;
 }
+
+/* TASK-015: UI Layout Optimization */
+
+/* Year Explorer Side-by-Side */
+.explorer-breakdowns-container {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.explorer-breakdown-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Coach Multi-Column Grid */
+#coachMessageList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.coach-insight-item {
+    transition: transform 0.2s ease, background 0.2s ease;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.coach-insight-item:hover {
+    transform: translateY(-2px);
+    background: rgba(59, 130, 246, 0.08) !important;
+}
+
+@media (max-width: 768px) {
+    .explorer-breakdowns-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}

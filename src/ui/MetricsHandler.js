@@ -134,15 +134,13 @@ export class MetricsHandler {
         const list = document.getElementById('coachMessageList');
         if (list) {
             list.innerHTML = insights.map(ins => `
-                <div onclick="scrollToSection('${ins.section}')" 
+                <div class="coach-insight-item" onclick="scrollToSection('${ins.section}')" 
                      style="border-left: 4px solid ${ins.type === 'warning' ? '#ef4444' : (ins.type === 'success' ? '#10b981' : '#3b82f6')}; 
-                            padding: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.02); cursor: pointer; transition: background 0.2s;"
-                     onmouseover="this.style.background='rgba(59, 130, 246, 0.05)'"
-                     onmouseout="this.style.background='rgba(0,0,0,0.02)'">
+                            padding: 12px; background: rgba(59, 130, 246, 0.05); cursor: pointer;">
                     <strong>${ins.title}</strong>
-                    <div style="font-size: 0.85rem; opacity: 0.8;">${ins.text}</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">${ins.text}</div>
                 </div>
-            `).join('') || 'No critical optimizations found.';
+            `).join('') || '<div style="color: var(--text-muted); padding: 10px;">No critical optimizations found.</div>';
         }
     }
 
