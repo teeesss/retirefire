@@ -107,10 +107,15 @@ export class SimulationEngine {
             },
             drawdown: {
                 Investments: [],
+                InvestmentsTax: [],
                 RetirementSavings: [],
+                RetirementSavingsTax: [],
                 RothIRA: [],
+                RothIRATax: [],
                 HSA: [],
-                CashSavings: []
+                HSATax: [],
+                CashSavings: [],
+                CashSavingsTax: []
             },
             rothConversions: {
                 amounts: [],
@@ -166,9 +171,16 @@ export class SimulationEngine {
         });
 
         // Drawdown
-        Object.keys(results.drawdown).forEach(key => {
-            results.drawdown[key].push(yearResults.drawdown[key] || 0);
-        });
+        results.drawdown.Investments.push(yearResults.drawdown.Investments);
+        results.drawdown.InvestmentsTax.push(yearResults.drawdown.InvestmentsTax || 0);
+        results.drawdown.RetirementSavings.push(yearResults.drawdown.RetirementSavings);
+        results.drawdown.RetirementSavingsTax.push(yearResults.drawdown.RetirementSavingsTax || 0);
+        results.drawdown.RothIRA.push(yearResults.drawdown.RothIRA);
+        results.drawdown.RothIRATax.push(yearResults.drawdown.RothIRATax || 0);
+        results.drawdown.HSA.push(yearResults.drawdown.HSA);
+        results.drawdown.HSATax.push(yearResults.drawdown.HSATax || 0);
+        results.drawdown.CashSavings.push(yearResults.drawdown.CashSavings);
+        results.drawdown.CashSavingsTax.push(yearResults.drawdown.CashSavingsTax || 0);
 
         // Roth Conversions
         results.rothConversions.amounts.push(yearResults.rothConversion.amount);
@@ -282,6 +294,25 @@ export class SimulationEngine {
 
         let totalExpBeforeTax = generalExp + housingExp + medicalExp + ltcExp;
 
+        // Temporal / One-time Events
+        if (config.events && Array.isArray(config.events)) {
+            const yearEvents = config.events.filter(e => e.year === currentYear);
+            for (const evt of yearEvents) {
+                if (evt.type === 'expense') {
+                    totalExpBeforeTax += (evt.amount || 0);
+                    // Logger.debug(`Year ${currentYear}: Applied one-time expense event: ${evt.name} ($${evt.amount})`);
+                } else if (evt.type === 'income') {
+                    // Treat as ordinary income? or non-taxable?
+                    // For now, let's treat simplistically as generic "otherAssets" inflow or handle in specific buckets needed.
+                    // But simpler: just offset expenses to keep it clean, or add to 'otherOrdIncome'
+                    // For typical "inheritance" etc, likely tax-free or specific.
+                    // Let's assume generic tax-free inflow to investments for simplicity unless specified
+                    investments += (evt.amount || 0);
+                    // Logger.debug(`Year ${currentYear}: Applied one-time income event: ${evt.name} ($${evt.amount})`);
+                }
+            }
+        }
+
         // 3. Tax Calculation
         const otherOrdIncome = rmdIncome + (ssIncome * 0.85);
         let estimatedCapGains = 0;
@@ -351,11 +382,37 @@ export class SimulationEngine {
 
         // 6. Drawdown Logic
         let netFlow = workIncome + ssIncome + rmdIncome - totalExpBeforeTax - estimatedTax;
-        let yearlyDrawdownDetail = { Investments: 0, RetirementSavings: 0, RothIRA: 0, HSA: 0, CashSavings: 0 };
+        let yearlyDrawdownDetail = {
+            Investments: 0, InvestmentsTax: 0,
+            RetirementSavings: 0, RetirementSavingsTax: 0,
+            RothIRA: 0, RothIRATax: 0,
+            HSA: 0, HSATax: 0,
+            CashSavings: 0, CashSavingsTax: 0
+        };
 
         if (netFlow < 0) {
             let deficit = Math.abs(netFlow);
             const strategy = config.settings?.taxes?.withdrawalStrategy || 'grow_tax_deferred';
+
+            // Helper for marginal tax tracking
+            let currentTotalTax = estimatedTax;
+            let runningOrdIncome = otherOrdIncome + rothConvToProcess;
+            let runningCapGains = estimatedCapGains;
+
+            const calculateMarginalTax = (extraOrd = 0, extraCG = 0) => {
+                const newBreakdown = TaxCalculator.calculateTaxBreakdown(
+                    workIncome,
+                    runningOrdIncome + extraOrd,
+                    runningCapGains + extraCG,
+                    config.settings?.taxSettings?.filingStatus || 'joint',
+                    config.settings?.taxSettings?.state || 'none'
+                );
+                const diff = Math.max(0, newBreakdown.total - currentTotalTax);
+                currentTotalTax = newBreakdown.total;
+                runningOrdIncome += extraOrd;
+                runningCapGains += extraCG;
+                return diff;
+            };
 
             if (strategy === 'proportional') {
                 const totalLiquid = investments + retirement + roth;
@@ -367,14 +424,17 @@ export class SimulationEngine {
                     const invAmt = Math.min(investments, deficit * invPct);
                     investments -= invAmt;
                     yearlyDrawdownDetail.Investments = invAmt;
+                    yearlyDrawdownDetail.InvestmentsTax = calculateMarginalTax(0, invAmt * 0.5);
 
                     const retAmt = Math.min(retirement, deficit * retPct);
                     retirement -= retAmt;
                     yearlyDrawdownDetail.RetirementSavings = retAmt;
+                    yearlyDrawdownDetail.RetirementSavingsTax = calculateMarginalTax(retAmt, 0);
 
                     const rothAmt = Math.min(roth, deficit * rothPct);
                     roth -= rothAmt;
                     yearlyDrawdownDetail.RothIRA = rothAmt;
+                    yearlyDrawdownDetail.RothIRATax = calculateMarginalTax(0, 0);
 
                     deficit -= (invAmt + retAmt + rothAmt);
                 }
@@ -393,29 +453,38 @@ export class SimulationEngine {
                         investments -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.Investments += amount;
+                        yearlyDrawdownDetail.InvestmentsTax += calculateMarginalTax(0, amount * 0.5);
                     } else if (accountName === 'RetirementSavings') {
                         const amount = Math.min(retirement, deficit);
                         retirement -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.RetirementSavings += amount;
+                        yearlyDrawdownDetail.RetirementSavingsTax += calculateMarginalTax(amount, 0);
                     } else if (accountName === 'RothIRA') {
                         const amount = Math.min(roth, deficit);
                         roth -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.RothIRA += amount;
+                        yearlyDrawdownDetail.RothIRATax += calculateMarginalTax(0, 0);
                     } else if (accountName === 'HSA') {
                         const amount = Math.min(hsa, deficit);
                         hsa -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.HSA += amount;
+                        yearlyDrawdownDetail.HSATax += calculateMarginalTax(0, 0);
                     } else if (accountName === 'CashSavings') {
                         const amount = Math.min(cash, deficit);
                         cash -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.CashSavings += amount;
+                        yearlyDrawdownDetail.CashSavingsTax += calculateMarginalTax(0, 0);
                     }
                 }
             }
+
+            // Note: In a high-fidelity engine, we might re-run the deficit loop if 
+            // the new taxes increase the deficit. For now, we track the tax burden 
+            // of the *initial* needed drawdown.
         } else {
             investments += netFlow;
         }
@@ -474,10 +543,15 @@ export class SimulationEngine {
             },
             drawdown: {
                 Investments: Math.round(yearlyDrawdownDetail.Investments),
+                InvestmentsTax: Math.round(yearlyDrawdownDetail.InvestmentsTax),
                 RetirementSavings: Math.round(yearlyDrawdownDetail.RetirementSavings),
+                RetirementSavingsTax: Math.round(yearlyDrawdownDetail.RetirementSavingsTax),
                 RothIRA: Math.round(yearlyDrawdownDetail.RothIRA),
+                RothIRATax: Math.round(yearlyDrawdownDetail.RothIRATax),
                 HSA: Math.round(yearlyDrawdownDetail.HSA),
-                CashSavings: Math.round(yearlyDrawdownDetail.CashSavings)
+                HSATax: Math.round(yearlyDrawdownDetail.HSATax),
+                CashSavings: Math.round(yearlyDrawdownDetail.CashSavings),
+                CashSavingsTax: Math.round(yearlyDrawdownDetail.CashSavingsTax)
             },
             rothConversion: {
                 amount: actualConversion,

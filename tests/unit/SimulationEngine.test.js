@@ -112,7 +112,6 @@ describe('SimulationEngine', () => {
         // Before sale, index 1 has some investment value. After sale, index 2 should jump by 500k.
         const invBefore = results.accounts.Investments[1];
         const invAfter = results.accounts.Investments[2];
-        const homeBefore = results.accounts.Housing[1];
         const homeAfter = results.accounts.Housing[2];
 
         expect(homeAfter).toBe(0);
@@ -168,5 +167,26 @@ describe('SimulationEngine', () => {
         // If the test intended to test 3% inflation, it should set it in the config or local setting
         // For now, we update the expectation to match the config provided (0% inflation)
         expect(expAge51).toBeCloseTo(200000, -2);
+    });
+    it('should track tax costs for drawdowns', () => {
+        const configTax = JSON.parse(JSON.stringify(mockConfig));
+        configTax.settings.personal.retireAge = 50;
+        configTax.settings.expenses.annualSpending = 150000;
+        configTax.settings.income.work = 0;
+        configTax.settings.taxes.withdrawalStrategy = 'minimize_rmds'; // Retirement Savings (401k) first
+        configTax.settings.taxSettings.filingStatus = 'single';
+        configTax.settings.taxSettings.state = 'FL';
+
+        const results = SimulationEngine.project(configTax, 'average');
+
+        // Year 0 should have a deficit, covered by RetirementSavings
+        // RetirementSavings withdrawals are ordinary income and should trigger tax
+        expect(results.drawdown.RetirementSavings[0]).toBeGreaterThan(0);
+        expect(results.drawdown.RetirementSavingsTax[0]).toBeGreaterThan(0);
+
+        // Success check: Tax cost should be roughly 10-22% of the deduction
+        const taxRate = results.drawdown.RetirementSavingsTax[0] / results.drawdown.RetirementSavings[0];
+        expect(taxRate).toBeGreaterThan(0.05);
+        expect(taxRate).toBeLessThan(0.38);
     });
 });

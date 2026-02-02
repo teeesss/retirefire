@@ -192,74 +192,81 @@ export class ExplorerHandler {
     static _runWhatIfInternal(scenario, btn) {
         let modifiedResults;
         const testConfig = JSON.parse(JSON.stringify(config));
+        const defaultRate = (testConfig.settings?.rates?.investmentReturn || 7) / 100;
+
+        // Determine number of years (approximate based on rawData or config)
+        // rawData.years might be available
+        const totalYears = rawData.years ? rawData.years.length : 60;
+
+        // Helper to create baseline return sequence
+        const createSequence = () => new Array(totalYears).fill(defaultRate);
 
         switch (scenario) {
             case 'crash55':
                 // Apply crash at age 55
-                const crashYearIdx = 55 - testConfig.settings.personal.age; // Fix: use settings.personal.age
-                modifiedResults = SimulationEngine.project(testConfig, 'average');
+                const crashYearIdx = 55 - testConfig.settings.personal.age;
 
-                // If 55 is in the future
-                if (crashYearIdx >= 0 && crashYearIdx < modifiedResults.yearsCount) {
-                    // Apply 30% drop to investments in that year and verify propogation
-                    // Note: SimulationEngine projects year-over-year, so we need to adjust the flow or just hack the result for visualization
-                    // For true simulation, we should adjust the RETURNS vector passed to project, but project uses fixed returns.
-                    // Simple hack for visualization: Post-process the NW array
-                    for (let i = crashYearIdx; i < modifiedResults.yearsCount; i++) {
-                        // Permanently reduce by 30% from that point (sequence risk)
-                        for (const k in modifiedResults.accounts) modifiedResults.accounts[k][i] *= 0.7;
-                    }
+                if (crashYearIdx >= 0 && crashYearIdx < totalYears) {
+                    const seq = createSequence();
+                    // Apply -30% return in that year
+                    seq[crashYearIdx] = -0.30;
+
+                    // Use internal engine method to project with these specific returns
+                    modifiedResults = SimulationEngine._projectWithVariableReturns(testConfig, 'average', seq);
+                } else {
+                    // Age 55 already passed or invalid
+                    modifiedResults = SimulationEngine.project(testConfig, 'average');
                 }
                 break;
+
             case 'bear':
-                modifiedResults = SimulationEngine.project(testConfig, 'average');
+                // 6-year bear market (-5% returns) starting at age 65 (or now if >65)
                 const bearStart = Math.max(0, 65 - testConfig.settings.personal.age);
-                for (let i = bearStart; i < bearStart + 6 && i < modifiedResults.yearsCount; i++) {
-                    // Flatten growth during bear market
-                    for (const k in modifiedResults.accounts) modifiedResults.accounts[k][i] *= 0.95;
-                    // And subsequent years are lower naturally because of this
+                const seq = createSequence();
+
+                for (let i = bearStart; i < bearStart + 6 && i < totalYears; i++) {
+                    seq[i] = -0.05; // -5% return
                 }
-                // Propagate the loss forward? The loop actually compounds the drop each year of the bear market
-                // But we need to ensure subsequent years start from the lower base. 
-                // SimulationEngine returns cumulative arrays. Modifying one year doesn't auto-update future years in the result array if we hack it here.
-                // WE MUST re-propagate the reduction factor to all future years.
-                for (let i = bearStart + 6; i < modifiedResults.yearsCount; i++) {
-                    for (const k in modifiedResults.accounts) modifiedResults.accounts[k][i] *= Math.pow(0.95, 6); // Approx roughly
-                }
+
+                modifiedResults = SimulationEngine._projectWithVariableReturns(testConfig, 'average', seq);
+                // No need to manually propagate; the engine handles compounding naturally!
                 break;
+
             case 'healthcare':
-                // Medical Event
-                modifiedResults = SimulationEngine.project(testConfig, 'average');
-                const medicalIdx = Math.max(0, 75 - testConfig.settings.personal.age);
-                if (medicalIdx < modifiedResults.yearsCount) {
-                    // Subtract 250k from NW
-                    for (let i = medicalIdx; i < modifiedResults.yearsCount; i++) {
-                        // Simple NW reduction
-                        // We can't easily edit individual accounts without complex logic, so we just subtract from the total when summing later?
-                        // Or just scale down. 250k might be all of it :)
-                        // Let's assume it comes out of investments.
-                        // But we are returning 'modifiedResults' which has accounts.
-                        // Let's just create a 'netWorth' property update.
-                    }
+                // Medical Event: $250k expense at age 75
+                const medicalIdx = 75 - testConfig.settings.personal.age;
+
+                if (medicalIdx >= 0) {
+                    const currentYear = new Date().getFullYear(); // Or base year from config
+                    // Ideally we get the actual calendar year from rawData.years[medicalIdx] but we might not have it easily here if not initialized.
+                    // But rawData.years is reliable if defined.
+                    const targetYear = rawData.years ? rawData.years[medicalIdx] : (config.settings.personal.startYear || 2026) + medicalIdx;
+
+                    testConfig.events = [{
+                        type: 'expense',
+                        name: 'Long-term Care Event',
+                        amount: 250000,
+                        year: targetYear
+                    }];
+
+                    // Engine now supports config.events natively
+                    modifiedResults = SimulationEngine.project(testConfig, 'average');
+                } else {
+                    modifiedResults = SimulationEngine.project(testConfig, 'average');
                 }
-                // Actually SimulationEngine.project returns object with .accounts and .netWorth (calculated inside? No, usuall just accounts)
-                // Let's check SimulationEngine return. It usually returns { years, ages, accounts... }
-                // We calculate NW from accounts.
                 break;
+
             default:
                 modifiedResults = SimulationEngine.project(testConfig, 'average');
         }
 
-        // Re-calculate NW for the modified scenario
+        // Re-calculate NW for the modified scenario from the engine results
+        // SimulationEngine returns fully calculated account balances, so we just sum them.
         const modifiedPath = modifiedResults.years.map((_, i) => {
             let nw = 0;
-            // Apply manual adjustments for "healthcare" here since it's a fixed amount
-            const age = modifiedResults.ages[i];
-            let adjustment = 0;
-            if (scenario === 'healthcare' && age >= 75) adjustment = -250000;
-
+            // Simply sum the accounts calculated by the engine
             for (const k in modifiedResults.accounts) nw += modifiedResults.accounts[k][i] || 0;
-            return Math.max(0, nw + adjustment);
+            return nw; // No manual adjustments needed!
         });
 
         const baselinePath = rawData.average?.netWorth || [];

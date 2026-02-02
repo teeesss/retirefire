@@ -15,4 +15,8 @@ export default defineConfig({
     server: {
         open: true,
     },
+    test: {
+        exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**'],
+        environment: 'jsdom'
+    }
 });

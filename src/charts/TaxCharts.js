@@ -5,7 +5,7 @@ import { charts } from '../state/ChartStore.js';
 import { getSafeCtx } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
-import { getTotalIncome, getTotalExpenses, getTotalTaxes, calculateNetWorth } from '../state/DataUtils.js';
+import { getTotalIncome, calculateNetWorth } from '../state/DataUtils.js';
 
 export function initTaxesChart() {
     const ctx = getSafeCtx('chartTaxes');
@@ -167,8 +167,18 @@ export function initWithdrawalChart() {
     const drawdown = data.drawdown;
     const income = data.income;
 
-    // Combine RetirementSavings drawdown with RMDs for "Tax-Deferred" category
-    const taxDeferredTotal = drawdown.RetirementSavings.map((v, i) => v + (income.RMD[i] || 0));
+    // We'll show Net vs Tax for each major source
+    // Social Security tax is already aggregated in federal taxes, but for visibility 
+    // we can estimate it (usually 0-85% is taxable). 
+    // For now we focus on the drawdown accounts.
+
+    const taxDeferredGross = (drawdown.RetirementSavings || []).map((v, i) => v + (income.RMD?.[i] || 0));
+    const taxDeferredTax = drawdown.RetirementSavingsTax || [];
+    const taxDeferredNet = taxDeferredGross.map((v, i) => v - (taxDeferredTax[i] || 0));
+
+    const investmentsGross = drawdown.Investments || [];
+    const investmentsTax = drawdown.InvestmentsTax || [];
+    const investmentsNet = investmentsGross.map((v, i) => v - (investmentsTax[i] || 0));
 
     charts.withdrawal = new Chart(ctx, {
         type: 'bar',
@@ -178,7 +188,7 @@ export function initWithdrawalChart() {
                 {
                     label: 'Social Security',
                     data: income.SocialSecurity || [],
-                    backgroundColor: '#64748b', // Unique color for SS
+                    backgroundColor: '#64748b',
                     stack: 's1'
                 },
                 {
@@ -187,16 +197,30 @@ export function initWithdrawalChart() {
                     backgroundColor: '#84cc16',
                     stack: 's1'
                 },
+                // Investments
                 {
-                    label: 'Taxable (Investments)',
-                    data: drawdown.Investments || [],
+                    label: 'Taxable (Net)',
+                    data: investmentsNet,
                     backgroundColor: '#f59e0b',
                     stack: 's1'
                 },
                 {
-                    label: 'Tax-Deferred (401k/IRA)',
-                    data: taxDeferredTotal,
+                    label: 'Taxable (Tax)',
+                    data: investmentsTax,
+                    backgroundColor: '#f59e0b80', // Lighter color for tax leakage
+                    stack: 's1'
+                },
+                // Retirement Savings
+                {
+                    label: 'Tax-Deferred (Net)',
+                    data: taxDeferredNet,
                     backgroundColor: '#3b82f6',
+                    stack: 's1'
+                },
+                {
+                    label: 'Tax-Deferred (Tax)',
+                    data: taxDeferredTax,
+                    backgroundColor: '#3b82f680', // Lighter color for tax leakage
                     stack: 's1'
                 },
                 {
@@ -224,6 +248,25 @@ export function initWithdrawalChart() {
                 y: {
                     stacked: true,
                     ticks: { callback: (v) => formatCurrency(v) }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        afterBody: (context) => {
+                            const index = context[0].dataIndex;
+                            const invGross = (investmentsNet[index] || 0) + (investmentsTax[index] || 0);
+                            const defGross = (taxDeferredNet[index] || 0) + (taxDeferredTax[index] || 0);
+                            const totalWithdrawal = invGross + defGross + (drawdown.RothIRA?.[index] || 0) + (drawdown.HSA?.[index] || 0) + (drawdown.CashSavings?.[index] || 0) + (income.SocialSecurity?.[index] || 0);
+                            const totalTax = (investmentsTax[index] || 0) + (taxDeferredTax[index] || 0);
+
+                            if (totalWithdrawal > 0) {
+                                const efficiency = ((1 - (totalTax / totalWithdrawal)) * 100).toFixed(1);
+                                return `\nTax Efficiency: ${efficiency}%`;
+                            }
+                            return '';
+                        }
+                    }
                 }
             }
         }
