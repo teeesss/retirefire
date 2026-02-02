@@ -6,7 +6,12 @@ export const accountNames = {
 
 export const incomeNames = {
     Work: "Work Income", SocialSecurity: "Social Security", RMD: "RMD",
-    Drawdown: "Savings Drawdown", HomeSale: "Home Sale"
+    Drawdown: "Savings Drawdown", HomeSale: "Home Sale",
+    InvestmentsDrawdown: "Brokerage Withdrawal",
+    RetirementSavingsDrawdown: "401(k)/IRA Withdrawal",
+    RothIRADrawdown: "Roth Withdrawal",
+    HSADrawdown: "HSA Withdrawal",
+    CashSavingsDrawdown: "Cash Withdrawal"
 };
 
 export const expenseNames = {
@@ -22,7 +27,12 @@ export const colors = {
 
 export const incomeColors = {
     Work: "#10b981", SocialSecurity: "#3b82f6", RMD: "#8b5cf6",
-    Drawdown: "#f59e0b", HomeSale: "#06b6d4"
+    Drawdown: "#f59e0b", HomeSale: "#06b6d4",
+    InvestmentsDrawdown: "#f59e0b",
+    RetirementSavingsDrawdown: "#3b82f6",
+    RothIRADrawdown: "#10b981",
+    HSADrawdown: "#8b5cf6",
+    CashSavingsDrawdown: "#84cc16"
 };
 
 export const expenseColors = {

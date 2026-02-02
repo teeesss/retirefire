@@ -90,7 +90,12 @@ export class SimulationEngine {
                 SocialSecurity: [],
                 RMD: [],
                 Drawdown: [],
-                HomeSale: []
+                HomeSale: [],
+                InvestmentsDrawdown: [],
+                RetirementSavingsDrawdown: [],
+                RothIRADrawdown: [],
+                HSADrawdown: [],
+                CashSavingsDrawdown: []
             },
             expenses: {
                 General: [],
@@ -157,7 +162,19 @@ export class SimulationEngine {
 
         // Income
         Object.keys(results.income).forEach(key => {
-            results.income[key].push(yearResults.income[key]);
+            if (key === 'InvestmentsDrawdown') {
+                results.income[key].push(yearResults.drawdown.Investments);
+            } else if (key === 'RetirementSavingsDrawdown') {
+                results.income[key].push(yearResults.drawdown.RetirementSavings);
+            } else if (key === 'RothIRADrawdown') {
+                results.income[key].push(yearResults.drawdown.RothIRA);
+            } else if (key === 'HSADrawdown') {
+                results.income[key].push(yearResults.drawdown.HSA);
+            } else if (key === 'CashSavingsDrawdown') {
+                results.income[key].push(yearResults.drawdown.CashSavings);
+            } else {
+                results.income[key].push(yearResults.income[key]);
+            }
         });
 
         // Expenses

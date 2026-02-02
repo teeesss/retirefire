@@ -11,26 +11,54 @@ import { incomeColors, expenseColors, incomeNames, expenseNames } from '../data/
 export function initIncomeChart() {
     const ctx = getSafeCtx('chartIncome');
     if (!ctx) return;
-    const income = rawData[config.currentScenario].income;
+    const scenario = config.currentScenario;
+    const income = rawData[scenario].income;
+    const drawdown = rawData[scenario].drawdown;
+
+    // Filter out legacy "Drawdown" summary if granular ones exist to avoid double counting
+    const keysToExclude = ['Drawdown'];
 
     charts.income = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: rawData.years,
-            datasets: Object.keys(income).filter(k => income[k].some(v => v > 0)).map(key => ({
-                label: incomeNames[key] || key,
-                data: income[key],
-                backgroundColor: incomeColors[key] || '#10b981',
-                stack: 'stack1'
-            }))
+            datasets: Object.keys(income)
+                .filter(k => !keysToExclude.includes(k) && income[k].some(v => v > 0))
+                .map(key => ({
+                    label: incomeNames[key] || key,
+                    data: income[key],
+                    backgroundColor: incomeColors[key] || '#10b981',
+                    stack: 'stack1',
+                    // Store tax data for tooltips if it's a drawdown key
+                    taxData: key.endsWith('Drawdown') ? drawdown[key.replace('Drawdown', 'Tax')] : null
+                }))
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } }
+            interaction: { mode: 'index', intersect: false },
+            scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let label = context.dataset.label || '';
+                            if (label) label += ': ';
+                            if (context.parsed.y !== null) label += formatCurrency(context.parsed.y);
+
+                            // Add tax info if available
+                            const taxVal = context.dataset.taxData ? context.dataset.taxData[context.dataIndex] : 0;
+                            if (taxVal > 0) {
+                                label += ` (Tax Cost: ${formatCurrency(taxVal)})`;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
         }
     });
-    applyTooltipConfig(charts.income.options);
+    // applyTooltipConfig(charts.income.options); // Use custom callback instead for tax info
     charts.income.update();
 }
 
