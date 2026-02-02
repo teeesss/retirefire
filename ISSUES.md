@@ -18,6 +18,11 @@
 | **UI-049** | Key Metrics should be clickable for sectional navigation | ✅ FIXED | Added `scrollToSection` handlers to all metric cards in `dashboard-metrics.html`. |
 | **CHART-055** | Data Tables need yearly granularity and tax breakdown | ✅ FIXED | Modified `DashboardDetails.js` to render every year. Added marginal tax leakage columns for Investments and Retirement Savings. |
 | **SS-UX-01** | SS Comparison needs dynamic 4th bar for selected age | ✅ FIXED | Updated `IncomeExpenseCharts.js` to include a real-time "Choice" bar. |
+| **ISSUE-034** | Monte Carlo needs more scenario options | ✅ FIXED | Added spend rate presets (50%-150%) and market descriptions. Enhanced confidence bands with gradients. |
+| **ISSUE-035** | Monte Carlo missing historical range options | ✅ FIXED | Added "Last 30 Years" historical scenario indexing to SimulationEngine. |
+| **ENV-001** | Browser subagent fails on Windows due to missing $HOME | ✅ FIXED | **Lesson Learned**: If `browser_subagent` fails with `$HOME` errors, use `chrome-devtools` MCP server directly for live site verification and screenshots. |
+| **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | ✅ FIXED | Enhanced `GapCalculator.js` subtitle to show dynamic age with years to retirement context. Calculator now uses `config.settings.personal.retireAge` correctly. |
+| **ISSUE-020** | "What You Need" target income should be slider | ✅ FIXED | Added interactive slider with bidirectional sync to number input in `gap-calculator.html`. Created `CashFlowExplorer.js` with spend rate scenarios (3-5%). 15 unit tests passing. |
 
 ## ✅ Recently Fixed Issues (2026-02-01)
 
@@ -130,7 +135,6 @@
 | Issue | Description | Impact |
 |-------|-------------|--------|
 | **ISSUE-018** | "Compare" button at top doesn't work / seems useless | Remove or implement comparison feature |
-| **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | Update calculator to use current age |
 | **ISSUE-029** | Roth Conversion uses same amount per year - unclear where configured | Add clear configuration UI |
 | **ISSUE-030** | Roth Conversion doesn't show which account money comes from | Add account source transparency |
 | **ISSUE-031** | Roth Conversion needs break-even analysis | Implement break-even calculator |
@@ -145,6 +149,8 @@
 - ~~ISSUE-062~~ → Fixed in 2026-02-02 (Combined Bracket + Max Amount Caps)
 - ~~ISSUE-058~~, ~~ISSUE-059~~, ~~ISSUE-060~~ → Fixed in 2026-01-24 (Mortgage, Roth, RMD)
 - ~~ISSUE-070~~ → Fixed (Gap Calculator restored)
+- ~~ISSUE-034~~, ~~ISSUE-035~~ → Fixed (Monte Carlo scenarios & visuals)
+- ~~ISSUE-019~~, ~~ISSUE-020~~ → Fixed in 2026-02-02 (Advanced Cash Flow Explorer - TASK-007)
 
 ---
 
@@ -155,7 +161,6 @@
 | **ISSUE-013** | Sidebar active highlighting on scroll uses wrong container |
 | **ISSUE-014** | Scenario switching triggers internal warning |
 | **ISSUE-015** | Some charts use default 300x150 size |
-| **ISSUE-020** | "What You Need" target income should be slider |
 | **ISSUE-032** | Mortgage Payoff chart has no on-hover info |
 | **ISSUE-043** | Social Security: Should allow any age 62-70 |
 | **ISSUE-044** | Roth Conversion Optimizer: Hover tooltips don't work |

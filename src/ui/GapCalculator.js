@@ -31,7 +31,8 @@ export class GapCalculator {
 
         const subtitle = document.getElementById('calcSubtitle');
         if (subtitle && rawData.years) {
-            subtitle.textContent = `At Retirement: Age ${retireAge} (${rawData.years[safeIndex]})`;
+            const yearsToRetirement = retireAge - startAge;
+            subtitle.textContent = `At Retirement: Age ${retireAge} (${rawData.years[safeIndex]}) - ${yearsToRetirement} years from now`;
         }
 
         const gap = projectedMonthly - targetMonthly;
@@ -62,7 +63,33 @@ export class GapCalculator {
         const el = document.getElementById(id);
         if (el) el.textContent = content;
     }
+
+    static syncSlider(value) {
+        const slider = document.getElementById('calcTargetIncomeSlider');
+        const input = document.getElementById('calcTargetIncome');
+        if (slider) slider.value = value;
+        if (input) input.value = value;
+        this.update();
+        // Update CashFlowExplorer scenarios
+        if (window.updateCashFlowScenario) {
+            window.updateCashFlowScenario();
+        }
+    }
+
+    static syncInput(value) {
+        const slider = document.getElementById('calcTargetIncomeSlider');
+        const input = document.getElementById('calcTargetIncome');
+        if (slider) slider.value = value;
+        if (input) input.value = value;
+        this.update();
+        // Update CashFlowExplorer scenarios
+        if (window.updateCashFlowScenario) {
+            window.updateCashFlowScenario();
+        }
+    }
 }
 
-// Global exposure for HTML onchange handler
+// Global exposure for HTML onchange/oninput handlers
 window.initGapCalculator = () => GapCalculator.update();
+window.syncGapSlider = (value) => GapCalculator.syncSlider(value);
+window.syncGapInput = (value) => GapCalculator.syncInput(value);

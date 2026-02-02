@@ -23,6 +23,7 @@ import { RothDeepDive } from './roth/RothDeepDive.js';
 import { initializeDescriptionsAndTooltips } from './utils/comprehensiveDescriptions.js';
 import { initializeExplorerSections } from './utils/explorerSections.js';
 import { GapCalculator } from './ui/GapCalculator.js';
+import { CashFlowExplorer } from './explorers/CashFlowExplorer.js';
 import { GoalsHandler } from './ui/GoalsHandler.js';
 
 // Charts
@@ -68,6 +69,7 @@ const App = {
             RothUI.init();
             RothDeepDive.init();
             GapCalculator.init();
+            CashFlowExplorer.init();
             CryptoHandler.syncPrices();
             this.renderDashboard();
             this.initAllCharts();
@@ -251,6 +253,14 @@ const App = {
             Logger.debug('📊 MC Results:', results);
             rawData.monteCarlo = results; // Store for other components
 
+            // Store results globally for chart tooltips
+            window.lastMonteCarloResults = {
+                successRate: results.successRate,
+                legacyRate: results.legacyRate,
+                scenario: scenario,
+                iterations: iters
+            };
+
             if (charts.monteCarlo) {
                 charts.monteCarlo.data.datasets[0].data = results.p90;
                 charts.monteCarlo.data.datasets[1].data = results.p75;
@@ -359,6 +369,50 @@ window.debugRothState = () => {
     Logger.debug('    - NW Boost:', nwBoost);
 };
 Logger.debug('✅ Debug function available: window.debugRothState()');
+
+
+window.setMcSpendPreset = (val) => {
+    const input = document.getElementById('mcSpendScenario');
+    if (input) {
+        input.value = val;
+        window.updateMcSpendSlider(val);
+        // Highlight active button
+        document.querySelectorAll('.spend-presets .btn').forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline');
+        });
+        const activeBtn = document.getElementById(`preset-mc-${Math.round(val * 100)}`);
+        if (activeBtn) {
+            activeBtn.classList.remove('btn-outline');
+            activeBtn.classList.add('btn-primary');
+        }
+    }
+};
+
+window.updateMcSpendSlider = (val) => {
+    const display = document.getElementById('mcSpendVal');
+    if (display) {
+        display.textContent = Math.round(val * 100) + '%';
+    }
+};
+
+window.updateMcScenarioDesc = (scenario) => {
+    const descEl = document.getElementById('mcScenarioDesc');
+    if (!descEl) return;
+
+    const descriptions = {
+        'monte-carlo': 'Advanced statistical analysis using 1,000+ random market paths based on volatility.',
+        'historical-bootstrap': 'Uses random years selected from the full historical dataset (1928-Present).',
+        'last-10': 'Simulates the strong bull market returns from 2014-2023.',
+        'last-20': 'A mixed period covering two major stock market cycles (2004-2023).',
+        'last-30': 'A full 30-year cycle including multiple crashes and strong recoveries.',
+        '1970s': 'The period of "Stagflation" - low returns and high consumer price inflation.',
+        'dotcom': 'Covers the consecutive 2000 Dotcom bust and 2008 Financial Crisis.',
+        'depression': 'The "worst case" scenario in US history starting from the 1929 crash.'
+    };
+
+    descEl.textContent = descriptions[scenario] || descriptions['monte-carlo'];
+};
 
 
 window.openSettings = (section) => SettingsHandler.populateUI();

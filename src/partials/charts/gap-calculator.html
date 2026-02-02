@@ -9,21 +9,45 @@
     <div style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
         <div class="metric-row">
             <span class="metric-label">Target Monthly Income</span>
-            <input type="number" id="calcTargetIncome" class="modern-input" value="12000"
-                onchange="initGapCalculator()">
+            <div style="display: flex; gap: 10px; align-items: center; flex: 1;">
+                <input type="range" id="calcTargetIncomeSlider" min="0" max="30000" step="500" value="12000"
+                    style="flex: 1;" oninput="window.syncGapSlider(this.value)">
+                <input type="number" id="calcTargetIncome" class="modern-input" value="12000" min="0" max="50000"
+                    step="500" style="width: 120px;" onchange="window.syncGapInput(this.value)">
+            </div>
         </div>
         <div class="metric-row">
             <span class="metric-label">Projected Monthly Income</span>
             <span class="metric-value" id="calcProjectedIncome">$0</span>
         </div>
         <div id="calcSubtitle"
-            style="font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: -10px;">At
-            Retirement: Age 53 (2029)</div>
+            style="font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: -10px;">Calculating...
+        </div>
         <hr style="border-color: var(--border-color);">
         <div class="metric-row">
             <span class="metric-label" id="calcResultLabel">Status</span>
             <span class="metric-value" id="calcResultValue" style="font-weight: 800;">Calculated...</span>
         </div>
+
+        <!-- Spend Rate Scenarios -->
+        <div
+            style="margin-top: 15px; padding: 15px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; color: var(--text-primary);">
+                💰 Spend Rate Scenarios
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                <button class="scenario-btn" data-rate="3.0">3%</button>
+                <button class="scenario-btn" data-rate="3.5">3.5%</button>
+                <button class="scenario-btn active" data-rate="4.0">4%</button>
+                <button class="scenario-btn" data-rate="4.5">4.5%</button>
+                <button class="scenario-btn" data-rate="5.0">5%</button>
+            </div>
+            <div class="metric-row" style="margin-top: 10px;">
+                <span class="metric-label">Portfolio Needed (<span id="currentSpendRate">4%</span> rate):</span>
+                <span class="metric-value" id="portfolioNeeded" style="color: var(--accent-color);">$0</span>
+            </div>
+        </div>
+
         <div class="progress-bar-container">
             <div class="progress-bar" id="calcProgressBar" style="width: 0%"></div>
         </div>

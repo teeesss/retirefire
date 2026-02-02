@@ -66,4 +66,38 @@ describe('GapCalculator', () => {
 
         expect(document.getElementById('calcProgressBar').style.width).toBe('100%');
     });
+
+    it('should sync slider and input bidirectionally (slider to input)', () => {
+        document.body.innerHTML += `<input id="calcTargetIncomeSlider" value="10000">`;
+
+        GapCalculator.syncSlider(15000);
+
+        const slider = document.getElementById('calcTargetIncomeSlider');
+        const input = document.getElementById('calcTargetIncome');
+        expect(slider.value).toBe('15000');
+        expect(input.value).toBe('15000');
+    });
+
+    it('should sync slider and input bidirectionally (input to slider)', () => {
+        document.body.innerHTML += `<input id="calcTargetIncomeSlider" value="10000">`;
+
+        GapCalculator.syncInput(8000);
+
+        const slider = document.getElementById('calcTargetIncomeSlider');
+        const input = document.getElementById('calcTargetIncome');
+        expect(slider.value).toBe('8000');
+        expect(input.value).toBe('8000');
+    });
+
+    it('should display enhanced subtitle with years to retirement', () => {
+        document.body.innerHTML += `<div id="calcSubtitle"></div>`;
+        rawData.average.income.SocialSecurity[10] = 120000;
+
+        GapCalculator.update();
+
+        const subtitle = document.getElementById('calcSubtitle');
+        expect(subtitle.textContent).toContain('Age 60');
+        expect(subtitle.textContent).toContain('2036');
+        expect(subtitle.textContent).toContain('10 years from now');
+    });
 });

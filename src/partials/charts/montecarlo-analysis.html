@@ -28,12 +28,29 @@
                     <option value="0.25">High (25%)</option>
                 </select>
             </div>
+            <!-- Spend Rate Presets -->
+            <div class="control-group" style="width: 100%; margin-top: 5px;">
+                <label style="font-size: 0.75rem; display: block; margin-bottom: 8px;">Spending Flexibility
+                    Presets</label>
+                <div class="spend-presets" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-sm btn-outline" onclick="setMcSpendPreset(0.5)" id="preset-mc-50">50%
+                        (Conservative)</button>
+                    <button class="btn btn-sm btn-outline" onclick="setMcSpendPreset(0.75)" id="preset-mc-75">75%
+                        (Balanced)</button>
+                    <button class="btn btn-sm btn-primary" onclick="setMcSpendPreset(1.0)" id="preset-mc-100">100%
+                        (Planned)</button>
+                    <button class="btn btn-sm btn-outline" onclick="setMcSpendPreset(1.25)" id="preset-mc-125">125%
+                        (Flexible)</button>
+                    <button class="btn btn-sm btn-outline" onclick="setMcSpendPreset(1.5)" id="preset-mc-150">150%
+                        (Aggressive)</button>
+                </div>
+            </div>
+
             <div class="control-group" style="flex: 1; min-width: 200px;">
-                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Spending Flexibility: <span
+                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Fine Adjustment: <span
                         id="mcSpendVal">100%</span></label>
                 <input type="range" id="mcSpendScenario" min="0.5" max="1.5" step="0.05" value="1.0"
-                    oninput="document.getElementById('mcSpendVal').textContent = Math.round(this.value * 100) + '%'"
-                    style="width: 100%; height: 4px; border-radius: 2px;">
+                    oninput="updateMcSpendSlider(this.value)" style="width: 100%; height: 4px; border-radius: 2px;">
             </div>
             <div class="control-group">
                 <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Precision</label>
@@ -45,19 +62,24 @@
                 </select>
             </div>
             <div class="control-group">
-                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Return Sequence</label>
-                <select id="mcScenario" class="btn-sm"
-                    style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary);">
+                <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Market Return Sequence</label>
+                <select id="mcScenario" class="btn-sm" onchange="updateMcScenarioDesc(this.value)"
+                    style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); min-width: 220px;">
                     <option value="monte-carlo" selected>Random (Gaussian)</option>
                     <option value="historical-bootstrap">Historical Bootstrap (Random Year)</option>
                     <optgroup label="Historical Periods">
                         <option value="last-10">Last 10 Years (Bull Run)</option>
                         <option value="last-20">Last 20 Years (Mixed)</option>
+                        <option value="last-30">Last 30 Years (Full Cycle)</option>
                         <option value="1970s">1970s Stagflation</option>
                         <option value="dotcom">2000s Dotcom/GFC</option>
                         <option value="depression">Great Depression (1929)</option>
                     </optgroup>
                 </select>
+                <div id="mcScenarioDesc"
+                    style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; max-width: 220px; line-height: 1.2;">
+                    Advanced statistical analysis using 1,000+ random market paths.
+                </div>
             </div>
         </div>
     </div>

@@ -13,23 +13,129 @@ export function initMonteCarloChart() {
     const ctx = getSafeCtx('chartMonteCarlo');
     if (!ctx) return;
 
+    // Create gradient for confidence bands
+    const createGradient = (ctx, color1, color2) => {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, color1);
+        gradient.addColorStop(1, color2);
+        return gradient;
+    };
+
     charts.monteCarlo = new Chart(ctx, {
         type: 'line',
         data: {
             labels: rawData.years,
             datasets: [
-                { label: '90th %ile', data: [], borderColor: '#10b981', fill: 1, tension: 0.4, pointRadius: 0 },
-                { label: '75th %ile', data: [], borderColor: '#22c55e', fill: 2, tension: 0.4, pointRadius: 0 },
-                { label: 'Median', data: [], borderColor: '#3b82f6', tension: 0.4, pointRadius: 0, borderWidth: 3 },
-                { label: '25th %ile', data: [], borderColor: '#f59e0b', fill: 2, tension: 0.4, pointRadius: 0 },
-                { label: '10th %ile', data: [], borderColor: '#ef4444', tension: 0.4, pointRadius: 0 }
+                {
+                    label: '90th %ile',
+                    data: [],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    fill: 1,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 1.5,
+                    order: 5
+                },
+                {
+                    label: '75th %ile',
+                    data: [],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                    fill: 2,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 1,
+                    borderDash: [3, 3],
+                    order: 4
+                },
+                {
+                    label: 'Median (50th)',
+                    data: [],
+                    borderColor: '#3b82f6',
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 3,
+                    order: 1
+                },
+                {
+                    label: '25th %ile',
+                    data: [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                    fill: 4,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 1,
+                    borderDash: [3, 3],
+                    order: 3
+                },
+                {
+                    label: '10th %ile',
+                    data: [],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 1.5,
+                    order: 2
+                }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: { size: 11 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: (context) => {
+                            const yearIndex = context[0].dataIndex;
+                            const year = rawData.years[yearIndex];
+                            const age = rawData.ages[yearIndex];
+                            return `Year ${year} (Age ${age})`;
+                        },
+                        afterTitle: (context) => {
+                            // Show success rate for final year
+                            if (context[0].dataIndex === rawData.years.length - 1) {
+                                const successRate = window.lastMonteCarloResults?.successRate || 0;
+                                return `Success Rate: ${successRate.toFixed(1)}%`;
+                            }
+                            return '';
+                        },
+                        label: (context) => {
+                            const label = context.dataset.label || '';
+                            const value = formatCurrency(context.parsed.y);
+                            return `${label}: ${value}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { callback: v => formatCurrency(v) },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: { maxTicksLimit: 12 },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
         }
     });
     applyTooltipConfig(charts.monteCarlo.options);

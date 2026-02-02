@@ -39,33 +39,39 @@ All critical security and logic issues have been resolved:
 - **Estimated Effort**: 2-3 hours
 - **Priority**: **HIGH** (User-requested feature, 80% complete)
 
-### **[TASK-007]** Advanced Cash Flow Explorer
+### **[TASK-007]** Advanced Cash Flow Explorer ✅
 - **Description**: Modernize "What You Need" calculator with interactive controls
+- **Status**: **COMPLETE** (2026-02-02)
 - **Files**:
-  - `src/explorers/CashFlowExplorer.js` (to create)
-  - `src/partials/charts/cashflow-explorer.html` (to create)
-  - `src/utils/GapCalculator.js` (to update)
-- **Features Needed**:
-  - [ ] Fix hardcoded age 53 → use current age (ISSUE-019)
-  - [ ] Convert target income to interactive slider (ISSUE-020)
-  - [ ] Add spend rate % scenarios
-  - [ ] Implement deficit/surplus visualization
-- **Related Issues**: ISSUE-019, ISSUE-020
-- **Estimated Effort**: 4-6 hours
+  - `src/explorers/CashFlowExplorer.js` (created)
+  - `src/ui/GapCalculator.js` (updated)
+  - `src/partials/charts/gap-calculator.html` (updated)
+  - `tests/unit/CashFlowExplorer.test.js` (created - 9 tests passing)
+  - `tests/unit/GapCalculator.test.js` (updated - 6 tests passing)
+- **Features Completed**:
+  - [x] Fix hardcoded age 53 → use current age (ISSUE-019) - Enhanced subtitle shows dynamic age
+  - [x] Convert target income to interactive slider (ISSUE-020) - Bidirectional sync implemented
+  - [x] Add spend rate % scenarios - 5 buttons (3%, 3.5%, 4%, 4.5%, 5%)
+  - [x] Implement portfolio calculation - Shows required portfolio based on spend rate
+  - [x] Enhanced visualization - Progress bar and surplus/deficit display
+  - [x] Comprehensive testing - 15 unit tests passing
+- **Related Issues**: ISSUE-019 ✅, ISSUE-020 ✅
+- **Actual Effort**: 4 hours
 - **Priority**: **MEDIUM-HIGH**
 
 ### **[TASK-008]** Monte Carlo Enhancements
 - **Description**: Expand Monte Carlo analysis with more scenarios and visualizations
 - **Files**: 
   - `src/engine/SimulationEngine.js`
-  - `src/charts/MonteCarloCharts.js`
+  - `src/charts/AnalysisCharts.js`
 - **Features Needed**:
-  - [ ] Add "Last 30 years" historical range option (ISSUE-035)
-  - [ ] Implement spend rate % variations (ISSUE-034)
-  - [ ] Add market condition scenarios (ISSUE-034)
-  - [ ] Enhance visualization of confidence intervals
+  - [x] Add "Last 30 years" historical range option (ISSUE-035)
+  - [x] Implement spend rate % variations (ISSUE-034)
+  - [x] Add market condition scenarios (ISSUE-034)
+  - [x] Enhance visualization of confidence intervals
+  - [x] Add market scenario descriptions and tooltips
 - **Related Issues**: ISSUE-034, ISSUE-035
-- **Estimated Effort**: 6-8 hours
+- **Status**: **COMPLETED (2026-02-02)**
 - **Priority**: **MEDIUM**
 
 ### **[TASK-014]** Gap Years Withdrawal Logic Fix
@@ -202,25 +208,35 @@ All critical security and logic issues have been resolved:
 - ✅ **Roth Deep-Dive Phases 1-4**: Account transparency, break-even, strategy comparison, combined constraints
 - ✅ **[TASK-012] Critical Linting Fixes**: Fixed 34 errors (undefined vars, parsing, case declarations) - 0 errors remaining
 - ✅ **[TASK-006] Roth Deep-Dive Phase 5**: Year-by-year detail view, 6-column table sorting with indicators - 100% complete
+- ✅ **[TASK-007] Advanced Cash Flow Explorer**: Interactive slider controls, spend rate scenarios (3-5%), portfolio calculation, enhanced age display - 100% complete
 
 ---
 
 ## 🚀 Immediate Action Queue (Top 3)
 
-### 1. **[TASK-007] Modernize Cash Flow Explorer**
-   - **Why**: Fixes outdated "What You Need" calculator (hardcoded age 53)
-   - **Effort**: 4-6 hours
+### 1. **[TASK-008] Monte Carlo Enhancements**
+   - **Why**: Expand analysis with more scenarios and visualizations
+   - **Effort**: 6-8 hours
    - **Blockers**: None
-   - **Impact**: Critical for users with different ages, improves UX
-   - **Next Step**: Update `GapCalculator.js` to use dynamic age
-   - **Files**: `src/utils/GapCalculator.js`, `src/explorers/CashFlowExplorer.js`
+   - **Impact**: Better risk assessment and confidence intervals
+   - **Next Step**: Add "Last 30 years" historical range option
+   - **Files**: `src/engine/SimulationEngine.js`, `src/charts/MonteCarloCharts.js`
 
-### 3. **[TASK-008] Enhance Withdrawal Strategy Visualization**
-   - **Why**: Users need account-by-account breakdown for tax planning
+### 2. **[TASK-014] Gap Years Withdrawal Logic Fix**
+   - **Why**: Fix withdrawal logic when there's no income (gap years before retirement)
    - **Effort**: 3-4 hours
    - **Blockers**: None
-   - **Impact**: Improves transparency and tax efficiency understanding
-   - **Next Step**: Design data structure for account-level tracking
+   - **Impact**: Critical for early retirees with gap years
+   - **Next Step**: Implement smart withdrawal order for gap years
+   - **Files**: `src/engine/SimulationEngine.js`
+
+### 3. **[TASK-017] Roth Account Source Transparency**
+   - **Why**: Users need to know which accounts fund Roth conversions
+   - **Effort**: 2-3 hours
+   - **Blockers**: None
+   - **Impact**: Improves transparency and planning
+   - **Next Step**: Display account source breakdown
+   - **Files**: `src/roth/RothOptimizer.js`, `src/roth/RothDeepDive.js`
 
 ---
 
