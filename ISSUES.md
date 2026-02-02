@@ -138,11 +138,11 @@
 | **ISSUE-035** | Monte Carlo missing historical range options | Add last 10/20/30 years options |
 | **ISSUE-045** | Roth Conversion: Needs comparison feature | Add comparison (e.g., 100k vs 50k/year) |
 | **ISSUE-053** | Detailed Data Tables: Add Roth Conversion table | Add yearly Roth conversion breakdown |
-| **ISSUE-062** | Roth Strategy: Need Combined Bracket + Max Amount caps | Implement logic respecting both limits |
 | **ISSUE-063** | Gap Years logic broken (No income -> withdrawals) | Fix withdrawal logic for gap years |
 
 **Previously Fixed Issues Removed from this section:**
 - ~~ISSUE-025~~, ~~ISSUE-026~~, ~~ISSUE-041~~, ~~ISSUE-042~~ → Fixed in 2026-01-29 (SS Explorer Sync)
+- ~~ISSUE-062~~ → Fixed in 2026-02-02 (Combined Bracket + Max Amount Caps)
 - ~~ISSUE-058~~, ~~ISSUE-059~~, ~~ISSUE-060~~ → Fixed in 2026-01-24 (Mortgage, Roth, RMD)
 - ~~ISSUE-070~~ → Fixed (Gap Calculator restored)
 

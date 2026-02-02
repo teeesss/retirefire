@@ -1,8 +1,8 @@
 # Tasks
 
-**Last Updated**: 2026-02-02 12:19 PM  
-**Status**: TASK-006 Phase 3 Complete ✅ | 60% Complete Overall | Tests: 520/532 Passing (97.7%)
-**Pending Items**: 27 tasks across 4 priority levels
+**Last Updated**: 2026-02-02 12:50 PM  
+**Status**: TASK-006 Phase 4 Complete ✅ | 80% Complete Overall | Tests: 535/547 Passing (97.8%)
+**Pending Items**: 25 tasks across 4 priority levels
 
 ---
 
@@ -22,27 +22,26 @@ All critical security and logic issues have been resolved:
 
 **Focus**: Complete Roth Conversion Deep-Dive (TASK-006) and enhance core financial tools
 
-### **[TASK-006]** Roth Conversion Deep-Dive - **60% COMPLETE** 🚧
+### **[TASK-006]** Roth Conversion Deep-Dive - **80% COMPLETE** 🚧
 - **Description**: Implement comprehensive Roth conversion analysis and optimization
 - **Files**: 
   - `src/roth/RothOptimizer.js` ✅
   - `src/roth/RothDeepDive.js` ✅
-  - `src/roth/RothComparison.js` ✅ (has 2 TODOs)
+  - `src/roth/RothComparison.js` ✅
   - `src/roth/RothMetricsCalculator.js` ✅
   - `src/partials/modals/roth-deep-dive.html` ✅
+  - `tests/unit/RothCombinedConstraints.test.js` ✅ (NEW)
 - **Features Completed**:
   - [x] **Phase 1**: Account source transparency (ISSUE-030) ✅
   - [x] **Phase 2**: Break-even analysis calculator (ISSUE-031) ✅
   - [x] **Phase 3**: Strategy comparison (ISSUE-045) ✅
+  - [x] **Phase 4**: Combined bracket + max amount caps (ISSUE-062) ✅ **NEW!**
 - **Features Remaining**:
-  - [ ] **Phase 4**: Combined bracket + max amount caps (ISSUE-062)
   - [ ] **Phase 5**: Enhanced yearly conversion breakdown table (ISSUE-053)
-  - [ ] **Code TODO**: Load specific strategy's year-by-year data (`RothComparison.js:254`)
-  - [ ] **Code TODO**: Implement table sorting (`RothComparison.js:260`)
-- **Related Issues**: ISSUE-029, ISSUE-030 ✅, ISSUE-031 ✅, ISSUE-045 ✅, ISSUE-053, ISSUE-062
-- **Estimated Effort**: 4-6 hours remaining
-- **Priority**: **HIGH** (User-requested feature, 60% complete)
-- **Docs**: `docs/implementation_plans/TASK-006-*.md`
+- **Related Issues**: ISSUE-029, ISSUE-030 ✅, ISSUE-031 ✅, ISSUE-045 ✅, ISSUE-053, ISSUE-062 ✅
+- **Estimated Effort**: 2-3 hours remaining
+- **Priority**: **HIGH** (User-requested feature, 80% complete)
+- **Docs**: `docs/implementation_plans/TASK-006-*.md`, `docs/TASK-006-Phase4-Progress.md`
 
 ### **[TASK-007]** Advanced Cash Flow Explorer
 - **Description**: Modernize "What You Need" calculator with interactive controls
