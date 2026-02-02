@@ -15,6 +15,7 @@ import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 export class RothDeepDive {
     static chartWaterfall = null;
     static chartBreakeven = null;
+    static selectedStrategy = null;
 
     static init() {
         // Expose globally
@@ -503,6 +504,58 @@ export class RothDeepDive {
         // Run comparison
         await RothComparison.runComparison(params);
         this.comparisonLoaded = true;
+    }
+
+    /**
+     * Update the detail header to show which strategy is being viewed
+     */
+    static updateDetailHeader(amount, score) {
+        // Try to find a header element in the detailed view
+        const detailedView = document.getElementById('viewDetailedAnalysis');
+        if (!detailedView) return;
+
+        // Look for existing header or create one
+        let header = detailedView.querySelector('.strategy-detail-header');
+
+        if (!header) {
+            // Create header element at the top of the detailed view
+            header = document.createElement('div');
+            header.className = 'strategy-detail-header';
+            header.style.cssText = `
+                background: rgba(59, 130, 246, 0.1);
+                padding: 15px 20px;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 20px;
+                border-radius: 8px;
+            `;
+
+            // Insert at the beginning of the detailed view
+            const firstChild = detailedView.firstElementChild;
+            if (firstChild) {
+                detailedView.insertBefore(header, firstChild);
+            } else {
+                detailedView.appendChild(header);
+            }
+        }
+
+        // Update header content
+        header.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">
+                        📊 Viewing Strategy: ${formatCurrency(amount)}/year
+                    </h3>
+                    <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.85rem;">
+                        Score: <span style="color: ${score >= 80 ? 'var(--success)' : score >= 60 ? 'var(--warning)' : 'var(--text-muted)'}; font-weight: 700;">${score}/100</span>
+                    </p>
+                </div>
+                <button onclick="window.switchRothTab('comparison')" 
+                        class="btn-secondary" 
+                        style="padding: 8px 16px; font-size: 0.9rem;">
+                    ← Back to Comparison
+                </button>
+            </div>
+        `;
     }
 }
 

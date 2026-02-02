@@ -201,20 +201,13 @@ All critical security and logic issues have been resolved:
 - ✅ **Gap Year Logic**: Smart penalty-avoiding drawdown order
 - ✅ **Roth Deep-Dive Phases 1-4**: Account transparency, break-even, strategy comparison, combined constraints
 - ✅ **[TASK-012] Critical Linting Fixes**: Fixed 34 errors (undefined vars, parsing, case declarations) - 0 errors remaining
+- ✅ **[TASK-006] Roth Deep-Dive Phase 5**: Year-by-year detail view, 6-column table sorting with indicators - 100% complete
 
 ---
 
 ## 🚀 Immediate Action Queue (Top 3)
 
-### 1. **[TASK-006 Phase 5] Complete Roth Conversion Deep-Dive** 📋 80% DONE
-   - **Why**: 80% complete, high user value, clear path to completion
-   - **Effort**: 2-3 hours
-   - **Blockers**: None
-   - **Impact**: Completes major user-requested feature
-   - **Next Step**: Implement year-by-year data loading and table sorting
-   - **Files**: `src/roth/RothComparison.js` (lines 301, 307)
-
-### 2. **[TASK-007] Modernize Cash Flow Explorer**
+### 1. **[TASK-007] Modernize Cash Flow Explorer**
    - **Why**: Fixes outdated "What You Need" calculator (hardcoded age 53)
    - **Effort**: 4-6 hours
    - **Blockers**: None
@@ -234,8 +227,8 @@ All critical security and logic issues have been resolved:
 ## 🎯 Current Sprint Status
 
 **Sprint**: Financial Depth & UX Enhancements
-**Progress**: 90% Complete
-**Next Milestone**: Complete TASK-006 Phase 5
+**Progress**: 95% Complete
+**Next Milestone**: Modernize Cash Flow Explorer (TASK-007)
 
 ---
 

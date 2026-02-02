@@ -10,6 +10,10 @@ import Chart from 'chart.js/auto';
 
 export class RothComparison {
     static comparisonData = null;
+    static sortState = {
+        column: 'score',
+        direction: 'desc'
+    };
 
     /**
      * Run strategy comparison and render results
@@ -100,6 +104,40 @@ export class RothComparison {
                 </tr>
             `;
         }).join('');
+
+        // Update table headers with sort indicators
+        this.updateTableHeaders();
+    }
+
+    /**
+     * Update table headers with sort indicators
+     */
+    static updateTableHeaders() {
+        const headerMap = {
+            'amount': 'Annual Amount',
+            'netWorth': 'Final Net Worth',
+            'tax': 'Total Tax',
+            'breakEven': 'Break-Even Age',
+            'rothBalance': 'Roth Balance',
+            'score': 'Score'
+        };
+
+        // Find all table headers in the comparison table
+        const table = document.querySelector('#comparisonTableBody')?.closest('table');
+        if (!table) return;
+
+        const headers = table.querySelectorAll('thead th[onclick*="sortComparisonTable"]');
+        headers.forEach(th => {
+            const onclick = th.getAttribute('onclick');
+            const match = onclick?.match(/sortComparisonTable\('(\w+)'\)/);
+            if (!match) return;
+
+            const column = match[1];
+            const indicator = this.getSortIndicator(column);
+            const baseText = headerMap[column] || column;
+
+            th.textContent = baseText + indicator;
+        });
     }
 
     /**
@@ -295,16 +333,109 @@ window.viewStrategyDetails = (index) => {
     const strategy = RothComparison.comparisonData.strategies[index];
     console.log(`Viewing details for ${formatCurrency(strategy.amount)}/year strategy`);
 
-    // Switch to detailed view and load this strategy's data
-    window.switchRothTab('detailed');
+    // Import RothDeepDive dynamically
+    import('./RothDeepDive.js').then(module => {
+        const { RothDeepDive } = module;
 
-    // TODO: Load the specific strategy's year-by-year data into the detailed view
-    // This would require passing the strategy.results to renderTable()
+        // Store selected strategy for reference
+        RothDeepDive.selectedStrategy = {
+            amount: strategy.amount,
+            results: strategy.results,
+            score: strategy.score,
+            finalNetWorth: strategy.finalNetWorth,
+            totalTaxPaid: strategy.totalTaxPaid
+        };
+
+        // Switch to detailed view
+        window.switchRothTab('detailed');
+
+        // Render the strategy's year-by-year data
+        if (strategy.results && strategy.results.length > 0) {
+            RothDeepDive.renderTable(strategy.results);
+            RothDeepDive.updateDetailHeader(strategy.amount, strategy.score);
+        } else {
+            console.warn('No year-by-year results available for this strategy');
+        }
+    }).catch(err => {
+        console.error('Failed to load RothDeepDive:', err);
+    });
 };
 
 window.sortComparisonTable = (column) => {
-    console.log(`Sorting by ${column}`);
-    // TODO: Implement table sorting
+    if (!RothComparison.comparisonData) return;
+
+    // Toggle direction if same column, otherwise default to desc
+    if (RothComparison.sortState.column === column) {
+        RothComparison.sortState.direction =
+            RothComparison.sortState.direction === 'desc' ? 'asc' : 'desc';
+    } else {
+        RothComparison.sortState.column = column;
+        RothComparison.sortState.direction = 'desc';
+    }
+
+    console.log(`Sorting by ${column} (${RothComparison.sortState.direction})`);
+
+    // Sort strategies
+    const sorted = RothComparison.sortStrategies(
+        RothComparison.comparisonData.strategies,
+        column,
+        RothComparison.sortState.direction
+    );
+
+    // Update comparison data
+    RothComparison.comparisonData.strategies = sorted;
+
+    // Re-render table
+    RothComparison.renderComparisonTable(RothComparison.comparisonData);
+};
+
+/**
+ * Sort strategies by specified column
+ */
+RothComparison.sortStrategies = function (strategies, column, direction) {
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    return [...strategies].sort((a, b) => {
+        let aVal, bVal;
+
+        switch (column) {
+            case 'amount':
+                aVal = a.amount;
+                bVal = b.amount;
+                break;
+            case 'netWorth':
+                aVal = a.finalNetWorth || 0;
+                bVal = b.finalNetWorth || 0;
+                break;
+            case 'tax':
+                aVal = a.totalTaxPaid || 0;
+                bVal = b.totalTaxPaid || 0;
+                break;
+            case 'breakEven':
+                aVal = a.breakEvenAge === 999 ? Infinity : (a.breakEvenAge || Infinity);
+                bVal = b.breakEvenAge === 999 ? Infinity : (b.breakEvenAge || Infinity);
+                break;
+            case 'rothBalance':
+                aVal = a.finalRothBalance || 0;
+                bVal = b.finalRothBalance || 0;
+                break;
+            case 'score':
+            default:
+                aVal = a.score;
+                bVal = b.score;
+                break;
+        }
+
+        return (aVal - bVal) * multiplier;
+    });
+};
+
+/**
+ * Get sort indicator for column header
+ */
+RothComparison.getSortIndicator = function (column) {
+    if (RothComparison.sortState.column !== column) return '';
+    return RothComparison.sortState.direction === 'desc' ? ' ▼' : ' ▲';
 };
 
 export default RothComparison;
