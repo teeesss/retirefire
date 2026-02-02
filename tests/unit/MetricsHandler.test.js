@@ -253,65 +253,89 @@ describe('MetricsHandler', () => {
             expect(coachList).toContain('section-networth');
             expect(coachList).toContain('#10b981'); // Success color
         });
-    });
 
-    describe('safeUpdate', () => {
-        it('should update element content when element exists', () => {
-            const elem = document.createElement('div');
-            elem.id = 'testElement';
-            document.body.appendChild(elem);
+        it('should suggest Social Security delay when success rate is high', () => {
+            rawData.monteCarlo.successRate = 98;
+            MetricsHandler.updateCoach();
 
-            MetricsHandler.safeUpdate('testElement', 'Test Content');
-
-            expect(elem.textContent).toBe('Test Content');
+            const coachList = document.getElementById('coachMessageList').innerHTML;
+            expect(coachList).toContain('SS Optimization');
+            expect(coachList).toContain('Delaying SS to 70');
         });
 
-        it('should not throw error when element does not exist', () => {
-            expect(() => {
-                MetricsHandler.safeUpdate('nonExistentElement', 'Test Content');
-            }).not.toThrow();
-        });
+        it('should show Tax Leakage warning when drawdown taxes are high', () => {
+            // Setup drawdown data within the scenario object
+            rawData.average.drawdown = {
+                InvestmentsTax: [300000, 300000],
+                RetirementSavingsTax: [0, 0]
+            };
 
-        it('should handle numeric content', () => {
-            const elem = document.createElement('div');
-            elem.id = 'numericTest';
-            document.body.appendChild(elem);
+            MetricsHandler.updateCoach();
 
-            MetricsHandler.safeUpdate('numericTest', 42);
-
-            expect(elem.textContent).toBe('42');
-        });
-
-        it('should handle empty string content', () => {
-            const elem = document.createElement('div');
-            elem.id = 'emptyTest';
-            elem.textContent = 'Initial Value';
-            document.body.appendChild(elem);
-
-            MetricsHandler.safeUpdate('emptyTest', '');
-
-            expect(elem.textContent).toBe('');
+            const coachList = document.getElementById('coachMessageList').innerHTML;
+            expect(coachList).toContain('Tax Leakage');
+            expect(coachList).toContain('Significant tax leakage');
+            expect(coachList).toContain('section-withdrawals');
         });
     });
+});
 
-    describe('Edge Cases', () => {
-        it.skip('should handle empty net worth series gracefully', () => {
-            // Skipped: requires dynamic mock manipulation
-        });
+describe('safeUpdate', () => {
+    it('should update element content when element exists', () => {
+        const elem = document.createElement('div');
+        elem.id = 'testElement';
+        document.body.appendChild(elem);
 
-        it.skip('should handle negative net worth values', () => {
-            // Skipped: requires dynamic mock manipulation
-        });
+        MetricsHandler.safeUpdate('testElement', 'Test Content');
 
-        it.skip('should handle zero net worth throughout', () => {
-            // Skipped: requires dynamic mock manipulation
-        });
+        expect(elem.textContent).toBe('Test Content');
+    });
 
-        it('should handle missing rawData properties gracefully', () => {
-            rawData.ages = undefined;
-            rawData.years = undefined;
+    it('should not throw error when element does not exist', () => {
+        expect(() => {
+            MetricsHandler.safeUpdate('nonExistentElement', 'Test Content');
+        }).not.toThrow();
+    });
 
-            expect(() => MetricsHandler.updateMetrics()).not.toThrow();
-        });
+    it('should handle numeric content', () => {
+        const elem = document.createElement('div');
+        elem.id = 'numericTest';
+        document.body.appendChild(elem);
+
+        MetricsHandler.safeUpdate('numericTest', 42);
+
+        expect(elem.textContent).toBe('42');
+    });
+
+    it('should handle empty string content', () => {
+        const elem = document.createElement('div');
+        elem.id = 'emptyTest';
+        elem.textContent = 'Initial Value';
+        document.body.appendChild(elem);
+
+        MetricsHandler.safeUpdate('emptyTest', '');
+
+        expect(elem.textContent).toBe('');
+    });
+});
+
+describe('Edge Cases', () => {
+    it.skip('should handle empty net worth series gracefully', () => {
+        // Skipped: requires dynamic mock manipulation
+    });
+
+    it.skip('should handle negative net worth values', () => {
+        // Skipped: requires dynamic mock manipulation
+    });
+
+    it.skip('should handle zero net worth throughout', () => {
+        // Skipped: requires dynamic mock manipulation
+    });
+
+    it('should handle missing rawData properties gracefully', () => {
+        rawData.ages = undefined;
+        rawData.years = undefined;
+
+        expect(() => MetricsHandler.updateMetrics()).not.toThrow();
     });
 });

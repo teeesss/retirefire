@@ -560,6 +560,10 @@ ls *.md
 - **CHART GUARD**: Every chart initialization function MUST use `validateData()` (from `ChartHelpers.js`) to ensure input arrays are populated and non-zero before attempting to render.
 - **ERROR REPORTING**: If data is missing, log a clear `console.error` with the chart ID to make debugging immediate.
 
+### 🚨 MANDATORY: Simulation Data Access
+- **DEFENSIVE CHECKS**: Always use optional chaining or explicit null checks when accessing `rawData[scenario]` properties like `drawdown` or `accounts` within UI handlers. Simulation state can be transient during scenario switches.
+- **SCENARIO-BASED MOCKS**: When writing unit tests for UI handlers, ensure mock data is nested within the scenario key (e.g., `rawData.average.drawdown`) rather than flat at the top level of `rawData`.
+
 **Last Updated**: 2026-02-02 (P1 Enhancements & Metrics Protection)
 **Review**: Before every commit  
 **Enforcement**: Mandatory
