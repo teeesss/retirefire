@@ -10,7 +10,9 @@
 |-------|-------------|--------|-------------|
 | **LOGIC-001** | SafeMath NaN check typo - denominator check duplicated numerator | ✅ FIXED | Fixed line 26 in `SafeMath.js` to check both `numerator` and `denominator` for NaN. Added 8 edge case tests. |
 | **LOGIC-002** | Auto-save race condition - overlapping localStorage writes | ✅ FIXED | Added mutex lock (`isSaving` flag) with async/await pattern in `main.js`. Prevents data corruption. |
+| **CRIT-001** | LocalStorage data stored in plaintext - XSS vulnerability | ✅ FIXED | Created `SecureStorage.js` (224 lines) with AES-256 encryption. Browser fingerprint-based key. Automatic migration from plaintext. 22 tests passing. |
 | **CRIT-002** | Missing Content Security Policy (CSP) headers | ✅ FIXED | Added CSP meta tag to `index.html` with strict policies: `default-src 'self'`, `frame-ancestors 'none'`, etc. Prevents XSS attacks. |
+| **PERF-002** | LocalStorage quota exhaustion risk | ✅ FIXED | Implemented quota monitoring in `SecureStorage.js`. Warns at 4MB, auto-compresses on quota exceeded, graceful error handling. |
 | **SECURITY-001** | No global error boundary - unhandled errors crash app | ✅ FIXED | Created `ErrorBoundary.js` (189 lines) to catch unhandled errors and promise rejections. Displays user-friendly error UI. |
 | **SECURITY-002** | Missing input validation - extreme values accepted | ✅ FIXED | Created `InputValidator.js` (133 lines) with comprehensive validation for age, salary, rates, Monte Carlo iterations. Includes XSS sanitization. |
 

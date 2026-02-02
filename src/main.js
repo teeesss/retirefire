@@ -38,6 +38,7 @@ import { SimulationEngine } from './engine/SimulationEngine.js';
 // Utilities
 import { Logger } from './utils/Logger.js';
 import { ErrorBoundary } from './utils/ErrorBoundary.js';
+import { SecureStorage } from './utils/SecureStorage.js';
 import { deepMerge } from './utils/DeepMerge.js';
 import { calculateNetWorth, getNetWorthSeries, getTotalIncome, getTotalExpenses, getTotalTaxes } from './state/DataUtils.js';
 import { formatCurrency } from './utils/Formatters.js';
@@ -172,22 +173,29 @@ const App = {
 
     loadSettings() {
         try {
-            const savedConfig = localStorage.getItem('retirementPlannerConfig');
+            // Attempt to migrate from plaintext if this is first load
+            SecureStorage.migrateFromPlaintext();
+
+            // Load encrypted data
+            const savedConfig = SecureStorage.load();
             if (savedConfig) {
-                const parsed = JSON.parse(savedConfig);
                 // Recursive deep merge to preserve nested settings (US-033/034)
-                deepMerge(config, parsed);
+                deepMerge(config, savedConfig);
+                Logger.debug('✅ Settings loaded from encrypted storage');
+            } else {
+                Logger.debug('No saved settings found - using defaults');
             }
         } catch (e) {
-            Logger.warn('Could not load from localStorage:', e);
+            Logger.error('❌ Could not load from SecureStorage:', e);
         }
     },
 
     saveSettings() {
         try {
-            localStorage.setItem('retirementPlannerConfig', JSON.stringify(config));
+            SecureStorage.save(config);
+            Logger.debug('✅ Settings saved to encrypted storage');
         } catch (e) {
-            Logger.warn('Could not save to localStorage:', e);
+            Logger.error('❌ Could not save to SecureStorage:', e);
         }
     },
 
