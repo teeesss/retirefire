@@ -102,18 +102,26 @@ export class RothOptimizer {
         const currentBracket = this.getCurrentBracket(income, filingStatus);
 
         // Calculate room in target bracket
-        let roomInBracket = Math.max(0, bracketLimit - income);
+        const bracketRoom = Math.max(0, bracketLimit - income);
 
-        // Apply constraints
-        if (constraints.maxAnnual) {
-            roomInBracket = Math.min(roomInBracket, constraints.maxAnnual);
-        }
-        if (constraints.minAnnual && roomInBracket < constraints.minAnnual) {
-            roomInBracket = 0; // Don't convert if below minimum
+        // Apply max annual cap (if specified)
+        const maxAnnualCap = constraints.maxAnnual || Infinity;
+
+        // Combined constraint: lesser of bracket room and max annual
+        let effectiveLimit = Math.min(bracketRoom, maxAnnualCap);
+
+        // Apply minimum annual threshold
+        if (constraints.minAnnual && effectiveLimit < constraints.minAnnual) {
+            effectiveLimit = 0; // Don't convert if below minimum
         }
 
         // Don't exceed available balance
-        let conversionAmount = Math.min(roomInBracket, balance);
+        let conversionAmount = Math.min(effectiveLimit, balance);
+
+        // Track which constraint was the limiting factor (for UI feedback)
+        const limitingFactor = conversionAmount === 0 ? 'none' :
+            conversionAmount === balance ? 'balance' :
+                bracketRoom <= maxAnnualCap ? 'bracket' : 'maxAnnual';
 
         // Apply Manual Overrides if present
         if (RothConfig.manualOverrides && RothConfig.manualOverrides[year] !== undefined) {
@@ -170,8 +178,15 @@ export class RothOptimizer {
             effectiveRate,
             taxOnConversion: Math.round(taxOnConversion),
             remainingBalance: balance - conversionAmount,
-            bracketUtilization: roomInBracket > 0 ? (conversionAmount / roomInBracket) * 100 : 0,
-            taxPaymentSource: payTaxesFrom
+            bracketUtilization: bracketRoom > 0 ? (conversionAmount / bracketRoom) * 100 : 0,
+            taxPaymentSource: payTaxesFrom,
+            // NEW: Constraint tracking
+            constraints: {
+                bracketRoom: Math.round(bracketRoom),
+                maxAnnualCap: maxAnnualCap === Infinity ? null : Math.round(maxAnnualCap),
+                effectiveLimit: Math.round(effectiveLimit),
+                limitingFactor
+            }
         };
     }
 
@@ -319,9 +334,9 @@ export class RothOptimizer {
     }
 
     /**
-     * Compare manual strategy vs optimized strategy
+     * Compare two strategies (manual vs optimized)
      */
-    static compareStrategies(manualResults, optimizedResults) {
+    static compareTwoStrategies(manualResults, optimizedResults) {
         const manualTotal = manualResults.summary.totalConverted;
         const optimizedTotal = optimizedResults.summary.totalConverted;
         const manualTax = manualResults.summary.totalTaxPaid;
