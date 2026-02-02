@@ -45,52 +45,76 @@ import { formatCurrency } from './utils/Formatters.js';
  */
 const App = {
     async init() {
-        Logger.debug('🚀 RetireFire Initializing...');
-        this.loadSettings();
-        updateRawData();
+        try {
+            Logger.debug('🚀 RetireFire Initializing...');
+            this.loadSettings();
+            updateRawData();
 
-        // Apply theme
-        document.documentElement.setAttribute('data-theme', config.theme);
-        const themeToggle = document.querySelector('.theme-toggle');
-        if (themeToggle) themeToggle.textContent = config.theme === 'dark' ? '🌙' : '☀️';
+            // Apply theme
+            document.documentElement.setAttribute('data-theme', config.theme);
+            const themeToggle = document.querySelector('.theme-toggle');
+            if (themeToggle) themeToggle.textContent = config.theme === 'dark' ? '🌙' : '☀️';
 
-        // Initialize UI components
-        NavigationHandler.init();
-        RothUI.init();
-        RothDeepDive.init();
-        GapCalculator.init();
-        CryptoHandler.syncPrices();
-        this.renderDashboard();
-        this.initAllCharts();
+            // Initialize UI components
+            NavigationHandler.init();
+            RothUI.init();
+            RothDeepDive.init();
+            GapCalculator.init();
+            CryptoHandler.syncPrices();
+            this.renderDashboard();
+            this.initAllCharts();
 
-        // Initialize descriptions and explorers
-        setTimeout(() => {
-            Logger.debug('⏰ Init timeout executing');
-            Logger.debug('  - RothUI defined:', typeof RothUI);
-            Logger.debug('  - refreshMetrics defined:', typeof RothUI?.refreshMetrics);
+            // Initialize descriptions and explorers
+            setTimeout(() => {
+                Logger.debug('⏰ Init timeout executing');
+                Logger.debug('  - RothUI defined:', typeof RothUI);
+                Logger.debug('  - refreshMetrics defined:', typeof RothUI?.refreshMetrics);
 
-            initializeDescriptionsAndTooltips(charts);
-            // initializeExplorerSections(); // Disabled to prevent partial duplication (using explicit HTML partials now)
+                initializeDescriptionsAndTooltips(charts);
+                // initializeExplorerSections(); // Disabled to prevent partial duplication (using explicit HTML partials now)
 
-            // Refresh Roth metrics after everything is loaded
-            if (RothUI && RothUI.refreshMetrics) {
-                try {
-                    Logger.debug('🔄 Calling RothUI.refreshMetrics()...');
-                    RothUI.refreshMetrics();
-                } catch (error) {
-                    Logger.error('❌ refreshMetrics() error:', error);
+                // Refresh Roth metrics after everything is loaded
+                if (RothUI && RothUI.refreshMetrics) {
+                    try {
+                        Logger.debug('🔄 Calling RothUI.refreshMetrics()...');
+                        RothUI.refreshMetrics();
+                    } catch (error) {
+                        Logger.error('❌ refreshMetrics() error:', error);
+                    }
+                } else {
+                    Logger.error('❌ RothUI.refreshMetrics not available');
+                    Logger.error('  - RothUI:', RothUI);
+                    Logger.error('  - RothUI.refreshMetrics:', RothUI?.refreshMetrics);
                 }
-            } else {
-                Logger.error('❌ RothUI.refreshMetrics not available');
-                Logger.error('  - RothUI:', RothUI);
-                Logger.error('  - RothUI.refreshMetrics:', RothUI?.refreshMetrics);
+            }, 1000);
+
+            // Auto-save every 30 seconds
+            setInterval(() => this.saveSettings(), 30000);
+
+            Logger.debug('✅ RetireFire Ready');
+        } catch (error) {
+            Logger.error('❌ Fatal error during App initialization:', error);
+            // Show user-friendly error message
+            const appElement = document.getElementById('app');
+            if (appElement) {
+                appElement.innerHTML = `
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--bg-color);">
+                        <div style="text-align: center; padding: 2rem; max-width: 500px;">
+                            <h1 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Initialization Error</h1>
+                            <p style="color: var(--text-color); margin-bottom: 1rem;">
+                                The application failed to initialize. Please refresh the page and try again.
+                            </p>
+                            <p style="color: var(--text-muted); font-size: 0.875rem;">
+                                If the problem persists, try clearing your browser cache or resetting settings.
+                            </p>
+                            <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Refresh Page
+                            </button>
+                        </div>
+                    </div>
+                `;
             }
-        }, 1000);
-
-        // Auto-save every 30 seconds
-        setInterval(() => this.saveSettings(), 30000);
-
-        Logger.debug('✅ RetireFire Ready');
+        }
     },
 
     renderDashboard() {
