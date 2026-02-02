@@ -176,8 +176,8 @@ describe('Edge Case Testing', () => {
         });
 
         it('should handle very high income', () => {
-            const tax = TaxCalculator.getTaxes(20_000_000, 'single', 'CA');
-            expect(tax.total).toBeGreaterThan(7_000_000);
+            const tax = TaxCalculator.getTaxes(20000000, 'single', 'CA');
+            expect(tax.total).toBeGreaterThan(7000000);
         });
 
         it('should handle unknown state code', () => {
@@ -281,7 +281,7 @@ describe('Edge Case Testing', () => {
         });
 
         it('should handle maximum salary', () => {
-            const result = InputValidator.validate(10_000_000, 'salary');
+            const result = InputValidator.validate(10000000, 'salary');
             expect(result.valid).toBe(true);
         });
     });
