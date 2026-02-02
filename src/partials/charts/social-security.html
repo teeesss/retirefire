@@ -5,6 +5,14 @@
             <span>🏦 Social Security Strategy</span>
             <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
         </div>
+        <div class="control-group" style="margin-left: auto;">
+            <select id="ssExplorerViewToggle" class="btn-sm"
+                style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary);"
+                onchange="updateSSExplorerChart()">
+                <option value="cumulative">Lifetime Cumulative</option>
+                <option value="annual">Annual Cash Flow</option>
+            </select>
+        </div>
     </div>
     <div class="explorer-container">
         <div class="stats-row" style="margin-bottom: 1.5rem;">

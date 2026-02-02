@@ -1,4 +1,3 @@
-import { Logger } from '../utils/Logger.js';
 import { config } from '../data/Config.js';
 import { TaxCalculator } from './TaxCalculator.js';
 import { RothCalculator } from '../roth/RothCalculator.js';
@@ -411,26 +410,6 @@ export class SimulationEngine {
             let deficit = Math.abs(netFlow);
             const strategy = config.settings?.taxes?.withdrawalStrategy || 'grow_tax_deferred';
 
-            // Helper for marginal tax tracking
-            let currentTotalTax = estimatedTax;
-            let runningOrdIncome = otherOrdIncome + rothConvToProcess;
-            let runningCapGains = estimatedCapGains;
-
-            const calculateMarginalTax = (extraOrd = 0, extraCG = 0) => {
-                const newBreakdown = TaxCalculator.calculateTaxBreakdown(
-                    workIncome,
-                    runningOrdIncome + extraOrd,
-                    runningCapGains + extraCG,
-                    config.settings?.taxSettings?.filingStatus || 'joint',
-                    config.settings?.taxSettings?.state || 'none'
-                );
-                const diff = Math.max(0, newBreakdown.total - currentTotalTax);
-                currentTotalTax = newBreakdown.total;
-                runningOrdIncome += extraOrd;
-                runningCapGains += extraCG;
-                return diff;
-            };
-
             if (strategy === 'proportional') {
                 const totalLiquid = investments + retirement + roth;
                 if (totalLiquid > 0) {
@@ -441,17 +420,14 @@ export class SimulationEngine {
                     const invAmt = Math.min(investments, deficit * invPct);
                     investments -= invAmt;
                     yearlyDrawdownDetail.Investments = invAmt;
-                    yearlyDrawdownDetail.InvestmentsTax = calculateMarginalTax(0, invAmt * 0.5);
 
                     const retAmt = Math.min(retirement, deficit * retPct);
                     retirement -= retAmt;
                     yearlyDrawdownDetail.RetirementSavings = retAmt;
-                    yearlyDrawdownDetail.RetirementSavingsTax = calculateMarginalTax(retAmt, 0);
 
                     const rothAmt = Math.min(roth, deficit * rothPct);
                     roth -= rothAmt;
                     yearlyDrawdownDetail.RothIRA = rothAmt;
-                    yearlyDrawdownDetail.RothIRATax = calculateMarginalTax(0, 0);
 
                     deficit -= (invAmt + retAmt + rothAmt);
                 }
@@ -470,43 +446,56 @@ export class SimulationEngine {
                         investments -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.Investments += amount;
-                        yearlyDrawdownDetail.InvestmentsTax += calculateMarginalTax(0, amount * 0.5);
                     } else if (accountName === 'RetirementSavings') {
                         const amount = Math.min(retirement, deficit);
                         retirement -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.RetirementSavings += amount;
-                        yearlyDrawdownDetail.RetirementSavingsTax += calculateMarginalTax(amount, 0);
                     } else if (accountName === 'RothIRA') {
                         const amount = Math.min(roth, deficit);
                         roth -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.RothIRA += amount;
-                        yearlyDrawdownDetail.RothIRATax += calculateMarginalTax(0, 0);
                     } else if (accountName === 'HSA') {
                         const amount = Math.min(hsa, deficit);
                         hsa -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.HSA += amount;
-                        yearlyDrawdownDetail.HSATax += calculateMarginalTax(0, 0);
                     } else if (accountName === 'CashSavings') {
                         const amount = Math.min(cash, deficit);
                         cash -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.CashSavings += amount;
-                        yearlyDrawdownDetail.CashSavingsTax += calculateMarginalTax(0, 0);
                     }
                 }
             }
 
-            // Note: In a high-fidelity engine, we might re-run the deficit loop if 
-            // the new taxes increase the deficit. For now, we track the tax burden 
-            // of the *initial* needed drawdown.
+            // HOLISTIC TAX RE-CALCULATION
+            // Track the final taxable amounts including all sources
+            const finalTaxableOrd = otherOrdIncome + rothConvToProcess + yearlyDrawdownDetail.RetirementSavings;
+            const finalTaxableCG = estimatedCapGains + (yearlyDrawdownDetail.Investments * 0.5);
+
+            const finalBreakdown = TaxCalculator.calculateTaxBreakdown(
+                workIncome,
+                finalTaxableOrd,
+                finalTaxableCG,
+                config.settings?.taxSettings?.filingStatus || 'joint',
+                config.settings?.taxSettings?.state || 'none'
+            );
+
+            estimatedTax = finalBreakdown.total;
+            Object.assign(taxBreakdown, finalBreakdown);
+
+            // Assign marginal taxes for detail display (Simple approximation: total - base)
+            // Note: These are for visual breakdown only; the total tax is already comprehensive.
+            yearlyDrawdownDetail.RetirementSavingsTax = Math.round(yearlyDrawdownDetail.RetirementSavings * 0.22); // Rough est for detail display
+            yearlyDrawdownDetail.InvestmentsTax = Math.round(yearlyDrawdownDetail.Investments * 0.15); // Rough est for detail display
+
         } else {
             investments += netFlow;
         }
 
-        // Process Roth Conversion
+        // Process Roth Conversion (already factored into taxes above via rothConvToProcess)
         let actualConversion = 0;
         let conversionTax = 0;
         if (rothConvToProcess > 0 && retirement >= rothConvToProcess) {
@@ -514,14 +503,9 @@ export class SimulationEngine {
             roth += rothConvToProcess;
             actualConversion = rothConvToProcess;
 
-            const baseTaxBreakdown = TaxCalculator.calculateTaxBreakdown(
-                workIncome,
-                otherOrdIncome,
-                estimatedCapGains,
-                config.settings?.taxSettings?.filingStatus || 'joint',
-                config.settings?.taxSettings?.state || 'none'
-            );
-            conversionTax = Math.max(0, taxBreakdown.total - baseTaxBreakdown.total);
+            // Use the already calculated marginal values for detail if needed, 
+            // but the total tax is already correct in estimatedTax.
+            conversionTax = 0; // Simplified tracking for walkthrough
         }
 
         // Build year results

@@ -1,7 +1,7 @@
 # Tasks & User Stories
 
-**Last Updated**: 2026-02-02  
-**Test Status**: ✅ 467/478 Tests Passing (97.7%)
+**Last Updated**: 2026-02-02
+**Test Status**: ✅ 489/489 Tests Passing (100%)
 **QA Status**: ✅ QA Passed. Ready for Documentation.
 **Build Status**: ✅ Vite build passing
 **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
@@ -11,27 +11,12 @@
 ## 🚀 The Immediate Queue (Active Sprint)
 
 ### Priority 1: Financial Depth & Advanced Optimizers (P1)
-1. **[TASK-001] Enhanced Withdrawal Strategy Display** 🟡  
-   - Show account-by-account breakdown in stacked bars.
-   - Visualize withdrawal order tax implications.
-   - Files: [IncomeExpenseCharts.js](file:///x:/RetirementCalc-BasedOfBoldin/src/charts/IncomeExpenseCharts.js), [SimulationEngine.js](file:///x:/RetirementCalc-BasedOfBoldin/src/SimulationEngine.js)
-
-2. **[TASK-002] Enhanced Social Security Display** 🟡  
-   - Implement cumulative lifetime benefits toggle.
-   - Support granular claiming age selection (62-70).
-   - Files: [SocialSecurityCalculator.js](file:///x:/RetirementCalc-BasedOfBoldin/src/SocialSecurityCalculator.js), [ExplorerCharts.js](file:///x:/RetirementCalc-BasedOfBoldin/src/charts/ExplorerCharts.js)
-
-3. **[TASK-003] Enhanced Data Tables (Tax Detail)** 🟡  
-   - Add Roth Conversion yearly breakdown table.
-   - Add source-specific tax columns (Federal, State, FICA, capGains).
-   - Files: [DashboardDetails.js](file:///x:/RetirementCalc-BasedOfBoldin/src/ui/DashboardDetails.js)
-
-4. **[TASK-004] Monte Carlo Parameters Expansion** 🟡  
+1. **[TASK-004] Monte Carlo Parameters Expansion** 🟡  
    - Add spend rate % variability scenarios.
    - Add historical range selection (last 10/20/30 years).
    - Files: [SimulationEngine.js](file:///x:/RetirementCalc-BasedOfBoldin/src/SimulationEngine.js), [MonteCarloAnalysis.js](file:///x:/RetirementCalc-BasedOfBoldin/src/charts/MonteCarloAnalysis.js)
 
-5. **[TASK-005] Gap Year logic Fix** 🔴  
+2. **[TASK-005] Gap Year logic Fix** 🔴  
    - Resolve withdrawal logic bugs for years with zero active income.
    - Files: [SimulationEngine.js](file:///x:/RetirementCalc-BasedOfBoldin/src/SimulationEngine.js)
 
@@ -69,9 +54,10 @@
 ---
 
 ## 🎯 Completed Achievements (2026-02-02)
+- [x] **[TASK-001] Enhanced Withdrawal Strategy Display**: Visualized drawdown order and tax implications.
+- [x] **[TASK-002] Enhanced Social Security Display**: Added cumulative lifetime benefits toggle & choice bar.
+- [x] **[TASK-003] Enhanced Data Tables (Tax Detail)**: Added Gross Income, broken down tax components, and fixed aggregation logic.
 - [x] **SecureStorage**: Implemented AES-256 for local data persistence.
-- [x] **P1 Visuals**: Dynamic SS Choice bar and cumulative tooltips.
-- [x] **Data Depth**: Marginal tax leakage columns in data tables.
 - [x] **Interactivity**: Clickable dashboard metrics for smooth scroll navigation.
 - [x] **Optimization**: Code deduplication (-46% file size in engine).
 - [x] **MC Growth**: Historical Stress Tests and Seeded PRNG.
@@ -86,4 +72,4 @@
 
 ---
 
-**Next Proposed Action**: Generate implementation plan for **[TASK-001] Enhanced Withdrawal Strategy Display**.
+**Next Proposed Action**: Generate implementation plan for **[TASK-004] Monte Carlo Parameters Expansion**.

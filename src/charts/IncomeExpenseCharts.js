@@ -7,6 +7,7 @@ import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
 import { getTotalIncome, getTotalExpenses } from '../state/DataUtils.js';
 import { incomeColors, expenseColors, incomeNames, expenseNames } from '../data/Constants.js';
+import { SocialSecurityCalculator } from '../utils/SocialSecurityCalculator.js';
 
 export function initIncomeChart() {
     const ctx = getSafeCtx('chartIncome');
@@ -40,6 +41,7 @@ export function initIncomeChart() {
             scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, ticks: { callback: v => formatCurrency(v) } } },
             plugins: {
                 tooltip: {
+                    enabled: true,
                     callbacks: {
                         label: function (context) {
                             let label = context.dataset.label || '';
@@ -151,26 +153,19 @@ export function updateSSComparisonChart() {
     const pia = parseFloat(document.getElementById('ssPiaInput')?.value || 2800);
     const viewMode = document.getElementById('ssViewToggle')?.value || 'annual';
 
-    // Calculate factors based on FRA 67
-    const getFactor = (age) => {
-        if (age === 67) return 1.0;
-        if (age < 67) return 1.0 - (67 - age) * 0.0667;
-        return 1.0 + (age - 67) * 0.08;
-    };
-
-    const choiceAge = config.settings.socialSecurity.claimAge || 62;
-    const f62 = getFactor(62);
-    const f67 = getFactor(67);
-    const f70 = getFactor(70);
-    const fChoice = getFactor(choiceAge);
+    const choiceAge = config.settings.socialSecurity.claimAge || 67;
+    const b62 = SocialSecurityCalculator.calculateBenefitAtAge(pia, 62);
+    const b67 = SocialSecurityCalculator.calculateBenefitAtAge(pia, 67);
+    const b70 = SocialSecurityCalculator.calculateBenefitAtAge(pia, 70);
+    const bChoice = SocialSecurityCalculator.calculateBenefitAtAge(pia, choiceAge);
 
     let data, label;
     if (viewMode === 'cumulative') {
         data = [
-            pia * f62 * 12 * (95 - 62),
-            pia * f67 * 12 * (95 - 67),
-            pia * f70 * 12 * (95 - 70),
-            pia * fChoice * 12 * (95 - choiceAge)
+            b62 * 12 * (95 - 62),
+            b67 * 12 * (95 - 67),
+            b70 * 12 * (95 - 70),
+            bChoice * 12 * (95 - choiceAge)
         ];
         label = 'Lifetime Total (to 95)';
 
@@ -191,10 +186,10 @@ export function updateSSComparisonChart() {
         charts.ssComparison.data.labels[3] = `Choice (${choiceAge})`;
     } else {
         data = [
-            pia * f62 * 12,
-            pia * f67 * 12,
-            pia * f70 * 12,
-            pia * fChoice * 12
+            b62 * 12,
+            b67 * 12,
+            b70 * 12,
+            bChoice * 12
         ];
         label = 'Annual Benefit';
 
@@ -202,9 +197,9 @@ export function updateSSComparisonChart() {
         const el62 = document.getElementById('ss62');
         const el67 = document.getElementById('ss67');
         const el70 = document.getElementById('ss70');
-        if (el62) el62.textContent = formatCurrency(pia * f62) + '/mo';
-        if (el67) el67.textContent = formatCurrency(pia * f67) + '/mo';
-        if (el70) el70.textContent = formatCurrency(pia * f70) + '/mo';
+        if (el62) el62.textContent = formatCurrency(b62) + '/mo';
+        if (el67) el67.textContent = formatCurrency(b67) + '/mo';
+        if (el70) el70.textContent = formatCurrency(b70) + '/mo';
 
         // Show and update "Life:" labels
         const life62 = document.getElementById('ss62Lifetime');
@@ -212,15 +207,15 @@ export function updateSSComparisonChart() {
         const life70 = document.getElementById('ss70Lifetime');
         if (life62) {
             life62.style.display = 'block';
-            life62.textContent = 'Life: ' + formatCurrency(pia * f62 * 12 * (95 - 62));
+            life62.textContent = 'Life: ' + formatCurrency(b62 * 12 * (95 - 62));
         }
         if (life67) {
             life67.style.display = 'block';
-            life67.textContent = 'Life: ' + formatCurrency(pia * f67 * 12 * (95 - 67));
+            life67.textContent = 'Life: ' + formatCurrency(b67 * 12 * (95 - 67));
         }
         if (life70) {
             life70.style.display = 'block';
-            life70.textContent = 'Life: ' + formatCurrency(pia * f70 * 12 * (95 - 70));
+            life70.textContent = 'Life: ' + formatCurrency(b70 * 12 * (95 - 70));
         }
 
         charts.ssComparison.data.labels[3] = `Choice (${choiceAge})`;

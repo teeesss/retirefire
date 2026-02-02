@@ -20,7 +20,8 @@ export function initSSExplorerChart() {
             datasets: [
                 { label: 'Claim @ 62', data: [], borderColor: '#ef4444', tension: 0.4, pointRadius: 0 },
                 { label: 'Claim @ 67', data: [], borderColor: '#3b82f6', tension: 0.4, pointRadius: 0 },
-                { label: 'Claim @ 70', data: [], borderColor: '#10b981', tension: 0.4, pointRadius: 0 }
+                { label: 'Claim @ 70', data: [], borderColor: '#10b981', tension: 0.4, pointRadius: 0 },
+                { label: 'Your Choice', data: [], borderColor: '#a855f7', borderDash: [5, 2], tension: 0.4, pointRadius: 0 }
             ]
         },
         options: {
@@ -33,28 +34,38 @@ export function initSSExplorerChart() {
 
     // Add custom labels to show Annual Benefit flow even though chart is cumulative
     charts.ssExplorer.options.plugins.tooltip.callbacks.label = (context) => {
-        const cumulativeValue = context.parsed.y;
+        const value = context.parsed.y;
         const datasetLabel = context.dataset.label || '';
         const age = rawData.ages[context.dataIndex];
+        const viewMode = document.getElementById('ssExplorerViewToggle')?.value || 'cumulative';
+        const isCumulative = viewMode === 'cumulative';
 
-        // Find the annual amount (back-calculated or from calculator)
-        // For simplicity, we know the monthly amounts based on label/age
-        let monthly = 0;
+        // Find the monthly amount for this strategy
+        let targetAge = 67;
+        if (datasetLabel.includes('62')) targetAge = 62;
+        else if (datasetLabel.includes('70')) targetAge = 70;
+        else if (datasetLabel.includes('Choice')) {
+            const match = datasetLabel.match(/\((\d+)\)/);
+            if (match) targetAge = parseInt(match[1]);
+            else targetAge = config.settings.socialSecurity.claimAge || 67;
+        }
+
         const pia = parseFloat(document.getElementById('ssPiaInput')?.value || 2800);
-        if (datasetLabel.includes('62')) monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, 62);
-        else if (datasetLabel.includes('67')) monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, 67);
-        else if (datasetLabel.includes('70')) monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, 70);
+        const monthly = SocialSecurityCalculator.calculateBenefitAtAge(pia, targetAge);
+        const annualFlow = age >= targetAge ? monthly * 12 : 0;
 
-        const isClaimingYet = (datasetLabel.includes('62') && age >= 62) ||
-            (datasetLabel.includes('67') && age >= 67) ||
-            (datasetLabel.includes('70') && age >= 70);
-
-        const annualFlow = isClaimingYet ? monthly * 12 : 0;
-
-        return [
-            `${datasetLabel}: ${formatCurrency(cumulativeValue)} (Cumulative)`,
-            `   Annual Flow: ${formatCurrency(annualFlow)}/yr`
-        ];
+        if (isCumulative) {
+            return [
+                `${datasetLabel}: ${formatCurrency(value)} (Cumulative)`,
+                `   Annual Flow: ${formatCurrency(annualFlow)}/yr`
+            ];
+        } else {
+            // Annual View
+            return [
+                `${datasetLabel}: ${formatCurrency(value)}/yr`,
+                `   Monthly: ${formatCurrency(value / 12)}/mo`
+            ];
+        }
     };
 
     updateSSExplorerChart();
@@ -75,46 +86,45 @@ export function updateSSExplorerChart() {
     // Recalculate benefits with the current PIA
     const benefits = SocialSecurityCalculator.calculateBenefits(pia);
 
-    // Generate years array for projection
+    const viewMode = document.getElementById('ssExplorerViewToggle')?.value || 'cumulative';
+    const isCumulative = viewMode === 'cumulative';
+
+    // Calculate current choice claiming age
+    const claimAge = config.settings.socialSecurity.claimAge || 67;
+
+    // Generate years/ages array for projection
     const years = rawData.years || [];
     const ages = rawData.ages || [];
 
-    // Create data series for each claiming age (62, 67, 70)
-    // We want to show the cumulative or annual benefit over time for each strategy
-    // For "Strategy Strategy", normally we show the break-even lines (Cumulative)
+    const generateSeries = (targetClaimAge) => {
+        let cumulativeSum = 0;
+        const monthlyBenefit = SocialSecurityCalculator.calculateBenefitAtAge(pia, targetClaimAge);
+        const annualBenefit = monthlyBenefit * 12;
 
-    // Let's refine: The chart is likely "Cumulative Benefits over Time" to show break-even.
-    // Calculate cumulative sum
-    let sum62 = 0;
-    const series62 = years.map((y, i) => {
-        const age = ages[i];
-        if (age >= 62) sum62 += (benefits.ss62 * 12); // Add annual benefit
-        return sum62;
-    });
+        return years.map((y, i) => {
+            const age = ages[i];
+            const isClaiming = age >= targetClaimAge;
+            const currentYearBenefit = isClaiming ? annualBenefit : 0;
 
-    let sum67 = 0;
-    const series67 = years.map((y, i) => {
-        const age = ages[i];
-        if (age >= 67) sum67 += (benefits.ss67 * 12);
-        return sum67;
-    });
-
-    let sum70 = 0;
-    const series70 = years.map((y, i) => {
-        const age = ages[i];
-        if (age >= 70) sum70 += (benefits.ss70 * 12);
-        return sum70;
-    });
+            if (isCumulative) {
+                cumulativeSum += currentYearBenefit;
+                return cumulativeSum;
+            } else {
+                return currentYearBenefit;
+            }
+        });
+    };
 
     charts.ssExplorer.data.labels = years;
-    charts.ssExplorer.data.datasets[0].data = series62; // Claim @ 62
-    charts.ssExplorer.data.datasets[1].data = series67; // Claim @ 67
-    charts.ssExplorer.data.datasets[2].data = series70; // Claim @ 70
+    charts.ssExplorer.data.datasets[0].data = generateSeries(62); // Claim @ 62
+    charts.ssExplorer.data.datasets[1].data = generateSeries(67); // Claim @ 67
+    charts.ssExplorer.data.datasets[2].data = generateSeries(70); // Claim @ 70
+    charts.ssExplorer.data.datasets[3].data = generateSeries(claimAge); // Your Choice
+    charts.ssExplorer.data.datasets[3].label = `Your Choice (${claimAge})`;
 
     charts.ssExplorer.update();
 
-    // Calculate current monthly benefit based on claim age
-    const claimAge = config.settings.socialSecurity.claimAge || 67;
+    // Use already declared claimAge
     const benefitAtClaimAge = SocialSecurityCalculator.calculateBenefitAtAge(pia, claimAge);
 
     // Update Top Stats (First Card)
