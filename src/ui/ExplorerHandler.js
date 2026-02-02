@@ -139,7 +139,7 @@ export class ExplorerHandler {
         let insight = "";
 
         switch (scenario) {
-            case 'dotcom':
+            case 'dotcom': {
                 results = SimulationEngine.project(testConfig, 'average');
                 for (let i = 0; i < 3 && i < results.yearsCount; i++) {
                     const factor = [0.85, 0.70, 0.55][i];
@@ -148,7 +148,8 @@ export class ExplorerHandler {
                 }
                 insight = "DotCom crash (early sequence risk) drains early principal.";
                 break;
-            case 'gfc':
+            }
+            case 'gfc': {
                 results = SimulationEngine.project(testConfig, 'average');
                 const startIdx = Math.max(0, testConfig.settings.personal.retireAge - testConfig.settings.personal.age);
                 for (let i = startIdx; i < results.yearsCount; i++) {
@@ -157,9 +158,12 @@ export class ExplorerHandler {
                 }
                 insight = "GFC crash at retirement destroys the safe withdrawal safety net.";
                 break;
-            default:
+            }
+            default: {
                 results = SimulationEngine.project(testConfig, 'average');
                 insight = "Baseline average market conditions.";
+                break;
+            }
         }
 
         const path = results.years.map((_, i) => {
@@ -202,7 +206,7 @@ export class ExplorerHandler {
         const createSequence = () => new Array(totalYears).fill(defaultRate);
 
         switch (scenario) {
-            case 'crash55':
+            case 'crash55': {
                 // Apply crash at age 55
                 const crashYearIdx = 55 - testConfig.settings.personal.age;
 
@@ -218,8 +222,9 @@ export class ExplorerHandler {
                     modifiedResults = SimulationEngine.project(testConfig, 'average');
                 }
                 break;
+            }
 
-            case 'bear':
+            case 'bear': {
                 // 6-year bear market (-5% returns) starting at age 65 (or now if >65)
                 const bearStart = Math.max(0, 65 - testConfig.settings.personal.age);
                 const seq = createSequence();
@@ -231,8 +236,9 @@ export class ExplorerHandler {
                 modifiedResults = SimulationEngine._projectWithVariableReturns(testConfig, 'average', seq);
                 // No need to manually propagate; the engine handles compounding naturally!
                 break;
+            }
 
-            case 'healthcare':
+            case 'healthcare': {
                 // Medical Event: $250k expense at age 75
                 const medicalIdx = 75 - testConfig.settings.personal.age;
 
@@ -255,9 +261,12 @@ export class ExplorerHandler {
                     modifiedResults = SimulationEngine.project(testConfig, 'average');
                 }
                 break;
+            }
 
-            default:
+            default: {
                 modifiedResults = SimulationEngine.project(testConfig, 'average');
+                break;
+            }
         }
 
         // Re-calculate NW for the modified scenario from the engine results

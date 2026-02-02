@@ -3,6 +3,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SettingsHandler } from '../../src/ui/SettingsHandler.js';
 import { config } from '../../src/data/Config.js';
 
+// Mock the recalculate function from main.js
+vi.mock('../../src/main.js', () => ({
+    recalculate: vi.fn()
+}));
+
+// Import the mocked recalculate for verification
+import { recalculate } from '../../src/main.js';
+
 describe('SettingsHandler', () => {
     beforeEach(() => {
         document.body.innerHTML = `
@@ -84,9 +92,8 @@ describe('SettingsHandler', () => {
         config.settings.personal = { name: 'Test', age: 40, retireAge: 65, longevity: 90 };
         vi.spyOn(SettingsHandler, 'save').mockImplementation(() => { });
         vi.spyOn(SettingsHandler, 'notify').mockImplementation(() => { });
-        // Mock validate directly if logic is complex or DOM dependent
-        // But better to test usage
-        window.recalculate = vi.fn();
+        // Clear mock calls from previous tests
+        vi.clearAllMocks();
     });
 
     it('should populate UI from config', () => {
@@ -120,6 +127,6 @@ describe('SettingsHandler', () => {
 
         SettingsHandler.apply();
         expect(config.settings.personal.age).toBe(41);
-        expect(window.recalculate).toHaveBeenCalled();
+        expect(recalculate).toHaveBeenCalled();
     });
 });

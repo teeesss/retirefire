@@ -1,5 +1,6 @@
 import { config } from '../data/Config.js';
 import { formatCurrency } from '../utils/Formatters.js';
+import { recalculate } from '../main.js';
 
 export class SettingsHandler {
     static populateUI() {

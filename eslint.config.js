@@ -12,7 +12,7 @@ export default [
     {
         files: ['**/*.{js,jsx}'],
         languageOptions: {
-            ecmaVersion: 2020,
+            ecmaVersion: 2022,
             sourceType: 'module',
             globals: {
                 ...globals.browser,
@@ -25,6 +25,11 @@ export default [
                 vi: true,
                 beforeEach: true,
                 afterEach: true,
+                beforeAll: true,
+                afterAll: true,
+                Chart: true,
+                setScenario: true,
+                runMonteCarloSimulation: true,
             },
             parserOptions: {
                 ecmaFeatures: {

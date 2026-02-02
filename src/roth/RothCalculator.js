@@ -25,17 +25,19 @@ export class RothCalculator {
         let amount = 0;
 
         switch (activeConfig.mode) {
-            case 'bracket':
+            case 'bracket': {
                 amount = calculateBracketAmount(activeConfig.targetBracket, filingStatus, ordinaryIncome);
                 break;
+            }
 
-            case 'hybrid':
+            case 'hybrid': {
                 const bracketAmount = calculateBracketAmount(activeConfig.targetBracket, filingStatus, ordinaryIncome);
                 amount = Math.min(bracketAmount, activeConfig.maxAnnualCap || Infinity);
                 break;
+            }
 
             case 'manual':
-            default:
+            default: {
                 // Support both direct amount and manualOverrides map
                 if (activeConfig.manualOverrides && activeConfig.manualOverrides[year] !== undefined) {
                     amount = activeConfig.manualOverrides[year];
@@ -43,6 +45,7 @@ export class RothCalculator {
                     amount = activeConfig.manualAmount || 0;
                 }
                 break;
+            }
         }
 
         return validateConversionAmount(amount, retirementBalance);

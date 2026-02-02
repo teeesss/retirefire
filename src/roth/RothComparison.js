@@ -110,7 +110,7 @@ export class RothComparison {
 
         results.forEach(year => {
             const factor = year.constraints?.limitingFactor || 'none';
-            if (counts.hasOwnProperty(factor)) {
+            if (Object.prototype.hasOwnProperty.call(counts, factor)) {
                 counts[factor]++;
             }
         });
