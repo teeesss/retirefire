@@ -11,7 +11,8 @@
             <button class="tab" onclick="showDataTable('roth', this)">Roth</button>
             <button class="tab" onclick="showDataTable('cashflow', this)">Cash Flow</button>
         </div>
-        <div class="card-actions">
+        <div class="card-actions" style="display: flex; gap: 5px;">
+            <button class="btn btn-outline btn-sm" onclick="exportPDF()">&#128229; Export PDF</button>
             <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#128228; Export CSV</button>
         </div>
     </div>

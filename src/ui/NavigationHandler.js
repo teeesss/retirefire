@@ -37,29 +37,37 @@ export class NavigationHandler {
             });
         });
 
-        // Update active nav item on scroll
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent) {
-            let scrollTimeout;
-            mainContent.addEventListener('scroll', function () {
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    const scrollTop = mainContent.scrollTop;
-                    let currentSection = sections[0];
+        // COLLECT ALL SECTIONS FOR SCROLL SPY
+        const sectionsToWatch = [];
+        navItems.forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const section = document.getElementById(href.slice(1));
+                if (section) {
+                    sectionsToWatch.push({ id: href.slice(1), element: section, navItem: item });
+                }
+            }
+        });
 
-                    for (const section of sections) {
-                        if (section.element.offsetTop <= scrollTop + 100) {
-                            currentSection = section;
-                        }
-                    }
+        // HIGHLIGHT ON SCROLL (IntersectionObserver)
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -70% 0px', // Trigger when section is in top-middle of view
+            threshold: 0
+        };
 
-                    if (currentSection) {
-                        navItems.forEach(n => n.classList.remove('active'));
-                        currentSection.navItem.classList.add('active');
-                    }
-                }, 100);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navItems.forEach(item => {
+                        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+                    });
+                }
             });
-        }
+        }, observerOptions);
+
+        sectionsToWatch.forEach(s => observer.observe(s.element));
     }
 
     static scrollToSection(id) {

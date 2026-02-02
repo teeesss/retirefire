@@ -12,32 +12,44 @@ export class DashboardDetails {
         let scenario = config.currentScenario;
         if (scenario === 'all') scenario = 'average';
 
-        const retireYearIdx = Math.max(0, config.settings.personal.retireAge - config.settings.personal.age);
-        const age70Idx = Math.max(0, 70 - config.settings.personal.age);
+        const goals = (config.goals || []).map((goal, index) => {
+            const yearIndex = Math.max(0, goal.year - config.startYear);
+            const currentAmount = calculateNetWorth(scenario, yearIndex);
+            return {
+                ...goal,
+                current: currentAmount,
+                index
+            };
+        });
 
-        const goals = [
-            { name: 'Retirement Net Worth', target: config.settings.goals.retirementNW, current: calculateNetWorth(scenario, retireYearIdx) },
-            { name: 'Age 70 Legacy', target: config.settings.goals.age70NW, current: calculateNetWorth(scenario, age70Idx) }
-        ];
+        if (goals.length === 0) {
+            goalsList.innerHTML = '<p class="text-muted" style="text-align:center; padding: 1rem;">No goals added yet.</p>';
+            return;
+        }
 
         goalsList.innerHTML = goals.map(goal => {
-            const progress = Math.min(100, (goal.current / goal.target) * 100);
+            const progress = Math.min(100, Math.max(0, (goal.current / goal.target) * 100));
             return `
-                <div class="goal-item">
+                <div class="goal-item" style="position: relative; margin-bottom: 1.5rem;">
+                    <button class="btn-close-sm" onclick="removeGoal(${goal.index})" style="position: absolute; right: -5px; top: -5px; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.75rem;">×</button>
                     <div class="goal-header">
-                        <span>${goal.name}</span>
-                        <span>${formatCurrency(goal.target)}</span>
+                        <span style="font-weight: 600;">${goal.name} (${goal.year})</span>
+                        <span style="color: var(--primary); font-weight: 700;">${formatCurrency(goal.target)}</span>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    <div class="progress-bar" style="background: var(--bg-tertiary); height: 8px; border-radius: 4px; margin: 0.5rem 0; overflow: hidden;">
+                        <div class="progress-fill" style="width: ${progress}%; background: ${progress >= 100 ? 'var(--success)' : 'var(--primary)'}; height: 100%; transition: width 0.5s ease;"></div>
                     </div>
-                    <div class="goal-footer">
-                        <span>Current: ${formatCurrency(goal.current)}</span>
-                        <span>${progress.toFixed(0)}%</span>
+                    <div class="goal-footer" style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                        <span>Current Est: ${formatCurrency(goal.current)}</span>
+                        <span style="font-weight: bold; color: ${progress >= 100 ? 'var(--success)' : 'inherit'}">${progress.toFixed(0)}%</span>
                     </div>
                 </div>
             `;
-        }).join('');
+        }).join('') + `
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn btn-sm btn-outline" onclick="openGoalModal()">+ Add Goal</button>
+            </div>
+        `;
     }
 
     static updateMilestones() {

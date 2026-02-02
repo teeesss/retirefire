@@ -46,7 +46,8 @@
                 <div class="settings-nav-item" onclick="showSettingsSection('scenarios', this)">&#127919; Custom
                     Scenarios
                 </div>
-                <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">&#127919; Goals</div>
+                <div class="settings-nav-item" onclick="showSettingsSection('goals', this)">🎯 Goals</div>
+                <div class="settings-nav-item" onclick="showSettingsSection('data', this)">💾 Data</div>
             </div>
             <div class="settings-content">
                 <!-- ============================================ -->
@@ -944,6 +945,23 @@
                             <label>Coast FIRE Number</label>
                             <input type="number" id="goalCoastFIRE" value="1200000" readonly
                                 style="background: var(--bg-tertiary);">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- SECTION: Data Management -->
+                <!-- ============================================ -->
+                <div class="settings-section" id="settings-data">
+                    <h3>💾 Data Management</h3>
+                    <p class="section-description">
+                        Backup your complete plan configuration or export data for spreadsheet analysis.
+                    </p>
+                    <div class="settings-grid">
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-outline" onclick="exportJSON()">⬇️ Download JSON Backup</button>
+                            <button class="btn btn-outline" onclick="exportCSV()">⬇️ Download CSV Export</button>
+                            <button class="btn btn-outline" onclick="exportPDF()">⬇️ Generate PDF Report</button>
                         </div>
                     </div>
                 </div>

@@ -23,6 +23,7 @@ import { RothDeepDive } from './roth/RothDeepDive.js';
 import { initializeDescriptionsAndTooltips } from './utils/comprehensiveDescriptions.js';
 import { initializeExplorerSections } from './utils/explorerSections.js';
 import { GapCalculator } from './ui/GapCalculator.js';
+import { GoalsHandler } from './ui/GoalsHandler.js';
 
 // Charts
 import { charts, destroyAllCharts } from './state/ChartStore.js';
@@ -36,6 +37,7 @@ import { SimulationEngine } from './engine/SimulationEngine.js';
 
 // Utilities
 import { Logger } from './utils/Logger.js';
+import { ErrorBoundary } from './utils/ErrorBoundary.js';
 import { deepMerge } from './utils/DeepMerge.js';
 import { calculateNetWorth, getNetWorthSeries, getTotalIncome, getTotalExpenses, getTotalTaxes } from './state/DataUtils.js';
 import { formatCurrency } from './utils/Formatters.js';
@@ -44,8 +46,13 @@ import { formatCurrency } from './utils/Formatters.js';
  * Main Application Orchestrator
  */
 const App = {
+    isSaving: false, // Mutex for auto-save
+
     async init() {
         try {
+            // Initialize error boundary FIRST to catch any initialization errors
+            ErrorBoundary.init();
+
             Logger.debug('🚀 RetireFire Initializing...');
             this.loadSettings();
             updateRawData();
@@ -88,8 +95,21 @@ const App = {
                 }
             }, 1000);
 
-            // Auto-save every 30 seconds
-            setInterval(() => this.saveSettings(), 30000);
+            // Auto-save every 30 seconds with race condition protection
+            setInterval(async () => {
+                if (this.isSaving) {
+                    Logger.warn('⏭️ Skipping auto-save: previous save still in progress');
+                    return;
+                }
+                this.isSaving = true;
+                try {
+                    await this.saveSettings();
+                } catch (error) {
+                    Logger.error('Auto-save failed:', error);
+                } finally {
+                    this.isSaving = false;
+                }
+            }, 30000);
 
             Logger.debug('✅ RetireFire Ready');
         } catch (error) {
@@ -380,6 +400,11 @@ window.addEvent = () => EventsHandler.addEvent();
 window.removeEvent = (btn) => EventsHandler.removeEvent(btn);
 window.addRecurringEvent = () => EventsHandler.addRecurringEvent();
 window.removeRecurringEvent = (idx) => EventsHandler.removeRecurringEvent(idx);
+
+window.openGoalModal = () => GoalsHandler.openGoalModal();
+window.closeGoalModal = () => GoalsHandler.closeGoalModal();
+window.saveGoal = () => GoalsHandler.saveGoal();
+window.removeGoal = (idx) => GoalsHandler.removeGoal(idx);
 
 window.updateCryptoPrices = () => CryptoHandler.syncPrices();
 

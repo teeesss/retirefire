@@ -23,7 +23,7 @@ export function safeDiv(numerator, denominator, fallback = 0) {
     }
 
     // NaN check
-    if (isNaN(numerator) || isNaN(numerator)) {
+    if (isNaN(numerator) || isNaN(denominator)) {
         return fallback;
     }
 

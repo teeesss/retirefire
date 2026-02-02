@@ -108,7 +108,9 @@ export class SimulationEngine {
             drawdown: {
                 Investments: [],
                 RetirementSavings: [],
-                RothIRA: []
+                RothIRA: [],
+                HSA: [],
+                CashSavings: []
             },
             rothConversions: {
                 amounts: [],
@@ -165,7 +167,7 @@ export class SimulationEngine {
 
         // Drawdown
         Object.keys(results.drawdown).forEach(key => {
-            results.drawdown[key].push(yearResults.drawdown[key]);
+            results.drawdown[key].push(yearResults.drawdown[key] || 0);
         });
 
         // Roth Conversions
@@ -349,7 +351,7 @@ export class SimulationEngine {
 
         // 6. Drawdown Logic
         let netFlow = workIncome + ssIncome + rmdIncome - totalExpBeforeTax - estimatedTax;
-        let yearlyDrawdownDetail = { Investments: 0, RetirementSavings: 0, RothIRA: 0 };
+        let yearlyDrawdownDetail = { Investments: 0, RetirementSavings: 0, RothIRA: 0, HSA: 0, CashSavings: 0 };
 
         if (netFlow < 0) {
             let deficit = Math.abs(netFlow);
@@ -380,8 +382,8 @@ export class SimulationEngine {
 
             if (deficit > 0) {
                 let order = strategy === 'minimize_rmds'
-                    ? ['RetirementSavings', 'Investments', 'RothIRA']
-                    : ['Investments', 'RetirementSavings', 'RothIRA'];
+                    ? ['CashSavings', 'RetirementSavings', 'Investments', 'HSA', 'RothIRA']
+                    : ['CashSavings', 'Investments', 'RetirementSavings', 'HSA', 'RothIRA'];
 
                 for (let accountName of order) {
                     if (deficit <= 0) break;
@@ -401,6 +403,16 @@ export class SimulationEngine {
                         roth -= amount;
                         deficit -= amount;
                         yearlyDrawdownDetail.RothIRA += amount;
+                    } else if (accountName === 'HSA') {
+                        const amount = Math.min(hsa, deficit);
+                        hsa -= amount;
+                        deficit -= amount;
+                        yearlyDrawdownDetail.HSA += amount;
+                    } else if (accountName === 'CashSavings') {
+                        const amount = Math.min(cash, deficit);
+                        cash -= amount;
+                        deficit -= amount;
+                        yearlyDrawdownDetail.CashSavings += amount;
                     }
                 }
             }
@@ -463,7 +475,9 @@ export class SimulationEngine {
             drawdown: {
                 Investments: Math.round(yearlyDrawdownDetail.Investments),
                 RetirementSavings: Math.round(yearlyDrawdownDetail.RetirementSavings),
-                RothIRA: Math.round(yearlyDrawdownDetail.RothIRA)
+                RothIRA: Math.round(yearlyDrawdownDetail.RothIRA),
+                HSA: Math.round(yearlyDrawdownDetail.HSA),
+                CashSavings: Math.round(yearlyDrawdownDetail.CashSavings)
             },
             rothConversion: {
                 amount: actualConversion,

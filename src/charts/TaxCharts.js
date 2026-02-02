@@ -178,7 +178,13 @@ export function initWithdrawalChart() {
                 {
                     label: 'Social Security',
                     data: income.SocialSecurity || [],
-                    backgroundColor: '#3b82f6',
+                    backgroundColor: '#64748b', // Unique color for SS
+                    stack: 's1'
+                },
+                {
+                    label: 'Cash Savings',
+                    data: drawdown.CashSavings || [],
+                    backgroundColor: '#84cc16',
                     stack: 's1'
                 },
                 {
@@ -190,6 +196,12 @@ export function initWithdrawalChart() {
                 {
                     label: 'Tax-Deferred (401k/IRA)',
                     data: taxDeferredTotal,
+                    backgroundColor: '#3b82f6',
+                    stack: 's1'
+                },
+                {
+                    label: 'HSA',
+                    data: drawdown.HSA || [],
                     backgroundColor: '#8b5cf6',
                     stack: 's1'
                 },

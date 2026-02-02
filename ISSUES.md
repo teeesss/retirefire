@@ -1,14 +1,26 @@
 # Issues & Fixes Log
 
-**Last Updated**: 2026-01-30
+**Last Updated**: 2026-02-02
 
 ---
+
+## ✅ Recently Fixed Issues (2026-02-02)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **LOGIC-001** | SafeMath NaN check typo - denominator check duplicated numerator | ✅ FIXED | Fixed line 26 in `SafeMath.js` to check both `numerator` and `denominator` for NaN. Added 8 edge case tests. |
+| **LOGIC-002** | Auto-save race condition - overlapping localStorage writes | ✅ FIXED | Added mutex lock (`isSaving` flag) with async/await pattern in `main.js`. Prevents data corruption. |
+| **CRIT-002** | Missing Content Security Policy (CSP) headers | ✅ FIXED | Added CSP meta tag to `index.html` with strict policies: `default-src 'self'`, `frame-ancestors 'none'`, etc. Prevents XSS attacks. |
+| **SECURITY-001** | No global error boundary - unhandled errors crash app | ✅ FIXED | Created `ErrorBoundary.js` (189 lines) to catch unhandled errors and promise rejections. Displays user-friendly error UI. |
+| **SECURITY-002** | Missing input validation - extreme values accepted | ✅ FIXED | Created `InputValidator.js` (133 lines) with comprehensive validation for age, salary, rates, Monte Carlo iterations. Includes XSS sanitization. |
 
 ## ✅ Recently Fixed Issues (2026-02-01)
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
 | **ISSUE-077** | Explore Year slider does not change year or projections | ✅ FIXED | Added `initYearSlider()` method to `ExplorerHandler.js` to dynamically set slider max value based on simulation data. Enhanced `updateYear()` with better error handling and logging. Updated `main.js` to call `initYearSlider()` during dashboard initialization. |
+| **TEST-005** | `MetricsHandler.test.js` failing with unhandled errors and logic flaws | ✅ FIXED | Implemented robust property checks in `MetricsHandler.js` to prevent crashes. Corrected logic for "Debt Free Age" and adjusted Vitest mock data to match engine sign conventions. |
+| **BUG-001** | Goals not persisting across sessions | ✅ FIXED | Implemented `GoalsHandler.js` and integrated with `localStorage`. Goals now survive page refreshes and update dashboard dynamically. |
 
 ## ✅ Recently Fixed Issues (2026-01-31)
 

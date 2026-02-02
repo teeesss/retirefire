@@ -17,17 +17,25 @@ export class MetricsHandler {
         this.safeUpdate('metricScenarioLabel', scenarioLabel);
 
         this.safeUpdate('metricCurrentNW', formatCurrency(currentNW));
-        this.safeUpdate('currentNWSubtitle', `Age ${rawData.ages[0]} (${rawData.years[0]})`);
+        if (rawData.ages?.[0] !== undefined && rawData.years?.[0] !== undefined) {
+            this.safeUpdate('currentNWSubtitle', `Age ${rawData.ages[0]} (${rawData.years[0]})`);
+        }
 
         this.safeUpdate('metricPeakNW', formatCurrency(peakNW));
-        this.safeUpdate('metricPeakYear', `Age ${rawData.ages[peakIndex]} (${rawData.years[peakIndex]})`);
-        this.safeUpdate('metricPeakGrowth', `+${((peakNW - currentNW) / currentNW * 100).toFixed(0)}%`);
+        if (rawData.ages?.[peakIndex] !== undefined && rawData.years?.[peakIndex] !== undefined) {
+            this.safeUpdate('metricPeakYear', `Age ${rawData.ages[peakIndex]} (${rawData.years[peakIndex]})`);
+        }
+
+        const growthVal = currentNW != 0 ? ((peakNW - currentNW) / currentNW * 100).toFixed(0) : 0;
+        this.safeUpdate('metricPeakGrowth', `+${growthVal}%`);
 
         const mc = rawData.monteCarlo || { successRate: 97 };
         const successRate = mc.successRate;
         this.safeUpdate('metricSuccess', successRate.toFixed(0) + '%');
         this.safeUpdate('metricRetireAge', config.settings.personal.retireAge);
-        this.safeUpdate('metricRetireYear', `Year ${rawData.years[0] + (config.settings.personal.retireAge - rawData.ages[0])}`);
+
+        const rYear = (rawData.years?.[0] || 2025) + (config.settings.personal.retireAge - (rawData.ages?.[0] || 30));
+        this.safeUpdate('metricRetireYear', `Year ${rYear}`);
 
         const ssBenefit = config.settings.socialSecurity.ss67;
         this.safeUpdate('metricSS', formatCurrency(ssBenefit, false) + '/mo');
@@ -35,17 +43,19 @@ export class MetricsHandler {
 
         // Extended Metrics
         const outOfMoney = netWorths.findIndex(nw => nw <= 0);
-        this.safeUpdate('mNeverRunOut', outOfMoney === -1 ? 'Never' : 'Age ' + rawData.ages[outOfMoney]);
+        const outOfMoneyAge = (outOfMoney === -1) ? 'Never' : (rawData.ages?.[outOfMoney] !== undefined ? 'Age ' + rawData.ages[outOfMoney] : 'Run Out');
+        this.safeUpdate('mNeverRunOut', outOfMoneyAge);
 
-        const retirementSpend = config.settings.expenses.annualSpending;
+        const retirementSpend = config.settings.expenses.annualSpending || 80000;
         const assetsRequired = retirementSpend * 25;
         const currentAssets = (config.settings.assets.retirement || 0) + (config.settings.assets.roth || 0) + (config.settings.assets.investments || 0);
-        const savingsRatio = (currentAssets / assetsRequired * 100).toFixed(0);
+        const savingsRatio = assetsRequired > 0 ? (currentAssets / assetsRequired * 100).toFixed(0) : 0;
         this.safeUpdate('mSavingsRatio', savingsRatio + '%');
 
-        // Debt Free Age
-        const debtIdx = rawData[scenario].accounts.Debt.findIndex((d, idx) => d >= 0 && idx > 0);
-        this.safeUpdate('mDebtFree', debtIdx !== -1 ? `Age ${config.settings.personal.age + debtIdx}` : 'Paid Off');
+        const debt = rawData[scenario]?.accounts?.Debt;
+        const debtIdx = debt ? debt.findIndex((d, idx) => d >= 0 && idx > 0) : -1;
+        const isAlreadyPaidOff = debt && debt[0] >= 0;
+        this.safeUpdate('mDebtFree', isAlreadyPaidOff ? 'Paid Off' : (debtIdx !== -1 ? `Age ${config.settings.personal.age + debtIdx}` : 'Paid Off'));
 
         this.updateCoach();
     }
