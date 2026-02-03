@@ -36,7 +36,6 @@ body {
     --warning-dark: #d97706;
     --danger: #ef4444;
     --danger-dark: #dc2626;
-    --purple: #8b5cf6;
     --purple-dark: #7c3aed;
     --cyan: #06b6d4;
     --pink: #ec4899;
@@ -46,6 +45,18 @@ body {
     --indigo: #6366f1;
     --rose: #f43f5e;
     --amber: #f59e0b;
+
+    /* Fluid Typography & Spacing */
+    --fs-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
+    --fs-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
+    --fs-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+    --fs-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+    --fs-xl: clamp(1.3rem, 1.2rem + 0.5vw, 1.5rem);
+    --fs-2xl: clamp(1.6rem, 1.4rem + 1vw, 2rem);
+
+    --spacing-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+    --spacing-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+    --spacing-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
 
     /* Dark theme (default) */
     --bg-primary: #0f172a;
@@ -59,7 +70,17 @@ body {
     --text-primary: #f1f5f9;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+
+    /* Modern Shadow Stack */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-highlight: 0 0 15px rgba(59, 130, 246, 0.3);
+    /* For active elements */
+
+    --shadow: var(--shadow-lg);
+    /* Fallback */
     --gradient-header: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
 }
 
@@ -86,12 +107,16 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     transition: background 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll globally */
 }
 
+/* Fluid Container */
 .container {
     width: 100%;
     margin: 0 auto;
-    padding: 1rem;
+    padding: var(--spacing-md);
+    /* Fluid padding */
     max-width: 2560px;
     /* Reasonable upper limit for ultra-wide displays */
 }
@@ -115,7 +140,12 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 1rem;
     padding: 1rem 0;
-    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    backdrop-filter: blur(20px) saturate(180%);
+    /* Enhanced Sidebar Glass */
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: var(--shadow-md);
+    /* Distinct separation */
     z-index: 1;
 }
 
@@ -132,9 +162,11 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* Sidebar Navigation Fluidity */
 .sidebar-section-title {
     padding: 0.5rem 1rem;
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
+    /* Fluid */
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
@@ -148,7 +180,8 @@ body {
     padding: 0.6rem 1rem;
     color: var(--text-secondary);
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
+    /* Fluid */
     transition: all 0.2s ease;
     border-left: 3px solid transparent;
     text-decoration: none;
@@ -185,7 +218,8 @@ body {
 
     .main-sidebar {
         position: fixed;
-        left: -240px;
+        left: -260px;
+        /* Increased offset to hide shadow */
         top: 0;
         height: 100vh;
         width: 220px;
@@ -201,11 +235,12 @@ body {
     }
 }
 
-/* Header */
+/* Header Fluid Spacing */
 header {
     background: var(--gradient-header);
     border: 1px solid var(--border-color);
-    padding: 1.5rem 2rem;
+    padding: var(--spacing-lg) var(--spacing-lg);
+    /* Fluid padding */
     border-radius: 1rem;
     margin-bottom: 1.5rem;
     backdrop-filter: blur(10px);
@@ -220,7 +255,8 @@ header {
 }
 
 .header-title h1 {
-    font-size: 2rem;
+    font-size: var(--fs-2xl);
+    /* Fluid Header */
     font-weight: 700;
     background: linear-gradient(90deg, var(--primary-light), var(--purple));
     -webkit-background-clip: text;
@@ -340,14 +376,16 @@ header {
     color: white;
 }
 
-/* Buttons */
+/* Buttons Fluidity */
 .btn {
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    /* Fluid padding */
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
+    /* Fluid font size */
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
@@ -409,13 +447,19 @@ header {
     border: 1px solid var(--border-color);
     border-radius: 1rem;
     padding: 1.25rem;
-    backdrop-filter: blur(10px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    backdrop-filter: blur(16px) saturate(180%);
+    /* Enhanced Glassmorphism */
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: var(--shadow-sm);
+    /* Default low depth */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
+    transform: translateY(-4px);
+    /* Increased lift */
+    box-shadow: var(--shadow-xl);
+    /* High depth on hover */
     border-color: var(--border-hover);
 }
 
@@ -429,7 +473,8 @@ header {
 }
 
 .card-title {
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
+    /* Fluid */
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -458,7 +503,8 @@ header {
 }
 
 .card-value {
-    font-size: 1.75rem;
+    font-size: var(--fs-xl);
+    /* Fluid */
     font-weight: 700;
     color: var(--text-primary);
     margin-top: 0.25rem;
@@ -470,18 +516,20 @@ header {
     margin-top: 0.25rem;
 }
 
-/* Dashboard Grid */
+/* Dashboard Grid (Fluid with breakpoints) */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* Min card width 280px to fit Laptop 1366px */
+    gap: 1.5rem;
+    /* Increased gap for better breathing room */
+    margin-bottom: 2rem;
 }
 
-/* Metrics Grid (7-column for top metrics row) */
+/* Metrics Grid (Fluid with min-width constraints) */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
 }
@@ -744,7 +792,8 @@ select {
     border-radius: 0.5rem;
     background: #ffffff !important;
     color: #000000 !important;
-    font-size: 0.875rem;
+    font-size: var(--fs-base);
+    /* Fluid input text */
     transition: border-color 0.2s ease;
     font-weight: 500;
 }

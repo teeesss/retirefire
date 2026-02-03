@@ -211,6 +211,22 @@ export function initSequenceRiskChart() {
             }
         }
     });
+
+    // Custom Tooltip for Sequence Risk
+    charts.sequenceRisk.options.plugins.tooltip = {
+        callbacks: {
+            title: (context) => `Year ${context[0].label}`,
+            label: (context) => {
+                const label = context.dataset.label || '';
+                const value = formatCurrency(context.parsed.y);
+                return `${label}: ${value}`;
+            },
+            afterBody: (context) => {
+                // Add explanation
+                return '\n"Stressed Path" applies the selected\nmarket crash scenario + volatility.';
+            }
+        }
+    };
     applyTooltipConfig(charts.sequenceRisk.options);
     charts.sequenceRisk.update();
 }
@@ -254,6 +270,26 @@ export function initLifetimeCashFlowChart() {
             }
         }
     });
+
+    // Custom Tooltip for Lifetime Cash Flow
+    charts.lifetimeCashFlow.options.plugins.tooltip = {
+        callbacks: {
+            label: (context) => {
+                const idx = context.dataIndex;
+                const income = getTotalIncome(config.currentScenario, idx);
+                const expenses = getTotalExpenses(config.currentScenario, idx);
+                const net = income - expenses;
+
+                return [
+                    `Cumulative: ${formatCurrency(context.parsed.y)}`,
+                    `Annual Net: ${formatCurrency(net)}`,
+                    `  + Income: ${formatCurrency(income)}`,
+                    `  - Expenses: ${formatCurrency(expenses)}`
+                ];
+            }
+        }
+    };
+
     applyTooltipConfig(charts.lifetimeCashFlow.options);
     charts.lifetimeCashFlow.update();
 }

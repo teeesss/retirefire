@@ -1,21 +1,70 @@
-/* Dashboard Layout Improvements (US-044) */
+/* Performance Optimizations (US-044) */
+.chart-container {
+    will-change: transform;
+    /* Promote to GPU layer for smoother rendering */
+    transform: translateZ(0);
+    /* Null transform hack for older browsers */
+    content-visibility: auto;
+    /* Skip rendering off-screen content */
+    contain: content;
+    /* Isolate layout repaints */
+}
+
+/* Eliminate CLS by reserving space */
+.chart-container canvas {
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+}
 
 /* Reduce chart heights for better vertical density */
-.chart-container.small { height: 180px !important; }
-.chart-container.medium { height: 250px !important; }
-.chart-container.large { height: 320px !important; }
-.chart-container.xlarge { height: 400px !important; }
+.chart-container.small {
+    height: 180px !important;
+}
+
+.chart-container.medium {
+    height: 250px !important;
+}
+
+.chart-container.large {
+    height: 320px !important;
+}
+
+.chart-container.xlarge {
+    height: 400px !important;
+}
+
+/* Laptop Breakpoint (Intermediate) */
+@media (max-width: 1400px) {
+    .dashboard-grid {
+        /* Force 3 columns max on laptops to prevent awkward 4th column squeeze */
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* CRITICAL: Reset all span classes to single column on laptop */
+    .span-2,
+    .span-3,
+    .span-4,
+    .span-5,
+    .span-6 {
+        grid-column: span 1 !important;
+    }
+}
 
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
     .dashboard-grid {
         grid-template-columns: 1fr !important;
     }
-    
-    .span-1, .span-2, .span-3, .span-4, .span-5, .span-6 {
+
+    .span-1,
+    .span-2,
+    .span-3,
+    .span-4,
+    .span-5,
+    .span-6 {
         grid-column: 1 / -1 !important;
     }
-    
+
     /* Ensure cards have margin on mobile */
     .card {
         margin-bottom: 1rem;

@@ -336,6 +336,24 @@ export class RothDeepDive {
                 }
             }
         });
+
+        // Enhanced Tooltip for Waterfall
+        this.chartWaterfall.options.plugins.tooltip = {
+            callbacks: {
+                label: (context) => {
+                    const label = context.dataset.label;
+                    const val = formatCurrency(context.raw);
+                    if (label === 'Tax (Withheld)') {
+                        return [`${label}: ${val}`, 'Reduces invested amount (Tax Drag)'];
+                    }
+                    if (label === 'Amt to Roth') {
+                        return [`${label}: ${val}`, 'Compounds tax-free forever'];
+                    }
+                    return `${label}: ${val}`;
+                }
+            }
+        };
+
         applyTooltipConfig(this.chartWaterfall.options);
         this.chartWaterfall.update();
     }
@@ -405,6 +423,28 @@ export class RothDeepDive {
                 }
             }
         });
+
+        // Enhanced Tooltip for Breakeven
+        this.chartBreakeven.options.plugins.tooltip = {
+            callbacks: {
+                footer: (context) => {
+                    const ctxTax = context.find(c => c.dataset.label.includes('Tax Paid'));
+                    const ctxSave = context.find(c => c.dataset.label.includes('Future Savings'));
+
+                    if (ctxTax && ctxSave) {
+                        const tax = ctxTax.parsed.y;
+                        const save = ctxSave.parsed.y;
+                        if (save > tax) {
+                            return `✅ Profit: ${formatCurrency(save - tax)}`;
+                        } else {
+                            return `⏳ Recovering: ${formatCurrency(tax - save)} to go`;
+                        }
+                    }
+                    return '';
+                }
+            }
+        };
+
         applyTooltipConfig(this.chartBreakeven.options);
         this.chartBreakeven.update();
     }

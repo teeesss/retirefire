@@ -18,7 +18,7 @@ export function initializeExplorerSections() {
 
         explorersContainer = document.createElement('div');
         explorersContainer.id = 'section-explorers';
-        explorersContainer.style.cssText = 'display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; margin-top: 20px;';
+        explorersContainer.className = 'dashboard-grid'; // Use responsive grid class
         mainContent.appendChild(explorersContainer);
     }
 

@@ -332,7 +332,14 @@
                         </div>
                         <div class="input-group">
                             <label>Planned SS Start Age</label>
-                            <input type="number" id="inputSSAge" value="62" min="62" max="70">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="range" id="inputSSAgeSlider" value="62" min="62" max="70" style="flex: 1;"
+                                    oninput="document.getElementById('inputSSAge').value = this.value; document.getElementById('ssAgeDisplay').textContent = this.value;">
+                                <input type="number" id="inputSSAge" value="62" min="62" max="70" style="width: 70px;"
+                                    oninput="document.getElementById('inputSSAgeSlider').value = this.value; document.getElementById('ssAgeDisplay').textContent = this.value;">
+                                <span id="ssAgeDisplay" style="font-weight: 600; min-width: 30px;">62</span>
+                            </div>
+                            <span class="input-hint">Choose any age from 62 to 70</span>
                         </div>
                         <div class="input-group">
                             <label>Full Retirement Age (FRA)</label>

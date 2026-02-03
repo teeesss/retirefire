@@ -131,12 +131,43 @@ export class MetricsHandler {
             }
         }
 
+        // 6. Portfolio Drag (NEW)
+        const currentAge = config.settings.personal.age || 50;
+        const allocation = config.settings.assets.allocation || {};
+        const conservativeAlloc = (allocation.bonds || 0) + (allocation.cash || 0);
+        if (currentAge < 55 && conservativeAlloc > 40) {
+            insights.push({
+                type: 'info',
+                title: '📉 Portfolio Drag',
+                text: `High cash/bonds allocation (${conservativeAlloc}%) may limit growth. Consider adjusting asset mix.`,
+                section: 'section-networth'
+            });
+        }
+
+        // 7. Inflation Risk (NEW)
+        const finalNW = getNetWorthSeries(scenario)[getNetWorthSeries(scenario).length - 1];
+        const currentNW = getNetWorthSeries(scenario)[0];
+        const realGrowth = ((finalNW / currentNW) - 1) * 100;
+        if (realGrowth < 50) { // Less than 50% real growth over lifetime
+            insights.push({
+                type: 'warning',
+                title: '📊 Inflation Risk',
+                text: 'Purchasing power may decline significantly. Review inflation assumptions.',
+                section: 'settings-inflation'
+            });
+        }
+
         const list = document.getElementById('coachMessageList');
         if (list) {
             list.innerHTML = insights.map(ins => `
                 <div class="coach-insight-item" onclick="scrollToSection('${ins.section}')" 
                      style="border-left: 4px solid ${ins.type === 'warning' ? '#ef4444' : (ins.type === 'success' ? '#10b981' : '#3b82f6')}; 
-                            padding: 12px; background: rgba(59, 130, 246, 0.05); cursor: pointer;">
+                            padding: 12px; background: rgba(59, 130, 246, 0.05); cursor: pointer;
+                            transition: all 0.2s ease;
+                            border-radius: 4px;
+                            margin-bottom: 8px;"
+                     onmouseover="this.style.background='rgba(59, 130, 246, 0.15)'; this.style.transform='translateX(4px)';"
+                     onmouseout="this.style.background='rgba(59, 130, 246, 0.05)'; this.style.transform='translateX(0)';">
                     <strong>${ins.title}</strong>
                     <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">${ins.text}</div>
                 </div>
