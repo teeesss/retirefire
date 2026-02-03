@@ -85,14 +85,16 @@ export class MetricsHandler {
         }
 
         // 2. Liquidity Check (Age 60)
-        const taxableGapIdx = sc.accounts.Investments.findIndex((v, i) => v <= 0 && rawData.ages[i] < 60);
-        if (taxableGapIdx !== -1) {
-            insights.push({
-                type: 'warning',
-                title: '⚠️ Liquidity Gap',
-                text: 'Potential shortfall before age 60 penalties expire.',
-                section: 'section-withdrawals'
-            });
+        if (sc && sc.accounts && sc.accounts.Investments) {
+            const taxableGapIdx = sc.accounts.Investments.findIndex((v, i) => v <= 0 && rawData.ages[i] < 60);
+            if (taxableGapIdx !== -1) {
+                insights.push({
+                    type: 'warning',
+                    title: '⚠️ Liquidity Gap',
+                    text: 'Potential shortfall before age 60 penalties expire.',
+                    section: 'section-withdrawals'
+                });
+            }
         }
 
         // 3. Tax Optimization
@@ -117,7 +119,7 @@ export class MetricsHandler {
         }
 
         // 5. Withdrawal Strategy Check
-        const drawdown = sc.drawdown;
+        const drawdown = sc?.drawdown;
         if (drawdown && drawdown.InvestmentsTax && drawdown.RetirementSavingsTax) {
             const totalDrawTax = drawdown.InvestmentsTax.reduce((a, b) => a + b, 0) +
                 drawdown.RetirementSavingsTax.reduce((a, b) => a + b, 0);

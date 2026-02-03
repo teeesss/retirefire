@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MetricsHandler } from '../../src/ui/MetricsHandler.js';
 import { config } from '../../src/data/Config.js';
@@ -11,13 +14,23 @@ describe('MetricsHandler - New Insights (TASK-010)', () => {
         // Mock config
         config.currentScenario = 'average';
         config.settings = {
-            personal: { age: 50 },
+            personal: { age: 50, retireAge: 65 },
             assets: {
                 allocation: {
                     stocks: 60,
                     bonds: 30,
                     cash: 10
                 }
+            },
+            taxes: {
+                rothConversionEnabled: false
+            },
+            socialSecurity: {
+                ss67: 3000,
+                claimAge: 67
+            },
+            expenses: {
+                annualSpending: 80000
             }
         };
 

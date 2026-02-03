@@ -1,8 +1,15 @@
 # Issues & Fixes Log
 
-**Last Updated**: 2026-02-02
+**Last Updated**: 2026-02-03
 
 ---
+
+## ✅ Recently Fixed Issues (2026-02-03)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **UI-050** | Comprehensive Metrics rows wrap to 2 lines on laptop | ✅ FIXED | Implemented `flex-wrap: nowrap` and `clamp()` fluid typography in `style.css`. Forced single-line display with auto-resizing. |
+| **TEST-006** | `MetricsHandlerEnhanced.test.js` failing with ReferenceError | ✅ FIXED | Added `@vitest-environment jsdom` and populated missing `config.settings.taxes` in `beforeEach`. Restored 100% test pass rate. |
 
 ## ✅ Recently Fixed Issues (2026-02-02)
 
