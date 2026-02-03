@@ -1,7 +1,7 @@
 # Tasks
 
-**Last Updated**: 2026-02-02 1:13 PM  
-**Status**: Workflow Infrastructure Complete ✅ | Tests: 544/548 Passing (99.3%)
+**Last Updated**: 2026-02-02 6:35 PM  
+**Status**: Workflow Infrastructure Complete ✅ | Tests: 522/525 Passing (99.4%)
 **Total Pending**: 30 tasks across 4 priority levels
 
 ---
@@ -66,26 +66,39 @@ All critical security and logic issues have been resolved:
 - **Status**: **COMPLETED (2026-02-02)**
 - **Priority**: **MEDIUM**
 
-### **[TASK-014]** Gap Years Withdrawal Logic Fix
+### **[TASK-014]** Gap Years Withdrawal Logic Fix ✅
 - **Description**: Fix withdrawal logic when there's no income (gap years before retirement)
+- **Status**: **COMPLETE** (2026-02-02)
 - **Files**: `src/engine/SimulationEngine.js`
-- **Features Needed**:
-  - [ ] Implement smart withdrawal order for gap years (ISSUE-063)
-  - [ ] Ensure 10% penalty avoidance logic works correctly
-  - [ ] Add tests for gap year scenarios
-- **Related Issues**: ISSUE-063
-- **Estimated Effort**: 3-4 hours
-- **Priority**: **MEDIUM-HIGH**
+- **Features Completed**:
+  - [x] Implement iterative drawdown loop to fund taxes/penalties (gross-up)
+  - [x] Fix withdrawal exclusion in `getTotalIncome`
+  - [x] Verify $0 gap in early retirement scenarios
+- **Related Issues**: ISSUE-063 ✅
+- **Actual Effort**: 3 hours
+- **Priority**: **HIGH**
 
-### **[TASK-015]** Compare Button Implementation
-- **Description**: Fix or remove the "Compare" button at top of dashboard
-- **Files**: `src/main.js`, `src/ui/DashboardMetrics.js`
-- **Features Needed**:
-  - [ ] Implement multi-scenario comparison view (ISSUE-018)
-  - [ ] OR remove button if not needed
-- **Related Issues**: ISSUE-018
-- **Estimated Effort**: 2-3 hours
-- **Priority**: **LOW-MEDIUM**
+### **[TASK-015]** UI Layout Optimization ✅
+- **Description**: Optimize dashboard for space and side-by-side viewing
+- **Status**: **COMPLETE** (2026-02-02)
+- **Files**: `src/partials/charts/year-explorer.html`, `src/partials/dashboard-metrics.html`, `src/style.css`
+- **Features Completed**:
+  - [x] Side-by-side Account Breakdown & Cash Flow details
+  - [x] Multi-column grid for Coach Insights
+- **Related Issues**: ISSUE-077 ✅
+- **Actual Effort**: 2 hours
+- **Priority**: **MEDIUM**
+
+### **[TASK-016]** Grid Layout & Alignment Fix ✅
+- **Description**: Fix analysis row 3+1 layout and rebalance grid spans
+- **Status**: **COMPLETE** (2026-02-02)
+- **Files**: `src/partials/charts/networth-charts.html`, `src/partials/charts/roth.html`, `src/partials/charts/legacy.html`
+- **Features Completed**:
+  - [x] Rebalanced Row 2 (Net Worth) and Row 7 (Roth) to 50/50 split
+  - [x] Set Analysis row to 3-across (What-If, Stress, Sequence)
+  - [x] Set Legacy chart to solo row (full width)
+- **Actual Effort**: 1.5 hours
+- **Priority**: **MEDIUM**
 
 ### **[TASK-017]** Roth Account Source Transparency
 - **Description**: Show which accounts fund Roth conversions
@@ -201,6 +214,9 @@ All critical security and logic issues have been resolved:
 - ✅ **[TASK-012] Critical Linting Fixes**: Fixed 34 errors (undefined vars, parsing, case declarations) - 0 errors remaining
 - ✅ **[TASK-006] Roth Deep-Dive Phase 5**: Year-by-year detail view, 6-column table sorting with indicators - 100% complete
 - ✅ **[TASK-007] Advanced Cash Flow Explorer**: Interactive slider controls, spend rate scenarios (3-5%), portfolio calculation, enhanced age display - 100% complete
+- ✅ **[TASK-014] Gap Years Logic Fix**: Iterative gross-up loop ensures funded taxes/shortfalls - 100% complete
+- ✅ **[TASK-015] UI Optimization**: Side-by-side explorer sections and multi-column coach grid - 100% complete
+- ✅ **[TASK-016] Grid Rebalancing**: Balanced 6-column rows and 3+1 analysis layout - 100% complete
 
 ---
 

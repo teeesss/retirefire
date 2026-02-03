@@ -23,6 +23,8 @@
 | **ENV-001** | Browser subagent fails on Windows due to missing $HOME | ✅ FIXED | **Lesson Learned**: If `browser_subagent` fails with `$HOME` errors, use `chrome-devtools` MCP server directly for live site verification and screenshots. |
 | **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | ✅ FIXED | Enhanced `GapCalculator.js` subtitle to show dynamic age with years to retirement context. Calculator now uses `config.settings.personal.retireAge` correctly. |
 | **ISSUE-020** | "What You Need" target income should be slider | ✅ FIXED | Added interactive slider with bidirectional sync to number input in `gap-calculator.html`. Created `CashFlowExplorer.js` with spend rate scenarios (3-5%). 15 unit tests passing. |
+| **ISSUE-063** | Gap Years logic doesn't fund taxes from withdrawals | ✅ FIXED | Implemented iterative drawdown loop in `SimulationEngine.js` to "gross-up" withdrawals to cover triggered taxes and penalties. |
+| **ISSUE-078** | Dashboard grid alignment shifts on large screens | ✅ FIXED | Rebalanced spans in Row 2 and Row 7 to perfect 50/50 splits (span-3/span-3). Set analysis row to 3-across layout. |
 
 ## ✅ Recently Fixed Issues (2026-02-01)
 
