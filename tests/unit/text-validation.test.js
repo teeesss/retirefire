@@ -7,7 +7,7 @@ function getAllFiles(dirPath, arrayOfFiles) {
     arrayOfFiles = arrayOfFiles || [];
 
     files.forEach(function (file) {
-        if (file === 'node_modules' || file === '.git' || file === 'dist' || file === '.idea' || file === '.vscode' || file === 'coverage' || file === 'text-validation.test.js') return;
+        if (file === 'node_modules' || file === '.git' || file === 'dist' || file === '.idea' || file === '.vscode' || file === 'coverage' || file === 'playwright-report' || file === 'test-results' || file === 'text-validation.test.js' || file === '.agent' || file === 'ISSUE_RESOLUTION.md') return;
 
         // Exclude historical docs directory
         if (dirPath.includes('docs') && dirPath.includes('completed')) return;

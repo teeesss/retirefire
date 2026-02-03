@@ -136,6 +136,21 @@ All critical security and logic issues have been resolved. The application is ca
   - [x] Add horizontal scroll checks
   - [x] Assert visibility of critical elements
   - [x] NEW: Fix Metrics Row single-line display
+- ✅ **TASK-021**: [TASK-022-025] Dashboard Layout & Responsiveness Fix
+- **Goals**: Fix metrics row wrapping, implement 12-col grid (3-across charts), optimize header density.
+- **Status**: Completed 2026-02-03
+
+- 🟢 **TASK-026**: Responsive Retrofit: Header/Toolbar (Playwright Migration)
+  - **Goals**: Enforce "No-Wrap" mandate, implement "Icon-Only" mode for mobile, migrate E2E to Playwright.
+  - **Status**: Completed 2026-02-03
+
+- ✅ **TASK-027**: Deployment & Verification
+  - **Goals**: Build and deploy to remote server.
+  - **Status**: Completed 2026-02-03
+
+- ✅ **TASK-028**: Layout Polish (Round 2)
+  - **Goals**: Fix metric label truncation ("Out of Mone...") by increasing grid card width to 280px. Fix Key Metrics density.
+  - **Status**: Completed 2026-02-03
 
 **Estimated Total Effort**: 10-15 hours
 

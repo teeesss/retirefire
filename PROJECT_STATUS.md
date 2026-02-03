@@ -582,10 +582,15 @@ npm run deploy   # Deploy to bmwseals.com/retirefire
 - **Dashboard Stability**: Resolved UI pollution from verbose console logs and fixed character corruption (ISSUE-066, 067).
 - **Hardened DOM Updates**: `safeUpdateElement` now handles missing elements silently, preventing console flood (ISSUE-068).
 - **Redundancy Cleanup**: Removed duplicate section descriptions scripts (ISSUE-069).
+- **Dashboard Layout Fixes**: Implemented 12-column grid, density optimizations, and "Icon-Only" mobile header.
+- **Verification**: Migrated E2E tests to **Playwright** (`layout.spec.ts`) and verified strict layout mandates across 7 viewports.
+- **Layout Polish**: Increased grid widths to solve label truncation ("Out of Mone...") and improve density.
+- **Deployment**: Successfully deployed to remote server (v1.0.1).
+- ✅ Space Optimization: Compact header with side-by-side Coach/Metrics and restricted list heights.
+- ✅ E2E Tests: Updated `viewport.test.js` to verify responsiveness across all resolutions.
 - ✅ Created section descriptions utility
 - ✅ Created tooltip configuration utility
 - ✅ Created explorer sections utility
-- ✅ Updated all documentation
 
 ### 2026-01-20/21
 - ✅ Completed user feedback round 2

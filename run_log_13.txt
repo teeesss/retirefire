@@ -1,0 +1,100 @@
+
+Running 10 tests using 8 workers
+
+[1A[2K[1/10] [Desktop HD (1920x1080)] ΓÇ║ tests\e2e\layout.spec.ts:74:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Data Modal - Should open and display table
+[1A[2K[2/10] [Desktop HD (1920x1080)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+[1A[2K[3/10] [Laptop (1366x768)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+[1A[2K[4/10] [Ultrawide (3440x1440)] ΓÇ║ tests\e2e\layout.spec.ts:74:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Data Modal - Should open and display table
+[1A[2K[5/10] [Desktop 2K (2560x1440)] ΓÇ║ tests\e2e\layout.spec.ts:74:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Data Modal - Should open and display table
+[1A[2K[6/10] [Laptop (1366x768)] ΓÇ║ tests\e2e\layout.spec.ts:74:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Data Modal - Should open and display table
+[1A[2K[7/10] [Ultrawide (3440x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+[1A[2K[8/10] [Desktop 2K (2560x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+[1A[2K[Ultrawide (3440x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Testing Layout for Viewport Width: 3440px
+
+[1A[2K[Desktop HD (1920x1080)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Testing Layout for Viewport Width: 1920px
+
+[1A[2K[Laptop (1366x768)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Testing Layout for Viewport Width: 1366px
+
+[1A[2K[Desktop HD (1920x1080)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Found 2 grids to verify.
+
+[1A[2K[Laptop (1366x768)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Found 2 grids to verify.
+
+[1A[2K[Ultrawide (3440x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Γ£à Ultrawide Max-Width constraint varified
+
+[1A[2KFound 2 grids to verify.
+
+[1A[2K[Desktop 2K (2560x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Testing Layout for Viewport Width: 2560px
+
+[1A[2KΓ£à Ultrawide Max-Width constraint varified
+
+[1A[2KFound 2 grids to verify.
+
+[1A[2K[Ultrawide (3440x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #1 FS: 0px, Children: 2
+
+[1A[2KGrid #1 (<div class="dashboard-grid" style="margin-bottom: 0;">
+    <!-- Coach Insights (Span 1 - 1/3 width i...) Template: "491.172px 1253.66px 491.172px" -> 3 cols
+
+[1A[2K[Desktop HD (1920x1080)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #1 FS: 0px, Children: 2
+
+[1A[2KGrid #1 (<div class="dashboard-grid" style="margin-bottom: 0;">
+    <!-- Coach Insights (Span 1 - 1/3 width i...) Template: "342px 1253.66px 0.34375px" -> 3 cols
+
+[1A[2K[Laptop (1366x768)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #1 FS: 0px, Children: 2
+
+[1A[2KGrid #1 (<div class="dashboard-grid" style="margin-bottom: 0;">
+    <!-- Coach Insights (Span 1 - 1/3 width i...) Template: "342px 1014.7px 0px" -> 3 cols
+
+[1A[2K[Desktop HD (1920x1080)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #2 FS: 0px, Children: 26
+
+[1A[2KGrid #2 (<div class="dashboard-grid">
+                        <!-- Row 1: Executive Summary & Planning (2+2+2...) Template: "532px 532px 532px" -> 3 cols
+
+[1A[2K[Ultrawide (3440x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #2 FS: 0px, Children: 26
+
+[1A[2KGrid #2 (<div class="dashboard-grid">
+                        <!-- Row 1: Executive Summary & Planning (2+2+2...) Template: "745.328px 745.328px 745.328px" -> 3 cols
+
+[1A[2K[Laptop (1366x768)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #2 FS: 0px, Children: 26
+
+[1A[2KGrid #2 (<div class="dashboard-grid">
+                        <!-- Row 1: Executive Summary & Planning (2+2+2...) Template: "342px 498.109px 491.891px" -> 3 cols
+
+[1A[2K[Desktop 2K (2560x1440)] ΓÇ║ tests\e2e\layout.spec.ts:5:5 ΓÇ║ Command Center Layout Responsiveness ΓÇ║ Should respect layout rules for current viewport
+Grid #1 FS: 0px, Children: 2
+
+[1A[2KGrid #1 (<div class="dashboard-grid" style="margin-bottom: 0;">
+    <!-- Coach Insights (Span 1 - 1/3 width i...) Template: "491.172px 1253.66px 491.172px" -> 3 cols
+
+[1A[2KGrid #2 FS: 0px, Children: 26
+
+[1A[2KGrid #2 (<div class="dashboard-grid">
+                        <!-- Row 1: Executive Summary & Planning (2+2+2...) Template: "745.328px 745.328px 745.328px" -> 3 cols
+
+node:internal/fs/promises:856
+  return await PromisePrototypeThen(
+         ^
+
+Error: ENOENT: no such file or directory, mkdir 'X:\RetirementCalc-BasedOfBoldin\test-results\.playwright-artifacts-8'
+    at Object.mkdir (node:internal/fs/promises:856:10)
+    at WorkerHost.start (X:\RetirementCalc-BasedOfBoldin\node_modules\playwright\lib\runner\workerHost.js:68:5)
+    at Dispatcher._runJobInWorker (X:\RetirementCalc-BasedOfBoldin\node_modules\playwright\lib\runner\dispatcher.js:103:20) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'mkdir',
+  path: 'X:\\RetirementCalc-BasedOfBoldin\\test-results\\.playwright-artifacts-8'
+}
+
+Node.js v25.5.0

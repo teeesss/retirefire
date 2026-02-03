@@ -4,7 +4,7 @@ import { charts } from '../state/ChartStore.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { SimulationEngine } from '../engine/SimulationEngine.js';
 import { accountNames } from '../data/Constants.js';
-import { getNetWorthSeries, calculateNetWorth, getTotalIncome, getTotalExpenses, getTotalTaxes } from '../state/DataUtils.js';
+import { calculateNetWorth, getTotalIncome, getTotalExpenses, getTotalTaxes } from '../state/DataUtils.js';
 import { updateSSExplorerChart, updateStressTestChart } from '../charts/ExplorerCharts.js';
 import { updateSSComparisonChart } from '../charts/IncomeExpenseCharts.js';
 
@@ -243,7 +243,7 @@ export class ExplorerHandler {
                 const medicalIdx = 75 - testConfig.settings.personal.age;
 
                 if (medicalIdx >= 0) {
-                    const currentYear = new Date().getFullYear(); // Or base year from config
+                    // const currentYear = new Date().getFullYear(); // Or base year from config
                     // Ideally we get the actual calendar year from rawData.years[medicalIdx] but we might not have it easily here if not initialized.
                     // But rawData.years is reliable if defined.
                     const targetYear = rawData.years ? rawData.years[medicalIdx] : (config.settings.personal.startYear || 2026) + medicalIdx;
@@ -294,7 +294,7 @@ export class ExplorerHandler {
         if (btn) btn.classList.add('highlight');
     }
 
-    static runStressTest(btn) {
+    static runStressTest() {
         const inflation = parseFloat(document.getElementById('stressInflation').value);
         const marketShock = parseFloat(document.getElementById('stressMarket').value);
 

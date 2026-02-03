@@ -85,7 +85,7 @@ describe('ExplorerHandler', () => {
         expect(SimulationEngine.project).toHaveBeenCalled();
 
         // Verify the config passed has event
-        const callArgs = SimulationEngine.project.mock.calls[0][0]; // 1st arg of 1st call
+        // const callArgs = SimulationEngine.project.mock.calls[0][0]; // 1st arg of 1st call
         // Actually earlier calls might exist. Let's get the last call.
         const lastCallArgs = SimulationEngine.project.mock.lastCall[0];
 

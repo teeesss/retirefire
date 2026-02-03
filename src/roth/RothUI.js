@@ -5,10 +5,10 @@
 
 import { Logger } from '../utils/Logger.js';
 import RothConfig, { getStrategyDescription, syncWithGlobalConfig } from './RothConfig.js';
-import RothCalculator from './RothCalculator.js';
+
 import { rawData, updateRawData } from '../data/Store.js';
 import { config } from '../data/Config.js';
-import { recalculate } from '../main.js'; // Or ensure window.recalculate is used
+// import { recalculate } from '../main.js'; // Or ensure window.recalculate is used
 
 export class RothUI {
     /**
@@ -321,16 +321,16 @@ export class RothUI {
                 };
 
                 // Run optimization
-                const optimized = RothOptimizer.optimize(params);
+                const { optimizedResults } = RothOptimizer.optimize(params);
 
                 // Generate report
-                const report = RothOptimizer.generateReport(optimized);
+                const report = RothOptimizer.generateReport(optimizedResults);
 
                 // Display results
-                this.displayOptimizationResults(report, optimized);
+                this.displayOptimizationResults(report, optimizedResults);
 
-                // Ask user if they want to apply
-                this.showOptimizationDialog(optimized);
+                // Asking user if they want to apply
+                this.showOptimizationDialog(optimizedResults);
             }).catch(error => {
                 console.error('Failed to load optimizer:', error);
             });
@@ -340,7 +340,8 @@ export class RothUI {
     /**
      * Display optimization results
      */
-    static displayOptimizationResults(report, optimizedResults) {
+    static displayOptimizationResults(report, /* optimizedResults */) {
+
         console.log('\n📊 OPTIMIZATION RESULTS\n');
         console.log(report.headline);
         console.log('\n💰 Metrics:');
@@ -383,7 +384,7 @@ Would you like to apply this optimized strategy?
     /**
      * Apply optimized strategy
      */
-    static applyOptimizedStrategy(optimizedResults) {
+    static applyOptimizedStrategy(_optimizedResults) {
         // Switch to bracket mode with the target bracket
         RothConfig.mode = 'bracket';
 

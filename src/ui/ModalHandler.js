@@ -58,4 +58,19 @@ export class ModalHandler {
         const el = document.getElementById(id);
         if (el) el[type] = content;
     }
+
+    static openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.style.display = 'flex';
+            // Accessibiltiy focus could go here
+        }
+    }
+
+    static closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
 }

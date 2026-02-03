@@ -120,8 +120,7 @@ describe('Build Validation', () => {
             let content;
             try {
                 content = readFileSync(resolve('dist/index.html'), 'utf-8');
-            } catch (e) {
-                // If dist doesn't exist, skip this test
+            } catch {
                 console.warn('dist/index.html not found - run npm run build first');
                 return;
             }
@@ -135,7 +134,7 @@ describe('Build Validation', () => {
             let content;
             try {
                 content = readFileSync(resolve('dist/index.html'), 'utf-8');
-            } catch (e) {
+            } catch {
                 console.warn('dist/index.html not found - run npm run build first');
                 return;
             }
@@ -149,7 +148,7 @@ describe('Build Validation', () => {
             let content;
             try {
                 content = readFileSync(resolve('dist/index.html'), 'utf-8');
-            } catch (e) {
+            } catch {
                 console.warn('dist/index.html not found - run npm run build first');
                 return;
             }
@@ -163,7 +162,7 @@ describe('Build Validation', () => {
             let content;
             try {
                 content = readFileSync(resolve('dist/index.html'), 'utf-8');
-            } catch (e) {
+            } catch {
                 console.warn('dist/index.html not found - run npm run build first');
                 return;
             }

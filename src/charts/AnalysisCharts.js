@@ -14,12 +14,13 @@ export function initMonteCarloChart() {
     if (!ctx) return;
 
     // Create gradient for confidence bands
-    const createGradient = (ctx, color1, color2) => {
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, color1);
-        gradient.addColorStop(1, color2);
-        return gradient;
-    };
+    // Create gradient for confidence bands
+    // const createGradient = (ctx, color1, color2) => {
+    //    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    //    gradient.addColorStop(0, color1);
+    //    gradient.addColorStop(1, color2);
+    //    return gradient;
+    // };
 
     charts.monteCarlo = new Chart(ctx, {
         type: 'line',
@@ -221,7 +222,7 @@ export function initSequenceRiskChart() {
                 const value = formatCurrency(context.parsed.y);
                 return `${label}: ${value}`;
             },
-            afterBody: (context) => {
+            afterBody: (_context) => {
                 // Add explanation
                 return '\n"Stressed Path" applies the selected\nmarket crash scenario + volatility.';
             }

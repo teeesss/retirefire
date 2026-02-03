@@ -34,24 +34,33 @@
 }
 
 /* Laptop Breakpoint (Intermediate) */
-@media (max-width: 1400px) {
+@media (max-width: 1440px) {
     .dashboard-grid {
-        /* Force 3 columns max on laptops to prevent awkward 4th column squeeze */
-        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+}
+
+/* Tablet Responsiveness */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(6, 1fr) !important;
     }
 
-    /* CRITICAL: Reset all span classes to single column on laptop */
-    .span-2,
-    .span-3,
     .span-4,
-    .span-5,
-    .span-6 {
-        grid-column: span 1 !important;
+    .span-3 {
+        grid-column: span 3 !important;
+        /* 2 across */
+    }
+
+    .span-6,
+    .span-12 {
+        grid-column: span 6 !important;
+        /* 1 across */
     }
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
     .dashboard-grid {
         grid-template-columns: 1fr !important;
     }
@@ -61,12 +70,18 @@
     .span-3,
     .span-4,
     .span-5,
-    .span-6 {
+    .span-6,
+    .span-7,
+    .span-8,
+    .span-9,
+    .span-10,
+    .span-11,
+    .span-12 {
         grid-column: 1 / -1 !important;
     }
 
     /* Ensure cards have margin on mobile */
     .card {
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
     }
 }

@@ -12,6 +12,10 @@ import { MetricsHandler } from './ui/MetricsHandler.js';
 import { NavigationHandler } from './ui/NavigationHandler.js';
 import { ExportHandler } from './ui/ExportHandler.js';
 import { ModalHandler } from './ui/ModalHandler.js';
+// Expose Modal Helpers globally
+window.openModal = (id) => ModalHandler.openModal(id);
+window.closeModal = (id) => ModalHandler.closeModal(id);
+
 import { SettingsHandler } from './ui/SettingsHandler.js';
 import { EventsHandler } from './ui/EventsHandler.js';
 import { DashboardDetails } from './ui/DashboardDetails.js';

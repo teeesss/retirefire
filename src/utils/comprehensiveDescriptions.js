@@ -1,6 +1,6 @@
-import Chart from 'chart.js/auto';
-import { config } from '../data/Config.js';
-import { formatCurrency } from './Formatters.js';
+import 'chart.js/auto';
+// import { config } from '../data/Config.js';
+// import { formatCurrency } from './Formatters.js';
 
 /**
  * Comprehensive Section Descriptions and Chart Tooltips
@@ -262,7 +262,7 @@ export function initializeAllSectionDescriptions() {
 /**
  * Enable tooltips on all charts
  */
-export function enableAllChartTooltips(charts) {
+export function enableAllChartTooltips() {
     // DISABLED: This function was causing infinite tooltip callback loops
     // The charts already have their tooltip configurations set during initialization
     // Attempting to modify them post-creation triggers Chart.js internal errors

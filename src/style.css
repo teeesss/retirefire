@@ -46,17 +46,18 @@ body {
     --rose: #f43f5e;
     --amber: #f59e0b;
 
-    /* Fluid Typography & Spacing */
-    --fs-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
-    --fs-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
-    --fs-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
-    --fs-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
-    --fs-xl: clamp(1.3rem, 1.2rem + 0.5vw, 1.5rem);
-    --fs-2xl: clamp(1.6rem, 1.4rem + 1vw, 2rem);
+    /* Fluid Typography & Spacing - Enhanced for Laptop Density */
+    --fs-xs: clamp(0.65rem, 0.6rem + 0.15vw, 0.75rem);
+    --fs-sm: clamp(0.75rem, 0.7rem + 0.2vw, 0.85rem);
+    --fs-base: clamp(0.85rem, 0.8rem + 0.2vw, 0.95rem);
+    --fs-lg: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
+    --fs-xl: clamp(1.2rem, 1.1rem + 0.5vw, 1.4rem);
+    --fs-2xl: clamp(1.4rem, 1.3rem + 0.8vw, 1.8rem);
 
-    --spacing-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
-    --spacing-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
-    --spacing-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+    --spacing-xs: clamp(0.25rem, 0.2rem + 0.2vw, 0.4rem);
+    --spacing-sm: clamp(0.4rem, 0.35rem + 0.3vw, 0.6rem);
+    --spacing-md: clamp(0.75rem, 0.65rem + 0.5vw, 1.25rem);
+    --spacing-lg: clamp(1.25rem, 1rem + 1vw, 2rem);
 
     /* Dark theme (default) */
     --bg-primary: #0f172a;
@@ -236,50 +237,83 @@ body {
 }
 
 /* Header Fluid Spacing */
+/* Header Retrofit: Single Row Mandate */
 header {
     background: var(--gradient-header);
     border: 1px solid var(--border-color);
-    padding: var(--spacing-lg) var(--spacing-lg);
-    /* Fluid padding */
+    padding: var(--spacing-sm) var(--spacing-md);
     border-radius: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     backdrop-filter: blur(10px);
+    container-type: inline-size;
+    /* For container queries */
+    overflow: hidden;
+    /* Prevent spillover */
 }
 
 .header-top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    align-items: center;
+    flex-wrap: nowrap;
+    /* CRITICAL: The Mandate */
     gap: 1rem;
+    width: 100%;
+}
+
+.header-title {
+    flex-shrink: 1;
+    /* Allow title to shrink */
+    min-width: 0;
+    /* Prevent flex blowout */
+    overflow: hidden;
 }
 
 .header-title h1 {
-    font-size: var(--fs-2xl);
-    /* Fluid Header */
+    font-size: clamp(1rem, 1.5vw, 1.8rem);
+    /* Fluid scaling */
     font-weight: 700;
     background: linear-gradient(90deg, var(--primary-light), var(--purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .header-title p {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: clamp(0.7rem, 1vw, 0.9rem);
     margin-top: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .header-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: clamp(0.25rem, 0.5vw, 0.5rem);
+    /* Fluid gap */
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    /* CRITICAL: The Mandate */
+    flex-shrink: 0;
+    /* Actions should resist shrinking if possible, or adapt elegantly */
+}
+
+/* Button scaling for tight spaces */
+.header-actions .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: clamp(0.7rem, 0.8vw, 0.85rem);
+    white-space: nowrap;
 }
 
 .theme-toggle {
-    width: 40px;
-    height: 40px;
+    width: clamp(32px, 3vw, 40px);
+    /* Fluid icon */
+    height: clamp(32px, 3vw, 40px);
+    flex-shrink: 0;
     border-radius: 50%;
     border: 1px solid var(--border-color);
     background: var(--bg-input);
@@ -288,13 +322,37 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: clamp(0.9rem, 1vw, 1.2rem);
     transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
     background: var(--bg-hover);
     border-color: var(--border-hover);
+}
+
+/* Icon-Only Mode for tight spaces */
+@container (max-width: 800px) {
+    .btn-label {
+        display: none;
+    }
+
+    .header-actions .btn {
+        padding: 0.4rem;
+        /* Square-ish buttons */
+    }
+
+    .header-title p {
+        display: none;
+        /* Hide subtitle on very small screens */
+    }
+}
+
+@container (max-width: 400px) {
+    .header-title h1 {
+        font-size: 1rem;
+        /* Force smaller title */
+    }
 }
 
 .header-controls {
@@ -447,6 +505,10 @@ header {
     border: 1px solid var(--border-color);
     border-radius: 1rem;
     padding: 1.25rem;
+    height: 100%;
+    /* Force full height alignment */
+    display: flex;
+    flex-direction: column;
     backdrop-filter: blur(16px) saturate(180%);
     /* Enhanced Glassmorphism */
     -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -516,14 +578,61 @@ header {
     margin-top: 0.25rem;
 }
 
-/* Dashboard Grid (Fluid with breakpoints) */
+/* Dashboard Grid (Strict 3-Across Layout for Desktop+) */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    /* Min card width 280px to fit Laptop 1366px */
+    /* Mobile: 1 col */
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    /* Increased gap for better breathing room */
     margin-bottom: 2rem;
+    padding: 1rem 0;
+    /* Fix for anonymous grid items (whitespace/comments) causing phantom columns */
+    font-size: 0;
+}
+
+.dashboard-grid>* {
+    font-size: 1rem;
+    /* Restore font size for children */
+}
+
+/* Tablet: 2 cols */
+@media (min-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop & Ultrawide: 3 cols MAX */
+@media (min-width: 1280px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Remap 12-column spans to 3-column layout */
+    /* Remap 12-column spans to 3-column layout - High Specificity */
+    .dashboard-grid .span-1,
+    .dashboard-grid .span-2,
+    .dashboard-grid .span-3,
+    .dashboard-grid .span-4 {
+        grid-column: span 1;
+        /* 1/3 width */
+    }
+
+    .dashboard-grid .span-6 {
+        grid-column: span 3;
+        /* Force full width for half-items (or span 2 if room?) Defaulting to full to prevent gaps */
+    }
+
+    .dashboard-grid .span-8,
+    .dashboard-grid .span-9 {
+        grid-column: span 2;
+        /* 2/3 width */
+    }
+
+    .span-12 {
+        grid-column: span 3;
+        /* Full width */
+    }
 }
 
 /* Metrics Grid (Fluid with min-width constraints) */
@@ -534,10 +643,49 @@ header {
     margin-bottom: 20px;
 }
 
-/* Comprehensive Metrics specific grid - needs wider columns for data rows */
+/* Force 7-column layout for the Key Metrics Row on large screens */
+.key-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+@media (min-width: 1400px) {
+    .key-metrics-row {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+/* Coach Message List - Remove Scroll, allow full height or grid */
+/* Coach Message List - Horizontal Grid on Desktop */
+#coachMessageList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+@media (min-width: 1400px) {
+    #coachMessageList {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+}
+
+
+/* Comprehensive Metrics specific grid - Enforce 6 columns on large screens */
 #comprehensiveMetrics {
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1rem;
+}
+
+@media (min-width: 1400px) {
+    #comprehensiveMetrics {
+        grid-template-columns: repeat(6, 1fr);
+    }
 }
 
 
@@ -558,36 +706,45 @@ header {
 }
 
 /* Each metric row: Label on left, Value+Status on right - ALWAYS ONE LINE */
+/* Metric Rows (Consolidated) */
 .metric-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.35rem 0;
-    gap: 0.5rem;
+    padding: 0.5rem 0;
+    /* Reduced padding for density */
+    gap: 0.75rem;
     flex-wrap: nowrap;
-    /* CRITICAL: Never wrap to second line */
-    min-height: 1.75rem;
+    /* Force single line */
+    min-width: 0;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
 }
 
 .metric-label {
-    font-size: clamp(0.65rem, 0.6rem + 0.3vw, 0.85rem);
-    /* Fluid font that shrinks on small screens */
+    font-size: 0.75rem;
+    /* Slightly smaller to fit labels */
     color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     flex-shrink: 1;
-    /* Allow label to shrink if needed */
     min-width: 0;
-    /* Enable text truncation */
+    margin-right: auto;
+    /* Push value to right */
 }
 
+/* Value Group: Value + Status */
 .metric-value-group {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     flex-shrink: 0;
-    /* Protect values from shrinking */
+    /* Never shrink the value */
+    text-align: right;
 }
 
 .metric-value {
@@ -649,6 +806,30 @@ header {
 
 .span-6 {
     grid-column: span 6;
+}
+
+.span-7 {
+    grid-column: span 7;
+}
+
+.span-8 {
+    grid-column: span 8;
+}
+
+.span-9 {
+    grid-column: span 9;
+}
+
+.span-10 {
+    grid-column: span 10;
+}
+
+.span-11 {
+    grid-column: span 11;
+}
+
+.span-12 {
+    grid-column: span 12;
 }
 
 /* Charts */
@@ -1413,9 +1594,132 @@ select {
 
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    /* Increased from 220px to 280px to ensure "Out of Money Date" fits on one line */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 0.75rem;
 }
+
+/* ========================================
+   RESPONSIVE LAYOUT: Key Metrics Row (7 cards)
+   ======================================== */
+.key-metrics-row {
+    display: grid;
+    gap: 0.5rem;
+}
+
+/* Desktop XL (≥1440px): 7 across - spacious */
+@media (min-width: 1440px) {
+    .key-metrics-row {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+/* Desktop (1200-1439px): 7 across - compact */
+@media (min-width: 1200px) and (max-width: 1439px) {
+    .key-metrics-row {
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .key-metrics-row .card {
+        padding: 0.4rem;
+    }
+
+    .key-metrics-row .card-value {
+        font-size: 0.9rem !important;
+    }
+
+    .key-metrics-row .card-title {
+        font-size: 0.65rem;
+    }
+
+    .key-metrics-row .mini-chart {
+        height: 30px !important;
+    }
+}
+
+/* Laptop (992-1199px): 4 + 3 */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .key-metrics-row {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Tablet (768-991px): 3 + 3 + 1 */
+@media (min-width: 768px) and (max-width: 991px) {
+    .key-metrics-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Mobile (<768px): Stacked */
+@media (max-width: 767px) {
+    .key-metrics-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT: Comprehensive Metrics (6 categories)
+   ======================================== */
+.comprehensive-metrics-row {
+    display: grid;
+    gap: 0.75rem;
+}
+
+/* Desktop (≥1200px): 6 across */
+@media (min-width: 1200px) {
+    .comprehensive-metrics-row {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .comprehensive-metrics-row .metrics-category {
+        padding: 0.5rem;
+    }
+
+    .comprehensive-metrics-row h3 {
+        font-size: 0.7rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .comprehensive-metrics-row .metric-row {
+        padding: 0.25rem 0;
+    }
+
+    .comprehensive-metrics-row .metric-label {
+        font-size: 0.6rem;
+    }
+
+    .comprehensive-metrics-row .metric-value {
+        font-size: 0.7rem;
+    }
+
+    .comprehensive-metrics-row .metric-status {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.25rem;
+    }
+}
+
+/* Laptop (992-1199px): 3 + 3 */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .comprehensive-metrics-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet (768-991px): 2 + 2 + 2 */
+@media (min-width: 768px) and (max-width: 991px) {
+    .comprehensive-metrics-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile (<768px): Stacked */
+@media (max-width: 767px) {
+    .comprehensive-metrics-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 .metric-card {
     background: var(--bg-input);
@@ -2760,13 +3064,8 @@ footer {
     }
 
     .main-sidebar {
-        width: 100% !important;
-        height: auto !important;
-        position: static;
-        overflow-x: auto;
-        display: flex !important;
-        flex-direction: row !important;
-        padding: 0.5rem;
+        display: none !important;
+        /* Hide sidebar on mobile for cleaner UI */
     }
 
     .sidebar-section {
