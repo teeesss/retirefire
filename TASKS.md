@@ -152,6 +152,14 @@ All critical security and logic issues have been resolved. The application is ca
   - **Goals**: Fix metric label truncation ("Out of Mone...") by increasing grid card width to 280px. Fix Key Metrics density.
   - **Status**: Completed 2026-02-03
 
+- ✅ **TASK-029**: Dashboard Schematic Alignment (Strict 3-Across)
+  - **Goals**: Group components into specific rows, split multi-card partials, standardize 600px height.
+  - **Status**: Completed 2026-02-03
+
+- ✅ **TASK-030**: Root Directory Sanitization
+  - **Goals**: Move logs, screenshots, and credentials to dedicated subfolders.
+  - **Status**: Completed 2026-02-03
+
 **Estimated Total Effort**: 10-15 hours
 
 ---

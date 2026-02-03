@@ -15,7 +15,22 @@
 > **Code Quality Grade**: A (improved from B+)
 > **Refactoring**: Phase 1-5 Complete + Security Hardening + P1 Enhancements + Workflow Automation
 
-### Today's Session (2026-02-03 - Responsive Retrofit):
+### Today's Session 2 (2026-02-03 - Dashboard Layout & Root Cleanup):
+- [x] **TASK-022: Dashboard Grid Refactor (Strict 3-Across)** ✅ COMPLETE
+    - [x] Reordered all metrics to match requested 3-across schematic
+    - [x] Split generic partials into standalone cards (Allocation, SS Strategy, SS Comparison, etc.)
+    - [x] Standardized all card heights to `600px` for uniform grid rows
+    - [x] Implemented explicit grid placement for Row 1 to fix phantom column skipping
+- [x] **TASK-023: Project Root Sanitization** ✅ COMPLETE
+    - [x] Moved 20+ `run_log_*.txt` files from root to `/logs/`
+    - [x] Moved 10+ `.png` debug screenshots from root to `/debug/`
+    - [x] Reorganized credentials: Moved `deploy_creds.json` and `.credentials` to `/.credentials/`
+    - [x] Cleaned up root documentation: Moved reports to `/docs/`
+- [x] **TASK-024: Documentation & README Synchronization** ✅ COMPLETE
+    - [x] Updated `README.md` with new project structure and components
+    - [x] Updated all sprint docs via `/update` workflow
+
+### Today's Session 1 (2026-02-03 - Responsive Retrofit):
 - [x] **TASK-018: Layout Audit & Fluid Layouts** ✅ COMPLETE
     - [x] Replaced fixed grid columns with `auto-fit` and `minmax`
     - [x] Fixed specific breakpoint issue on 1366x768 screens

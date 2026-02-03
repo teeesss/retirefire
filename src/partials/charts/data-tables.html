@@ -1,23 +1,51 @@
-﻿<!-- Detailed Data Tables -->
-<div class="card span-6" id="section-tables">
+﻿<div class="card span-4" id="section-tables">
     <div class="card-header">
-        <div class="card-title">&#128203; Year-by-Year Financial Data</div>
-        <div class="tab-container" id="tableTabs" style="display: flex; gap: 5px; flex-wrap: wrap;">
-            <button class="tab active" onclick="showDataTable('summary', this)">Summary</button>
-            <button class="tab" onclick="showDataTable('accounts', this)">Accounts</button>
-            <button class="tab" onclick="showDataTable('income', this)">Income</button>
-            <button class="tab" onclick="showDataTable('expenses', this)">Expenses</button>
-            <button class="tab" onclick="showDataTable('taxes', this)">Taxes</button>
-            <button class="tab" onclick="showDataTable('roth', this)">Roth</button>
-            <button class="tab" onclick="showDataTable('cashflow', this)">Cash Flow</button>
+        <div class="card-title">
+            <span>📋 Year-by-Year Financial Data</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
         </div>
         <div class="card-actions" style="display: flex; gap: 5px;">
-            <button class="btn btn-outline btn-sm" onclick="exportPDF()">&#128229; Export PDF</button>
-            <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#128228; Export CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="openDataTableModal()" title="Expand to fullscreen">
+                🔍 Expand
+            </button>
         </div>
     </div>
+    <div class="tab-container" id="tableTabs" style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px;">
+        <button class="tab active" onclick="showDataTable('summary', this)">Summary</button>
+        <button class="tab" onclick="showDataTable('accounts', this)">Accounts</button>
+        <button class="tab" onclick="showDataTable('income', this)">Income</button>
+        <button class="tab" onclick="showDataTable('expenses', this)">Expenses</button>
+        <button class="tab" onclick="showDataTable('taxes', this)">Taxes</button>
+    </div>
     <div class="table-container" id="dataTableContainer"
-        style="overflow-x: auto; margin-top: 15px; max-height: 600px; border-radius: 8px;">
+        style="overflow-x: auto; margin-top: 10px; max-height: 350px; border-radius: 8px; font-size: 0.75rem;">
         <!-- Populated by JS (showDataTable) -->
+    </div>
+
+    <!-- Year-by-Year Data Modal (INSIDE card to avoid grid layout issues) -->
+    <div id="dataTableModal" class="data-table-modal-overlay" style="display: none;">
+        <div class="data-table-modal">
+            <div class="data-table-modal-header">
+                <h3>📋 Year-by-Year Financial Data</h3>
+                <button class="btn btn-outline btn-sm" onclick="closeDataTableModal()">✕ Close</button>
+            </div>
+            <div class="tab-container" style="display: flex; gap: 5px; flex-wrap: wrap; margin: 15px 0;">
+                <button class="tab active" onclick="showDataTableModal('summary', this)">Summary</button>
+                <button class="tab" onclick="showDataTableModal('accounts', this)">Accounts</button>
+                <button class="tab" onclick="showDataTableModal('income', this)">Income</button>
+                <button class="tab" onclick="showDataTableModal('expenses', this)">Expenses</button>
+                <button class="tab" onclick="showDataTableModal('taxes', this)">Taxes</button>
+                <button class="tab" onclick="showDataTableModal('roth', this)">Roth</button>
+                <button class="tab" onclick="showDataTableModal('cashflow', this)">Cash Flow</button>
+            </div>
+            <div class="card-actions" style="display: flex; gap: 8px; margin-bottom: 15px;">
+                <button class="btn btn-outline btn-sm" onclick="exportPDF()">📥 Export PDF</button>
+                <button class="btn btn-outline btn-sm" onclick="exportCSV()">📤 Export CSV</button>
+            </div>
+            <div class="table-container" id="dataTableModalContainer"
+                style="overflow: auto; max-height: calc(80vh - 180px); border-radius: 8px;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
     </div>
 </div>

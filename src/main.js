@@ -462,6 +462,57 @@ window.scrollToSection = (id) => NavigationHandler.scrollToSection(id);
 
 window.showDataTable = (type, el) => DashboardDetails.showDataTable(type, el);
 
+// Data Table Modal functions
+window.openDataTableModal = () => {
+    const modal = document.getElementById('dataTableModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Show summary tab by default in modal
+        window.showDataTableModal('summary', modal.querySelector('.tab.active'));
+    }
+};
+
+window.closeDataTableModal = () => {
+    const modal = document.getElementById('dataTableModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
+window.showDataTableModal = (type, btn) => {
+    // Update active tab
+    if (btn) {
+        const tabs = btn.closest('.tab-container')?.querySelectorAll('.tab');
+        tabs?.forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    // Use DashboardDetails to generate the table content
+    const container = document.getElementById('dataTableModalContainer');
+    if (container && DashboardDetails.generateDataTableHTML) {
+        container.innerHTML = DashboardDetails.generateDataTableHTML(type);
+    } else if (container) {
+        DashboardDetails.showDataTable(type, btn);
+        // Copy content from regular container to modal
+        const sourceContainer = document.getElementById('dataTableContainer');
+        if (sourceContainer) {
+            container.innerHTML = sourceContainer.innerHTML;
+        }
+    }
+};
+
+// Close modal on escape key or clicking outside
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        window.closeDataTableModal();
+    }
+});
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('data-table-modal-overlay')) {
+        window.closeDataTableModal();
+    }
+});
+
 window.addEvent = () => EventsHandler.addEvent();
 window.removeEvent = (btn) => EventsHandler.removeEvent(btn);
 window.addRecurringEvent = () => EventsHandler.addRecurringEvent();

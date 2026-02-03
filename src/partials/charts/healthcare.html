@@ -1,0 +1,26 @@
+<div class="card span-4">
+    <div class="card-header">
+        <div class="card-title">
+            <span>🏥 Healthcare</span>
+            <a href="#dashboard-top" class="back-to-top-btn">↑ Top</a>
+        </div>
+    </div>
+    <div class="chart-container large">
+        <canvas id="chartHealthcare"></canvas>
+    </div>
+    <div class="stats-row"
+        style="margin-top: 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; text-align: center;">
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.65rem; color: var(--text-muted);">Pre-65</div>
+            <div class="value negative" id="preMedicareCost" style="font-size: 0.8rem; font-weight: 700;">$0</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.65rem; color: var(--text-muted);">65+</div>
+            <div class="value" id="medicareCost" style="font-size: 0.8rem; font-weight: 700;">$0</div>
+        </div>
+        <div class="stat-item">
+            <div class="label" style="font-size: 0.65rem; color: var(--text-muted);">90+</div>
+            <div class="value negative" id="ltcCost" style="font-size: 0.8rem; font-weight: 700;">$0</div>
+        </div>
+    </div>
+</div>

@@ -4,6 +4,7 @@
 - Update `task.md` frequently to track progress. Note: `task.md` is located in the artifacts directory (check conversation history/preamble), NOT the workspace root.
 
 # Terminal Command Rules
+- **Root Maintenance**: KEEP THE ROOT CLEAN. Never place temporary log files, debugging screenshots, or credentials in the root. Use `/logs/` for .txt logs, `/debug/` for screenshots, and `/.credentials/` for secure config.
 - **Search**: Use `Select-String -Path "pattern" -Pattern "text"`.
 - **List**: Use `Get-ChildItem` (or `dir`).
 - **Read**: Use `Get-Content` (or `type`).

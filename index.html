@@ -31,55 +31,55 @@
                     <!-- Dashboard Metrics (Coach + Key Metrics + Money Flow) -->
                     <load src="src/partials/dashboard-metrics.html" />
 
+                    <!-- Milestones Row (Full Width, Single Line - Like Coach) -->
+                    <load src="src/partials/charts/milestones.html" />
+
                     <!-- Comprehensive Metrics Dashboard -->
                     <load src="src/partials/comprehensive-metrics.html" />
 
-                    <!-- Charts Grid (Strict 3-Across Layout) -->
                     <div class="dashboard-grid">
-                        <!-- Row 1: Executive Summary & Planning (2+2+2) -->
+                        <!-- Row 1: Income & Expenses Explorer -->
                         <load src="src/partials/charts/year-explorer.html" />
-                        <load src="src/partials/charts/milestones.html" />
+                        <load src="src/partials/charts/data-tables.html" />
                         <load src="src/partials/charts/gap-calculator.html" />
 
-                        <!-- Row 2: Portfolio & Legacy (4+4+4 = 12 cols) -->
+                        <!-- Row 2: Net Worth & Legacy -->
                         <load src="src/partials/charts/networth-charts.html" />
-                        <!-- networth-charts.html contains Net Worth (span-4) + Allocation (span-4) -->
+                        <load src="src/partials/charts/allocation.html" />
                         <load src="src/partials/charts/legacy.html" />
-                        <!-- legacy.html contains Legacy & Estate Impact (span-4) -->
 
-                        <!-- Row 3: Cash Flow Analysis (2+2+2) -->
-                        <!-- income-charts.html contains Money Flow (span-2) + Surplus/Gap (span-2) = 4 cols -->
-                        <load src="src/partials/charts/income-charts.html" />
-                        <!-- expense-tax-charts.html contains Expenses (span-2) -->
+                        <!-- Row 3: Income & Money Flow -->
+                        <load src="src/partials/charts/income-sources.html" />
+                        <load src="src/partials/charts/surplus-gap.html" />
+                        <load src="src/partials/charts/money-flow.html" />
 
-                        <!-- Row 4: Expense Breakdown & Healthcare (2+2+2) -->
-                        <!-- expense-tax-charts.html contains Expense Pie (span-2) + Healthcare (span-2) = 4 cols -->
-                        <load src="src/partials/charts/expense-tax-charts.html" />
-                        <!-- Placeholder for 3rd item in Row 4 (2 cols needed) -->
+                        <!-- Row 4: Expenses & Health -->
+                        <load src="src/partials/charts/expense-charts.html" />
+                        <load src="src/partials/charts/expense-pie.html" />
+                        <load src="src/partials/charts/healthcare.html" />
 
-                        <!-- Row 5: Tax & Social Security (2+2+2) -->
+                        <!-- Row 5: Strategy & Social Security -->
                         <load src="src/partials/charts/taxes.html" />
-                        <!-- social-security.html contains SS Strategy (span-2) + SS Cumulative (span-2) = 4 cols -->
-                        <load src="src/partials/charts/social-security.html" />
+                        <load src="src/partials/charts/social-security-strategy.html" />
+                        <load src="src/partials/charts/social-security-comparison.html" />
 
-                        <!-- Row 6: Drawdown Strategy -->
-                        <load src="src/partials/charts/withdrawal-strategy-charts.html" />
-
-                        <!-- Row 7: Roth Optimization (span-6 + span-6) -->
+                        <!-- Row 6: Roth & Improvement -->
                         <load src="src/partials/charts/roth.html" />
+                        <load src="src/partials/charts/plan-improvement-delta.html" />
+                        <load src="src/partials/charts/tax-delta.html" />
 
-                        <!-- Row 8: Monte Carlo Analysis (Full Width span-12) -->
-                        <load src="src/partials/charts/montecarlo-analysis.html" />
-
-                        <!-- Row 9: Explorers & Scenarios (4+4+4) -->
+                        <!-- Row 7: Scenario Explorers -->
                         <load src="src/partials/charts/explorers.html" />
                         <load src="src/partials/charts/stress-test.html" />
                         <load src="src/partials/charts/sequence-risk.html" />
 
-                        <!-- Row 9: Detailed Reporting (6) -->
-                        <load src="src/partials/charts/data-tables.html" />
+                        <!-- Row 8: Withdrawal Strategies (2 across) -->
+                        <load src="src/partials/charts/withdrawal-strategy.html" />
+                        <load src="src/partials/charts/safe-withdrawal.html" />
 
-                        <!-- Placeholder containers for missing charts referenced in main.js -->
+                        <!-- Row 9: Monte Carlo (Full Width) -->
+                        <load src="src/partials/charts/montecarlo-analysis.html" />
+
                         <div style="display:none;">
                             <canvas id="chartRealNominal"></canvas>
                             <canvas id="chartStackedPortfolio"></canvas>

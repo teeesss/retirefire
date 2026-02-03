@@ -241,22 +241,22 @@ See [ISSUES.md](ISSUES.md) for complete list and status.
 
 ```
 retirefire/
-├── index.html              # Main application file
-├── src/                    # Source code (if modularized)
-├── tests/                  # Test suite
-│   ├── unit/              # Unit tests
-│   ├── integration/       # Integration tests
-│   └── e2e/               # End-to-end tests
-├── docs/                   # Documentation
-│   ├── testing/           # Test documentation
-│   ├── guides/            # How-to guides
-│   ├── completed/         # Completed work archive
-│   └── archive/           # Historical reference
+├── index.html              # Main application file (Modular Shell)
+├── src/                    # Source code
+│   ├── partials/          # HTML Templates (Modularized)
+│   ├── modules/           # Core logic (Tax, Simulation, etc)
+│   ├── charts/            # Chart.js initialization logic
+│   └── ui/                # UI Handlers and Event management
+├── tests/                  # Full Test Suite (Unit, E2E, Integrated)
+├── docs/                   # Documentation & Audit Reports
+├── logs/                   # Debug logs and run reports
+├── debug/                  # Diagnostic screenshots and visual diffs
+├── .credentials/           # Deployment & Manual credentials (gitignored)
 ├── scripts/               # Build and deployment scripts
-├── dist/                  # Production build output
-├── TASKS.md               # Current work
-├── ISSUES.md              # Active bugs
-├── PROJECT_STATUS.md      # Project health
+├── dist/                  # Production build output (Vite)
+├── TASKS.md               # Continuous Sprint Planning
+├── ISSUES.md              # Active Bug Tracking
+├── PROJECT_STATUS.md      # Detailed Project Health
 ├── QUICKSTART.md          # Getting started
 └── README.md              # This file
 ```
@@ -284,6 +284,6 @@ For questions or support, please open an issue or contact the project maintainer
 
 ---
 
-**Last Updated**: 2026-01-30  
-**Version**: 1.1.0  
+**Last Updated**: 2026-02-03  
+**Version**: 1.2.0  
 **Status**: Production Ready ✅
