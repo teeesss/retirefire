@@ -602,36 +602,33 @@ header {
     }
 }
 
-/* Desktop & Ultrawide: 3 cols MAX */
+/* Desktop & Ultrawide: STRICT 3 cols MAX per row */
+/* RULE: Maximum 3 cards per row. Only span-12 (e.g., Monte Carlo) spans full width */
 @media (min-width: 1280px) {
     .dashboard-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    /* Remap 12-column spans to 3-column layout */
-    /* Remap 12-column spans to 3-column layout - High Specificity */
+    /* ALL cards span exactly 1 column (1 of 3) to enforce max 3 per row */
     .dashboard-grid .span-1,
     .dashboard-grid .span-2,
     .dashboard-grid .span-3,
-    .dashboard-grid .span-4 {
-        grid-column: span 1;
-        /* 1/3 width */
-    }
-
-    .dashboard-grid .span-6 {
-        grid-column: span 3;
-        /* Force full width for half-items (or span 2 if room?) Defaulting to full to prevent gaps */
-    }
-
+    .dashboard-grid .span-4,
+    .dashboard-grid .span-5,
+    .dashboard-grid .span-6,
+    .dashboard-grid .span-7,
     .dashboard-grid .span-8,
-    .dashboard-grid .span-9 {
-        grid-column: span 2;
-        /* 2/3 width */
+    .dashboard-grid .span-9,
+    .dashboard-grid .span-10,
+    .dashboard-grid .span-11 {
+        grid-column: span 1 !important;
+        /* STRICT: 1/3 width - max 3 per row */
     }
 
-    .span-12 {
-        grid-column: span 3;
-        /* Full width */
+    /* ONLY span-12 gets full width (e.g., Monte Carlo Analysis) */
+    .dashboard-grid .span-12 {
+        grid-column: span 3 !important;
+        /* Full width - this card alone on its row */
     }
 }
 

@@ -144,3 +144,68 @@ charts.myChart.update();
 // Always save after user actions
 saveToLocalStorage();
 ```
+
+## CSS / Layout Standards
+
+### Dashboard Grid - CRITICAL RULE
+
+**Maximum 3 cards per row on desktop viewport (≥1280px)**
+
+The dashboard uses a strict 3-column grid system. This is enforced in `src/style.css`:
+
+```css
+/* Desktop & Ultrawide: STRICT 3 cols MAX per row */
+@media (min-width: 1280px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* ALL cards span exactly 1 column (1 of 3) */
+    .dashboard-grid .span-1,
+    .dashboard-grid .span-2,
+    .dashboard-grid .span-3,
+    .dashboard-grid .span-4,
+    .dashboard-grid .span-5,
+    .dashboard-grid .span-6,
+    .dashboard-grid .span-7,
+    .dashboard-grid .span-8,
+    .dashboard-grid .span-9,
+    .dashboard-grid .span-10,
+    .dashboard-grid .span-11 {
+        grid-column: span 1 !important;
+    }
+
+    /* ONLY span-12 gets full width (e.g., Monte Carlo Analysis) */
+    .dashboard-grid .span-12 {
+        grid-column: span 3 !important;
+    }
+}
+```
+
+### When to Use Each Span Class
+
+| Span Class | Desktop Behavior | Use For |
+|------------|------------------|---------|
+| `span-1` to `span-11` | 1 column (1/3 width) | Regular cards, charts, explorers |
+| `span-12` | Full width (3/3) | Monte Carlo, Data Tables, full-width sections |
+
+### Responsive Breakpoints
+
+| Viewport | Columns | Behavior |
+|----------|---------|----------|
+| ≥1280px | 3 cols | Max 3 cards per row |
+| 768-1279px | 2 cols | Max 2 cards per row |
+| <768px | 1 col | Single column, stacked |
+
+### ❌ DON'T
+
+1. Use `span-6`, `span-8`, etc. expecting them to span multiple columns - they all map to 1 column
+2. Add new span classes that break the 3-column grid
+3. Override the `!important` rules without team discussion
+
+### ✅ DO
+
+1. Use `span-12` only for truly full-width content
+2. Test layout at all breakpoints after CSS changes
+3. Keep card heights consistent for clean rows
+
