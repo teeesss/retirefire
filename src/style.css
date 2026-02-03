@@ -534,6 +534,99 @@ header {
     margin-bottom: 20px;
 }
 
+/* Comprehensive Metrics specific grid - needs wider columns for data rows */
+#comprehensiveMetrics {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+
+/* Comprehensive Metrics Category Cards */
+.metrics-category {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+.metrics-category h3 {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Each metric row: Label on left, Value+Status on right - ALWAYS ONE LINE */
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    /* CRITICAL: Never wrap to second line */
+    min-height: 1.75rem;
+}
+
+.metric-label {
+    font-size: clamp(0.65rem, 0.6rem + 0.3vw, 0.85rem);
+    /* Fluid font that shrinks on small screens */
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    /* Allow label to shrink if needed */
+    min-width: 0;
+    /* Enable text truncation */
+}
+
+.metric-value-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    /* Protect values from shrinking */
+}
+
+.metric-value {
+    font-size: clamp(0.7rem, 0.65rem + 0.3vw, 0.9rem);
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.metric-status {
+    font-size: clamp(0.55rem, 0.5rem + 0.2vw, 0.7rem);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.status-excelling {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.status-progressing {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+}
+
+.status-vulnerable {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.status-informational {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+}
+
+
 .span-1 {
     grid-column: span 1;
 }
