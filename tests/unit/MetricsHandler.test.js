@@ -5,6 +5,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MetricsHandler } from '../../src/ui/MetricsHandler.js';
 import { config } from '../../src/data/Config.js';
 import { rawData } from '../../src/data/Store.js';
+import { getNetWorthSeries } from '../../src/state/DataUtils.js';
 
 // Mock dependencies
 vi.mock('../../src/state/DataUtils.js', () => ({
@@ -237,6 +238,9 @@ describe('MetricsHandler', () => {
             rawData.monteCarlo.successRate = 85; // Between 70-95, no alerts
             config.settings.taxes.rothConversionEnabled = true;
             rawData.average.accounts.Investments = [100000, 100000, 100000]; // Always positive
+
+            // Mock high growth to avoid inflation risk
+            getNetWorthSeries.mockReturnValue([100000, 150000, 200000, 250000]);
 
             MetricsHandler.updateCoach();
 

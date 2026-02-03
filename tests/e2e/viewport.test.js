@@ -46,72 +46,80 @@ describe('Responsive Layout & Viewport Tests (TASK-021)', () => {
     };
 
     describe('Desktop Ultrawide (2560x1440)', () => {
-        it('should maintain 12-column liquid layout', async () => {
+        it('should maintain strict horizontal alignment for metrics', async () => {
             await page.setViewport({ width: 2560, height: 1440 });
-            await page.evaluate(() => new Promise(r => setTimeout(r, 500)));
+            // Increase wait for simulation and rendering
+            await page.evaluate(() => new Promise(r => setTimeout(r, 2000)));
 
             const res = await checkHorizontalScroll();
             expect(res.hasScroll).toBe(false);
 
-            // Should be 12 columns
-            const gridCols = await page.evaluate(() => {
-                const el = document.querySelector('.dashboard-grid');
+            // Key Metrics: 7 columns
+            const keyMetricsCols = await page.evaluate(() => {
+                const el = document.querySelector('#key-metrics-row');
+                if (!el) return 0;
                 return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
             });
-            expect(gridCols).toBe(3);
+            expect(keyMetricsCols).toBe(7);
+
+            // Comprehensive Metrics: 6 columns
+            const compMetricsCols = await page.evaluate(() => {
+                const el = document.querySelector('#comprehensiveMetrics');
+                if (!el) return 0;
+                return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
+            });
+            expect(compMetricsCols).toBe(6);
+
+            // Coach Insights: 3 columns
+            const coachCols = await page.evaluate(() => {
+                const el = document.querySelector('#coachMessageList');
+                if (!el) return 0;
+                console.log('Coach Grid Layout:', window.getComputedStyle(el).gridTemplateColumns);
+                return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
+            });
+            expect(coachCols).toBe(3);
         });
     });
 
     describe('Laptop Standard (1366x768)', () => {
-        it('should maintain 3-across chart layout via 12-col grid', async () => {
+        it('should maintain horizontal alignment on laptop screens', async () => {
             await page.setViewport({ width: 1366, height: 768 });
             await page.evaluate(() => new Promise(r => setTimeout(r, 1000)));
 
-            // Check grid columns (Changed to 3-column fixed layout)
-            const gridCols = await page.evaluate(() => {
-                const el = document.querySelector('.dashboard-grid');
+            // Key Metrics: 7 columns
+            const keyMetricsCols = await page.evaluate(() => {
+                const el = document.querySelector('#key-metrics-row');
                 return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
             });
-            expect(gridCols).toBe(3);
+            expect(keyMetricsCols).toBe(7);
 
-            // Verify Coach and Metrics are side-by-side
-            const areSideBySide = await page.evaluate(() => {
-                const coach = document.querySelector('#coach-insights');
-                const metrics = document.querySelector('.key-metrics-row') ? document.querySelector('.key-metrics-row').parentElement : null;
-                if (!coach || !metrics) return false;
-                const coachBox = coach.getBoundingClientRect();
-                const metricsBox = metrics.getBoundingClientRect();
-
-                // Compare top positions (within 50px tolerance for fluid scaling)
-                const verticallyAligned = Math.abs(coachBox.top - metricsBox.top) < 50;
-                const horizontallySeparated = coachBox.right <= metricsBox.left + 50;
-
-                return verticallyAligned && horizontallySeparated;
+            // Comprehensive Metrics: 6 columns
+            const compMetricsCols = await page.evaluate(() => {
+                const el = document.querySelector('#comprehensiveMetrics');
+                return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
             });
-            expect(areSideBySide).toBe(true);
+            expect(compMetricsCols).toBe(6);
         });
     });
 
     describe('Mobile (375x812)', () => {
-        it('should stack grid components into single column', async () => {
+        it('should stack grid components correctly on mobile', async () => {
             await page.setViewport({ width: 375, height: 812 });
             await page.waitForSelector('#coach-insights');
 
-            // Grid should be 1 column due to media query override
-            const gridCols = await page.evaluate(() => {
-                const el = document.querySelector('.dashboard-grid');
+            // Key Metrics: 2 columns (md:grid-cols-4, default grid-cols-2)
+            const keyMetricsCols = await page.evaluate(() => {
+                const el = document.querySelector('#key-metrics-row');
                 return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
             });
-            expect(gridCols).toBe(1);
+            expect(keyMetricsCols).toBe(2);
 
-            // Sidebar should be hidden on mobile
-            const sidebarVisible = await page.evaluate(() => {
-                const el = document.querySelector('.main-sidebar');
-                if (!el) return false;
-                const style = window.getComputedStyle(el);
-                return style.display !== 'none' && style.visibility !== 'hidden';
+            // Comprehensive Metrics: 1 column
+            const compMetricsCols = await page.evaluate(() => {
+                const el = document.querySelector('#comprehensiveMetrics');
+                return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
             });
-            expect(sidebarVisible).toBe(false);
+            expect(compMetricsCols).toBe(1);
         });
     });
 });

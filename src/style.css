@@ -643,50 +643,10 @@ header {
     margin-bottom: 20px;
 }
 
-/* Force 7-column layout for the Key Metrics Row on large screens */
-.key-metrics-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-}
-
-@media (min-width: 1400px) {
-    .key-metrics-row {
-        grid-template-columns: repeat(7, 1fr);
-    }
-}
-
-/* Coach Message List - Remove Scroll, allow full height or grid */
-/* Coach Message List - Horizontal Grid on Desktop */
-#coachMessageList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    overflow: visible !important;
-    max-height: none !important;
-}
-
-@media (min-width: 1400px) {
-    #coachMessageList {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-}
 
 
-/* Comprehensive Metrics specific grid - Enforce 6 columns on large screens */
-#comprehensiveMetrics {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-}
+/* Legacy coachMessageList removed */
 
-@media (min-width: 1400px) {
-    #comprehensiveMetrics {
-        grid-template-columns: repeat(6, 1fr);
-    }
-}
 
 
 /* Comprehensive Metrics Category Cards */

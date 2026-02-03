@@ -1,176 +1,171 @@
-<div class="card span-12">
-    <div class="card-header">
-        <div class="card-title">&#128269; Comprehensive Plan Metrics</div>
-        <div class="sync-indicator">
-            <span class="status-excelling" style="padding: 2px 6px; border-radius: 4px;">Excelling</span>
-            <span class="status-progressing" style="padding: 2px 6px; border-radius: 4px;">Progressing</span>
-            <span class="status-vulnerable" style="padding: 2px 6px; border-radius: 4px;">Vulnerable</span>
-        </div>
-    </div>
-
-    <div class="comprehensive-metrics-row" id="comprehensiveMetrics">
-        <!-- Row 1: Health & Progress -->
-        <div class="metrics-category hover-card" id="section-health-summary"
-            onclick="scrollToSection('section-montecarlo')" style="cursor: pointer;">
-            <h3>🏦 Financial Health</h3>
-            <div class="metric-row">
-                <span class="metric-label">Out of Money Date</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mNeverRunOut">Never</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
+<div class="col-span-full w-full">
+    <div class="card w-full">
+        <div class="card-header border-b border-white/5 pb-3 mb-4 flex justify-between items-center">
+            <div class="card-title text-base flex items-center">
+                <span class="mr-2">🔍</span> Comprehensive Plan Metrics
             </div>
-            <div class="metric-row">
-                <span class="metric-label">Chance of Success</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mSuccessRate">99%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Savings to Need Ratio</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mSavingsRatio">188%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
+            <div class="flex gap-2 text-[0.6rem] font-bold uppercase tracking-tighter">
+                <span class="bg-success/20 text-success px-2 py-1 rounded">Excelling</span>
+                <span class="bg-primary/20 text-primary px-2 py-1 rounded">Progressing</span>
+                <span class="bg-danger/20 text-danger px-2 py-1 rounded">Vulnerable</span>
             </div>
         </div>
 
-        <div class="metrics-category hover-card" id="section-progress-summary"
-            onclick="scrollToSection('section-milestones')" style="cursor: pointer;">
-            <h3>&#128200; Progress Tracking</h3>
-            <div class="metric-row">
-                <span class="metric-label">Total Annual Expenses</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mTotalExpenses">$90,000</span>
-                    <span class="metric-status status-informational">Info</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 w-full" id="comprehensiveMetrics">
+            <!-- Row 1: Health & Progress -->
+            <div class="metrics-category hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 cursor-pointer"
+                id="section-health-summary" onclick="scrollToSection('section-montecarlo')">
+                <h3 class="text-xs font-bold text-muted uppercase mb-3 flex items-center">🏦 Financial Health</h3>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Out of Money</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mNeverRunOut">Never</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Success Rate</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mSuccessRate">99%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Savings Ratio</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mSavingsRatio">188%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
                 </div>
             </div>
-            <div class="metric-row">
-                <span class="metric-label">Retirement Countdown</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mRetireCount">42 mo</span>
-                    <span class="metric-status status-informational">Info</span>
-                </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Life Opportunity</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mLifeRemaining">551 mo</span>
-                    <span class="metric-status status-informational">Info</span>
-                </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Savings Rate</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mSavingsRate">0%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- Row 2: Debt & Taxes -->
-        <div class="metrics-category hover-card" id="section-debt-summary"
-            onclick="scrollToSection('section-surplusgap')" style="cursor: pointer;">
-            <h3>💳 Debt & Cash Flow</h3>
-            <div class="metric-row">
-                <span class="metric-label">Debt Freedom Date</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mDebtFree">Sep 2027</span>
-                    <span class="metric-status status-progressing">Progressing</span>
+            <div class="metrics-category hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 cursor-pointer"
+                id="section-progress-summary" onclick="scrollToSection('section-milestones')">
+                <h3 class="text-xs font-bold text-muted uppercase mb-3 flex items-center">📈 Progress</h3>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Expenses</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mTotalExpenses">$90k</span>
+                        <span class="metric-status status-informational ml-2">INFO</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Countdown</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mRetireCount">42 mo</span>
+                        <span class="metric-status status-informational ml-2">INFO</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Savings Rate</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mSavingsRate">0%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
                 </div>
             </div>
-            <div class="metric-row">
-                <span class="metric-label">Total Debt Ratio</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mDebtRatio">25.1%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">12mo Cash Flow</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mCashFlow12">-$5,112</span>
-                    <span class="metric-status status-vulnerable">Vulnerable</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="metrics-category hover-card" id="section-tax-summary" onclick="scrollToSection('section-taxes')"
-            style="cursor: pointer;">
-            <h3>⚖️ Taxes & Housing</h3>
-            <div class="metric-row">
-                <span class="metric-label">Effective Tax (Lifetime)</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mTaxLifetime">10.3%</span>
-                    <span class="metric-status status-informational">Info</span>
+            <div class="metrics-category hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 cursor-pointer"
+                id="section-debt-summary" onclick="scrollToSection('section-surplusgap')">
+                <h3 class="text-xs font-bold text-muted uppercase mb-3 flex items-center">💳 Debt &amp; Cash</h3>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Debt Free</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mDebtFree">Sep 2027</span>
+                        <span class="metric-status status-progressing ml-2">PROG</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Debt Ratio</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mDebtRatio">25.1%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">12mo Cash</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mCashFlow12">-$5k</span>
+                        <span class="metric-status status-vulnerable ml-2">VULN</span>
+                    </div>
                 </div>
             </div>
-            <div class="metric-row">
-                <span class="metric-label">Effective Tax (2026)</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mTaxNextYear">17.5%</span>
-                    <span class="metric-status status-informational">Info</span>
-                </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Housing Expense Ratio</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mHousingRatio">21.1%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- Row 3: Legacy & Risk -->
-        <div class="metrics-category hover-card" id="section-legacy-summary" onclick="scrollToSection('section-legacy')"
-            style="cursor: pointer;">
-            <h3>🎁 Legacy & Estate</h3>
-            <div class="metric-row">
-                <span class="metric-label">Financial Legacy Goal</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mLegacyScore">1754%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
+            <div class="metrics-category hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 cursor-pointer"
+                id="section-tax-summary" onclick="scrollToSection('section-taxes')">
+                <h3 class="text-xs font-bold text-muted uppercase mb-3 flex items-center">⚖️ Taxes &amp; Home</h3>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Life Tax</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mTaxLifetime">10.3%</span>
+                        <span class="metric-status status-informational ml-2">INFO</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Next Yr Tax</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mTaxNextYear">17.5%</span>
+                        <span class="metric-status status-informational ml-2">INFO</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Housing %</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mHousingRatio">21.1%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
                 </div>
             </div>
-            <div class="metric-row">
-                <span class="metric-label">Estate Documents</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mEstateDocs">0/7</span>
-                    <span class="metric-status status-vulnerable">Vulnerable</span>
-                </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Roth Estate Impact</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mRothLegacy">+$4.3M</span>
-                    <span class="metric-status status-excelling">Excelling</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="metrics-category hover-card" id="section-risk-summary"
-            onclick="scrollToSection('section-sequencerisk')" style="cursor: pointer;">
-            <h3>🛡️ Risk Protection</h3>
-            <div class="metric-row">
-                <span class="metric-label">LTC Risk</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mLTCRisk">70% Potential</span>
-                    <span class="metric-status status-progressing">Progressing</span>
+            <div class="metrics-category hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 cursor-pointer"
+                id="section-legacy-summary" onclick="scrollToSection('section-legacy')">
+                <h3 class="text-xs font-bold text-muted uppercase mb-3 flex items-center">🎁 Legacy</h3>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Legacy Goal</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mLegacyScore">1754%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Estate Docs</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mEstateDocs">0/7</span>
+                        <span class="metric-status status-vulnerable ml-2">VULN</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Roth Legacy</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mRothLegacy">+$4.3M</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
                 </div>
             </div>
-            <div class="metric-row">
-                <span class="metric-label">Withdrawal Rate</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mWithdrawalRate">1.4%</span>
-                    <span class="metric-status status-excelling">Excelling</span>
+
+            <div class="metrics-category hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 cursor-pointer"
+                id="section-risk-summary" onclick="scrollToSection('section-sequencerisk')">
+                <h3 class="text-xs font-bold text-muted uppercase mb-3 flex items-center">🛡️ Risk</h3>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">LTC Risk</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mLTCRisk">70%</span>
+                        <span class="metric-status status-progressing ml-2">PROG</span>
+                    </div>
                 </div>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Market Stress Test</span>
-                <div class="metric-value-group">
-                    <span class="metric-value" id="mStressTest">Passed</span>
-                    <span class="metric-status status-excelling">Excelling</span>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Withdrawal</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mWithdrawalRate">1.4%</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
+                </div>
+                <div class="metric-row border-b border-white/5 pb-2 mb-2 last:border-0 last:mb-0">
+                    <span class="metric-label text-[0.65rem]">Stress Test</span>
+                    <div class="metric-value-group">
+                        <span class="metric-value text-sm" id="mStressTest">Passed</span>
+                        <span class="metric-status status-excelling ml-2">EXC</span>
+                    </div>
                 </div>
             </div>
         </div>
