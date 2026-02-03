@@ -304,8 +304,8 @@ export class ExplorerHandler {
         // How to apply market shock? 
         // We can inject a one-time drop in current assets
         if (marketShock !== 0) {
-            testConfig.portfolio.investments *= (1 + marketShock);
-            testConfig.portfolio.retirement *= (1 + marketShock);
+            testConfig.settings.assets.investments *= (1 + marketShock);
+            testConfig.settings.assets.retirement *= (1 + marketShock);
         }
 
         const results = SimulationEngine.project(testConfig, 'average');

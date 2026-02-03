@@ -135,7 +135,7 @@ export class MetricsHandler {
 
         // 6. Portfolio Drag (NEW)
         const currentAge = config.settings.personal.age || 50;
-        const allocation = config.settings.assets.allocation || {};
+        const allocation = config.settings.glidePath || {};
         const conservativeAlloc = (allocation.bonds || 0) + (allocation.cash || 0);
         if (currentAge < 55 && conservativeAlloc > 40) {
             insights.push({

@@ -15,12 +15,10 @@ describe('MetricsHandler - New Insights (TASK-010)', () => {
         config.currentScenario = 'average';
         config.settings = {
             personal: { age: 50, retireAge: 65 },
-            assets: {
-                allocation: {
-                    stocks: 60,
-                    bonds: 30,
-                    cash: 10
-                }
+            glidePath: {
+                stocks: 60,
+                bonds: 30,
+                cash: 10
             },
             taxes: {
                 rothConversionEnabled: false
@@ -51,7 +49,7 @@ describe('MetricsHandler - New Insights (TASK-010)', () => {
 
     it('should generate Portfolio Drag insight for young investors with high conservative allocation', () => {
         config.settings.personal.age = 50;
-        config.settings.assets.allocation = {
+        config.settings.glidePath = {
             stocks: 40,
             bonds: 35,
             cash: 25
@@ -66,7 +64,7 @@ describe('MetricsHandler - New Insights (TASK-010)', () => {
 
     it('should NOT generate Portfolio Drag insight for older investors', () => {
         config.settings.personal.age = 60; // Over 55
-        config.settings.assets.allocation = {
+        config.settings.glidePath = {
             stocks: 40,
             bonds: 40,
             cash: 20
@@ -80,7 +78,7 @@ describe('MetricsHandler - New Insights (TASK-010)', () => {
 
     it('should NOT generate Portfolio Drag insight for appropriate allocation', () => {
         config.settings.personal.age = 50;
-        config.settings.assets.allocation = {
+        config.settings.glidePath = {
             stocks: 70,
             bonds: 20,
             cash: 10
@@ -107,7 +105,7 @@ describe('MetricsHandler - New Insights (TASK-010)', () => {
 
     it('should add hover effects to all insight cards', () => {
         config.settings.personal.age = 50;
-        config.settings.assets.allocation = {
+        config.settings.glidePath = {
             stocks: 40,
             bonds: 50,
             cash: 10
