@@ -8,6 +8,8 @@
 
 ---
 
+![RetireFire Dashboard Overview](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/chartNetWorth.png)
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -57,55 +59,78 @@ npm run deploy
 
 ---
 
-## 📋 What is RetireFire?
+## 📋 Professional-Grade Financial Engine
 
-RetireFire is a high-fidelity financial planning application designed to provide professional-grade retirement projections. It features:
+RetireFire is a high-fidelity financial planning application designed to rival professional platforms like RightCapital. It utilizes a zero-defect logic engine to provide institutional-grade retirement projections.
 
-- **Multi-Scenario Analysis** - Optimistic, Average, and Pessimistic projections
-- **45-Year Projections** - Comprehensive long-term planning
-- **Interactive Charts** - 25+ visualizations powered by Chart.js
-- **Tax Optimization** - Roth conversion strategies and tax-efficient withdrawals
-- **Monte Carlo Simulation** - Probability-based success analysis with Historical Stress Tests (1970s, Dot-com, 1929)
-- **Comprehensive Settings** - Full control over all financial variables
+### 💎 Core Visualization: The Command Center
+The dashboard is designed as a "Command Center," providing a 360-degree view of your financial life across 11 critical rows.
 
----
-
-## ✨ Key Features
-
-### Financial Projections
-- Net worth tracking across multiple scenarios
-- Income sources (work, Social Security, RMDs, withdrawals)
-- Expense categories (housing, healthcare, living, taxes)
-- Tax burden analysis and optimization
-- Mortgage payoff tracking
-- Home equity calculations
-
-### Analysis Tools
-- **Surplus/Gap Analysis** - Income vs. expenses
-- **Money Flow Visualization** - Cash flow breakdown
-- **Success Rate Gauge** - Monte Carlo probability
-- **What You Need Calculator** - Retirement readiness
-- **Withdrawal Strategy** - Tax-efficient drawdown
-- **Roth Conversion Optimizer** - Tax strategy planning
-
-### Interactive Features
-- Year-by-year explorer with slider
-- Scenario comparison (side-by-side)
-- Goal tracking and milestones
-- Data export (PDF, CSV, JSON)
-- Dark/Light theme toggle
-- Responsive mobile design
+| Row | Focus Area | Visual Component |
+|---|---|---|
+| **1** | **Key Metrics** | Net Worth, Peak Assets, FI Age, Success % |
+| **2** | **Wealth Milestones** | Interactive FI/Retirement Timeline |
+| **3** | **Wealth Trajectory** | Net Worth Comparison (Optimistic vs Stressed) |
+| **4** | **Risk Analysis** | Monte Carlo Success Probability & Distribution |
+| **5** | **Portfolio Health** | Asset Allocation & Real-time Rebalancing |
+| **6** | **Life Flow** | Advanced Cash Flow Explorer (Interactive) |
+| **7** | **Legacy** | Estate Impact & Inheritance Projections |
+| **8** | **Stress Tests** | Historical Scenarios (1929, 1970s, Dot-com) |
+| **9** | **Optimization** | Roth Conversion Strategy & Tax Delta |
+| **10** | **Optimization** | Social Security Full-Horizon Comparison |
+| **11** | **Verification** | Detailed Yearly Data Tables |
 
 ---
 
-## 🏗️ Technology Stack
+## 🔥 Professional Deep-Dives
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Charts**: Chart.js with plugins (annotation, zoom)
-- **Build**: Vite
-- **Testing**: Vitest + Puppeteer
-- **Styling**: Tailwind CSS
-- **Deployment**: Automated FTP
+### 🛡️ Roth Conversion Optimizer (Enterprise Logic)
+The Roth Conversion Optimizer is one of the most advanced features in RetireFire, allowing users to find the "Sweet Spot" for tax efficiency.
+
+- **Dynamic Source Tracking**: Automatically identifies funding sources (Investment vs Retirement accounts) and tracks "Internal Tax Drag" on converting amounts.
+- **Combined Constraints**: Plan conversions by snapping to specific **Tax Brackets** (e.g., "Top of 24%") or setting **Maximum Annual Amounts**.
+- **Side-by-Side Comparison**: Real-time visualization of `With Conversion` vs `Without Conversion` scenarios, showing the "Break-even Year" and total lifetime tax savings.
+- **Waterfall Analysis**: Visual breakdown of how taxes are paid and how the "Tax Leakage" impacts total net worth over 40+ years.
+
+> [!IMPORTANT]
+> The engine handles complex interactions between Social Security taxation, RMDs, and the conversion ladder to ensure $0 of wasted tax space.
+
+### 📈 Monte Carlo & Historical Stress Testing
+Beyond simple average returns, RetireFire subjects your plan to the harsh realities of market history.
+
+- **Success Probability**: 1,000+ iteration Monte Carlo simulation with variable asset class returns.
+- **Historical Scenarios**: Compare your plan against specific historical events:
+  - **1929 Great Depression**: Massive initial loss with long recovery.
+  - **1970s Stagflation**: High inflation and low real returns.
+  - **2000 Dot-com Crash**: Sequential risk during the "First 10 Years" of retirement.
+- **Sequence of Returns Risk**: Interactive visualization showing why *when* you lose money matters more than *how much* you lose in the aggregate.
+
+![Monte Carlo Probability Gauge](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/gaugeSuccess.png)
+![Monte Carlo Success Distribution](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/chartMonteCarlo.png)
+
+### 💸 Advanced Cash Flow Explorer
+A modern, interactive tool to visualize every dollar moving through your plan.
+
+- **Slide-to-Age Granularity**: Instantly see your income/expense breakdown for any year in the future.
+- **Gap Detection**: Highlights "The Red Years" where expenses exceed income, automatically calculating required withdrawals.
+- **Tax-Efficient Drawdown**: Automatically prioritizes withdrawals across Taxable, Tax-Deferred, and Tax-Free accounts to minimize marginal tax burden.
+
+![Money Flow Visualization](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/chartMoneyFlow.png)
+
+---
+
+## 🔒 Security & Architecture
+
+### Secure-by-Design
+- **Local-First Security**: All financial data is stored locally in your browser using **AES-256 Encryption** via `SecureStorage.js`. Encryption keys are derived from browser fingerprints.
+- **Privacy**: Zero data ever leaves your machine. Calculations happen locally in a sandbox-safe environment.
+- **Integrity**: Strict **Content Security Policy (CSP)** and input sanitization prevent XSS and injection attacks.
+
+### Technology Stack
+- **Engine**: Modular Vanilla JS (SimulationEngine, TaxCalculators)
+- **UI**: Pure CSS3 Grid/Flexbox with no bloated frameworks
+- **Visuals**: High-performance Chart.js 4.x
+- **Reliability**: 600+ test suite (95.5% Coverage)
 
 ---
 
@@ -154,14 +179,11 @@ See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed session logs.
 ```
 
 ### Test Coverage
-- Tax calculations (federal, state, FICA, capital gains)
-- Simulation engine (projections, scenarios, Monte Carlo)
-- Account management (6 account types)
-- Withdrawal strategies
-- Number formatting
-- Dashboard metrics
-- Chart rendering
-- Interactive controls
+- **Core Engine**: Projections, Scenarios, Monte Carlo
+- **Tax Systems**: Federal, State, IRMAA, Capital Gains
+- **Optimization**: Roth Conversion, SS Strategy, Tax-Efficient Withdrawal
+- **Security**: AES-256 Crypto, CSP validation, Input Sanitization
+- **Visuals**: Chart rendering, Theme persistence, Responsive Viewports
 
 See [docs/testing/TEST_GUIDE.md](docs/testing/TEST_GUIDE.md) for details.
 
