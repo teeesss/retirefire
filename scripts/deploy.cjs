@@ -1,3 +1,4 @@
+/* eslint-env node */
 const ftp = require('basic-ftp');
 const fs = require('fs');
 const path = require('path');
@@ -58,7 +59,7 @@ async function deploy() {
         // Kill any running dev servers first
         await killDevServers();
 
-        const creds = JSON.parse(fs.readFileSync(path.join(__dirname, '../deploy_creds.json'), 'utf8'));
+        const creds = JSON.parse(fs.readFileSync(path.join(__dirname, '../.credentials/deploy_creds.json'), 'utf8'));
 
         console.log(`Connecting to ${creds.host}...`);
         await client.access({
