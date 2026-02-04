@@ -428,6 +428,16 @@ window.exportSettings = () => SettingsHandler.exportSettings();
 window.toggleTheme = () => App.toggleTheme();
 window.updateTotalExpenses = () => SettingsHandler.updateTotalExpenses();
 
+window.toggleSidebar = () => {
+    const sidebar = document.querySelector('.main-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+};
+
 
 // Chart Type Switching
 window.setChartType = (section, type, button) => {

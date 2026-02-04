@@ -81,7 +81,25 @@
     }
 
     /* Ensure cards have margin on mobile */
+    /* Ensure cards have margin on mobile */
     .card {
         margin-bottom: 0.75rem;
+    }
+
+    /* Mobile Height Optimizations */
+    .chart-container.small {
+        height: 160px !important;
+    }
+
+    .chart-container.medium {
+        height: 220px !important;
+    }
+
+    .chart-container.large {
+        height: 260px !important;
+    }
+
+    .chart-container.xlarge {
+        height: 300px !important;
     }
 }
