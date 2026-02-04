@@ -1,9 +1,10 @@
 import { config } from '../data/Config.js';
-import { formatCurrency } from '../utils/Formatters.js';
 import { recalculate } from '../main.js';
+import { SecureStorage } from '../utils/SecureStorage.js';
+import { Logger } from '../utils/Logger.js';
 
 export class SettingsHandler {
-    static populateUI() {
+    static populateUI(sectionId = 'personal') {
         const s = config.settings;
 
         // Personal
@@ -102,6 +103,38 @@ export class SettingsHandler {
 
         // Open overlay
         document.getElementById('settingsOverlay')?.classList.add('active');
+
+        // Show specific section
+        this.showSettingsSection(sectionId);
+    }
+
+    static showSettingsSection(sectionId, navItem) {
+        // Hide all sections
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        // Show target section
+        const target = document.getElementById('settings-' + sectionId);
+        if (target) {
+            target.classList.add('active');
+            // Scroll content to top
+            const content = document.querySelector('.settings-content');
+            if (content) content.scrollTop = 0;
+        }
+
+        // Update nav items
+        document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+
+        if (navItem) {
+            navItem.classList.add('active');
+        } else {
+            // Find nav item by text or data (more robust than index)
+            const navItems = document.querySelectorAll('.settings-nav-item');
+            navItems.forEach(n => {
+                const text = n.textContent.toLowerCase();
+                if (text.includes(sectionId.toLowerCase())) {
+                    n.classList.add('active');
+                }
+            });
+        }
     }
 
     static validate() {
@@ -244,7 +277,12 @@ export class SettingsHandler {
     }
 
     static save() {
-        localStorage.setItem('retirementPlannerConfig', JSON.stringify(config));
+        try {
+            SecureStorage.save(config);
+        } catch (e) {
+            Logger.error('SettingsHandler save failed:', e);
+            this.notify('Failed to save settings safely', 'error');
+        }
     }
 
     static showSuccess() {
@@ -282,7 +320,11 @@ export class SettingsHandler {
 
     static getVal(id) {
         const el = document.getElementById(id);
-        return el ? el.value : null;
+        if (!el) {
+            Logger.warn(`Element with ID "${id}" not found in DOM`);
+            return '0';
+        }
+        return el.value || '0';
     }
 
     static close() {
@@ -311,6 +353,7 @@ export class SettingsHandler {
                     this.notify('Settings imported successfully!');
                     location.reload();
                 } catch (err) {
+                    Logger.error('Import failed:', err);
                     this.notify('Error importing settings', 'error');
                 }
             };

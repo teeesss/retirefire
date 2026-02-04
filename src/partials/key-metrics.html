@@ -1,7 +1,7 @@
 <!-- Row 1: Key Metrics (Strict 7-Across on Large Screens) -->
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 w-full" id="key-metrics-row">
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
-        onclick="scrollToSection('section-networth')" style="min-height: 100px;">
+        onclick="navigateToSettings('section-networth')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Net Worth <span
                 id="metricScenarioLabel" class="scenario-badge">Avg</span></div>
         <div class="text-lg font-bold truncate w-full" id="metricCurrentNW">$4.24M</div>
@@ -10,7 +10,7 @@
     </div>
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
-        onclick="scrollToSection('section-networth')" style="min-height: 100px;">
+        onclick="navigateToSettings('section-networth')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Peak Net Worth</div>
         <div class="text-lg font-bold truncate w-full" id="metricPeakNW">$233.8M</div>
         <div class="text-[0.65rem] text-success font-bold mt-1" id="metricPeakGrowth">+5,422%</div>
@@ -18,7 +18,7 @@
     </div>
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
-        onclick="scrollToSection('section-montecarlo')" style="min-height: 100px;">
+        onclick="navigateToSettings('section-montecarlo')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Success Rate</div>
         <div class="text-lg font-bold truncate w-full" id="metricSuccess">99%</div>
         <div class="w-full h-[40px] mt-1 flex justify-center">
@@ -34,21 +34,21 @@
     </div>
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
-        onclick="scrollToSection('section-income')" style="min-height: 100px;">
+        onclick="navigateToSettings('section-income')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Retire Age</div>
         <div class="text-lg font-bold truncate w-full" id="metricRetireAge">53</div>
         <div class="text-[0.65rem] text-success font-bold mt-1">🎯 OK</div>
     </div>
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
-        onclick="scrollToSection('section-socialsecurity')" style="min-height: 100px;">
+        onclick="navigateToSettings('section-socialsecurity')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">SS Benefit</div>
         <div class="text-lg font-bold truncate w-full" id="metricSS">$2,739</div>
         <div class="text-[0.65rem] text-muted opacity-80 mt-1" id="metricSSAge">Age 67</div>
     </div>
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
-        onclick="scrollToSection('section-taxes')" style="min-height: 100px;">
+        onclick="navigateToSettings('section-taxes')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Projected Taxes</div>
         <div class="text-lg font-bold truncate w-full" id="metricTaxes">$7.0M</div>
         <div class="text-[0.65rem] text-primary font-bold mt-1">💰 Opt</div>

@@ -83,6 +83,32 @@ export class NavigationHandler {
         }
     }
 
+    static navigateToSettings(id) {
+        // Scroll to the dashboard section
+        this.scrollToSection(id);
+
+        // Map dashboard sections to settings sections
+        const mapping = {
+            'section-networth': 'assets',
+            'section-income': 'income',
+            'section-expenses': 'expenses',
+            'section-socialsecurity': 'socialsecurity',
+            'section-taxes': 'taxes',
+            'section-montecarlo': 'scenarios',
+            'section-milestones': 'goals',
+            'section-goals': 'goals'
+        };
+
+        if (mapping[id]) {
+            // Delay slightly to allow scroll to start, then open settings
+            setTimeout(() => {
+                if (window.openSettings) {
+                    window.openSettings(mapping[id]);
+                }
+            }, 300);
+        }
+    }
+
     static toggleSidebar() {
         const sidebar = document.getElementById('mainSidebar');
         if (sidebar) {

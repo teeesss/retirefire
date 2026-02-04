@@ -25,7 +25,6 @@ import { RothUI } from './roth/RothUI.js';
 import RothConfig from './roth/RothConfig.js';
 import { RothDeepDive } from './roth/RothDeepDive.js';
 import { initializeDescriptionsAndTooltips } from './utils/comprehensiveDescriptions.js';
-import { initializeExplorerSections } from './utils/explorerSections.js';
 import { GapCalculator } from './ui/GapCalculator.js';
 import { CashFlowExplorer } from './explorers/CashFlowExplorer.js';
 import { GoalsHandler } from './ui/GoalsHandler.js';
@@ -419,7 +418,8 @@ window.updateMcScenarioDesc = (scenario) => {
 };
 
 
-window.openSettings = (section) => SettingsHandler.populateUI();
+window.openSettings = (section) => SettingsHandler.populateUI(section);
+window.showSettingsSection = (section, el) => SettingsHandler.showSettingsSection(section, el);
 window.applySettings = () => SettingsHandler.apply();
 window.closeSettings = () => SettingsHandler.close();
 window.resetToDefaults = () => SettingsHandler.reset();
@@ -459,6 +459,7 @@ window.exportJSON = () => ExportHandler.exportJSON();
 window.openYearModal = (idx) => ModalHandler.openYearModal(idx);
 window.closeYearModal = () => ModalHandler.closeYearModal();
 window.scrollToSection = (id) => NavigationHandler.scrollToSection(id);
+window.navigateToSettings = (id) => NavigationHandler.navigateToSettings(id);
 
 window.showDataTable = (type, el) => DashboardDetails.showDataTable(type, el);
 
