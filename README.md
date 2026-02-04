@@ -8,7 +8,7 @@
 
 ---
 
-![RetireFire Dashboard Overview](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/chartNetWorth.png)
+![RetireFire Dashboard Overview](tests/screenshots/chartNetWorth.png)
 
 ## 🚀 Quick Start
 
@@ -105,8 +105,8 @@ Beyond simple average returns, RetireFire subjects your plan to the harsh realit
   - **2000 Dot-com Crash**: Sequential risk during the "First 10 Years" of retirement.
 - **Sequence of Returns Risk**: Interactive visualization showing why *when* you lose money matters more than *how much* you lose in the aggregate.
 
-![Monte Carlo Probability Gauge](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/gaugeSuccess.png)
-![Monte Carlo Success Distribution](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/chartMonteCarlo.png)
+![Monte Carlo Probability Gauge](tests/screenshots/gaugeSuccess.png)
+![Monte Carlo Success Distribution](tests/screenshots/chartMonteCarlo.png)
 
 ### 💸 Advanced Cash Flow Explorer
 A modern, interactive tool to visualize every dollar moving through your plan.
@@ -115,7 +115,7 @@ A modern, interactive tool to visualize every dollar moving through your plan.
 - **Gap Detection**: Highlights "The Red Years" where expenses exceed income, automatically calculating required withdrawals.
 - **Tax-Efficient Drawdown**: Automatically prioritizes withdrawals across Taxable, Tax-Deferred, and Tax-Free accounts to minimize marginal tax burden.
 
-![Money Flow Visualization](file:///x:/RetirementCalc-BasedOfBoldin/tests/screenshots/chartMoneyFlow.png)
+![Money Flow Visualization](tests/screenshots/chartMoneyFlow.png)
 
 ---
 
