@@ -25,7 +25,7 @@
             <load src="src/partials/sidebar.html" />
 
             <!-- Main Content Area (Command Center Logic) -->
-            <div class="main-content" id="dashboard-top">
+            <div class="main-content scroll-mt-32" id="dashboard-top">
                 <!-- Master Layout Wrapper: Ultrawide Centered -->
                 <div class="max-w-[2560px] mx-auto w-full px-4 flex flex-col gap-6">
 
@@ -35,73 +35,77 @@
                     <!-- ROW 2: Comprehensive Metrics (Strict 6-Column Grid) -->
                     <load src="src/partials/comprehensive-metrics.html" />
 
-                    <!-- ROW 3: Milestones (Full Width) -->
-                    <div class="w-full">
+                    <!-- ROW 3: Milestones / Goals (Full Width) -->
+                    <div class="w-full scroll-mt-32" id="section-milestones">
+                        <div id="section-goals" class="scroll-mt-32"></div>
                         <load src="src/partials/charts/milestones.html" />
                     </div>
 
                     <!-- ROW 4: Plan Optimizer & Coach (Full Width) -->
-                    <div class="w-full">
+                    <div class="w-full scroll-mt-32" id="section-coach">
                         <load src="src/partials/plan-optimizer.html" />
                     </div>
 
                     <!-- ROW 5: Tools & Calculators (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-tools">
                         <load src="src/partials/charts/year-explorer.html" />
                         <load src="src/partials/charts/data-tables.html" />
                         <load src="src/partials/charts/gap-calculator.html" />
                     </div>
 
                     <!-- ROW 6: Portfolio Charts (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-networth">
+                        <div id="section-legacy" class="scroll-mt-32"></div>
                         <load src="src/partials/charts/networth-charts.html" />
                         <load src="src/partials/charts/allocation.html" />
                         <load src="src/partials/charts/legacy.html" />
                     </div>
 
                     <!-- ROW 7: Cash Flow Charts (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-income">
                         <load src="src/partials/charts/income-sources.html" />
                         <load src="src/partials/charts/surplus-gap.html" />
                         <load src="src/partials/charts/money-flow.html" />
                     </div>
 
                     <!-- ROW 8: Expense Charts (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-expenses">
                         <load src="src/partials/charts/expense-charts.html" />
                         <load src="src/partials/charts/expense-pie.html" />
                         <load src="src/partials/charts/healthcare.html" />
                     </div>
 
                     <!-- ROW 9: Tax & SS Charts (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-taxes">
+                        <div id="section-socialsecurity" class="scroll-mt-32"></div>
                         <load src="src/partials/charts/taxes.html" />
                         <load src="src/partials/charts/social-security-strategy.html" />
                         <load src="src/partials/charts/social-security-comparison.html" />
                     </div>
 
                     <!-- ROW 10: Optimization Charts (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-roth">
                         <load src="src/partials/charts/roth.html" />
                         <load src="src/partials/charts/plan-improvement.html" />
                         <load src="src/partials/charts/tax-delta.html" />
                     </div>
 
                     <!-- ROW 11: Stress Test Charts (3-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 scroll-mt-32" id="section-stresstest">
+                        <div id="section-explorers" class="scroll-mt-32"></div>
                         <load src="src/partials/charts/explorers.html" />
                         <load src="src/partials/charts/stress-test.html" />
                         <load src="src/partials/charts/sequence-risk.html" />
                     </div>
 
                     <!-- ROW 12: Withdrawal Strategy (2-Column Grid) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-32" id="section-withdrawals">
                         <load src="src/partials/charts/withdrawal-strategy.html" />
                         <load src="src/partials/charts/safe-withdrawal.html" />
                     </div>
 
                     <!-- ROW 13: Monte Carlo (Full Width) -->
-                    <div class="w-full">
+                    <div class="w-full scroll-mt-32" id="section-montecarlo">
                         <load src="src/partials/charts/montecarlo-analysis.html" />
                     </div>
 

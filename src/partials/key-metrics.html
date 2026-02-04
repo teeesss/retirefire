@@ -1,5 +1,5 @@
 <!-- Row 1: Key Metrics (Strict 7-Across) -->
-<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 w-full" id="key-metrics-row">
+<div class="grid grid-cols-7 gap-4 w-full" id="key-metrics-row">
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
         onclick="scrollToSection('section-networth')" style="min-height: 100px;">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Net Worth <span
@@ -11,7 +11,7 @@
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
         onclick="scrollToSection('section-networth')" style="min-height: 100px;">
-        <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Net Worth</div>
+        <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Peak Net Worth</div>
         <div class="text-lg font-bold truncate w-full" id="metricPeakNW">$233.8M</div>
         <div class="text-[0.65rem] text-success font-bold mt-1" id="metricPeakGrowth">+5,422%</div>
         <div class="w-full h-[30px] mt-1"><canvas id="sparkGrowth"></canvas></div>
@@ -19,17 +19,18 @@
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
         onclick="scrollToSection('section-montecarlo')" style="min-height: 100px;">
-        <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Success</div>
+        <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Success Rate</div>
         <div class="text-lg font-bold truncate w-full" id="metricSuccess">99%</div>
         <div class="w-full h-[40px] mt-1 flex justify-center">
             <canvas id="gaugeSuccess"></canvas>
         </div>
     </div>
 
-    <div class="card p-3 text-center flex flex-col items-center justify-center min-w-0" style="min-height: 100px;">
+    <div class="card p-3 text-center flex flex-col items-center justify-center min-w-0" style="min-height: 100px;"
+        title="Health - Debt - Risk (Composite Score)">
         <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Wellness</div>
         <div class="text-lg font-bold truncate w-full" id="metricWellness">85</div>
-        <div class="text-xl mt-1" id="wellnessEmoji">⭐</div>
+        <div class="text-[10px] text-gray-400 mt-1">Health • Debt • Risk</div>
     </div>
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
@@ -48,7 +49,7 @@
 
     <div class="card clickable p-3 text-center flex flex-col items-center justify-center min-w-0"
         onclick="scrollToSection('section-taxes')" style="min-height: 100px;">
-        <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Net Worth</div>
+        <div class="text-[0.65rem] font-semibold text-muted uppercase tracking-wider mb-1">Projected Taxes</div>
         <div class="text-lg font-bold truncate w-full" id="metricTaxes">$7.0M</div>
         <div class="text-[0.65rem] text-primary font-bold mt-1">💰 Opt</div>
     </div>
