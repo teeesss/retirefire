@@ -8,7 +8,7 @@
 
 ---
 
-![RetireFire Dashboard Overview](tests/screenshots/chartNetWorth.png)
+![RetireFire Dashboard Overview](tests/screenshots/dashboard-overview.png)
 
 ## 🚀 Quick Start
 
@@ -105,8 +105,8 @@ Beyond simple average returns, RetireFire subjects your plan to the harsh realit
   - **2000 Dot-com Crash**: Sequential risk during the "First 10 Years" of retirement.
 - **Sequence of Returns Risk**: Interactive visualization showing why *when* you lose money matters more than *how much* you lose in the aggregate.
 
-![Monte Carlo Probability Gauge](tests/screenshots/gaugeSuccess.png)
-![Monte Carlo Success Distribution](tests/screenshots/chartMonteCarlo.png)
+![Monte Carlo Probability Gauge](tests/screenshots/success-probability.png)
+![Monte Carlo Success Distribution](tests/screenshots/monte-carlo-analysis.png)
 
 ### 💸 Advanced Cash Flow Explorer
 A modern, interactive tool to visualize every dollar moving through your plan.
@@ -115,7 +115,7 @@ A modern, interactive tool to visualize every dollar moving through your plan.
 - **Gap Detection**: Highlights "The Red Years" where expenses exceed income, automatically calculating required withdrawals.
 - **Tax-Efficient Drawdown**: Automatically prioritizes withdrawals across Taxable, Tax-Deferred, and Tax-Free accounts to minimize marginal tax burden.
 
-![Money Flow Visualization](tests/screenshots/chartMoneyFlow.png)
+![Money Flow Visualization](tests/screenshots/money-flow.png)
 
 ---
 
@@ -136,13 +136,11 @@ A modern, interactive tool to visualize every dollar moving through your plan.
 
 ## 📊 Project Status
 
-**Current Status**: ✅ PRODUCTION READY - DEPLOYED
+**Current Status**: ✅ 600+ Tests Passing | Institutional Grade Projections
 
 - **Test Pass Rate**: ✅ 599/599 Tests (100% Pass Rate)
 - **Test Command**: `npm run test:all`
 - **Build Status**: Stable (Zero console errors)
-- **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
-- **Deploy Command**: `npm run deploy` (Automated build/sync)
 - **Quality Grade**: A (Zero-Defect Verified)
 
 See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed session logs.

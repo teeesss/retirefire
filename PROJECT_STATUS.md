@@ -8,7 +8,7 @@
 > **Tests**: ✅ 599/599 Passing (100%) | Comprehensive suite passing with jsdom
 > **Linting**: ⚠️ 63 problems (0 errors, 63 warnings) - Non-blocking
 > **Repo**: ✅ Husky Pre-commit Hooks Enabled
-> **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
+> **Deployment**: ✅ Configured for Automated FTP Sync
 > **Security**: 🔒 AES-256 Encrypted Storage, CSP Enabled, Error Boundary Active, Input Validation
 > **Recent Fixes**: 🎨 Metrics Row Fluid Layout, 📱 Responsive Retrofit, 🔒 Secure Storage Fixes
 > **Security Grade**: A (improved from C)
@@ -28,12 +28,11 @@
     - [x] Automated QA Pass (599 tests @ 100%)
     - [x] Documentation Sync (Synced TASKS, PROJECT_STATUS, ISSUES, README)
     - [x] Final Build & Production Deployment
-- [x] **TASK-034: Institutional README Expansion** ✅ COMPLETE
-    - [x] Added detailed Roth Conversion Deep-Dive documentation.
-    - [x] Added Monte Carlo Historical Stress Test sections.
-    - [x] Integrated visual screenshots (Money Flow, Success Gauge, Net Worth).
-    - [x] Documented Security Architecture (AES-256, CSP).
-    - [x] Final Repository Sync & Git Push.
+- [x] **TASK-034: Institutional Architecture & Visual Polish** ✅ COMPLETE
+    - [x] Refined README with professional deep-dives for Roth & Monte Carlo.
+    - [x] Captured high-fidelity, data-rich screenshots (Puppeteer).
+    - [x] Removed internal deployment URLs for repository portability.
+    - [x] Finalized Documentation Sync and Git push.
 
 ### Previous Sessions (2026-02-03):
 - [x] **TASK-022: Dashboard Grid Refactor (Strict 3-Across)** ✅ COMPLETE
