@@ -27,7 +27,10 @@ export function getTotalIncome(scenario, yearIndex, includeDrawdown = true) {
     if (!income) return 0;
     let total = 0;
     for (let key in income) {
-        if (!includeDrawdown && (key === 'Drawdown' || key.endsWith('Drawdown'))) continue;
+        // Exclude aggregate 'Drawdown' key to avoid double counting with granular '*Drawdown' keys
+        if (key === 'Drawdown') continue;
+
+        if (!includeDrawdown && key.endsWith('Drawdown')) continue;
         if (income[key]?.[yearIndex]) total += income[key][yearIndex];
     }
     return total;

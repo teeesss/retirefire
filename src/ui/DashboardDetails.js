@@ -129,7 +129,8 @@ export class DashboardDetails {
             }
         } else if (type === 'income') {
             const income = rawData[scenario].income;
-            const keys = Object.keys(income).filter(k => income[k].some(v => v > 0));
+            // Filter out keys with no data AND the aggregate 'Drawdown' key to avoid redundancy
+            const keys = Object.keys(income).filter(k => k !== 'Drawdown' && income[k].some(v => v > 0));
             keys.forEach(k => html += `<th>${incomeNames[k] || k}</th>`);
             html += '</tr></thead><tbody>';
             for (let i = 0; i < rawData.years.length; i++) {
@@ -171,14 +172,25 @@ export class DashboardDetails {
                 html += `<td class="negative"><strong>${formatCurrency(total + tax)}</strong></td></tr>`;
             }
         } else if (type === 'roth') {
-            const roth = rawData[scenario].roth;
-            html += '<th>Converted</th><th>Tax Cost</th><th>Basis</th><th>Balance</th></tr></thead><tbody>';
-            const bal = rawData[scenario].accounts.Roth;
-            for (let i = 0; i < rawData.years.length; i++) {
-                html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
-                         <td class="positive">${formatCurrency(roth.Converted[i])}</td>
-                         <td class="negative">${formatCurrency(roth.TaxPaid[i])}</td>
-                         <td>${formatCurrency(bal[i])}</td></tr>`;
+            const roth = rawData[scenario].rothConversions; // Fixed property access
+            // Check if roth data exists to prevent errors
+            if (!roth) {
+                html += '<th>Status</th></tr></thead><tbody><tr><td colspan="5">No Roth conversion data available for this scenario.</td></tr>';
+            } else {
+                html += '<th>Converted</th><th>Tax Cost</th><th>Basis</th><th>Balance</th></tr></thead><tbody>';
+                const bal = rawData[scenario].accounts.Roth;
+                for (let i = 0; i < rawData.years.length; i++) {
+                    // Use correct property names from SimulationEngine (arrays)
+                    const converted = roth.amounts && roth.amounts[i] !== undefined ? roth.amounts[i] : 0;
+                    const tax = roth.taxPaid && roth.taxPaid[i] !== undefined ? roth.taxPaid[i] : 0;
+                    const basis = roth.cumulativeConverted && roth.cumulativeConverted[i] !== undefined ? roth.cumulativeConverted[i] : 0;
+
+                    html += `<tr><td>${rawData.years[i]} (${rawData.ages[i]})</td>
+                             <td class="positive">${formatCurrency(converted)}</td>
+                             <td class="negative">${formatCurrency(tax)}</td>
+                             <td>${formatCurrency(basis)}</td>
+                             <td>${formatCurrency(bal[i])}</td></tr>`;
+                }
             }
         } else if (type === 'cashflow') {
             html += '<th>Gross Income</th><th>Expenses</th><th>Tax</th><th>Net Flow</th></tr></thead><tbody>';
