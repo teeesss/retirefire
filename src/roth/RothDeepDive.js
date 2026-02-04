@@ -3,6 +3,7 @@
  * Handles the advanced modal view for Roth conversion planning.
  */
 
+import { Logger } from '../utils/Logger.js';
 import Chart from 'chart.js/auto';
 import { formatCurrency } from '../utils/formatters.js';
 import { rawData } from '../data/Store.js';
@@ -46,14 +47,14 @@ export class RothDeepDive {
             // For this step, I will assume we will add it to the build. 
             // But for safety, let's check.
         } catch (e) {
-            console.error('Failed to inject Roth Deep Dive modal', e);
+            Logger.error('Failed to inject Roth Deep Dive modal', e);
         }
     }
 
     static open() {
         const modal = document.getElementById('rothDeepDiveModal');
         if (!modal) {
-            console.error('Roth Deep Dive modal not found in DOM');
+            Logger.error('Roth Deep Dive modal not found in DOM');
             return;
         }
 
@@ -180,7 +181,7 @@ export class RothDeepDive {
     static renderAnalysis() {
         // Validation
         if (!rawData.years || !rawData.average?.income?.Work) {
-            console.error('RothDeepDive: Missing rawData for analysis');
+            Logger.error('RothDeepDive: Missing rawData for analysis');
             return;
         }
 

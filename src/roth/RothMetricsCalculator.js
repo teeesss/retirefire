@@ -3,6 +3,7 @@
  * Calculates comprehensive metrics from simulation results
  */
 
+import { Logger } from '../utils/Logger.js';
 import RothConfig from './RothConfig.js';
 
 export class RothMetricsCalculator {
@@ -15,7 +16,7 @@ export class RothMetricsCalculator {
      */
     static calculateMetrics(rothData, baselineData, config) {
         if (!rothData || !baselineData) {
-            console.warn('RothMetricsCalculator: Missing data');
+            Logger.warn('RothMetricsCalculator: Missing data');
             return this.getEmptyMetrics();
         }
 
@@ -122,7 +123,7 @@ export class RothMetricsCalculator {
      */
     static calculateBreakEven(rothData, baselineData, config) {
         if (!rothData || !baselineData || !config) {
-            console.warn('RothMetricsCalculator: Missing data for break-even calculation');
+            Logger.warn('RothMetricsCalculator: Missing data for break-even calculation');
             return {
                 breakEvenYear: null,
                 breakEvenAge: null,
@@ -200,7 +201,7 @@ export class RothMetricsCalculator {
         // Check for NaN values
         const values = Object.values(metrics);
         if (values.some(v => typeof v === 'number' && isNaN(v))) {
-            console.warn('RothMetricsCalculator: NaN detected in metrics');
+            Logger.warn('RothMetricsCalculator: NaN detected in metrics');
             return false;
         }
 

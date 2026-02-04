@@ -8,6 +8,7 @@
  * - Providing detailed tax impact analysis
  */
 
+import { Logger } from '../utils/Logger.js';
 import RothConfig from './RothConfig.js';
 
 export class RothOptimizer {
@@ -456,7 +457,7 @@ export class RothOptimizer {
             amounts.push(amt);
         }
 
-        console.log(`🔬 Comparing ${amounts.length} strategies from ${this.formatCurrency(minAmount)} to ${this.formatCurrency(maxAmount)}`);
+        Logger.info(`\ud83d\udd2c Comparing ${amounts.length} strategies from ${this.formatCurrency(minAmount)} to ${this.formatCurrency(maxAmount)}`);
 
         // Run optimization for each amount
         const strategies = amounts.map(amount => {
