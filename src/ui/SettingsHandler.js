@@ -327,6 +327,26 @@ export class SettingsHandler {
         return el.value || '0';
     }
 
+    static updateTotalExpenses() {
+        const general = parseFloat(this.getVal('inputExpensesGeneral')) || 0;
+        const utilities = parseFloat(this.getVal('inputExpensesUtilities')) || 0;
+        const travel = parseFloat(this.getVal('inputExpensesTravel')) || 0;
+        const misc = parseFloat(this.getVal('inputExpensesMisc')) || 0;
+        const gifts = parseFloat(this.getVal('inputGifts')) || 0;
+        const vehicle = parseFloat(this.getVal('inputVehicle')) || 0;
+
+        const total = general + utilities + travel + misc + gifts + vehicle;
+        const formatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0
+        }).format(total);
+
+        document.querySelectorAll('.total-expenses-display').forEach(el => {
+            el.textContent = formatted;
+        });
+    }
+
     static close() {
         document.getElementById('settingsOverlay')?.classList.remove('active');
     }

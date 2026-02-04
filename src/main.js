@@ -417,7 +417,7 @@ window.updateMcScenarioDesc = (scenario) => {
     descEl.textContent = descriptions[scenario] || descriptions['monte-carlo'];
 };
 
-
+// Global bridge functions
 window.openSettings = (section) => SettingsHandler.populateUI(section);
 window.showSettingsSection = (section, el) => SettingsHandler.showSettingsSection(section, el);
 window.applySettings = () => SettingsHandler.apply();
@@ -426,6 +426,8 @@ window.resetToDefaults = () => SettingsHandler.reset();
 window.importSettings = () => SettingsHandler.importSettings();
 window.exportSettings = () => SettingsHandler.exportSettings();
 window.toggleTheme = () => App.toggleTheme();
+window.updateTotalExpenses = () => SettingsHandler.updateTotalExpenses();
+
 
 // Chart Type Switching
 window.setChartType = (section, type, button) => {

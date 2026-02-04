@@ -362,13 +362,14 @@
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">
                             Total
                             Annual Expenses</div>
-                        <div id="totalExpensesDisplay"
+                        <div class="total-expenses-display"
                             style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">$0</div>
                     </div>
                     <div class="settings-grid settings-grid-3">
                         <div class="input-group">
                             <label>General Living Expenses</label>
-                            <input type="number" id="inputExpensesGeneral" value="60000">
+                            <input type="number" id="inputExpensesGeneral" value="60000"
+                                oninput="SettingsHandler.updateTotalExpenses()">
                             <span class="input-hint">Groceries, Dining, Hobbies</span>
                         </div>
                         <div class="input-group">
@@ -378,30 +379,35 @@
                         </div>
                         <div class="input-group">
                             <label>Utilities & Services</label>
-                            <input type="number" id="inputExpensesUtilities" value="6000">
+                            <input type="number" id="inputExpensesUtilities" value="6000"
+                                oninput="SettingsHandler.updateTotalExpenses()">
                         </div>
                         <div class="input-group">
                             <label>Annual Travel Budget</label>
-                            <input type="number" id="inputExpensesTravel" value="12000">
+                            <input type="number" id="inputExpensesTravel" value="12000"
+                                oninput="SettingsHandler.updateTotalExpenses()">
                         </div>
                         <div class="input-group">
                             <label>Discretionary / Misc</label>
-                            <input type="number" id="inputExpensesMisc" value="3000">
+                            <input type="number" id="inputExpensesMisc" value="3000"
+                                oninput="SettingsHandler.updateTotalExpenses()">
                         </div>
                         <div class="input-group">
                             <label>Annual Gifts/Charity</label>
-                            <input type="number" id="inputGifts" value="5000">
+                            <input type="number" id="inputGifts" value="5000"
+                                oninput="SettingsHandler.updateTotalExpenses()">
                         </div>
                         <div class="input-group">
                             <label>Vehicle Expenses</label>
-                            <input type="number" id="inputVehicle" value="4000">
+                            <input type="number" id="inputVehicle" value="4000"
+                                oninput="SettingsHandler.updateTotalExpenses()">
                         </div>
                     </div>
                     <div
                         style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 600; color: var(--text-secondary);">Total Annual
                             Expenses:</span>
-                        <span id="totalExpensesDisplay"
+                        <span class="total-expenses-display"
                             style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">$0</span>
                     </div>
                 </div>

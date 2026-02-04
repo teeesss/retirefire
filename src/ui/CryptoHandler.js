@@ -3,7 +3,7 @@ import { formatCurrency } from '../utils/Formatters.js';
 
 export class CryptoHandler {
     static async syncPrices() {
-        console.log('🔄 Syncing Crypto Prices...');
+        // console.log('🔄 Syncing Crypto Prices...');
         const prices = { BTC: 93000, ETH: 3200, SOL: 130 };
 
         try {
