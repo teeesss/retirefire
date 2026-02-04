@@ -29,6 +29,7 @@ dist-ssr
 .credentials.yaml
 .gemini/
 .prompt
+.layout_diagram
 legacy_backup/
 
 # Data files

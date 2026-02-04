@@ -9,3 +9,10 @@
 - **List**: Use `Get-ChildItem` (or `dir`).
 - **Read**: Use `Get-Content` (or `type`).
 - **Binary/Hex**: Use `Format-Hex "path"` directly. Do NOT use `Get-Content -Encoding Byte`.
+
+# Testing & Verification Rules
+- **MCP Tool Usage**: For testing and visual validation, strictly use the following `chrome-devtools` MCP tools:
+  - `navigate_page`: To access local or staged application URLs.
+  - `take_snapshot` / `take_screenshot`: To capture visual state for verification.
+  - `evaluate_script`: To inspect DOM state, CSS properties, and computed styles programmatically.
+- **Rule of Thumb**: Prioritize using these MCP tools over manual browser checking or simple curl requests when verifying UI/layout logic.

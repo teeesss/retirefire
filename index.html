@@ -24,84 +24,103 @@
             <!-- Sidebar Navigation -->
             <load src="src/partials/sidebar.html" />
 
-            <!-- Main Content Area -->
+            <!-- Main Content Area (Command Center Logic) -->
             <div class="main-content" id="dashboard-top">
-                <!-- Master Layout Wrapper: Command Center Mode -->
-                <div style="max-width: 2400px; margin: 0 auto; width: 100%;">
-                    <!-- Dashboard Metrics (Coach + Key Metrics + Money Flow) -->
-                    <load src="src/partials/dashboard-metrics.html" />
+                <!-- Master Layout Wrapper: Ultrawide Centered -->
+                <div class="max-w-[2560px] mx-auto w-full px-4 flex flex-col gap-6">
 
-                    <!-- Milestones Row (Full Width, Single Line - Like Coach) -->
-                    <load src="src/partials/charts/milestones.html" />
+                    <!-- ROW 1: Key Metrics (Strict 7-Column Grid) -->
+                    <load src="src/partials/key-metrics.html" />
 
-                    <!-- Comprehensive Metrics Dashboard -->
+                    <!-- ROW 2: Comprehensive Metrics (Strict 6-Column Grid) -->
                     <load src="src/partials/comprehensive-metrics.html" />
 
-                    <div class="dashboard-grid">
-                        <!-- Row 1: Income & Expenses Explorer -->
+                    <!-- ROW 3: Milestones (Full Width) -->
+                    <div class="col-span-full">
+                        <load src="src/partials/charts/milestones.html" />
+                    </div>
+
+                    <!-- ROW 4: Plan Optimizer & Coach (Full Width) -->
+                    <div class="w-full">
+                        <load src="src/partials/plan-optimizer.html" />
+                    </div>
+
+                    <!-- ROW 5: Tools & Calculators (Strict 3-Column Grid) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <load src="src/partials/charts/year-explorer.html" />
                         <load src="src/partials/charts/data-tables.html" />
                         <load src="src/partials/charts/gap-calculator.html" />
+                    </div>
 
-                        <!-- Row 2: Net Worth & Legacy -->
+                    <!-- ROW 6: THE MAIN CHART GRID (Strict 3x3 Layout) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Line 1 -->
                         <load src="src/partials/charts/networth-charts.html" />
                         <load src="src/partials/charts/allocation.html" />
                         <load src="src/partials/charts/legacy.html" />
 
-                        <!-- Row 3: Income & Money Flow -->
+                        <!-- Line 2 -->
                         <load src="src/partials/charts/income-sources.html" />
                         <load src="src/partials/charts/surplus-gap.html" />
                         <load src="src/partials/charts/money-flow.html" />
 
-                        <!-- Row 4: Expenses & Health -->
+                        <!-- Line 3 -->
                         <load src="src/partials/charts/expense-charts.html" />
                         <load src="src/partials/charts/expense-pie.html" />
                         <load src="src/partials/charts/healthcare.html" />
 
-                        <!-- Row 5: Strategy & Social Security -->
+                        <!-- Line 4 -->
                         <load src="src/partials/charts/taxes.html" />
                         <load src="src/partials/charts/social-security-strategy.html" />
                         <load src="src/partials/charts/social-security-comparison.html" />
 
-                        <!-- Row 6: Roth & Improvement -->
+                        <!-- Line 5 -->
                         <load src="src/partials/charts/roth.html" />
-                        <load src="src/partials/charts/plan-improvement-delta.html" />
+                        <load src="src/partials/charts/plan-improvement.html" />
                         <load src="src/partials/charts/tax-delta.html" />
 
-                        <!-- Row 7: Scenario Explorers -->
+                        <!-- Line 6 -->
                         <load src="src/partials/charts/explorers.html" />
                         <load src="src/partials/charts/stress-test.html" />
                         <load src="src/partials/charts/sequence-risk.html" />
+                    </div>
 
-                        <!-- Row 8: Withdrawal Strategies (2 across) -->
+                    <!-- ROW 7: Withdrawal Strategy (2-Column Split) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <load src="src/partials/charts/withdrawal-strategy.html" />
-                        <load src="src/partials/charts/safe-withdrawal.html" />
-
-                        <!-- Row 9: Monte Carlo (Full Width) -->
-                        <load src="src/partials/charts/montecarlo-analysis.html" />
-
-                        <div style="display:none;">
-                            <canvas id="chartRealNominal"></canvas>
-                            <canvas id="chartStackedPortfolio"></canvas>
-                            <canvas id="chartIncomeReplacement"></canvas>
-                            <canvas id="chartCumulativeTax"></canvas>
-                            <canvas id="chartEffectiveTax"></canvas>
-                            <canvas id="chartTaxBracket"></canvas>
-                            <canvas id="chartRothConversion"></canvas>
-                            <canvas id="chartRMD"></canvas>
-                            <canvas id="chartMortgage"></canvas>
-                            <canvas id="chartAccountTrends"></canvas>
-                            <canvas id="chartScenarioComparison"></canvas>
-                            <canvas id="chartDebtPayoff"></canvas>
-                            <canvas id="chartMarketRisk"></canvas>
-                            <canvas id="chartRothExplorer"></canvas>
+                        <div class="flex flex-col items-center">
+                            <load src="src/partials/charts/safe-withdrawal.html" />
                         </div>
                     </div>
 
+                    <!-- ROW 8: Monte Carlo (Full Width) -->
+                    <div class="col-span-full">
+                        <load src="src/partials/charts/montecarlo-analysis.html" />
+                    </div>
+
+                    <!-- Hidden Charts & Logic -->
+                    <div style="display:none;">
+                        <canvas id="chartRealNominal"></canvas>
+                        <canvas id="chartStackedPortfolio"></canvas>
+                        <canvas id="chartIncomeReplacement"></canvas>
+                        <canvas id="chartCumulativeTax"></canvas>
+                        <canvas id="chartEffectiveTax"></canvas>
+                        <canvas id="chartTaxBracket"></canvas>
+                        <canvas id="chartRothConversion"></canvas>
+                        <canvas id="chartRMD"></canvas>
+                        <canvas id="chartMortgage"></canvas>
+                        <canvas id="chartAccountTrends"></canvas>
+                        <canvas id="chartScenarioComparison"></canvas>
+                        <canvas id="chartDebtPayoff"></canvas>
+                        <canvas id="chartMarketRisk"></canvas>
+                        <canvas id="chartRothExplorer"></canvas>
+                    </div>
+
                     <!-- Footer -->
-                    <div class="card span-6">
+                    <div class="w-full mt-8">
                         <load src="src/partials/footer.html" />
                     </div>
+
                 </div> <!-- End Master Layout Wrapper -->
             </div> <!-- End main-content -->
         </div> <!-- End main-layout -->

@@ -69,15 +69,6 @@ describe('Responsive Layout & Viewport Tests (TASK-021)', () => {
                 return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
             });
             expect(compMetricsCols).toBe(6);
-
-            // Coach Insights: 3 columns
-            const coachCols = await page.evaluate(() => {
-                const el = document.querySelector('#coachMessageList');
-                if (!el) return 0;
-                console.log('Coach Grid Layout:', window.getComputedStyle(el).gridTemplateColumns);
-                return window.getComputedStyle(el).gridTemplateColumns.split(' ').length;
-            });
-            expect(coachCols).toBe(3);
         });
     });
 

@@ -1,0 +1,428 @@
+
+> retirement-planner-tests@1.0.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mX:/RetirementCalc-BasedOfBoldin[39m
+
+[90mstdout[2m | tests/unit/MonteCarlo.test.js[2m > [22m[2mMonte Carlo Logic[2m > [22m[2mshould generate valid statistical results
+[22m[39mDEBUG: MC Last Median: [33m45144126[39m
+
+ [32mΓ£ô[39m tests/unit/MonteCarlo.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+[90mstdout[2m | tests/unit/Performance.test.js[2m > [22m[2mPerformance Benchmarks[2m > [22m[2mshould complete 1000 Monte Carlo iterations in under 3 seconds
+[22m[39mMonte Carlo (1000 iterations): 227ms
+
+ [32mΓ£ô[39m tests/unit/SeededMonteCarlo.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 229[2mms[22m[39m
+[90mstdout[2m | tests/unit/Performance.test.js[2m > [22m[2mPerformance Benchmarks[2m > [22m[2mshould complete single projection in under 50ms
+[22m[39mSingle projection: 0.30ms
+
+ [32mΓ£ô[39m tests/unit/Performance.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 231[2mms[22m[39m
+[90mstdout[2m | tests/unit/text-validation.test.js
+[22m[39mScanning 192 files for corrupted text...
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEncryption and Decryption[2m > [22m[2mshould encrypt data before storing
+[22m[39mΓ£à Secure storage saved: 0.05 KB (encrypted)
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEncryption and Decryption[2m > [22m[2mshould decrypt data correctly
+[22m[39mΓ£à Secure storage saved: 0.05 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEncryption and Decryption[2m > [22m[2mshould handle complex nested objects
+[22m[39mΓ£à Secure storage saved: 0.23 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mError Handling[2m > [22m[2mshould return null if no data exists
+[22m[39mNo encrypted data found in storage
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mError Handling[2m > [22m[2mshould return null if decryption fails
+[22m[39mΓ£à Secure storage cleared
+
+stderr | tests/unit/SecureStorage.test.js > SecureStorage > Error Handling > should return null if decryption fails
+ΓÜá∩╕Å Decryption failed - clearing corrupted data
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mError Handling[2m > [22m[2mshould handle invalid JSON gracefully
+[22m[39mΓ£à Secure storage cleared
+
+stderr | tests/unit/SecureStorage.test.js > SecureStorage > Error Handling > should handle invalid JSON gracefully
+ΓÜá∩╕Å Decryption failed - clearing corrupted data
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mStorage Size Management[2m > [22m[2mshould calculate storage size correctly
+[22m[39mΓ£à Secure storage saved: 0.01 KB (encrypted)
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mStorage Size Management[2m > [22m[2mshould detect when approaching quota
+[22m[39mΓ£à Secure storage saved: 0.02 KB (encrypted)
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mStorage Size Management[2m > [22m[2mshould warn about large data
+[22m[39mΓ£à Secure storage saved: 6347.67 KB (encrypted)
+
+stderr | tests/unit/SecureStorage.test.js > SecureStorage > Storage Size Management > should warn about large data
+Storage size: 6347.67 KB - approaching quota limit
+ΓÜá∩╕Å Large data detected: 6347.67 KB. Consider clearing old data.
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mData Compression[2m > [22m[2mshould compress data by removing rawData
+[22m[39mData compressed - removed non-essential cached data
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mData Compression[2m > [22m[2mshould remove cached/computed values
+[22m[39mData compressed - removed non-essential cached data
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mClear Functionality[2m > [22m[2mshould clear stored data
+[22m[39mΓ£à Secure storage saved: 0.01 KB (encrypted)
+Γ£à Secure storage cleared
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mMigration from Plaintext[2m > [22m[2mshould migrate plaintext data to encrypted
+[22m[39m≡ƒöä Migrating plaintext data to encrypted storage...
+Γ£à Secure storage saved: 0.03 KB (encrypted)
+Γ£à Migration complete - old plaintext data removed
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mMigration from Plaintext[2m > [22m[2mshould handle migration errors gracefully
+[22m[39m≡ƒöä Migrating plaintext data to encrypted storage...
+
+stderr | tests/unit/SecureStorage.test.js > SecureStorage > Migration from Plaintext > should handle migration errors gracefully
+Γ¥î Migration failed: SyntaxError: Unexpected token 'i', "invalid-json" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Object.migrateFromPlaintext (X:/RetirementCalc-BasedOfBoldin/src/utils/SecureStorage.js:208:35)
+    at X:/RetirementCalc-BasedOfBoldin/tests/unit/SecureStorage.test.js:215:44
+    at file:///X:/RetirementCalc-BasedOfBoldin/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///X:/RetirementCalc-BasedOfBoldin/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///X:/RetirementCalc-BasedOfBoldin/node_modules/@vitest/runner/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///X:/RetirementCalc-BasedOfBoldin/node_modules/@vitest/runner/dist/index.js:1209:10)
+    at file:///X:/RetirementCalc-BasedOfBoldin/node_modules/@vitest/runner/dist/index.js:1653:37
+    at Traces.$ (file:///X:/RetirementCalc-BasedOfBoldin/node_modules/vitest/dist/chunks/traces.CCmnQaNT.js:142:27)
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mXSS Protection[2m > [22m[2mshould safely store and retrieve data with special characters
+[22m[39mΓ£à Secure storage saved: 0.12 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mConcurrent Save Protection[2m > [22m[2mshould handle rapid successive saves
+[22m[39mΓ£à Secure storage saved: 0.01 KB (encrypted)
+Γ£à Secure storage saved: 0.01 KB (encrypted)
+Γ£à Secure storage saved: 0.01 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle empty object
+[22m[39mΓ£à Secure storage saved: 0.00 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle null values in data
+[22m[39mΓ£à Secure storage saved: 0.04 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle arrays
+[22m[39mΓ£à Secure storage saved: 0.03 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle boolean values
+[22m[39mΓ£à Secure storage saved: 0.03 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+[90mstdout[2m | tests/unit/SecureStorage.test.js[2m > [22m[2mSecureStorage[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle very large numbers
+[22m[39mΓ£à Secure storage saved: 0.07 KB (encrypted)
+Γ£à Secure storage loaded successfully
+
+ [32mΓ£ô[39m tests/unit/SecureStorage.test.js [2m([22m[2m22 tests[22m[2m)[22m[33m 708[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should warn about large data [33m 671[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/text-validation.test.js [2m([22m[2m192 tests[22m[2m)[22m[33m 3240[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/Integration.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/build-validation.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+[90mstdout[2m | tests/unit/SurplusGap.test.js[2m > [22m[2mSurplus / Gap Logic[2m > [22m[2mshould calculate valid surplus/gap values
+[22m[39m≡ƒöä updateRawData() called
+  - Before Final NW: 89,070,333
+  - After Final NW: 89,070,333
+  - Data Changed: [33mfalse[39m
+  - Baseline: exists
+  - rothConversions: 21 active years
+
+[90mstdout[2m | tests/unit/SurplusGap.test.js[2m > [22m[2mSurplus / Gap Logic[2m > [22m[2mshould include drawdown in total income for funded status
+[22m[39m≡ƒöä updateRawData() called
+  - Before Final NW: 89,070,333
+  - After Final NW: 89,070,333
+  - Data Changed: [33mfalse[39m
+  - Baseline: exists
+  - rothConversions: 21 active years
+
+ [32mΓ£ô[39m tests/unit/SurplusGap.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+[90mstdout[2m | tests/unit/Diagnostic.test.js[2m > [22m[2mApplication Logic Diagnostics[2m > [22m[2mshould have a working SimulationEngine
+[22m[39mDIAG: Final NW (Avg): $89.07M
+
+[90mstdout[2m | tests/unit/Diagnostic.test.js[2m > [22m[2mApplication Logic Diagnostics[2m > [22m[2mshould have working Monte Carlo logic
+[22m[39mDIAG: MC Success Rate: 100.0%
+
+ [32mΓ£ô[39m tests/unit/Diagnostic.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/roth.test.js [2m([22m[2m37 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/Formatters.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/EdgeCases.test.js [2m([22m[2m43 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+[90mstdout[2m | tests/e2e/monte-carlo-params.test.js[2m > [22m[2mMonte Carlo Parameters E2E[2m > [22m[2mshould run simulation and produce higher median net worth for Last 10 Years scenario
+[22m[39mBase Median: $46.3M (46.3), Last 10 Median: $234.4M (234.4)
+
+ [32mΓ£ô[39m tests/e2e/monte-carlo-params.test.js [2m([22m[2m3 tests[22m[2m)[22m[33m 5754[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should display the new Monte Carlo controls [33m 491[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should update spending label when slider moves [33m 359[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should run simulation and produce higher median net worth for Last 10 Years scenario [33m 1141[2mms[22m[39m
+stderr | tests/e2e/comprehensive.test.js > E2E: RetireFire Application > Chart Hover Tooltips > should show tooltip on Net Worth chart hover
+ΓÜá∩╕Å  Net Worth chart tooltips may not be working
+
+stderr | tests/e2e/descriptions-tooltips.test.js > Comprehensive: Descriptions and Tooltips > Section Descriptions > should have description for Goals Tracking
+ΓÜá∩╕Å  Section not found: section-goals
+
+stderr | tests/e2e/descriptions-tooltips.test.js > Comprehensive: Descriptions and Tooltips > Section Descriptions > should have description for Milestones
+ΓÜá∩╕Å  Section not found: section-milestones
+
+stderr | tests/e2e/descriptions-tooltips.test.js > Comprehensive: Descriptions and Tooltips > Section Descriptions > should have description for Debt Payoff
+ΓÜá∩╕Å  Section not found: section-debt
+
+stderr | tests/e2e/descriptions-tooltips.test.js > Comprehensive: Descriptions and Tooltips > Section Descriptions > should have description for Market Risk
+ΓÜá∩╕Å  Section not found: section-risk
+
+[90mstdout[2m | tests/e2e/descriptions-tooltips.test.js[2m > [22m[2mComprehensive: Descriptions and Tooltips[2m > [22m[2mSection Descriptions[2m > [22m[2mshould have descriptions with proper styling
+[22m[39mΓ£ô Found 29 section descriptions
+
+stderr | tests/e2e/comprehensive.test.js > E2E: RetireFire Application > Chart Hover Tooltips > should show tooltip on Monte Carlo chart hover
+ΓÜá∩╕Å  Monte Carlo chart tooltips may not be working (ISSUE-033)
+
+ [32mΓ£ô[39m tests/unit/BaselineComparison.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+[90mstdout[2m | tests/simulation.test.js[2m > [22m[2mSimulationEngine[2m > [22m[2mshould model downsizing (Equity Swap) correctly (Story B)
+[22m[39mDownsize Debug: { inv2029: [33m52599[39m, inv2030: [33m509248[39m, diff: [33m456649[39m }
+
+ [32mΓ£ô[39m tests/simulation.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32mΓ£ô[39m tests/e2e/console_validation.test.js [2m([22m[2m5 tests[22m[2m)[22m[33m 10744[2mms[22m[39m
+stderr | tests/e2e/comprehensive.test.js > E2E: RetireFire Application > Explorer Buttons > should have Debt Payoff Explorer buttons
+ΓÜá∩╕Å  Debt Payoff Explorer not found (ISSUE-038)
+
+stderr | tests/e2e/comprehensive.test.js > E2E: RetireFire Application > Explorer Buttons > should have Market Risk Explorer buttons
+ΓÜá∩╕Å  Market Risk Explorer not found (ISSUE-039)
+
+stderr | tests/e2e/descriptions-tooltips.test.js > Comprehensive: Descriptions and Tooltips > Chart Hover Tooltips > should have working hover tooltip on Success Gauge
+ΓÜá∩╕Å  Tooltip not configured for Success Gauge
+
+stderr | tests/e2e/visual.test.js > Visual: Chart Rendering > Chart Accessibility > should have accessible labels for all charts
+ΓÜá∩╕Å  Chart gaugeSuccess missing parent label
+
+[90mstdout[2m | tests/e2e/descriptions-tooltips.test.js[2m > [22m[2mComprehensive: Descriptions and Tooltips[2m > [22m[2mChart Hover Tooltips[2m > [22m[2mshould have tooltip configuration on all Chart.js instances
+[22m[39mΓ£ô 7/8 charts have tooltips configured
+
+[90mstdout[2m | tests/e2e/descriptions-tooltips.test.js[2m > [22m[2mComprehensive: Descriptions and Tooltips[2m > [22m[2mDescriptions and Tooltips Integration[2m > [22m[2mshould initialize descriptions and tooltips on page load
+[22m[39m≡ƒô¥ Descriptions: 29
+≡ƒÄ» Charts with tooltips: 7/8
+
+ [32mΓ£ô[39m tests/e2e/visual.test.js [2m([22m[2m15 tests[22m[2m)[22m[33m 13920[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should render Net Worth Projection chart [33m 395[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should render Surplus Gap Analysis chart [33m 357[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should render Money Flow chart [33m 314[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should update charts when scenario changes [33m 1543[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should update charts when year slider changes [33m 522[2mms[22m[39m
+ [32mΓ£ô[39m tests/e2e/comprehensive.test.js [2m([22m[2m37 tests[22m[2m)[22m[33m 14418[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should show tooltip on Net Worth chart hover [33m 523[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should show tooltip on Monte Carlo chart hover [33m 538[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working scenario selector [33m 1239[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have year explorer slider [33m 678[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should navigate to sections when clicked [33m 549[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should open settings modal [33m 1052[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should work on mobile viewport [33m 584[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/simulation.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/Consistency.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+[90mstdout[2m | tests/e2e/descriptions-tooltips.test.js[2m > [22m[2mComprehensive: Descriptions and Tooltips[2m > [22m[2mDescriptions and Tooltips Integration[2m > [22m[2mshould have console confirmation messages
+[22m[39mΓ£ô Found initialization confirmation in console
+
+[90mstdout[2m | tests/e2e/descriptions-tooltips.test.js[2m > [22m[2mComprehensive: Descriptions and Tooltips[2m > [22m[2mAccessibility[2m > [22m[2mshould have readable description text
+[22m[39mΓ£ô Average description length: 42 words
+
+[90mstdout[2m | tests/e2e/descriptions-tooltips.test.js[2m > [22m[2mComprehensive: Descriptions and Tooltips[2m > [22m[2mAccessibility[2m > [22m[2mshould have chart tooltips with proper contrast
+[22m[39mΓ£ô Found tooltip color configurations for 3 charts
+
+ [32mΓ£ô[39m tests/e2e/descriptions-tooltips.test.js [2m([22m[2m31 tests[22m[2m)[22m[33m 18659[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Net Worth Chart [33m 534[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Allocation Chart [33m 524[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Income Chart [33m 530[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Expenses Chart [33m 525[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Surplus/Gap Chart [33m 526[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Money Flow Chart [33m 521[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Success Gauge [33m 530[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have working hover tooltip on Monte Carlo Chart [33m 529[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should have console confirmation messages [33m 4575[2mms[22m[39m
+ [32mΓ£ô[39m tests/simulation-engine.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+stderr | tests/unit/RothBreakEven.test.js > TASK-006 Phase 2: Roth Conversion Break-Even Analysis > Break-Even Calculation - Edge Cases > should handle missing data gracefully
+RothMetricsCalculator: Missing data for break-even calculation
+
+ [32mΓ£ô[39m tests/unit/RothBreakEven.test.js [2m([22m[2m11 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/TemporalEvents.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/NaNSafety.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/SimulationEngine.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+[90mstdout[2m | tests/unit/RothHoH.test.js[2m > [22m[2mRothOptimizer Head of Household Support[2m > [22m[2mshould calculate non-zero conversions for Head of Household filing status
+[22m[39mHoH 24% total converted: [33m486500[39m
+
+[90mstdout[2m | tests/unit/RothHoH.test.js[2m > [22m[2mRothOptimizer Head of Household Support[2m > [22m[2mshould calculate different amounts for HoH vs Single vs Joint
+[22m[39m12% Bracket Limits:
+HoH: [33m0[39m
+Single: [33m0[39m
+Joint: [33m0[39m
+
+ [32mΓ£ô[39m tests/unit/RothHoH.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/RothCombinedConstraints.test.js [2m([22m[2m10 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [31mΓ¥»[39m tests/e2e/viewport.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 28370[2mms[22m[39m
+[31m       [31m├ù[31m should maintain strict horizontal alignment for metrics[39m[33m 8087[2mms[22m[39m
+       [33m[2mΓ£ô[22m[39m should maintain horizontal alignment on laptop screens [33m 5061[2mms[22m[39m
+[31m       [31m├ù[31m should stack grid components correctly on mobile[39m[33m 13748[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/WithdrawalEnhancement.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/HousingDownsize.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/RothSourceTracking.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstdout[2m | tests/unit/NaNDebug.test.js[2m > [22m[2mNaN Regression Debug[2m > [22m[2mshould identify where NaN is introduced in project()
+[22m[39mAverage Net Worth: [ [33m90000[39m, [33m80000[39m ]
+
+ [32mΓ£ô[39m tests/unit/NaNDebug.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/data-utils.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/RothOptimizer.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+[90mstdout[2m | tests/unit/TaxAggregation.test.js[2m > [22m[2mTax Aggregation Verification[2m > [22m[2mshould include drawdown taxes in the total tax expense
+[22m[39m[DEBUG] Total Tax Expense: 4564
+[DEBUG] Detailed Fed Tax: 4564
+[DEBUG] Drawdown Tax: 12004
+
+ [32mΓ£ô[39m tests/unit/TaxAggregation.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/TaxCalculator.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/UXEnhancements.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 264[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/GapYear.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/SocialSecurityCalculator.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+[90mstdout[2m | tests/unit/EventsHandler.test.js
+[22m[39mΓ£à Debug function available: window.debugRothState()
+
+ [32mΓ£ô[39m tests/unit/EventsHandler.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/MonteCarloEnhanced.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+[90mstdout[2m | tests/unit/chart-tooltips.test.js[2m > [22m[2mChart Tooltip Configuration Validation[2m > [22m[2mshould have tooltips configured for all Summary charts
+[22m[39m≡ƒôè Initializing Money Flow Chart [Scenario: average]
+   - Data structure: OK
+   - Income categories: Work, SocialSecurity, RMD, Drawdown
+
+[90mstdout[2m | tests/unit/chart-tooltips.test.js[2m > [22m[2mChart Tooltip Configuration Validation[2m > [22m[2mshould have tooltips configured for all Explorer charts
+[22m[39m≡ƒôè updateRothExplorerChart() called
+  - Scenario: average
+  - Chart exists: [33mtrue[39m
+  - Data exists: [33mtrue[39m
+  - Baseline final NW: [33m1200[39m
+  - Roth final NW: [33m1200[39m
+  - Delta: [33m0[39m
+  Γ£à Chart updated
+
+ [32mΓ£ô[39m tests/unit/chart-tooltips.test.js [2m([22m[2m6 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  tests/e2e/viewport.test.js > Responsive Layout & Viewport Tests (TASK-021) > Desktop Ultrawide (2560x1440) > should maintain strict horizontal alignment for metrics
+AssertionError: expected 7 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 7
+
+ Γ¥» tests/e2e/viewport.test.js:80:31
+     78|                 return window.getComputedStyle(el).gridTemplateColumnsΓÇª
+     79|             });
+     80|             expect(coachCols).toBe(3);
+       |                               ^
+     81|         });
+     82|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+ FAIL  tests/e2e/viewport.test.js > Responsive Layout & Viewport Tests (TASK-021) > Mobile (375x812) > should stack grid components correctly on mobile
+Error: Test timed out in 10000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ Γ¥» tests/e2e/viewport.test.js:106:11
+    104| 
+    105|     describe('Mobile (375x812)', () => {
+    106|         it('should stack grid components correctly on mobile', async (ΓÇª
+       |           ^
+    107|             await page.setViewport({ width: 375, height: 812 });
+    108|             await page.waitForSelector('#coach-insights');
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/2]ΓÄ»
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Errors ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+Vitest caught 6 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Error ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+Error: [vitest-pool]: Failed to start forks worker for test files X:/RetirementCalc-BasedOfBoldin/tests/unit/MetricsHandler.test.js.
+ Γ¥» node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:94
+ Γ¥» runNextTicks node:internal/process/task_queues:65:5
+ Γ¥» listOnTimeout node:internal/timers:567:9
+ Γ¥» processTimers node:internal/timers:541:7
+ Γ¥» Pool.schedule node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ Γ¥» Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7626:58
+ Γ¥» listOnTimeout node:internal/timers:605:17
+ Γ¥» processTimers node:internal/timers:541:7
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Error ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+Error: [vitest-pool]: Failed to start forks worker for test files X:/RetirementCalc-BasedOfBoldin/tests/unit/MetricsHandlerEnhanced.test.js.
+ Γ¥» node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:94
+ Γ¥» runNextTicks node:internal/process/task_queues:65:5
+ Γ¥» listOnTimeout node:internal/timers:567:9
+ Γ¥» processTimers node:internal/timers:541:7
+ Γ¥» Pool.schedule node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ Γ¥» Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7626:58
+ Γ¥» listOnTimeout node:internal/timers:605:17
+ Γ¥» processTimers node:internal/timers:541:7
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Error ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+Error: [vitest-pool]: Failed to start forks worker for test files X:/RetirementCalc-BasedOfBoldin/tests/unit/GapCalculator.test.js.
+ Γ¥» node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:94
+ Γ¥» Pool.schedule node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ Γ¥» Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7626:58
+ Γ¥» listOnTimeout node:internal/timers:605:17
+ Γ¥» processTimers node:internal/timers:541:7
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Error ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+Error: [vitest-pool]: Failed to start forks worker for test files X:/RetirementCalc-BasedOfBoldin/tests/unit/CashFlowExplorer.test.js.
+ Γ¥» node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:94
+ Γ¥» Pool.schedule node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ Γ¥» Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7626:58
+ Γ¥» listOnTimeout node:internal/timers:605:17
+ Γ¥» processTimers node:internal/timers:541:7
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Error ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+Error: [vitest-pool]: Failed to start forks worker for test files X:/RetirementCalc-BasedOfBoldin/tests/unit/SettingsHandler.test.js.
+ Γ¥» node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:94
+ Γ¥» runNextTicks node:internal/process/task_queues:65:5
+ Γ¥» processTimers node:internal/timers:538:9
+ Γ¥» Pool.schedule node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ Γ¥» Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7626:58
+ Γ¥» listOnTimeout node:internal/timers:605:17
+ Γ¥» processTimers node:internal/timers:541:7
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Unhandled Error ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+Error: [vitest-pool]: Failed to start forks worker for test files X:/RetirementCalc-BasedOfBoldin/tests/unit/ExplorerHandler.test.js.
+ Γ¥» node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:94
+ Γ¥» Pool.schedule node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8046:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ Γ¥» Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7626:58
+ Γ¥» listOnTimeout node:internal/timers:605:17
+ Γ¥» processTimers node:internal/timers:541:7
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m42 passed[39m[22m[90m (43)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m537 passed[39m[22m[90m (539)[39m
+[2m     Errors [22m [1m[31m6 errors[39m[22m
+[2m   Start at [22m 19:13:48
+[2m   Duration [22m 91.77s[2m (transform 8.61s, setup 0ms, import 282.36s, tests 97.04s, environment 106.18s)[22m
+
