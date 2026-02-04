@@ -130,17 +130,6 @@ tency
   - [x] Ensure no horizontal scrolling on 1366px
 
 
-### **[TASK-021]** ✅ Viewport Test Suite
-- **Status**: COMPLETE (2026-02-03)
-- **Goals**:
-  - [x] Create Playwright viewport tests (1920x1080, 1366x768, 375x812)
-  - [x] Add horizontal scroll checks
-  - [x] Assert visibility of critical elements
-  - [x] NEW: Fix Metrics Row single-line display
-- ✅ **TASK-021**: [TASK-022-025] Dashboard Layout & Responsiveness Fix
-- **Goals**: Fix metrics row wrapping, implement 12-col grid (3-across charts), optimize header density.
-- **Status**: Completed 2026-02-03
-
 - 🟢 **TASK-026**: Responsive Retrofit: Header/Toolbar (Playwright Migration)
   - **Goals**: Enforce "No-Wrap" mandate, implement "Icon-Only" mode for mobile, migrate E2E to Playwright.
   - **Status**: Completed 2026-02-03
@@ -169,6 +158,16 @@ tency
     - [x] Add Ultrawide support (max-w-[2560px]).
     - [x] Create Visual Regression Tests (layout.spec.ts).
   - **Status**: Completed (2026-02-03)
+
+- ✅ **[TASK-032] UX Polish & Layout Hardening**
+  - **Description**: Re-implemented Milestones, fixed scroll offsets, and hardened Row 1 metrics.
+  - **Goals**:
+    - [x] Apply glassmorphism and centering to Milestones.
+    - [x] Remove extraneous descriptive text in Milestones.
+    - [x] Fix scroll margin for sticky header (`scroll-mt-32`).
+    - [x] Enforce strict 7-column grid for Row 1 metrics.
+    - [x] Clarify Wellness score with sub-label and tooltip.
+  - **Status**: Completed (2026-02-04)
 
 **Estimated Total Effort**: 10-15 hours
 

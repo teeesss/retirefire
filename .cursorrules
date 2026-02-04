@@ -16,3 +16,5 @@
   - `take_snapshot` / `take_screenshot`: To capture visual state for verification.
   - `evaluate_script`: To inspect DOM state, CSS properties, and computed styles programmatically.
 - **Rule of Thumb**: Prioritize using these MCP tools over manual browser checking or simple curl requests when verifying UI/layout logic.
+- **Scroll Offset Rule**: When implementing sticky headers, use `scroll-mt-*` (e.g., `scroll-mt-32`) directly on section containers to ensure navigation offsets are handled without adding extra wrapper divs (see `LAYOUT_SPEC.md`).
+- **Visual Regression Rule**: After any intentional UI change that shifts layout or styling, ALWAYS run Playwright with `--update-snapshots` to reset the visual baseline.

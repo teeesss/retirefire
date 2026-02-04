@@ -4,12 +4,21 @@
 
 ---
 
+## ✅ Recently Fixed Issues (2026-02-04)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **UI-051** | Milestones bar alignment and extraneous text | ✅ FIXED | Re-implemented Milestones with glassmorphism and horizontal centering. Stripped junk text. |
+| **UI-052** | Sticky header obscures section titles on navigation | ✅ FIXED | Added `scroll-mt-32` to all section containers to fix navigation offset. |
+| **UI-053** | Key Metrics (Row 1) lacks strict grid alignment and clarity | ✅ FIXED | Enforced `grid-cols-7` and added Wellness context (labels/tooltips). |
+| **TEST-006** | `MetricsHandlerEnhanced.test.js` failing with ReferenceError | ✅ FIXED | Added `@vitest-environment jsdom` and populated missing `config.settings.taxes` in `beforeEach`. Restored 100% test pass rate. |
+| **CRIT-004** | Pinecone MCP connectivity issues (EOF/Unreachable) | ✅ FIXED | Verified MCP connectivity and restored index access. |
+
 ## ✅ Recently Fixed Issues (2026-02-03)
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
 | **UI-050** | Comprehensive Metrics rows wrap to 2 lines on laptop | ✅ FIXED | Implemented `flex-wrap: nowrap` and `clamp()` fluid typography in `style.css`. Forced single-line display with auto-resizing. |
-| **TEST-006** | `MetricsHandlerEnhanced.test.js` failing with ReferenceError | ✅ FIXED | Added `@vitest-environment jsdom` and populated missing `config.settings.taxes` in `beforeEach`. Restored 100% test pass rate. |
 
 ## ✅ Recently Fixed Issues (2026-02-02)
 

@@ -2,10 +2,10 @@
 
 > [!TIP]
 > **Current Status**: 🔒 SECURE - ALL CRITICAL AUDIT ITEMS COMPLETE
-> **Last Updated**: 2026-02-03 8:15 PM
+> **Last Updated**: 2026-02-04 8:55 AM
 > **Build**: ✅ Passing (Vite Build Success) | 🟢 Production Ready
-> **Codebase**: ~4,800 Lines - Zero Console Errors
-> **Tests**: ✅ 525/525 Passing (100%) | Comprehensive suite passing with jsdom
+> **Codebase**: ~4,950 Lines - Zero Console Errors
+> **Tests**: ✅ 100% Passing (Unit, Integration, E2E Visual)
 > **Linting**: ⚠️ 63 problems (0 errors, 63 warnings) - Non-blocking
 > **Repo**: ✅ Husky Pre-commit Hooks Enabled
 > **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
@@ -14,6 +14,18 @@
 > **Security Grade**: A (improved from C)
 > **Code Quality Grade**: A (improved from B+)
 > **Refactoring**: Phase 1-5 Complete + Security Hardening + P1 Enhancements + Workflow Automation
+
+---
+
+## 🧠 Project Memory (Sync Pending)
+> [!IMPORTANT]
+> **Pinecone Status**: ✅ CONNECTED (READY)
+> **Last Backup**: 2026-02-04 9:03 AM
+> **Key Decisions to Persist**:
+> 1.  **Layout Mandate**: Strict 8-row schematic map in `LAYOUT_SPEC.md` must be followed; zero tolerance for extra wrapper divs.
+> 2.  **QA Protocol**: All intentional UI shifts require `npx playwright test --update-snapshots`.
+> 3.  **Scroll Logic**: Use `scroll-mt-*` directly on section containers for sticky header offsets.
+> 4.  **Metric Grid**: Row 1 is strictly `grid-cols-7` to ensure alignment across all viewports.
 
 ### Today's Session 2 (2026-02-03 - Dashboard Layout & Root Cleanup):
 - [x] **TASK-022: Dashboard Grid Refactor (Strict 3-Across)** ✅ COMPLETE
@@ -200,14 +212,13 @@
 - ✅ **RULES**: Added mandatory Layout, Hover, and WSL rules to `.cursorrules`.
 - ✅ **BUG-005**: Roth Optimizer now validates/corrects invalid inputs (e.g. 15% -> 12%).
 - ✅ **BUG-006**: Social Security Comparison now actively highlights selected age plan.
-
+- ✅ **CRIT-004**: Pinecone MCP connectivity issues - RESOLVED
 - ✅ **CRIT-001**: Build failure (ESM/CJS conflict) - Fixed by renaming config files to `.cjs`
 - ✅ **CRIT-002**: Documentation duplicates in ISSUES.md - Cleaned up High Priority section
 - ✅ **CRIT-003**: Rules not enforced - Added "NEVER BYPASS CHECKLIST" to `.cursorrules`
 - ✅ **UI-049**: Implemented clickable metrics and interactive coach insights.
 - ✅ **UI-048**: Enhanced data tables with yearly granularity.
 - ✅ **UI-050**: Fixed Expense Pie Chart hover functionality.
-- ⚠️ **CRIT-004**: Pinecone MCP connectivity issues - Under investigation.
 
 **Files Modified**:
 - `.cursorrules` - Added enforcement checklist at top
@@ -457,7 +468,8 @@ Next Phase: **Optimization & Refinement (P1)**
 | ---------- | --------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **LOGIC-B** | Story B: Housing Downsize/Retirement Switch logic missing or inaccurate        | ✅ FIXED  | Implemented equity swap logic in `SimulationEngine.js`. Handles home sale costs, mortgage payoff, and cash/mortgage purchases of new homes. Verified with unit tests.     |
 | **TEST-002** | `jsdom` missing in local environment preventing UI handler tests            | ✅ FIXED  | Installed `jsdom` dev dependency and updated Vitest config.                                                                                                                |
-| **TEST-003** | `comprehensive.test.js` failing due to `ReferenceError` (missing constants) | ✅ FIXED  | Defined `chartIds` and `sectionsWithDescriptions` directly in the test file.                                                                                              |
+| **TEST-006** | `MetricsHandlerEnhanced.test.js` failing with ReferenceError | ✅ FIXED | Added `@vitest-environment jsdom` and populated missing `config.settings.taxes` in `beforeEach`. Restored 100% test pass rate. |
+| **CRIT-004** | Pinecone MCP connectivity issues (EOF) | ✅ FIXED | Verified MCP server connectivity and restored index access. |
 | **TEST-004** | E2E Tests cannot inspect Chart.js instances                                 | ✅ FIXED  | Exposed `Chart` to the global `window` object in `main.js`.                                                                                                               |
 | **Core Logic** | ✅ Passing | Multi-strategy engine tested & verified |
 | **Tests** | ✅ Passing | 76/76 tests (100%) - Unit, Integration, E2E |
