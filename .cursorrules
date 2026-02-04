@@ -10,6 +10,12 @@
 - **Read**: Use `Get-Content` (or `type`).
 - **Binary/Hex**: Use `Format-Hex "path"` directly. Do NOT use `Get-Content -Encoding Byte`.
 
+# Modularity & Architecture Rules
+- **Import Strategy**: Prefer named imports from the source component (e.g., `src/ui/`, `src/charts/`) instead of the entry point `main.js`.
+- **Global State**: The `window` object should only be populated via `src/core/GlobalBridge.js` to avoid cluttering business logic with legacy event hookups.
+- **Recalculation**: Always use `recalculate()` from `src/core/AppController.js` to trigger a full engine sync and UI refresh. Do NOT call `updateRawData()` in isolation unless bypassing UI updates is explicitly intended.
+- **Safety**: Use `window.showNotification` with a check (`if(window.showNotification)...`) to avoid crashes if UI handlers are not yet initialized.
+
 # Testing & Verification Rules
 - **MCP Tool Usage**: For testing and visual validation, strictly use the following `chrome-devtools` MCP tools:
   - `navigate_page`: To access local or staged application URLs.

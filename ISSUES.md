@@ -1,6 +1,18 @@
 # Issues & Fixes Log
 
-**Last Updated**: 2026-02-04
+**Last Updated**: 2026-02-04 14:45
+
+---
+
+## ✅ Recently Fixed Issues (2026-02-04)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **ARCH-001** | `main.js` grew into a 500+ line monolith | ✅ FIXED | Refactored into `AppController.js` and `GlobalBridge.js`. Streamlined entry point. |
+| **UX-100** | Sidebar occupies too much space on mobile | ✅ FIXED | Implemented slide-out drawer with hamburger toggle. Sidebar hidden by default on < 768px. |
+| **UX-101** | Charts cause "scroll fatigue" on small screens | ✅ FIXED | Implemented responsive height overrides in `dashboard-layout.css`. |
+| **BUILD-002** | `vite build` failed due to missing `recalculate` export | ✅ FIXED | Updated all dependent handlers (`EventsHandler`, `SettingsHandler`, `RothUI`) to import from `AppController.js`. |
+| **LINT-001** | `showNotification` undefined in modular files | ✅ FIXED | Standardized usage via `window.showNotification` to ensure runtime safety across modules. |
 
 ---
 
