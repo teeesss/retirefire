@@ -1,16 +1,14 @@
-<!-- Milestones Row (Full Width Horizontal - Like Plan Optimizer & Coach) -->
-<div class="w-full mb-6" id="milestones-row">
-    <div class="card border-success/30 overflow-hidden"
-        style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(34, 197, 94, 0.05));">
-        <div class="card-header border-b border-white/10 pb-2 mb-3">
-            <div class="card-title text-success" style="justify-content: flex-start;">
-                <span class="mr-2">🏆</span> Milestones
-            </div>
+<!-- Row 3: Milestones (Full Width - Matches Plan Optimizer & Coach styling) -->
+<div class="card border-success/30 overflow-hidden w-full" id="milestones-row"
+    style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(34, 197, 94, 0.05));">
+    <div class="card-header border-b border-white/10 pb-2 mb-3">
+        <div class="card-title text-success" style="justify-content: flex-start;">
+            <span class="mr-2">🏆</span> Milestones
         </div>
-        <div id="milestoneList" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3"
-            style="font-size: 0.85rem;">
-            <!-- Populated by JS -->
-            <div class="text-muted p-4">Loading milestones...</div>
-        </div>
+    </div>
+    <div id="milestoneList" class="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-white/10 w-full"
+        style="font-size: 0.85rem;">
+        <!-- Populated by JS -->
+        <div class="text-muted p-4 w-full text-center">Loading milestones...</div>
     </div>
 </div>
