@@ -8,7 +8,7 @@ import RothConfig, { getStrategyDescription, syncWithGlobalConfig } from './Roth
 
 import { rawData, updateRawData } from '../data/Store.js';
 import { config } from '../data/Config.js';
-// import { recalculate } from '../main.js'; // Or ensure window.recalculate is used
+// import { recalculate } from '../core/AppController.js'; // Or ensure window.recalculate is used
 
 export class RothUI {
     /**

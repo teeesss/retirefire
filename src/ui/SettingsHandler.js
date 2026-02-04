@@ -1,5 +1,5 @@
 import { config } from '../data/Config.js';
-import { recalculate } from '../main.js';
+import { recalculate } from '../core/AppController.js';
 import { SecureStorage } from '../utils/SecureStorage.js';
 import { Logger } from '../utils/Logger.js';
 
