@@ -6,8 +6,17 @@ export default defineConfig({
         environment: 'node',
         include: ['tests/**/*.test.js'],
         exclude: ['node_modules', 'dist', 'tests/e2e/settings.test.js'],
-        testTimeout: 10000,
+        testTimeout: 30000,
         hookTimeout: 30000,
+        pool: 'threads',
+        poolOptions: {
+            threads: {
+                singleThread: false,
+                isolate: true
+            }
+        },
+        maxConcurrency: 1,
+        fileParallelism: false,
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],

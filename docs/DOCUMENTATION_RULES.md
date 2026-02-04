@@ -10,6 +10,9 @@
 
 Only maintain files that are actively used. Archive completed work. Delete obsolete files.
 
+### Deployment & Cache Management
+- **MANDATORY**: For every production release, ensure asset hashes change to bypass browser/CDN caches. Use a manual buster comment in `src/main.js` if necessary.
+
 ---
 
 ## Active Documentation (Root Level)

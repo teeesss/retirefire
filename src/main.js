@@ -59,7 +59,7 @@ const App = {
             // Initialize error boundary FIRST to catch any initialization errors
             ErrorBoundary.init();
 
-            Logger.debug('🚀 RetireFire Initializing...');
+            Logger.debug('🚀 RetireFire Initializing... [Cache-Buster-2026.02.04.4]');
             this.loadSettings();
             updateRawData();
 

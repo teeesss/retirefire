@@ -63,11 +63,11 @@ export const sectionDescriptions = {
     },
     'section-goals': {
         title: 'Financial Goals & Aspiration Tracking',
-        description: 'Dynamic tracking of your prioritized financial objectives, from essential retirement baseline income to aspirational goals like premium travel, large purchases, or significant charitable giving. This system calculates the required savings rate and portfolio performance needed to meet each goal by its target date. Goals are dynamically adjusted for inflation and are stress-tested against the same market scenarios as your core plan.'
+        description: ''
     },
     'section-milestones': {
         title: 'Key Life Events & Financial Milestone Timeline',
-        description: 'A chronologically ordered roadmap of your major life events, including the transition to retirement, mortgage payoff dates, educational funding targets, and the start of Social Security or pension benefits. This timeline helps visualize the critical decision points in your plan and ensures you are strategically prepared for upcoming changes in cash flow or tax liability.'
+        description: ''
     },
     'section-tables': {
         title: 'Detailed Year-by-Year Actuarial Data',
@@ -226,6 +226,9 @@ export function initializeAllSectionDescriptions() {
         }
 
         const descInfo = sectionDescriptions[sectionId];
+        if (!descInfo || !descInfo.description) {
+            return; // Skip if no description
+        }
 
         // Find or create card-header
         let header = section.querySelector('.card-header');

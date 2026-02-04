@@ -16,3 +16,8 @@
   - `take_snapshot` / `take_screenshot`: To capture visual state for verification.
   - `evaluate_script`: To inspect DOM state, CSS properties, and computed styles programmatically.
 - **Rule of Thumb**: Prioritize using these MCP tools over manual browser checking or simple curl requests when verifying UI/layout logic.
+
+# Deployment & Cache Management Rules
+- **Cache-Busting**: Before every production deployment (`npm run deploy`), ALWAYS verify that the main asset hash will change. 
+- **Forced Update**: If making small logic or CSS changes that do not automatically trigger a hash change in `Vite`, manually add or update a "Cache-Buster" comment (e.g., `// [CB-YYYY.MM.DD]`) in a core source file like `src/main.js`.
+- **Verification**: After deployment, use `curl -I` or the `chrome-devtools` `navigate_page` tool to verify the `Last-Modified` header or the new asset filename on the live site.

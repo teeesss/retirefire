@@ -1,6 +1,6 @@
 # Issues & Fixes Log
 
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04
 
 ---
 
@@ -8,6 +8,10 @@
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
+| **UI-051** | Row 1 (Key Metrics) not responsive on mobile (7-col wrap) | ✅ FIXED | Updated `key-metrics.html` with responsive grid classes (`grid-cols-2 md:grid-cols-4 lg:grid-cols-7`). Aligned with E2E viewport tests. |
+| **TEST-007** | Intermittent Vitest failures (race conditions) | ✅ FIXED | Stabilized `vitest.config.js` with `fileParallelism: false` and increased `testTimeout` to 30s. |
+| **TEST-008** | Stale reference to missing `charts-grid.html` | ✅ FIXED | Removed outdated integrity check in `build-validation.test.js`. |
+| **LAYOUT-001** | Emergency Layout Recovery (Rule 3 violation) | ✅ FIXED | Removed extra wrapper divs around chart partials in `index.html` and restored `milestones.html` spacing. |
 | **UI-050** | Comprehensive Metrics rows wrap to 2 lines on laptop | ✅ FIXED | Implemented `flex-wrap: nowrap` and `clamp()` fluid typography in `style.css`. Forced single-line display with auto-resizing. |
 | **TEST-006** | `MetricsHandlerEnhanced.test.js` failing with ReferenceError | ✅ FIXED | Added `@vitest-environment jsdom` and populated missing `config.settings.taxes` in `beforeEach`. Restored 100% test pass rate. |
 

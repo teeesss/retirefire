@@ -1,11 +1,13 @@
 <!-- Row 3: Milestones (UX Polish: Centered Glassmorphism Timeline) -->
-<div class="w-full bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4 shadow-xl"
-    id="milestones-row">
-    <div class="flex flex-col gap-3">
-        <div class="flex items-center gap-2 text-success font-semibold text-sm">
-            <span>🏆</span> Milestones
+<div class="card border-success/30 overflow-hidden w-full py-3 shadow-xl" id="milestones-row">
+    <div class="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x w-full">
+        <div class="p-4 flex flex-col gap-3 min-w-[200px]">
+            <div class="flex items-center gap-2 text-success font-semibold text-sm">
+                <span>🏆</span> Milestones
+            </div>
+            <div class="text-xs text-muted">Key events in your financial journey</div>
         </div>
-        <div id="milestoneList" class="flex flex-wrap justify-center items-center gap-8 w-full py-2">
+        <div id="milestoneList" class="flex-grow flex flex-wrap justify-center items-center gap-8 p-4 py-1.5">
             <!-- Populated by JS -->
             <div class="text-gray-400 text-sm italic">Analyzing timeline for key milestones...</div>
         </div>
