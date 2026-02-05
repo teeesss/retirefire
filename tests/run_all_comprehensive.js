@@ -31,7 +31,7 @@ function header(message) {
 function runCommand(command, description) {
     log(`\n▶ ${description}...`, 'blue');
     try {
-        const output = execSync(command, {
+        const _output = execSync(command, {
             stdio: 'inherit',
             cwd: __dirname + '/..'
         });

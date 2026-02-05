@@ -4,7 +4,6 @@
  */
 
 import { Logger } from '../utils/Logger.js';
-import RothConfig from './RothConfig.js';
 
 export class RothMetricsCalculator {
     /**
@@ -14,7 +13,7 @@ export class RothMetricsCalculator {
      * @param {Object} config - Configuration object
      * @returns {Object} Metrics object
      */
-    static calculateMetrics(rothData, baselineData, config) {
+    static calculateMetrics(rothData, baselineData) {
         if (!rothData || !baselineData) {
             Logger.warn('RothMetricsCalculator: Missing data');
             return this.getEmptyMetrics();

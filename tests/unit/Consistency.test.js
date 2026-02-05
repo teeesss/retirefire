@@ -6,8 +6,6 @@ describe('Simulation Engine Consistency', () => {
     it('should produce identical results when volatility is 0 and inflation is matched', () => {
         const testConfig = JSON.parse(JSON.stringify(config));
         // Use average rates for both
-        const marketReturn = testConfig.settings.rates.average;
-        const inflationRate = testConfig.settings.inflation.average;
 
         const standardResult = SimulationEngine.project(testConfig, 'average');
 

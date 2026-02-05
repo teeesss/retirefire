@@ -79,7 +79,7 @@ async function main() {
 
         header('✅ E2E TESTS PASSED');
         process.exit(0);
-    } catch (error) {
+    } catch (_error) {
         header('❌ E2E TESTS FAILED');
         log('\nSome E2E tests failed. This is expected if:', 'yellow');
         log('  • Features are not yet implemented', 'yellow');

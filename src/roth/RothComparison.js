@@ -5,7 +5,7 @@
 
 import { Logger } from '../utils/Logger.js';
 import RothOptimizer from './RothOptimizer.js';
-import { formatCurrency } from '../utils/formatters.js';
+import { formatCurrency } from '../utils/Formatters.js';
 import { getSafeCtx } from '../charts/ChartHelpers.js';
 import Chart from 'chart.js/auto';
 

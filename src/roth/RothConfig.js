@@ -52,7 +52,6 @@ export const RothConfig = {
  * Validate and snap bracket to nearest valid key
  */
 function validateBracket(bracket) {
-    const validBrackets = [12, 22, 24, 32, 35, 37]; // 10 is technically possible but usually 12 is minimum for meaningful strategy
     // Or better, use keys from object
     const keys = Object.keys(RothConfig.brackets).map(Number);
 

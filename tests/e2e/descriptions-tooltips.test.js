@@ -26,7 +26,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
 
             await page.goto(APP_URL, { waitUntil: 'networkidle0' });
             await page.waitForTimeout(4000); // Wait for full initialization
-        } catch (e) {
+        } catch (_e) {
             console.log('Skipping Descriptions/Tooltips E2E: Browser failed to launch');
             shouldSkip = true;
         }

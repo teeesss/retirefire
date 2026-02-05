@@ -10,7 +10,6 @@ import { formatCurrency } from '../utils/Formatters.js';
 // Handlers
 import { MetricsHandler } from '../ui/MetricsHandler.js';
 import { NavigationHandler } from '../ui/NavigationHandler.js';
-import { ModalHandler } from '../ui/ModalHandler.js';
 import { EventsHandler } from '../ui/EventsHandler.js';
 import { DashboardDetails } from '../ui/DashboardDetails.js';
 import { ExplorerHandler } from '../ui/ExplorerHandler.js';

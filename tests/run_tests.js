@@ -53,7 +53,7 @@ class TestRunner {
         console.log(`  ${colors.yellow}○${colors.reset} ${testName} (${reason})`);
     }
 
-    async runAll(options = {}) {
+    async runAll(_options = {}) {
         this.log('\n═══════════════════════════════════════════════════════', 'cyan');
         this.log('  🧪 RETIREMENT PLANNER PRO - AUTOMATED TEST SUITE', 'bright');
         this.log('═══════════════════════════════════════════════════════\n', 'cyan');

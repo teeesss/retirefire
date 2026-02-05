@@ -16,7 +16,7 @@ describe('RothOptimizer Head of Household Support', () => {
     };
 
     it('should calculate non-zero conversions for Head of Household filing status', () => {
-        const result = RothOptimizer.optimize({ ...params, filingStatus: 'hoh', targetBracket: 22 });
+        RothOptimizer.optimize({ ...params, filingStatus: 'hoh', targetBracket: 22 });
 
         // HoH 22% bracket starts at ~$63k and goes to ~$100k (2025/2026 approx)
         // With $100k income, it might already be at 22%, but 24% and higher should definitely work.

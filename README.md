@@ -294,6 +294,6 @@ For questions or support, please open an issue or contact the project maintainer
 
 ---
 
-**Last Updated**: 2026-02-03  
-**Version**: 1.2.0  
+**Last Updated**: 2026-02-05  
+**Version**: 1.2.1  
 **Status**: Production Ready ✅

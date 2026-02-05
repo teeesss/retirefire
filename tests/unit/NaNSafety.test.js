@@ -20,7 +20,7 @@ describe('NaN Safety', () => {
 
         const result = SimulationEngine.project(minimalConfig, 'average');
 
-        result.netWorth.forEach((nw, i) => {
+        result.netWorth.forEach((nw, _i) => {
             expect(isNaN(nw)).toBe(false);
             expect(isFinite(nw)).toBe(true);
         });

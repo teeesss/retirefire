@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { calculateNetWorth, getTotalIncome, getTotalExpenses } from '../../src/state/DataUtils.js';
+import { getTotalIncome, getTotalExpenses } from '../../src/state/DataUtils.js';
 import { rawData, updateRawData } from '../../src/data/Store.js';
 import { config } from '../../src/data/Config.js';
-import { SimulationEngine } from '../../src/engine/SimulationEngine.js';
 
 describe('Surplus / Gap Logic', () => {
     it('should calculate valid surplus/gap values', () => {

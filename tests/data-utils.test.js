@@ -1,9 +1,8 @@
 /**
  * Test for Chart Logic and Data Utils
  */
-import { expect, test, describe, beforeEach } from 'vitest';
+import { expect, test, describe } from 'vitest';
 import { getTotalIncome, getTotalExpenses } from '../src/state/DataUtils.js';
-import { config } from '../src/data/Config.js';
 import { rawData } from '../src/data/Store.js';
 
 describe('Data Utility Tests', () => {
@@ -13,7 +12,7 @@ describe('Data Utility Tests', () => {
             income: {
                 Work: [1000, 1000],
                 SocialSecurity: [500, 500],
-                Drawdown: [200, 200]
+                BrokerageDrawdown: [200, 200]
             }
         };
 

@@ -5,7 +5,7 @@ import { charts, destroyChart } from '../state/ChartStore.js';
 import { getSafeCtx, validateData } from './ChartHelpers.js';
 import { formatCurrency } from '../utils/Formatters.js';
 import { applyTooltipConfig } from '../utils/tooltipConfig.js';
-import { getNetWorthSeries, calculateNetWorth } from '../state/DataUtils.js';
+import { getNetWorthSeries } from '../state/DataUtils.js';
 import { colors, scenarioColors, accountNames } from '../data/Constants.js';
 
 export function initNetWorthChart() {

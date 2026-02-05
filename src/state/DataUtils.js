@@ -1,4 +1,3 @@
-import { config } from '../data/Config.js';
 import { rawData } from '../data/Store.js';
 
 /**

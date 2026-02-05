@@ -1,6 +1,5 @@
 import { Logger } from '../utils/Logger.js';
 import { SimulationEngine } from '../engine/SimulationEngine.js';
-import { config } from './Config.js';
 
 export let rawData = SimulationEngine.run();
 

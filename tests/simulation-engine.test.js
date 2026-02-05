@@ -1,7 +1,7 @@
 /**
  * Test for Simulation Engine Logic
  */
-import { expect, test, describe, beforeEach } from 'vitest';
+import { expect, test, describe } from 'vitest';
 import { SimulationEngine } from '../src/engine/SimulationEngine.js';
 import { config } from '../src/data/Config.js';
 
