@@ -49,22 +49,26 @@ export class SimulationEngine {
         const average = this.project(config, 'average');
         const pessimistic = this.project(config, 'pessimistic');
 
-        // ALWAYS generate baseline for comparison (Baseline = Roth Disabled)
-        // This is needed for Roth metrics calculation even if Roth is currently disabled
-        // Uses the CURRENTLY selected scenario to ensure consistency with top metrics (US-061 Fix)
-        const baselineConfig = JSON.parse(JSON.stringify(config));
-        baselineConfig.settings.taxes.rothConversionEnabled = false;
-        // Also disable RothConfig to ensure no conversions in baseline
-        const baseline = this.project(baselineConfig, scenario);
-
-        return {
+        const results = {
             years: average.years,
             ages: average.ages,
             optimistic,
             average,
-            pessimistic,
-            baseline
+            pessimistic
         };
+
+        // Project and include current scenario if it's not a default one
+        if (!['optimistic', 'average', 'pessimistic'].includes(scenario)) {
+            results[scenario] = this.project(config, scenario);
+        }
+
+        // ALWAYS generate baseline for comparison (Baseline = Roth Disabled)
+        const baselineConfig = JSON.parse(JSON.stringify(config));
+        baselineConfig.settings.taxes.rothConversionEnabled = false;
+        const baseline = this.project(baselineConfig, scenario);
+
+        results.baseline = baseline;
+        return results;
     }
 
     /**

@@ -95,7 +95,7 @@ describe('Visual: Chart Rendering', () => {
                 const canvas = document.getElementById('chartNetWorth');
                 if (!canvas) return null;
 
-                const chart = Chart.getChart(canvas);
+                const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                 if (!chart) return null;
 
                 return {
@@ -125,7 +125,7 @@ describe('Visual: Chart Rendering', () => {
                 // ...
                 if (!canvas) return null;
 
-                const chart = Chart.getChart(canvas);
+                const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                 if (!chart) return null;
 
                 return {
@@ -151,7 +151,7 @@ describe('Visual: Chart Rendering', () => {
                 const canvas = document.getElementById('chartExpenses');
                 if (!canvas) return null;
 
-                const chart = Chart.getChart(canvas);
+                const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                 if (!chart) return null;
 
                 return {
@@ -178,7 +178,7 @@ describe('Visual: Chart Rendering', () => {
                 // ...
                 if (!canvas) return null;
 
-                const chart = Chart.getChart(canvas);
+                const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                 if (!chart) return null;
 
                 return {
@@ -206,7 +206,7 @@ describe('Visual: Chart Rendering', () => {
             if (shouldSkip) return;
             const _initialData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartNetWorth');
-                const chart = Chart.getChart(canvas);
+                const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                 return chart ? chart.data.datasets[0].data[0] : null;
             });
 
@@ -220,7 +220,7 @@ describe('Visual: Chart Rendering', () => {
 
             const updatedData = await page.evaluate(() => {
                 const canvas = document.getElementById('chartNetWorth');
-                const chart = Chart.getChart(canvas);
+                const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                 return chart ? chart.data.datasets[0].data[0] : null;
             });
 

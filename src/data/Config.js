@@ -99,6 +99,7 @@ export let config = {
             travel: 12000,
             gifts: 5000,
             misc: 3000,
+            vehicle: 4000,
             retireReduction: 10,
             age75Reduction: 15,
             annualSpending: 90000,

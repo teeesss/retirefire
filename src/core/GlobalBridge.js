@@ -21,6 +21,7 @@ import { GoalsHandler } from '../ui/GoalsHandler.js';
 import { CryptoHandler } from '../ui/CryptoHandler.js';
 import RothConfig from '../roth/RothConfig.js';
 import { RothUI } from '../roth/RothUI.js';
+import Chart from 'chart.js/auto';
 
 export const GlobalBridge = {
     init() {
@@ -43,6 +44,8 @@ export const GlobalBridge = {
         window.importSettings = () => SettingsHandler.importSettings();
         window.exportSettings = () => SettingsHandler.exportSettings();
         window.updateTotalExpenses = () => SettingsHandler.updateTotalExpenses();
+        window.createCustomScenario = () => SettingsHandler.createCustomScenario();
+        window.cloneScenario = () => SettingsHandler.cloneScenario();
 
         // Analysis & Explorer
         window.updateYearSlider = (val) => ExplorerHandler.updateYear(val);
@@ -211,6 +214,7 @@ export const GlobalBridge = {
             if (e.target.classList.contains('data-table-modal-overlay')) window.closeDataTableModal();
         });
 
+        window.Chart = Chart;
         Logger.debug('✅ Global Bridge Established');
     }
 };
