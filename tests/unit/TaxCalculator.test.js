@@ -68,4 +68,15 @@ describe('TaxCalculator', () => {
         const breakdown = TaxCalculator.calculateTaxBreakdown(300000, 0, 0, 'single', 'FL');
         expect(breakdown.fica).toBeCloseTo(16168, 0);
     });
+
+    it('should calculate taxable Social Security using combined income rules', () => {
+        // Single, $30k ordinary income, $20k SS benefit.
+        // Combined = 30k + 10k = 40k.
+        // Over 34k threshold.
+        // Tier 1: (34-25)*0.5 = 4500
+        // Tier 2: (40-34)*0.85 = 5100
+        // Total = 9600. (Max 85% of 20k = 17000).
+        const taxable = TaxCalculator.calculateTaxableSocialSecurity(30000, 20000, 'single');
+        expect(taxable).toBeCloseTo(9600, 0);
+    });
 });

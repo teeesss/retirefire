@@ -82,6 +82,28 @@ export class TaxCalculator {
     }
 
     /**
+     * Calculates portion of Social Security benefit subject to federal tax
+     * Based on "Combined Income" = AGI + Tax-exempt Interest + 50% of SS Benefit
+     * thresholds: Single: $25k/$34k, Married: $32k/$44k
+     */
+    static calculateTaxableSocialSecurity(nonSSOrdinaryIncome, ssBenefit, status) {
+        if (!ssBenefit || ssBenefit <= 0) return 0;
+
+        const combinedIncome = (nonSSOrdinaryIncome || 0) + (ssBenefit * 0.5);
+        const thresholds = status === 'married' ? [32000, 44000] : [25000, 34000];
+        
+        if (combinedIncome <= thresholds[0]) return 0;
+        
+        if (combinedIncome <= thresholds[1]) {
+            return Math.min(ssBenefit * 0.5, (combinedIncome - thresholds[0]) * 0.5);
+        }
+        
+        const tier1tax = (thresholds[1] - thresholds[0]) * 0.5;
+        const tier2tax = (combinedIncome - thresholds[1]) * 0.85;
+        return Math.min(ssBenefit * 0.85, tier1tax + tier2tax);
+    }
+
+    /**
      * Calculates detailed tax breakdown
      * @param {number} wages - Earned income (wages, self-employment) subject to FICA
      * @param {number} otherOrdIncome - Other ordinary income (RMDs, Pensions, Interest) NOT subject to FICA

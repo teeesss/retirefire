@@ -333,7 +333,9 @@ export class SimulationEngine {
         }
 
         // 3. Tax Calculation
-        const otherOrdIncome = rmdIncome + (ssIncome * 0.85);
+        const filingStatus = config.settings?.taxSettings?.filingStatus || 'single';
+        const taxableSS = TaxCalculator.calculateTaxableSocialSecurity(rmdIncome + workIncome, ssIncome, filingStatus);
+        const otherOrdIncome = rmdIncome + taxableSS;
         let estimatedCapGains = 0;
         let preTaxGap = Math.max(0, totalExpBeforeTax - (workIncome + ssIncome));
         if (preTaxGap > 0 && investments > 0) {
