@@ -191,4 +191,25 @@ describe('SimulationEngine', () => {
         expect(taxRate).toBeGreaterThan(0.05);
         expect(taxRate).toBeLessThan(0.38);
     });
+
+    it('should delay RMDs until age 75 for users born after 1959', () => {
+        const youngConfig = JSON.parse(JSON.stringify(mockConfig));
+        // Current Year 2026, Age 50 -> Born 1976 (After 1959) -> RMD age 75
+        youngConfig.startYear = 2026;
+        youngConfig.startAge = 50; 
+        youngConfig.settings.personal.age = 50;
+        youngConfig.settings.personal.retireAge = 55;
+        youngConfig.settings.personal.longevity = 95;
+        youngConfig.endYear = 2060; // Long enough to reach 75
+        
+        const results = SimulationEngine.project(youngConfig, 'average');
+        
+        // Age 73 (born 1976) should have 0 RMD
+        const age73Idx = results.ages.indexOf(73);
+        expect(results.income.RMD[age73Idx]).toBe(0);
+        
+        // Age 75 should have RMD
+        const age75Idx = results.ages.indexOf(75);
+        expect(results.income.RMD[age75Idx]).toBeGreaterThan(0);
+    });
 });
