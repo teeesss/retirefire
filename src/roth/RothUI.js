@@ -8,7 +8,7 @@ import RothConfig, { getStrategyDescription, syncWithGlobalConfig } from './Roth
 
 import { rawData, updateRawData } from '../data/Store.js';
 import { config } from '../data/Config.js';
-// import { recalculate } from '../main.js'; // Or ensure window.recalculate is used
+// import { recalculate } from '../core/AppController.js'; // Or ensure window.recalculate is used
 
 export class RothUI {
     /**
@@ -127,9 +127,9 @@ export class RothUI {
      * Refresh metrics from simulation data
      */
     static refreshMetrics() {
-        console.log('🔄 RothUI.refreshMetrics() called');
-        console.log('📊 rawData keys:', rawData ? Object.keys(rawData) : 'null');
-        console.log('📊 config.currentScenario:', config.currentScenario);
+        Logger.debug('🔄 RothUI.refreshMetrics() called');
+        Logger.debug('📊 rawData keys:', rawData ? Object.keys(rawData) : 'null');
+        Logger.debug('📊 config.currentScenario:', config.currentScenario);
 
         // Import metrics calculator
         import('./RothMetricsCalculator.js').then(({ RothMetricsCalculator }) => {
@@ -137,25 +137,25 @@ export class RothUI {
             const rothData = rawData[scenario];
             const baselineData = rawData.baseline;
 
-            console.log('📊 Scenario:', scenario);
-            console.log('📊 rothData exists:', !!rothData);
-            console.log('📊 baselineData exists:', !!baselineData);
+            Logger.debug('📊 Scenario:', scenario);
+            Logger.debug('📊 rothData exists:', !!rothData);
+            Logger.debug('📊 baselineData exists:', !!baselineData);
 
             if (!rothData) {
-                console.warn('❌ RothUI: No Roth data available for metrics');
+                Logger.warn('❌ RothUI: No Roth data available for metrics');
                 this.updateMetrics(0, 0, 0, 0);
                 return;
             }
 
-            console.log('📊 rothConversions:', rothData.rothConversions);
+            Logger.debug('📊 rothConversions:', rothData.rothConversions);
 
             if (!baselineData) {
-                console.warn('⚠️ RothUI: No baseline data available for comparison');
+                Logger.warn('⚠️ RothUI: No baseline data available for comparison');
                 // Show conversion data but no comparison metrics
                 const conversions = rothData.rothConversions || { amounts: [], taxPaid: [] };
                 const totalConverted = conversions.amounts.reduce((sum, amt) => sum + amt, 0);
                 const years = conversions.amounts.filter(amt => amt > 0).length;
-                console.log('📊 Basic metrics (no baseline):', { totalConverted, years });
+                Logger.debug('📊 Basic metrics (no baseline):', { totalConverted, years });
                 this.updateMetrics(totalConverted, years, 0, 0);
                 return;
             }
@@ -164,7 +164,7 @@ export class RothUI {
             const metrics = RothMetricsCalculator.calculateMetrics(rothData, baselineData, config);
 
             if (!RothMetricsCalculator.validateMetrics(metrics)) {
-                console.error('RothUI: Invalid metrics calculated');
+                Logger.error('RothUI: Invalid metrics calculated');
                 return;
             }
 
@@ -178,14 +178,14 @@ export class RothUI {
                 metrics.nwBoost              // Net worth boost
             );
 
-            console.log('📊 Roth Metrics Updated:', {
+            Logger.debug('📊 Roth Metrics Updated:', {
                 converted: metrics.totalConverted,
                 years: metrics.conversionYears,
                 taxPaid: metrics.totalConversionTax,
                 nwBoost: metrics.nwBoost
             });
         }).catch(error => {
-            console.error('Failed to load RothMetricsCalculator:', error);
+            Logger.error('Failed to load RothMetricsCalculator:', error);
         });
     }
 
@@ -195,36 +195,36 @@ export class RothUI {
     static attachEventListeners() {
         // Strategy mode change
         window.updateRothStrategy = (mode) => {
-            console.log('⚙️  updateRothStrategy() called:', mode);
+            Logger.debug('⚙️  updateRothStrategy() called:', mode);
             RothConfig.mode = mode;
             this.updateStrategyVisibility();
             this.updateStrategyDescription();
 
-            console.log('  - Calling updateRawData()...');
+            Logger.debug('  - Calling updateRawData()...');
             updateRawData();
 
-            console.log('  - Calling updateDashboard()...');
+            Logger.debug('  - Calling updateDashboard()...');
             if (window.updateDashboard) window.updateDashboard();
 
-            console.log('  - Calling refreshAllCharts()...');
+            Logger.debug('  - Calling refreshAllCharts()...');
             if (window.refreshAllCharts) window.refreshAllCharts();
 
             if (window.saveToLocalStorage) window.saveToLocalStorage();
 
             // Refresh metrics after recalculation
-            console.log('  - Scheduling refreshMetrics()...');
+            Logger.debug('  - Scheduling refreshMetrics()...');
             setTimeout(() => {
-                console.log('  - Calling refreshMetrics() now');
+                Logger.debug('  - Calling refreshMetrics() now');
                 this.refreshMetrics();
             }, 200);
         };
 
         // Bracket change
         window.updateRothTargetBracket = (bracket) => {
-            console.log('⚙️  updateRothTargetBracket() called:', bracket);
+            Logger.debug('⚙️  updateRothTargetBracket() called:', bracket);
             RothConfig.targetBracket = parseInt(bracket);
             this.updateStrategyDescription();
-            console.log('  - Calling updateRawData()...');
+            Logger.debug('  - Calling updateRawData()...');
             updateRawData();
             if (window.updateDashboard) window.updateDashboard();
             if (window.refreshAllCharts) window.refreshAllCharts();
@@ -296,11 +296,11 @@ export class RothUI {
 
         // Optimize
         window.optimizeRothConversion = () => {
-            console.log('🔍 Optimizing Roth conversion strategy...');
+            Logger.debug('🔍 Optimizing Roth conversion strategy...');
 
             // Get simulation data
             if (!rawData || !rawData.years) {
-                console.error('No simulation data available');
+                Logger.error('No simulation data available');
                 return;
             }
 
@@ -332,7 +332,7 @@ export class RothUI {
                 // Asking user if they want to apply
                 this.showOptimizationDialog(optimizedResults);
             }).catch(error => {
-                console.error('Failed to load optimizer:', error);
+                Logger.error('Failed to load optimizer:', error);
             });
         };
     }
@@ -342,22 +342,22 @@ export class RothUI {
      */
     static displayOptimizationResults(report, /* optimizedResults */) {
 
-        console.log('\n📊 OPTIMIZATION RESULTS\n');
-        console.log(report.headline);
-        console.log('\n💰 Metrics:');
-        console.log(`  Total Converted: $${report.metrics.totalConverted.toLocaleString()}`);
-        console.log(`  Total Tax Paid: $${report.metrics.totalTaxPaid.toLocaleString()}`);
-        console.log(`  Effective Tax Rate: ${report.metrics.effectiveTaxRate}%`);
-        console.log(`  Average Annual: $${Math.round(report.metrics.averageAnnual).toLocaleString()}`);
-        console.log(`  Years Active: ${report.metrics.yearsActive}`);
+        Logger.info('\n📊 OPTIMIZATION RESULTS\n');
+        Logger.info(report.headline);
+        Logger.info('\n💰 Metrics:');
+        Logger.info(`  Total Converted: $${report.metrics.totalConverted.toLocaleString()}`);
+        Logger.info(`  Total Tax Paid: $${report.metrics.totalTaxPaid.toLocaleString()}`);
+        Logger.info(`  Effective Tax Rate: ${report.metrics.effectiveTaxRate}%`);
+        Logger.info(`  Average Annual: $${Math.round(report.metrics.averageAnnual).toLocaleString()}`);
+        Logger.info(`  Years Active: ${report.metrics.yearsActive}`);
 
         if (report.yearByYear.length > 0) {
-            console.log('\n📅 Year-by-Year Breakdown:');
+            Logger.info('\n📅 Year-by-Year Breakdown:');
             report.yearByYear.slice(0, 5).forEach(r => {
-                console.log(`  ${r.year}: $${r.conversionAmount.toLocaleString()} (${r.marginalRate}% bracket)`);
+                Logger.info(`  ${r.year}: $${r.conversionAmount.toLocaleString()} (${r.marginalRate}% bracket)`);
             });
             if (report.yearByYear.length > 5) {
-                console.log(`  ... and ${report.yearByYear.length - 5} more years`);
+                Logger.info(`  ... and ${report.yearByYear.length - 5} more years`);
             }
         }
     }
@@ -397,7 +397,7 @@ Would you like to apply this optimized strategy?
         if (window.refreshAllCharts) window.refreshAllCharts();
         if (window.saveToLocalStorage) window.saveToLocalStorage();
 
-        console.log('✅ Optimized strategy applied!');
+        Logger.info('✅ Optimized strategy applied!');
     }
 }
 

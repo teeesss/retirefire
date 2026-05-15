@@ -3,8 +3,9 @@
  * Handles the advanced modal view for Roth conversion planning.
  */
 
+import { Logger } from '../utils/Logger.js';
 import Chart from 'chart.js/auto';
-import { formatCurrency } from '../utils/formatters.js';
+import { formatCurrency } from '../utils/Formatters.js';
 import { rawData } from '../data/Store.js';
 import { config } from '../data/Config.js';
 import RothOptimizer from './RothOptimizer.js';
@@ -46,14 +47,14 @@ export class RothDeepDive {
             // For this step, I will assume we will add it to the build. 
             // But for safety, let's check.
         } catch (e) {
-            console.error('Failed to inject Roth Deep Dive modal', e);
+            Logger.error('Failed to inject Roth Deep Dive modal', e);
         }
     }
 
     static open() {
         const modal = document.getElementById('rothDeepDiveModal');
         if (!modal) {
-            console.error('Roth Deep Dive modal not found in DOM');
+            Logger.error('Roth Deep Dive modal not found in DOM');
             return;
         }
 
@@ -180,7 +181,7 @@ export class RothDeepDive {
     static renderAnalysis() {
         // Validation
         if (!rawData.years || !rawData.average?.income?.Work) {
-            console.error('RothDeepDive: Missing rawData for analysis');
+            Logger.error('RothDeepDive: Missing rawData for analysis');
             return;
         }
 
@@ -235,7 +236,6 @@ export class RothDeepDive {
         // Assumption: Tax-free growth saves ~25% of converted amount over time
         // Break-even when savings >= tax paid
         if (elBreakEven && summary.totalConverted > 0) {
-            const taxPaid = summary.totalTaxPaid;
             const estimatedAnnualReturn = 0.06; // 6% growth
             const effectiveTaxRate = summary.effectiveTaxRate / 100;
 
@@ -376,7 +376,7 @@ export class RothDeepDive {
         // Heuristic: Estimated Future Savings (Tax-Free Growth Benefit)
         // This is a rough visualization of potential future tax avoidance.
         let cumSavingsValue = 0;
-        const savingsCurve = yearData.map((d, i) => {
+        const savingsCurve = yearData.map((d) => {
             if (d.conversionAmount > 0) {
                 // Heuristic: Each dollar converted saves ~25 cents in future RMD taxes/growth drag
                 cumSavingsValue += d.conversionAmount * 0.25;

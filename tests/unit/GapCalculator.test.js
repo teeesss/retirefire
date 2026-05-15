@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { GapCalculator } from '../../src/ui/GapCalculator.js';
 import { config } from '../../src/data/Config.js';
 import { rawData } from '../../src/data/Store.js';

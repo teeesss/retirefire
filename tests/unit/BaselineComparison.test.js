@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { SimulationEngine } from '../../src/engine/SimulationEngine.js';
 import { config } from '../../src/data/Config.js';
 

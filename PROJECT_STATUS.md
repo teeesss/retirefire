@@ -2,32 +2,60 @@
 
 > [!TIP]
 > **Current Status**: 🔒 SECURE - ALL CRITICAL AUDIT ITEMS COMPLETE
-> **Last Updated**: 2026-02-04 8:55 AM
+> **Last Updated**: 2026-02-05 09:10 AM
 > **Build**: ✅ Passing (Vite Build Success) | 🟢 Production Ready
-> **Codebase**: ~4,950 Lines - Zero Console Errors
-> **Tests**: ✅ 100% Passing (Unit, Integration, E2E Visual)
-> **Linting**: ⚠️ 63 problems (0 errors, 63 warnings) - Non-blocking
+> **Codebase**: ~4,800 Lines - Zero Console Errors
+> **Tests**: ✅ 599/599 Passing (100%) | Comprehensive suite passing with jsdom
+> **Linting**: ✅ 0 problems (0 errors, 0 warnings) - Clean
 > **Repo**: ✅ Husky Pre-commit Hooks Enabled
-> **Deployment**: ✅ Live at https://www.bmwseals.com/retirefire/
+> **Deployment**: ✅ Configured for Automated FTP Sync
 > **Security**: 🔒 AES-256 Encrypted Storage, CSP Enabled, Error Boundary Active, Input Validation
-> **Recent Fixes**: 🎨 Metrics Row Fluid Layout, 📱 Responsive Retrofit, 🔒 Secure Storage Fixes
+> **Recent Fixes**: 🛠️ E2E Test Stability Fix, 🎨 Metrics Row Fluid Layout, 📱 Responsive Retrofit
 > **Security Grade**: A (improved from C)
 > **Code Quality Grade**: A (improved from B+)
 > **Refactoring**: Phase 1-5 Complete + Security Hardening + P1 Enhancements + Workflow Automation
 
----
+### Today's Session 1 (2026-02-05 - Production Sync & /all Cycle):
+- [ ] **Full Production Sync (/all)** [/] IN-PROGRESS
+    - [x] Automated QA Pass: 599 tests @ 100% pass rate.
+    - [x] Fixed `ReferenceError` in `comprehensive.test.js` by standardizing `window.Chart` access.
+    - [/] Documentation Sync: Synchronizing `TASKS.md` and `PROJECT_STATUS.md`.
+    - [ ] Production Deployment: Pending build and git push.
 
-## 🧠 Project Memory (Sync Pending)
-> [!IMPORTANT]
-> **Pinecone Status**: ✅ CONNECTED (READY)
-> **Last Backup**: 2026-02-04 9:03 AM
-> **Key Decisions to Persist**:
-> 1.  **Layout Mandate**: Strict 8-row schematic map in `LAYOUT_SPEC.md` must be followed; zero tolerance for extra wrapper divs.
-> 2.  **QA Protocol**: All intentional UI shifts require `npx playwright test --update-snapshots`.
-> 3.  **Scroll Logic**: Use `scroll-mt-*` directly on section containers for sticky header offsets.
-> 4.  **Metric Grid**: Row 1 is strictly `grid-cols-7` to ensure alignment across all viewports.
+### Today's Session 2 (2026-02-04 - Architecture & Mobile UX):
+- [x] **TASK-038: Refactor `main.js` Monolith** ✅ COMPLETE
+    - [x] Extract `AppController.js`: Centralized orchestration and initialization logic.
+    - [x] Extract `GlobalBridge.js`: Isolated legacy `window` API bindings for HTML handlers.
+    - [x] Scaled `main.js` from 500+ lines to a clean 20-line entry point.
+    - [x] Fixed all import trees and resolved build-breaking export errors.
+- [x] **TASK-041: Mobile UX Refinement** ✅ COMPLETE
+    - [x] **Hamburger Navigation**: Implemented slide-out drawer with backdrop overlay.
+    - [x] **Responsive Overrides**: Condensed header actions and reduced chart heights for small viewports.
+    - [x] **Layout Logic**: Ensured zero horizontal scroll and fluid grid wrapping on mobile.
+- [x] **Full Production Sync (/all)** ✅ COMPLETE
+    - [x] Deployed modular architecture to Production.
+    - [x] Verified build integrity and site functionality.
 
-### Today's Session 2 (2026-02-03 - Dashboard Layout & Root Cleanup):
+### Today's Session 1 (2026-02-04 - QA Stability & Layout Recovery):
+- [x] **TASK-032: Emergency Layout Recovery** ✅ COMPLETE
+    - [x] Fixed Rule 3 violations by removing 4+ extra wrapper divs in `index.html`.
+    - [x] Restored `milestones.html` padding and alignment.
+    - [x] Verified full-width row integrity across all viewports.
+- [x] **TASK-033: QA Stability & Responsive Fixes** ✅ COMPLETE
+    - [x] Stabilized Vitest suite: Fixed 4+ intermittent failures by disabling file parallelism.
+    - [x] Resolved mobile metrics regression: Added responsive grid classes to Row 1.
+    - [x] Cleaned up stale test references.
+- [x] **Full Production Sync (/all)** ✅ COMPLETE
+    - [x] Automated QA Pass (599 tests @ 100%)
+    - [x] Documentation Sync (Synced TASKS, PROJECT_STATUS, ISSUES, README)
+    - [x] Final Build & Production Deployment
+- [x] **TASK-034: Institutional Architecture & Visual Polish** ✅ COMPLETE
+    - [x] Refined README with professional deep-dives for Roth & Monte Carlo.
+    - [x] Captured high-fidelity, data-rich screenshots (Puppeteer).
+    - [x] Removed internal deployment URLs for repository portability.
+    - [x] Finalized Documentation Sync and Git push.
+
+### Previous Sessions (2026-02-03):
 - [x] **TASK-022: Dashboard Grid Refactor (Strict 3-Across)** ✅ COMPLETE
     - [x] Reordered all metrics to match requested 3-across schematic
     - [x] Split generic partials into standalone cards (Allocation, SS Strategy, SS Comparison, etc.)
@@ -212,13 +240,14 @@
 - ✅ **RULES**: Added mandatory Layout, Hover, and WSL rules to `.cursorrules`.
 - ✅ **BUG-005**: Roth Optimizer now validates/corrects invalid inputs (e.g. 15% -> 12%).
 - ✅ **BUG-006**: Social Security Comparison now actively highlights selected age plan.
-- ✅ **CRIT-004**: Pinecone MCP connectivity issues - RESOLVED
+
 - ✅ **CRIT-001**: Build failure (ESM/CJS conflict) - Fixed by renaming config files to `.cjs`
 - ✅ **CRIT-002**: Documentation duplicates in ISSUES.md - Cleaned up High Priority section
 - ✅ **CRIT-003**: Rules not enforced - Added "NEVER BYPASS CHECKLIST" to `.cursorrules`
 - ✅ **UI-049**: Implemented clickable metrics and interactive coach insights.
 - ✅ **UI-048**: Enhanced data tables with yearly granularity.
 - ✅ **UI-050**: Fixed Expense Pie Chart hover functionality.
+- ⚠️ **CRIT-004**: Pinecone MCP connectivity issues - Under investigation.
 
 **Files Modified**:
 - `.cursorrules` - Added enforcement checklist at top
@@ -468,8 +497,7 @@ Next Phase: **Optimization & Refinement (P1)**
 | ---------- | --------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **LOGIC-B** | Story B: Housing Downsize/Retirement Switch logic missing or inaccurate        | ✅ FIXED  | Implemented equity swap logic in `SimulationEngine.js`. Handles home sale costs, mortgage payoff, and cash/mortgage purchases of new homes. Verified with unit tests.     |
 | **TEST-002** | `jsdom` missing in local environment preventing UI handler tests            | ✅ FIXED  | Installed `jsdom` dev dependency and updated Vitest config.                                                                                                                |
-| **TEST-006** | `MetricsHandlerEnhanced.test.js` failing with ReferenceError | ✅ FIXED | Added `@vitest-environment jsdom` and populated missing `config.settings.taxes` in `beforeEach`. Restored 100% test pass rate. |
-| **CRIT-004** | Pinecone MCP connectivity issues (EOF) | ✅ FIXED | Verified MCP server connectivity and restored index access. |
+| **TEST-003** | `comprehensive.test.js` failing due to `ReferenceError` (missing constants) | ✅ FIXED  | Defined `chartIds` and `sectionsWithDescriptions` directly in the test file.                                                                                              |
 | **TEST-004** | E2E Tests cannot inspect Chart.js instances                                 | ✅ FIXED  | Exposed `Chart` to the global `window` object in `main.js`.                                                                                                               |
 | **Core Logic** | ✅ Passing | Multi-strategy engine tested & verified |
 | **Tests** | ✅ Passing | 76/76 tests (100%) - Unit, Integration, E2E |
@@ -583,11 +611,13 @@ npm run test:watch            # Watch mode
 npm run validate              # Pre-deployment validation
 ```
 
-### Deployment
+### Deployment & Cache Management
 ```bash
 npm run build    # Build production bundle
 npm run deploy   # Deploy to bmwseals.com/retirefire
 ```
+> [!IMPORTANT]
+> **Cache-Busting**: Vite generates hashes for assets, but if only partials or minor logic changes occurred, the hash might remain stable. ALWAYS append a "Cache-Buster" comment to `src/main.js` (e.g., `// [CB-2026.02.04]`) to force a filename change and invalidate browser/CDN caches.
 
 ---
 

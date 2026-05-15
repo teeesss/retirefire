@@ -1,6 +1,8 @@
 import { config } from '../data/Config.js';
 import { formatCurrency } from '../utils/Formatters.js';
-import { recalculate } from '../main.js';
+import { recalculate } from '../core/AppController.js';
+import { SecureStorage } from '../utils/SecureStorage.js';
+import { Logger } from '../utils/Logger.js';
 
 export class EventsHandler {
     static addEvent() {
@@ -66,7 +68,7 @@ export class EventsHandler {
         // One-time events
         const tbody = document.getElementById('eventsTableBody');
         if (tbody && config.events) {
-            tbody.innerHTML = config.events.map((event, i) => `
+            tbody.innerHTML = config.events.map((event) => `
                 <tr>
                     <td>${event.year}</td>
                     <td>${event.description}</td>
@@ -92,7 +94,12 @@ export class EventsHandler {
     }
 
     static save() {
-        localStorage.setItem('retirementPlannerConfig', JSON.stringify(config));
+        try {
+            SecureStorage.save(config);
+        } catch (e) {
+            Logger.error('EventsHandler save failed:', e);
+            this.notify('Failed to save event safely', 'error');
+        }
     }
 
     static notify(message, type = 'success') {

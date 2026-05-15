@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { SimulationEngine } from '../../src/engine/SimulationEngine.js';
-import { config } from '../../src/data/Config.js';
 
 describe('Seeded Monte Carlo Reproducibility', () => {
     it('should produce identical results with the same seed', () => {

@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { SimulationEngine } from '../../src/engine/SimulationEngine.js';
-import { config } from '../../src/data/Config.js';
 
 describe('Monte Carlo Logic', () => {
     it('should generate valid statistical results', () => {
@@ -49,7 +48,7 @@ describe('Monte Carlo Logic', () => {
 
     it('should support historical scenarios', () => {
         const results70s = SimulationEngine.runMonteCarlo(1, 0.15, 1.0, '1970s');
-        const resultsNormal = SimulationEngine.runMonteCarlo(1, 0.15, 1.0, 'monte-carlo');
+        SimulationEngine.runMonteCarlo(1, 0.15, 1.0, 'monte-carlo');
 
         expect(results70s.p50).toBeDefined();
         expect(results70s.p50.length).toBeGreaterThan(0);

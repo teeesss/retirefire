@@ -127,7 +127,7 @@ class E2ETestRunner {
                 } else {
                     this.fail(`Canvas #${id} renders`, `Zero dimensions: ${dimensions.width}x${dimensions.height}`);
                 }
-            } catch (e) {
+            } catch (_e) {
                 this.fail(`Canvas #${id} exists`, 'Element not found in DOM');
             }
         }
@@ -348,7 +348,7 @@ class E2ETestRunner {
                     await new Promise(resolve => setTimeout(resolve, 500));
 
                     this.pass('Scenario switching function callable');
-                } catch (innerError) {
+                } catch (_innerError) {
                     // The function may throw an internal error but still work
                     this.pass('Scenario switching available (with warnings)');
                 }

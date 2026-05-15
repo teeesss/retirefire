@@ -18,7 +18,7 @@ describe('E2E: Console Reliability', () => {
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
             page = await browser.newPage();
-        } catch (e) {
+        } catch (_e) {
             console.log('Skipping E2E tests: Browser failed to launch (likely CI environment)');
             shouldSkip = true;
             return;

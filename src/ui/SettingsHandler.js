@@ -1,9 +1,10 @@
 import { config } from '../data/Config.js';
-import { formatCurrency } from '../utils/Formatters.js';
-import { recalculate } from '../main.js';
+import { recalculate } from '../core/AppController.js';
+import { SecureStorage } from '../utils/SecureStorage.js';
+import { Logger } from '../utils/Logger.js';
 
 export class SettingsHandler {
-    static populateUI() {
+    static populateUI(sectionId = 'personal') {
         const s = config.settings;
 
         // Personal
@@ -51,6 +52,8 @@ export class SettingsHandler {
         this.setVal('inputExpensesTravel', s.expenses.travel);
         this.setVal('inputExpensesUtilities', s.expenses.utilities);
         this.setVal('inputExpensesMisc', s.expenses.misc);
+        this.setVal('inputGifts', s.expenses.gifts);
+        this.setVal('inputVehicle', s.expenses.vehicle);
 
         // Taxes
         this.setVal('inputRothConversion', s.taxes.rothConversion);
@@ -102,6 +105,41 @@ export class SettingsHandler {
 
         // Open overlay
         document.getElementById('settingsOverlay')?.classList.add('active');
+
+        // Show specific section
+        this.showSettingsSection(sectionId);
+
+        // Auto-calculate totals
+        this.updateTotalExpenses();
+    }
+
+    static showSettingsSection(sectionId, navItem) {
+        // Hide all sections
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        // Show target section
+        const target = document.getElementById('settings-' + sectionId);
+        if (target) {
+            target.classList.add('active');
+            // Scroll content to top
+            const content = document.querySelector('.settings-content');
+            if (content) content.scrollTop = 0;
+        }
+
+        // Update nav items
+        document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+
+        if (navItem) {
+            navItem.classList.add('active');
+        } else {
+            // Find nav item by text or data (more robust than index)
+            const navItems = document.querySelectorAll('.settings-nav-item');
+            navItems.forEach(n => {
+                const text = n.textContent.toLowerCase();
+                if (text.includes(sectionId.toLowerCase())) {
+                    n.classList.add('active');
+                }
+            });
+        }
     }
 
     static validate() {
@@ -173,7 +211,9 @@ export class SettingsHandler {
         s.expenses.travel = parseFloat(this.getVal('inputExpensesTravel'));
         s.expenses.utilities = parseFloat(this.getVal('inputExpensesUtilities'));
         s.expenses.misc = parseFloat(this.getVal('inputExpensesMisc'));
-        s.expenses.annualSpending = s.expenses.general + s.expenses.travel + s.expenses.utilities + s.expenses.misc;
+        s.expenses.gifts = parseFloat(this.getVal('inputGifts'));
+        s.expenses.vehicle = parseFloat(this.getVal('inputVehicle'));
+        s.expenses.annualSpending = s.expenses.general + s.expenses.travel + s.expenses.utilities + s.expenses.misc + s.expenses.gifts + s.expenses.vehicle;
 
         s.expenses.phases = [
             { startAge: s.personal.retireAge, endAge: 60, multiplier: parseFloat(this.getVal('inputPhase1Mult') || 1.0), description: 'Active Retirement' },
@@ -244,7 +284,12 @@ export class SettingsHandler {
     }
 
     static save() {
-        localStorage.setItem('retirementPlannerConfig', JSON.stringify(config));
+        try {
+            SecureStorage.save(config);
+        } catch (e) {
+            Logger.error('SettingsHandler save failed:', e);
+            this.notify('Failed to save settings safely', 'error');
+        }
     }
 
     static showSuccess() {
@@ -282,7 +327,31 @@ export class SettingsHandler {
 
     static getVal(id) {
         const el = document.getElementById(id);
-        return el ? el.value : null;
+        if (!el) {
+            Logger.warn(`Element with ID "${id}" not found in DOM`);
+            return '0';
+        }
+        return el.value || '0';
+    }
+
+    static updateTotalExpenses() {
+        const general = parseFloat(this.getVal('inputExpensesGeneral')) || 0;
+        const utilities = parseFloat(this.getVal('inputExpensesUtilities')) || 0;
+        const travel = parseFloat(this.getVal('inputExpensesTravel')) || 0;
+        const misc = parseFloat(this.getVal('inputExpensesMisc')) || 0;
+        const gifts = parseFloat(this.getVal('inputGifts')) || 0;
+        const vehicle = parseFloat(this.getVal('inputVehicle')) || 0;
+
+        const total = general + utilities + travel + misc + gifts + vehicle;
+        const formatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0
+        }).format(total);
+
+        document.querySelectorAll('.total-expenses-display').forEach(el => {
+            el.textContent = formatted;
+        });
     }
 
     static showSection(sectionId, element) {
@@ -360,6 +429,7 @@ export class SettingsHandler {
                     this.notify('Settings imported successfully!');
                     location.reload();
                 } catch (err) {
+                    Logger.error('Import failed:', err);
                     this.notify('Error importing settings', 'error');
                 }
             };
@@ -374,8 +444,44 @@ export class SettingsHandler {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'retirement-planner-settings.json';
+        a.download = `RetireFire_Settings_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
-        this.notify('Settings exported!');
+        URL.revokeObjectURL(url);
     }
+
+    static cloneScenario() {
+        const sc = config.currentScenario;
+        this.setVal('customScenarioName', `${sc.charAt(0).toUpperCase() + sc.slice(1)} Clone`);
+        this.setVal('customReturn', config.settings.rates[sc] || 7);
+        this.setVal('customInflation', config.settings.inflation[sc] || 2.5);
+        this.setVal('customCOLA', config.settings.socialSecurity.cola || 2.0);
+    }
+
+    static createCustomScenario() {
+        const name = this.getVal('customScenarioName').trim().toLowerCase().replace(/\s+/g, '-');
+        if (!name) {
+            alert('Please enter a scenario name');
+            return;
+        }
+
+        const rate = parseFloat(this.getVal('customReturn'));
+        const inflation = parseFloat(this.getVal('customInflation'));
+        const cola = parseFloat(this.getVal('customCOLA'));
+
+        // Save to config
+        config.settings.rates[name] = rate;
+        config.settings.inflation[name] = inflation;
+        config.settings.socialSecurity.cola = cola; // Note: COLA is currently global in SS settings
+
+        // Switch and recalculate
+        config.currentScenario = name;
+
+        // Update comparison UI if needed
+        config.comparisonEnabled[name] = true;
+
+        if (window.recalculate) window.recalculate();
+        if (window.showNotification) window.showNotification(`Scenario "${name}" created and selected!`);
+        this.close();
+    }
+
 }

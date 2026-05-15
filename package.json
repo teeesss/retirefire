@@ -18,7 +18,7 @@
     "test:e2e": "node tests/e2e_tests.js",
     "test:e2e:new": "node tests/run_e2e.js",
     "test:e2e:comprehensive": "vitest run tests/e2e/comprehensive.test.js",
-    "test:e2e:visual": "vitest run tests/e2e/visual.test.js",
+    "test:e2e:visual": "set HOME=%USERPROFILE% && vitest run tests/e2e/visual.test.js",
     "test:legacy": "node tests/run_tests.js",
     "test:data": "node tests/run_tests.js --data",
     "preupdate": "npm run test:full",

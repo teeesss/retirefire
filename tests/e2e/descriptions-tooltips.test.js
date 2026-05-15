@@ -26,7 +26,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
 
             await page.goto(APP_URL, { waitUntil: 'networkidle0' });
             await page.waitForTimeout(4000); // Wait for full initialization
-        } catch (e) {
+        } catch (_e) {
             console.log('Skipping Descriptions/Tooltips E2E: Browser failed to launch');
             shouldSkip = true;
         }
@@ -164,7 +164,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
                     const canvas = document.getElementById(chartId);
                     if (!canvas) return false;
 
-                    const chartInstance = Chart.getChart(canvas);
+                    const chartInstance = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                     if (!chartInstance) return false;
 
                     const tooltipConfig = chartInstance.options?.plugins?.tooltip;
@@ -193,11 +193,11 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
                     const canvas = document.getElementById(id);
                     if (!canvas) return { id, exists: false, hasTooltip: false };
 
-                    const chart = Chart.getChart(canvas);
+                    const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                     if (!chart) return { id, exists: true, hasTooltip: false };
 
                     const tooltip = chart.options?.plugins?.tooltip;
-                    const defaults = Chart.defaults.plugins.tooltip;
+                    const defaults = (window.Chart && window.Chart.defaults) ? window.Chart.defaults.plugins.tooltip : null;
                     const isEnabled = (tooltip && tooltip.enabled !== false) ||
                         (!tooltip && defaults && defaults.enabled !== false);
 
@@ -239,7 +239,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
                 chartIds.forEach(id => {
                     const canvas = document.getElementById(id);
                     if (canvas) {
-                        const chart = Chart.getChart(canvas);
+                        const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                         if (chart?.options?.plugins?.tooltip?.enabled !== false) {
                             chartsWithTooltips++;
                         }
@@ -332,7 +332,7 @@ describe('Comprehensive: Descriptions and Tooltips', () => {
                 chartIds.forEach(id => {
                     const canvas = document.getElementById(id);
                     if (canvas) {
-                        const chart = Chart.getChart(canvas);
+                        const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                         const tooltip = chart?.options?.plugins?.tooltip;
                         if (tooltip) {
                             colors.push({

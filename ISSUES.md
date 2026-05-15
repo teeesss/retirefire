@@ -1,6 +1,18 @@
 # Issues & Fixes Log
 
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04 14:45
+
+---
+
+## ✅ Recently Fixed Issues (2026-02-04)
+
+| Issue | Description | Status | Fix Applied |
+|-------|-------------|--------|-------------|
+| **ARCH-001** | `main.js` grew into a 500+ line monolith | ✅ FIXED | Refactored into `AppController.js` and `GlobalBridge.js`. Streamlined entry point. |
+| **UX-100** | Sidebar occupies too much space on mobile | ✅ FIXED | Implemented slide-out drawer with hamburger toggle. Sidebar hidden by default on < 768px. |
+| **UX-101** | Charts cause "scroll fatigue" on small screens | ✅ FIXED | Implemented responsive height overrides in `dashboard-layout.css`. |
+| **BUILD-002** | `vite build` failed due to missing `recalculate` export | ✅ FIXED | Updated all dependent handlers (`EventsHandler`, `SettingsHandler`, `RothUI`) to import from `AppController.js`. |
+| **LINT-001** | `showNotification` undefined in modular files | ✅ FIXED | Standardized usage via `window.showNotification` to ensure runtime safety across modules. |
 
 ---
 
@@ -18,6 +30,10 @@
 
 | Issue | Description | Status | Fix Applied |
 |-------|-------------|--------|-------------|
+| **UI-051** | Row 1 (Key Metrics) not responsive on mobile (7-col wrap) | ✅ FIXED | Updated `key-metrics.html` with responsive grid classes (`grid-cols-2 md:grid-cols-4 lg:grid-cols-7`). Aligned with E2E viewport tests. |
+| **TEST-007** | Intermittent Vitest failures (race conditions) | ✅ FIXED | Stabilized `vitest.config.js` with `fileParallelism: false` and increased `testTimeout` to 30s. |
+| **TEST-008** | Stale reference to missing `charts-grid.html` | ✅ FIXED | Removed outdated integrity check in `build-validation.test.js`. |
+| **LAYOUT-001** | Emergency Layout Recovery (Rule 3 violation) | ✅ FIXED | Removed extra wrapper divs around chart partials in `index.html` and restored `milestones.html` spacing. |
 | **UI-050** | Comprehensive Metrics rows wrap to 2 lines on laptop | ✅ FIXED | Implemented `flex-wrap: nowrap` and `clamp()` fluid typography in `style.css`. Forced single-line display with auto-resizing. |
 
 ## ✅ Recently Fixed Issues (2026-02-02)
@@ -36,7 +52,7 @@
 | **SS-UX-01** | SS Comparison needs dynamic 4th bar for selected age | ✅ FIXED | Updated `IncomeExpenseCharts.js` to include a real-time "Choice" bar. |
 | **ISSUE-034** | Monte Carlo needs more scenario options | ✅ FIXED | Added spend rate presets (50%-150%) and market descriptions. Enhanced confidence bands with gradients. |
 | **ISSUE-035** | Monte Carlo missing historical range options | ✅ FIXED | Added "Last 30 Years" historical scenario indexing to SimulationEngine. |
-| **ENV-001** | Browser subagent fails on Windows due to missing $HOME | ✅ FIXED | **Lesson Learned**: If `browser_subagent` fails with `$HOME` errors, use `chrome-devtools` MCP server directly for live site verification and screenshots. |
+| **ENV-001** | Browser subagent fails on Windows due to missing $HOME | ✅ FIXED | **Fixed**: Added `set HOME=%USERPROFILE%` to E2E test scripts in `package.json`. See `test:e2e:visual` for example. |
 | **ISSUE-019** | "What You Need" calculator outdated / only shows Age 53 | ✅ FIXED | Enhanced `GapCalculator.js` subtitle to show dynamic age with years to retirement context. Calculator now uses `config.settings.personal.retireAge` correctly. |
 | **ISSUE-020** | "What You Need" target income should be slider | ✅ FIXED | Added interactive slider with bidirectional sync to number input in `gap-calculator.html`. Created `CashFlowExplorer.js` with spend rate scenarios (3-5%). 15 unit tests passing. |
 | **ISSUE-063** | Gap Years logic doesn't fund taxes from withdrawals | ✅ FIXED | Implemented iterative drawdown loop in `SimulationEngine.js` to "gross-up" withdrawals to cover triggered taxes and penalties. |

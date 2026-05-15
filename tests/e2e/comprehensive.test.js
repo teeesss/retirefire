@@ -24,7 +24,7 @@ describe('E2E: RetireFire Application', () => {
 
             await page.goto(APP_URL, { waitUntil: 'networkidle0' });
             await page.waitForTimeout(3000);
-        } catch (e) {
+        } catch (_e) {
             console.log('Skipping Comprehensive E2E: Browser failed to launch');
             shouldSkip = true;
         }
@@ -115,7 +115,7 @@ describe('E2E: RetireFire Application', () => {
                     const canvas = document.getElementById(id);
                     if (!canvas) return { id, exists: false, hasChart: false };
 
-                    const chart = Chart.getChart(canvas);
+                    const chart = (window.Chart && window.Chart.getChart) ? window.Chart.getChart(canvas) : null;
                     return {
                         id,
                         exists: true,
@@ -229,7 +229,7 @@ describe('E2E: RetireFire Application', () => {
             const scenarioButtons = await page.$$('[onclick*="setScenario"]');
             expect(scenarioButtons.length).toBeGreaterThan(0);
 
-            const initialNW = await page.$eval('#metricCurrentNW', el => el.textContent);
+            const _initialNW = await page.$eval('#metricCurrentNW', el => el.textContent);
 
             await page.evaluate(() => {
                 if (typeof setScenario === 'function') {
@@ -385,7 +385,7 @@ describe('E2E: RetireFire Application', () => {
                 expect(modal).toBeTruthy();
 
                 // Close modal
-                const closeButton = await page.evaluate(() => {
+                const _closeButton = await page.evaluate(() => {
                     const overlay = document.getElementById('settingsOverlay');
                     if (overlay) {
                         overlay.classList.remove('active');

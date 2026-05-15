@@ -3,8 +3,9 @@
  * Handles the comparison view in the Roth Deep Dive modal
  */
 
+import { Logger } from '../utils/Logger.js';
 import RothOptimizer from './RothOptimizer.js';
-import { formatCurrency } from '../utils/formatters.js';
+import { formatCurrency } from '../utils/Formatters.js';
 import { getSafeCtx } from '../charts/ChartHelpers.js';
 import Chart from 'chart.js/auto';
 
@@ -19,7 +20,7 @@ export class RothComparison {
      * Run strategy comparison and render results
      */
     static async runComparison(params) {
-        console.log('🔬 Running strategy comparison...');
+        Logger.info('🔬 Running strategy comparison...');
 
         // Show loading state
         const tableBody = document.getElementById('comparisonTableBody');
@@ -39,7 +40,7 @@ export class RothComparison {
         this.renderComparisonChart(comparison);
         this.updateRecommendation(comparison);
 
-        console.log(`✅ Comparison complete: ${comparison.strategies.length} strategies analyzed`);
+        Logger.info(`✅ Comparison complete: ${comparison.strategies.length} strategies analyzed`);
     }
 
     /**
@@ -315,7 +316,7 @@ export class RothComparison {
 
 // Global functions for window
 window.selectStrategy = (index) => {
-    console.log(`Selected strategy ${index}`);
+    Logger.debug(`Selected strategy ${index}`);
     // Highlight selected row
     const rows = document.querySelectorAll('#comparisonTableBody tr');
     rows.forEach((row, i) => {
@@ -331,7 +332,7 @@ window.viewStrategyDetails = (index) => {
     if (!RothComparison.comparisonData) return;
 
     const strategy = RothComparison.comparisonData.strategies[index];
-    console.log(`Viewing details for ${formatCurrency(strategy.amount)}/year strategy`);
+    Logger.debug(`Viewing details for ${formatCurrency(strategy.amount)}/year strategy`);
 
     // Import RothDeepDive dynamically
     import('./RothDeepDive.js').then(module => {
@@ -354,10 +355,10 @@ window.viewStrategyDetails = (index) => {
             RothDeepDive.renderTable(strategy.results);
             RothDeepDive.updateDetailHeader(strategy.amount, strategy.score);
         } else {
-            console.warn('No year-by-year results available for this strategy');
+            Logger.warn('No year-by-year results available for this strategy');
         }
     }).catch(err => {
-        console.error('Failed to load RothDeepDive:', err);
+        Logger.error('Failed to load RothDeepDive:', err);
     });
 };
 
@@ -373,7 +374,7 @@ window.sortComparisonTable = (column) => {
         RothComparison.sortState.direction = 'desc';
     }
 
-    console.log(`Sorting by ${column} (${RothComparison.sortState.direction})`);
+    Logger.debug(`Sorting by ${column} (${RothComparison.sortState.direction})`);
 
     // Sort strategies
     const sorted = RothComparison.sortStrategies(

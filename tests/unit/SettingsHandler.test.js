@@ -3,13 +3,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SettingsHandler } from '../../src/ui/SettingsHandler.js';
 import { config } from '../../src/data/Config.js';
 
-// Mock the recalculate function from main.js
-vi.mock('../../src/main.js', () => ({
+// Mock the recalculate function from AppController.js
+vi.mock('../../src/core/AppController.js', () => ({
     recalculate: vi.fn()
 }));
 
 // Import the mocked recalculate for verification
-import { recalculate } from '../../src/main.js';
+import { recalculate } from '../../src/core/AppController.js';
 
 describe('SettingsHandler', () => {
     beforeEach(() => {

@@ -10,11 +10,20 @@
 - **Read**: Use `Get-Content` (or `type`).
 - **Binary/Hex**: Use `Format-Hex "path"` directly. Do NOT use `Get-Content -Encoding Byte`.
 
+# Modularity & Architecture Rules
+- **Import Strategy**: Prefer named imports from the source component (e.g., `src/ui/`, `src/charts/`) instead of the entry point `main.js`.
+- **Global State**: The `window` object should only be populated via `src/core/GlobalBridge.js` to avoid cluttering business logic with legacy event hookups.
+- **Recalculation**: Always use `recalculate()` from `src/core/AppController.js` to trigger a full engine sync and UI refresh. Do NOT call `updateRawData()` in isolation unless bypassing UI updates is explicitly intended.
+- **Safety**: Use `window.showNotification` with a check (`if(window.showNotification)...`) to avoid crashes if UI handlers are not yet initialized.
+
 # Testing & Verification Rules
 - **MCP Tool Usage**: For testing and visual validation, strictly use the following `chrome-devtools` MCP tools:
   - `navigate_page`: To access local or staged application URLs.
   - `take_snapshot` / `take_screenshot`: To capture visual state for verification.
   - `evaluate_script`: To inspect DOM state, CSS properties, and computed styles programmatically.
 - **Rule of Thumb**: Prioritize using these MCP tools over manual browser checking or simple curl requests when verifying UI/layout logic.
-- **Scroll Offset Rule**: When implementing sticky headers, use `scroll-mt-*` (e.g., `scroll-mt-32`) directly on section containers to ensure navigation offsets are handled without adding extra wrapper divs (see `LAYOUT_SPEC.md`).
-- **Visual Regression Rule**: After any intentional UI change that shifts layout or styling, ALWAYS run Playwright with `--update-snapshots` to reset the visual baseline.
+
+# Deployment & Cache Management Rules
+- **Cache-Busting**: Before every production deployment (`npm run deploy`), ALWAYS verify that the main asset hash will change. 
+- **Forced Update**: If making small logic or CSS changes that do not automatically trigger a hash change in `Vite`, manually add or update a "Cache-Buster" comment (e.g., `// [CB-YYYY.MM.DD]`) in a core source file like `src/main.js`.
+- **Verification**: After deployment, use `curl -I` or the `chrome-devtools` `navigate_page` tool to verify the `Last-Modified` header or the new asset filename on the live site.

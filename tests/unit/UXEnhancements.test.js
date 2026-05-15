@@ -46,7 +46,6 @@ describe('Enhanced Chart Tooltips (TASK-009)', () => {
             // Mock data
             const mockIncome = 100000;
             const mockExpenses = 60000;
-            const mockNet = mockIncome - mockExpenses;
 
             // Simulated tooltip label callback
             const labelCallback = (income, expenses) => {

@@ -45,7 +45,7 @@ describe('SimulationEngine Data Integrity', () => {
         expect(results.income.RMD).toBeDefined();
 
         // Verify Drawdown is not just all zeros (usually it shouldn't be for a default retirement scenario)
-        const hasDrawdown = results.income.Drawdown.some(v => v > 0);
+        results.income.Drawdown.some(v => v > 0);
         // Note: Depending on default assets, might not have drawdown, but we want to know if it's there.
         expect(Array.isArray(results.income.Drawdown)).toBe(true);
     });
