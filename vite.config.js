@@ -14,6 +14,9 @@ export default defineConfig({
     },
     server: {
         open: true,
+        watch: {
+            usePolling: true
+        }
     },
     test: {
         exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**'],

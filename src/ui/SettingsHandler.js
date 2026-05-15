@@ -285,6 +285,55 @@ export class SettingsHandler {
         return el ? el.value : null;
     }
 
+    static showSection(sectionId, element) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.settings-section');
+        sections.forEach(s => s.classList.remove('active'));
+
+        // Show target section
+        const target = document.getElementById(`settings-${sectionId}`);
+        if (target) {
+            target.classList.add('active');
+        }
+
+        // Update nav styling
+        const navItems = document.querySelectorAll('.settings-nav-item');
+        navItems.forEach(item => item.classList.remove('active'));
+        if (element) {
+            element.classList.add('active');
+        }
+    }
+
+    static toggleSpouseFields() {
+        const checkbox = document.getElementById('hasSpouse');
+        const fields = document.getElementById('spouseFields');
+        if (checkbox && fields) {
+            fields.style.display = checkbox.checked ? 'block' : 'none';
+        }
+    }
+
+    static toggleHomeFields() {
+        const checkbox = document.getElementById('ownsHome');
+        const fields = document.getElementById('homeFields');
+        if (checkbox && fields) {
+            fields.style.display = checkbox.checked ? 'block' : 'none';
+        }
+    }
+
+    static updateAllocDisplay() {
+        const stocks = parseInt(document.getElementById('inputGlideStocks')?.value || 0);
+        const bonds = parseInt(document.getElementById('inputGlideBonds')?.value || 0);
+        const cash = parseInt(document.getElementById('inputGlideCash')?.value || 0);
+        const crypto = parseInt(document.getElementById('inputGlideCrypto')?.value || 0);
+        const total = stocks + bonds + cash + crypto;
+
+        const totalEl = document.getElementById('allocTotal');
+        if (totalEl) {
+            totalEl.textContent = total + '%';
+            totalEl.style.color = total === 100 ? '#10b981' : '#ef4444';
+        }
+    }
+
     static close() {
         document.getElementById('settingsOverlay')?.classList.remove('active');
     }

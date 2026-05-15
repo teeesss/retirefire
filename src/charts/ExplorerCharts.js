@@ -79,9 +79,16 @@ export function updateSSExplorerChart() {
     const profile = config.profile?.careerProfile || 'high'; // low, medium, high, max
 
     // Calculate PIA
-    // Check if manual input exists and use it, otherwise calculate from profile
+    // Priority: 1. Manual Input, 2. Config Setting (ss67), 3. Calculate from Profile
     const manualPiaInput = document.getElementById('ssPiaInput');
-    const pia = manualPiaInput ? parseFloat(manualPiaInput.value) : SocialSecurityCalculator.calculatePIA(currentIncome, profile);
+    let pia;
+    
+    if (manualPiaInput && manualPiaInput.value && document.activeElement === manualPiaInput) {
+        pia = parseFloat(manualPiaInput.value);
+    } else {
+        pia = config.settings?.socialSecurity?.ss67 || SocialSecurityCalculator.calculatePIA(currentIncome, profile);
+        if (manualPiaInput) manualPiaInput.value = pia;
+    }
 
     // Recalculate benefits with the current PIA
     const benefits = SocialSecurityCalculator.calculateBenefits(pia);

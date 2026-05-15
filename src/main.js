@@ -420,12 +420,28 @@ window.updateMcScenarioDesc = (scenario) => {
 
 
 window.openSettings = (section) => SettingsHandler.populateUI();
+window.showSettingsSection = (id, el) => SettingsHandler.showSection(id, el);
+window.toggleSpouseFields = () => SettingsHandler.toggleSpouseFields();
+window.toggleHomeFields = () => SettingsHandler.toggleHomeFields();
+window.updateAllocDisplay = () => SettingsHandler.updateAllocDisplay();
 window.applySettings = () => SettingsHandler.apply();
 window.closeSettings = () => SettingsHandler.close();
 window.resetToDefaults = () => SettingsHandler.reset();
 window.importSettings = () => SettingsHandler.importSettings();
 window.exportSettings = () => SettingsHandler.exportSettings();
 window.toggleTheme = () => App.toggleTheme();
+window.scrollToSection = (id) => NavigationHandler.scrollToSection(id);
+
+// Explorer & Interactive Handlers
+window.updateYear = (v) => ExplorerHandler.updateYear(v);
+window.updateSpending = (v) => ExplorerHandler.updateSpending(v);
+window.runWhatIf = (s, b) => ExplorerHandler.runWhatIf(s, b);
+window.runMarketRisk = (s, b) => ExplorerHandler.runMarketRisk(s, b);
+window.runStressTest = () => ExplorerHandler.runStressTest();
+window.runSequenceRisk = (s, b) => ExplorerHandler.runSequenceRisk(s, b);
+window.updateSSExplorer = () => ExplorerHandler.updateSSExplorer();
+window.setSSClaimAge = (a, b) => ExplorerHandler.setSSClaimAge(a, b);
+window.recalculate = () => App.recalculate();
 
 // Chart Type Switching
 window.setChartType = (section, type, button) => {

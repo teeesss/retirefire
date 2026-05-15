@@ -539,9 +539,12 @@ export class SimulationEngine {
             investments += netFlow;
         }
 
-        // Assign marginal taxes for detail display
-        yearlyDrawdownDetail.RetirementSavingsTax = Math.round(yearlyDrawdownDetail.RetirementSavings * 0.22);
-        yearlyDrawdownDetail.InvestmentsTax = Math.round(yearlyDrawdownDetail.Investments * 0.15);
+        // Assign estimated taxes for detail display
+        const totalTaxableIncome = workIncome + otherOrdIncome + rothConvToProcess + yearlyDrawdownDetail.RetirementSavings;
+        const effectiveRate = totalTaxableIncome > 0 ? (estimatedTax / totalTaxableIncome) : 0.22;
+        
+        yearlyDrawdownDetail.RetirementSavingsTax = Math.round(yearlyDrawdownDetail.RetirementSavings * Math.max(0.10, effectiveRate));
+        yearlyDrawdownDetail.InvestmentsTax = Math.round(yearlyDrawdownDetail.Investments * 0.15); // Long-term CG usually 15%
 
         // Process Roth Conversion (already factored into taxes above via rothConvToProcess)
         let actualConversion = 0;
