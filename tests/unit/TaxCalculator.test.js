@@ -58,4 +58,14 @@ describe('TaxCalculator', () => {
         expect(breakdown.total).toBe(0);
         expect(breakdown.federalOrd).toBe(0);
     });
+
+    it('should calculate 0.9% Additional Medicare Tax for high earners', () => {
+        // Single, $300k wages. 
+        // Medicare (1.45%): 300,000 * 0.0145 = 4350
+        // SS (6.2% up to 176100): 176100 * 0.062 = 10918.2
+        // Addl Medicare (0.9% over 200k): 100,000 * 0.009 = 900
+        // Total FICA/Medicare: 4350 + 10918.2 + 900 = 16168.2
+        const breakdown = TaxCalculator.calculateTaxBreakdown(300000, 0, 0, 'single', 'FL');
+        expect(breakdown.fica).toBeCloseTo(16168, 0);
+    });
 });

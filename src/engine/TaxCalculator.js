@@ -108,10 +108,18 @@ export class TaxCalculator {
         const ordCGTax = this.calculateProgressive(taxableOrd, cgBrackets);
         const fedCG = Math.max(0, totalCGTax - ordCGTax);
 
-        // 3. FICA (Simplified)
-        const ficaRate = 0.0765;
-        const ficaCap = 176100;
-        const fica = Math.min(wages || 0, ficaCap) * ficaRate;
+        // 3. FICA & Medicare
+        const ssRate = 0.062;
+        const ssCap = 176100;
+        const medicareRate = 0.0145;
+        const addlMedicareRate = 0.009;
+        const addlMedicareThreshold = filingStatus === 'married' ? 250000 : 200000;
+
+        const ssTax = Math.min(wages || 0, ssCap) * ssRate;
+        const medicareTax = (wages || 0) * medicareRate;
+        const addlMedicareTax = Math.max(0, (wages || 0) - addlMedicareThreshold) * addlMedicareRate;
+        
+        const fica = ssTax + medicareTax + addlMedicareTax;
 
         // 4. State Tax (Simplified)
         const stateRates = { 'CA': 0.093, 'NY': 0.065, 'FL': 0, 'TX': 0, 'IL': 0.0495, 'MA': 0.05 };
