@@ -29,10 +29,46 @@ export class TaxCalculator {
         ]
     };
 
+    static sunsetBrackets = {
+        single: [
+            { limit: 9325, rate: 0.10 },
+            { limit: 37950, rate: 0.15 },
+            { limit: 91900, rate: 0.25 },
+            { limit: 191650, rate: 0.28 },
+            { limit: 416700, rate: 0.33 },
+            { limit: 418400, rate: 0.35 },
+            { limit: Infinity, rate: 0.396 }
+        ],
+        married: [
+            { limit: 18650, rate: 0.10 },
+            { limit: 75900, rate: 0.15 },
+            { limit: 153100, rate: 0.25 },
+            { limit: 233350, rate: 0.28 },
+            { limit: 416700, rate: 0.33 },
+            { limit: 470700, rate: 0.35 },
+            { limit: Infinity, rate: 0.396 }
+        ],
+        hoh: [
+            { limit: 13350, rate: 0.10 },
+            { limit: 50800, rate: 0.15 },
+            { limit: 131200, rate: 0.25 },
+            { limit: 212500, rate: 0.28 },
+            { limit: 416700, rate: 0.33 },
+            { limit: 444550, rate: 0.35 },
+            { limit: Infinity, rate: 0.396 }
+        ]
+    };
+
     static standardDeduction = {
         single: 14600,
         married: 29200,
         hoh: 21900
+    };
+
+    static sunsetDeduction = {
+        single: 10400, // Includes personal exemption
+        married: 20800,
+        hoh: 13400
     };
 
     static ltcgBrackets = {
@@ -110,15 +146,25 @@ export class TaxCalculator {
      * @param {number} capGains - Long term capital gains
      * @param {string} filingStatus - single, married, or hoh
      * @param {string} state - state code (e.g., 'CA', 'FL')
+     * @param {number} earlyWithdrawalPenalty
+     * @param {number} currentYear
+     * @param {boolean} tcjaSunset
      * @returns {Object} Tax breakdown
      */
-    static calculateTaxBreakdown(wages, otherOrdIncome, capGains, filingStatus, state, earlyWithdrawalPenalty = 0) {
+    static calculateTaxBreakdown(wages, otherOrdIncome, capGains, filingStatus, state, earlyWithdrawalPenalty = 0, currentYear = 2026, tcjaSunset = false) {
+        const isSunset = tcjaSunset && currentYear >= 2026;
         const totalOrdIncome = (wages || 0) + (otherOrdIncome || 0);
-        const deduction = this.standardDeduction[filingStatus] || 14600;
+        
+        const deduction = isSunset 
+            ? (this.sunsetDeduction[filingStatus] || this.sunsetDeduction.single)
+            : (this.standardDeduction[filingStatus] || this.standardDeduction.single);
 
         // 1. Ordinary Income Tax
         const taxableOrd = Math.max(0, totalOrdIncome - deduction);
-        const ordBrackets = this.brackets[filingStatus] || this.brackets.single;
+        const ordBrackets = isSunset
+            ? (this.sunsetBrackets[filingStatus] || this.sunsetBrackets.single)
+            : (this.brackets[filingStatus] || this.brackets.single);
+            
         const fedOrd = this.calculateProgressive(taxableOrd, ordBrackets);
 
         // 2. Capital Gains Tax

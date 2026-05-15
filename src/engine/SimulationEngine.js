@@ -381,12 +381,16 @@ export class SimulationEngine {
             rothConvToProcess = Math.max(0, Math.min(rothConvToProcess, retirement));
         }
 
+        const tcjaSunset = config.settings?.taxSettings?.tcjaSunset || false;
         const taxBreakdown = TaxCalculator.calculateTaxBreakdown(
             workIncome,
             otherOrdIncome + rothConvToProcess,
             estimatedCapGains,
-            config.settings?.taxSettings?.filingStatus || 'joint',
-            config.settings?.taxSettings?.state || 'none'
+            config.settings?.taxSettings?.filingStatus || 'single',
+            config.settings?.taxSettings?.state || 'none',
+            0,
+            currentYear,
+            tcjaSunset
         );
 
         let estimatedTax = taxBreakdown.total;
@@ -507,9 +511,11 @@ export class SimulationEngine {
                 workIncome,
                 currentTaxableOrd,
                 currentTaxableCG,
-                config.settings?.taxSettings?.filingStatus || 'joint',
+                config.settings?.taxSettings?.filingStatus || 'single',
                 config.settings?.taxSettings?.state || 'none',
-                currentPenalty
+                currentPenalty,
+                currentYear,
+                tcjaSunset
             );
 
             estimatedTax = newTaxBreakdown.total;

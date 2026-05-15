@@ -79,4 +79,15 @@ describe('TaxCalculator', () => {
         const taxable = TaxCalculator.calculateTaxableSocialSecurity(30000, 20000, 'single');
         expect(taxable).toBeCloseTo(9600, 0);
     });
+
+    it('should calculate higher taxes when TCJA sunset is active', () => {
+        // Single, $50k wages, FL, 2026
+        const breakdownCurrent = TaxCalculator.calculateTaxBreakdown(50000, 0, 0, 'single', 'FL', 0, 2026, false);
+        const breakdownSunset = TaxCalculator.calculateTaxBreakdown(50000, 0, 0, 'single', 'FL', 0, 2026, true);
+
+        // Expected approx 4016 (Current) vs 5639 (Sunset)
+        expect(breakdownSunset.total).toBeGreaterThan(breakdownCurrent.total);
+        expect(breakdownSunset.federalOrd).toBeCloseTo(5639, 0);
+        expect(breakdownCurrent.federalOrd).toBeCloseTo(4016, 0);
+    });
 });

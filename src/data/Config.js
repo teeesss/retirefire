@@ -90,7 +90,8 @@ export let config = {
         taxSettings: {
             filingStatus: 'hoh',
             state: 'FL',
-            fedBracket: 24
+            fedBracket: 24,
+            tcjaSunset: true
         },
         expenses: {
             general: 60000,
